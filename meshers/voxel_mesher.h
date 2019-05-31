@@ -16,7 +16,7 @@
 #include "scene/resources/concave_polygon_shape.h"
 
 #include "../library/voxelman_library.h"
-#include "../collections/vector3i.h"
+#include "../math/vector3i.h"
 #include "../data/voxel.h"
 #include "../library/voxelman_library.h"
 #include "../utility/marching_cubes_voxel_query.h"

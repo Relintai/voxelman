@@ -5,7 +5,7 @@
 #include "core/reference.h"
 #include "core/vector.h"
 
-#include "../collections/vector3i.h"
+#include "../math/vector3i.h"
 
 class VoxelLight : public Reference {
 	GDCLASS(VoxelLight, Reference);

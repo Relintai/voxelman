@@ -2,7 +2,7 @@
 #define VOXEL_H
 
 #include "core/reference.h"
-#include "../collections/vector3i.h"
+#include "../math/vector3i.h"
 #include "core/math/quat.h"
 #include "core/resource.h"
 #include "core/vector.h"
