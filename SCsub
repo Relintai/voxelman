@@ -2,4 +2,19 @@ Import('env')
 
 env.add_source_files(env.modules_sources,"register_types.cpp")
 
+env.add_source_files(env.modules_sources,"collections/vector3i.cpp")
+
+env.add_source_files(env.modules_sources,"library/voxelman_library.cpp")
+env.add_source_files(env.modules_sources,"library/voxel_surface.cpp")
+
+env.add_source_files(env.modules_sources,"data/voxel.cpp")
+env.add_source_files(env.modules_sources,"data/voxel_light.cpp")
+
+env.add_source_files(env.modules_sources,"meshers/voxel_mesher.cpp")
+env.add_source_files(env.modules_sources,"meshers/voxel_mesher_transvoxel.cpp")
+env.add_source_files(env.modules_sources,"meshers/transvoxel_tables.cpp")
+
+env.add_source_files(env.modules_sources,"utility/marching_cubes_voxel_query.cpp")
+
+
 
