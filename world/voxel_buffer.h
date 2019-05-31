@@ -20,9 +20,9 @@
 #ifndef VOXEL_BUFFER_H
 #define VOXEL_BUFFER_H
 
-#include "math/vector3i.h"
-#include <core/reference.h>
-#include <core/vector.h>
+#include "../math/vector3i.h"
+#include "core/reference.h"
+#include "core/vector.h"
 
 // Dense voxels data storage.
 // Organized in 8-bit channels like images, all optional.

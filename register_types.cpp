@@ -10,6 +10,8 @@
 
 #include "utility/marching_cubes_voxel_query.h"
 
+#include "world/voxel_buffer.h"
+
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherTransvoxel>();
@@ -23,6 +25,8 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelLight>();
 
 	ClassDB::register_class<MarchingCubesVoxelQuery>();
+    
+    ClassDB::register_class<VoxelBuffer>();
 }	
 
 void unregister_voxelman_types() {
