@@ -14,55 +14,53 @@ class VoxelSurface : public Resource {
 	GDCLASS(VoxelSurface, Resource)
 
 public:
-	int get_id() { return _id; }
-	void set_id(int value) { _id = value; }
+	int get_id() const;
+	void set_id(int value);
 
-	Color get_voxel_color() { return _voxel_color; }
-	void set_voxel_color(Color value) { _voxel_color = value; }
+	Color get_voxel_color() const;
+	void set_voxel_color(Color value);
 
-	int get_atlas_texture_id() { return _atlas_texture_id; }
-	void set_atlas_texture_id(int value) { _atlas_texture_id = value; }
+	int get_atlas_texture_id() const;
+	void set_atlas_texture_id(int value);
 
-	bool has_face_color() {
-		return false;
-	}
+	bool has_face_color() const;
 
-	int get_mesh_id() { return _mesh_id; }
-	void set_mesh_id(int value) { _mesh_id = value; }
+	int get_mesh_id() const;
+	void set_mesh_id(int value);
 
-	Vector3 get_mesh_offset() { return _mesh_offset; }
-	void set_mesh_offset(Vector3 value) { _mesh_offset = value; }
+	Vector3 get_mesh_offset() const;
+	void set_mesh_offset(Vector3 value);
 
-	int get_prefab_id() { return _prefab_id; }
-	void set_prefab_id(int value) { _prefab_id = value; }
+	int get_prefab_id() const;
+	void set_prefab_id(int value);
 
-	Vector3 get_prefab_offset() { return _prefab_offset; }
-	void set_prefab_offset(Vector3 value) { _prefab_offset = value; }
+	Vector3 get_prefab_offset() const;
+	void set_prefab_offset(Vector3 value);
 
-	Vector3 get_prefab_rotation() { return _prefab_rotation; }
-	void set_prefab_rotation(Vector3 value) { _prefab_rotation = value; }
+	Vector3 get_prefab_rotation()const;
+	void set_prefab_rotation(Vector3 value);
 
-	bool get_light() { return _light; }
-	void set_light(bool value) { _light = value; }
+	bool get_light() const;
+	void set_light(bool value);
 
-	float get_light_strength() { return _light_strength; }
-	void set_light_strength(float value) { _light_strength = value; }
+	float get_light_strength() const;
+	void set_light_strength(float value);
 
-	Color get_light_color() { return _light_color; }
-	void set_light_color(Color value) { _light_color = value; }
+	Color get_light_color() const;
+	void set_light_color(Color value);
 
-	Vector3 get_light_offset() { return _light_offset; }
-	void set_light_offset(Vector3 value) { _light_offset = value; }
+	Vector3 get_light_offset() const;
+	void set_light_offset(Vector3 value);
 
-	void set_transparent(bool t = true);
-	bool is_transparent() const { return _is_transparent; }
-
+    bool is_transparent() const;
+	void set_transparent(bool transparent);
+	
+    String get_voxel_name() const;
 	void set_voxel_name(String name);
-	String get_voxel_name() const { return _name; }
-
-	void set_library(Ref<VoxelmanLibrary> lib);
-	Ref<VoxelmanLibrary> get_library();
-
+	
+    Ref<VoxelmanLibrary> get_library() const;
+	void set_library(Ref<VoxelmanLibrary> library);
+	
 	VoxelSurface();
 	VoxelSurface(int id);
 	~VoxelSurface();
@@ -71,7 +69,7 @@ protected:
 	static void _bind_methods();
 
 private:
-	VoxelmanLibrary *_library;
+	Ref<VoxelmanLibrary> _library;
 
 	int _id;
 	String _name;
