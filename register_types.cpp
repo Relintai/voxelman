@@ -11,6 +11,8 @@
 #include "utility/marching_cubes_voxel_query.h"
 
 #include "world/voxel_buffer.h"
+#include "world/voxel_world.h"
+#include "world/voxel_chunk.h"
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
@@ -27,6 +29,8 @@ void register_voxelman_types() {
 	ClassDB::register_class<MarchingCubesVoxelQuery>();
     
     ClassDB::register_class<VoxelBuffer>();
+    ClassDB::register_class<VoxelWorld>();
+    ClassDB::register_class<VoxelChunk>();
 }	
 
 void unregister_voxelman_types() {

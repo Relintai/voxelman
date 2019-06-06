@@ -17,9 +17,8 @@
 
 #include "../library/voxelman_library.h"
 #include "../math/vector3i.h"
-#include "../data/voxel.h"
-#include "../library/voxelman_library.h"
 #include "../utility/marching_cubes_voxel_query.h"
+#include "../world/voxel_buffer.h"
 
 const double PI_2 = 3.141592653589793238463 / 2;
 const double PI = 3.141592653589793238463;
@@ -36,12 +35,11 @@ public:
 
 	void reset();
 
-	//void add_voxels(Hash3DMap<Ref<Voxel> > *voxels);
-	void add_voxel(Ref<Voxel> voxels);
+	void add_buffer(Ref<VoxelBuffer> voxels);
 	void create_mesh_for_marching_cubes_query(Ref<MarchingCubesVoxelQuery> query);
 
 	void create_trimesh_shape(Ref<ConcavePolygonShape> shape) const;
-	void bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > *lights);
+	void bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights);
 
 	Ref<ArrayMesh> build_mesh();
 
@@ -83,12 +81,12 @@ protected:
 	static void _bind_methods();
 
 private:
-	Vector<Vector3> *_vertices;
-	Vector<Vector3> *_normals;
-	Vector<Color> *_colors;
-	Vector<Vector2> *_uvs;
-	Vector<int> *_indices;
-	Vector<int> *_bones;
+	Vector<Vector3> _vertices;
+	Vector<Vector3> _normals;
+	Vector<Color> _colors;
+	Vector<Vector2> _uvs;
+	Vector<int> _indices;
+	Vector<int> _bones;
 
 	Ref<VoxelmanLibrary> _library;
 

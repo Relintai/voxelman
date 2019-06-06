@@ -3,13 +3,6 @@
 VoxelMesher::VoxelMesher(Ref<VoxelmanLibrary> library) {
 	_library = library;
 
-	_vertices = memnew(Vector<Vector3>());
-	_normals = memnew(Vector<Vector3>());
-	_colors = memnew(Vector<Color>());
-	_uvs = memnew(Vector<Vector2>());
-	_indices = memnew(Vector<int>());
-	_bones = memnew(Vector<int>());
-
 	_debug_voxel_face = false;
 	size = (float)1;
 	vertexOffset = Vector3((float)0.5, (float)0.5, (float)0.5);
@@ -18,13 +11,6 @@ VoxelMesher::VoxelMesher(Ref<VoxelmanLibrary> library) {
 }
 
 VoxelMesher::VoxelMesher() {
-	_vertices = memnew(Vector<Vector3>());
-	_normals = memnew(Vector<Vector3>());
-	_colors = memnew(Vector<Color>());
-	_uvs = memnew(Vector<Vector2>());
-	_indices = memnew(Vector<int>());
-	_bones = memnew(Vector<int>());
-
 	_debug_voxel_face = false;
 	size = (float)1;
 	vertexOffset = Vector3((float)0.5, (float)0.5, (float)0.5);
@@ -33,12 +19,12 @@ VoxelMesher::VoxelMesher() {
 }
 
 VoxelMesher::~VoxelMesher() {
-	memdelete(_vertices);
-	memdelete(_normals);
-	memdelete(_colors);
-	memdelete(_uvs);
-	memdelete(_indices);
-	memdelete(_bones);
+	_vertices.clear();
+	_normals.clear();
+	_colors.clear();
+	_uvs.clear();
+	_indices.clear();
+	_bones.clear();
 	memdelete(_surface_tool);
 }
 
@@ -46,26 +32,26 @@ Ref<ArrayMesh> VoxelMesher::build_mesh() {
 	_surface_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
 	_surface_tool->set_material(_library->get_material());
 
-	int len = _vertices->size();
+	int len = _vertices.size();
 
 	for (int i = 0; i < len; ++i) {
-		if (_normals->size() > 0) {
-			_surface_tool->add_normal(_normals->get(i));
+		if (_normals.size() > 0) {
+			_surface_tool->add_normal(_normals.get(i));
 		}
 
-		if (_colors->size() > 0) {
-			_surface_tool->add_color(_colors->get(i));
+		if (_colors.size() > 0) {
+			_surface_tool->add_color(_colors.get(i));
 		}
 
-		if (_uvs->size() > 0) {
-			_surface_tool->add_uv(_uvs->get(i));
+		if (_uvs.size() > 0) {
+			_surface_tool->add_uv(_uvs.get(i));
 		}
 
-		_surface_tool->add_vertex(_vertices->get(i));
+		_surface_tool->add_vertex(_vertices.get(i));
 	}
 
-	for (int i = 0; i < _indices->size(); ++i) {
-		_surface_tool->add_index(_indices->get(i));
+	for (int i = 0; i < _indices.size(); ++i) {
+		_surface_tool->add_index(_indices.get(i));
 	}
 
 	_surface_tool->generate_normals();
@@ -76,12 +62,12 @@ Ref<ArrayMesh> VoxelMesher::build_mesh() {
 }
 
 void VoxelMesher::reset() {
-	_vertices->clear();
-	_normals->clear();
-	_colors->clear();
-	_uvs->clear();
-	_indices->clear();
-	_bones->clear();
+	_vertices.clear();
+	_normals.clear();
+	_colors.clear();
+	_uvs.clear();
+	_indices.clear();
+	_bones.clear();
 }
 
 void VoxelMesher::create_mesh_for_marching_cubes_query(Ref<MarchingCubesVoxelQuery> query) {
@@ -91,49 +77,33 @@ void VoxelMesher::create_mesh_for_marching_cubes_query(Ref<MarchingCubesVoxelQue
 	call("_create_mesh_for_marching_cubes_query", query);
 }
 
-/*
-void VoxelMesher::add_voxels(Hash3DMap<Ref<Voxel> > *voxels) {
-	ERR_FAIL_COND(!has_method("_add_voxels"));
-
-	Array arr;
-
-	const int *k = NULL;
-	while (k = voxels->next(k)) {
-		Ref<Voxel> v = voxels->get(*k);
-
-		arr.append(v);
-	}
-
-	call("_add_voxels", arr);
-}*/
-
-void VoxelMesher::add_voxel(Ref<Voxel> voxels) {
+void VoxelMesher::add_buffer(Ref<VoxelBuffer> voxels) {
 	ERR_FAIL_COND(!has_method("_add_voxel"));
 	
 	call("_add_voxel", voxels);
 }
 
 void VoxelMesher::create_trimesh_shape(Ref<ConcavePolygonShape> shape) const {
-	if (_vertices->size() == 0)
+	if (_vertices.size() == 0)
 		return;
 
 	PoolVector<Vector3> face_points;
 
-	if (_indices->size() == 0) {
+	if (_indices.size() == 0) {
 
-		//face_points.resize(_vertices->size());
+		//face_points.resize(_vertices.size());
 
-		int len = (_vertices->size() / 4);
+		int len = (_vertices.size() / 4);
 
 		for (int i = 0; i < len; ++i) {
 
-			face_points.push_back(_vertices->get(i * 4));
-			face_points.push_back(_vertices->get((i * 4) + 2));
-			face_points.push_back(_vertices->get((i * 4) + 1));
+			face_points.push_back(_vertices.get(i * 4));
+			face_points.push_back(_vertices.get((i * 4) + 2));
+			face_points.push_back(_vertices.get((i * 4) + 1));
 
-			face_points.push_back(_vertices->get(i * 4));
-			face_points.push_back(_vertices->get((i * 4) + 3));
-			face_points.push_back(_vertices->get((i * 4) + 2));
+			face_points.push_back(_vertices.get(i * 4));
+			face_points.push_back(_vertices.get((i * 4) + 3));
+			face_points.push_back(_vertices.get((i * 4) + 2));
 		}
 
 		shape->set_faces(face_points);
@@ -141,31 +111,32 @@ void VoxelMesher::create_trimesh_shape(Ref<ConcavePolygonShape> shape) const {
 		return;
 	}
 
-	face_points.resize(_indices->size());
+	face_points.resize(_indices.size());
 	for (int i = 0; i < face_points.size(); i++) {
-		face_points.set(i, _vertices->get(_indices->get(i)));
+		face_points.set(i, _vertices.get(_indices.get(i)));
 	}
 
 	shape->set_faces(face_points);
 }
 
-void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > *lights) {
+void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights) {
+	ERR_FAIL_COND(node == NULL);
 
 	Color darkColor(0, 0, 0, 1);
 
-	for (int v = 0; v < _vertices->size(); ++v) {
+	for (int v = 0; v < _vertices.size(); ++v) {
 
-		Vector3 vet = _vertices->get(v);
+		Vector3 vet = _vertices.get(v);
 		Vector3 vertex = node->to_global(vet);
 
 		//grab normal
-		Vector3 normal = _normals->get(v);
+		Vector3 normal = _normals.get(v);
 
 		Vector3 v_lightDiffuse;
 
 		//calculate the lights value
-		for (int i = 0; i < lights->size(); ++i) {
-			Ref<VoxelLight> light = lights->get(i);
+		for (int i = 0; i < lights.size(); ++i) {
+			Ref<VoxelLight> light = lights.get(i);
 
 			Vector3 lightDir = light->get_world_position() - vertex;
 
@@ -199,7 +170,7 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > *ligh
                     v_lightDiffuse += value;*/
 		}
 
-		Color f = _colors->get(v);
+		Color f = _colors.get(v);
 		//Color f = darkColor;
 
 		Vector3 cv2(f.r, f.g, f.b);
@@ -226,7 +197,7 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > *ligh
 		//f.g = v_lightDiffuse.y;
 		//f.b = v_lightDiffuse.z;
 
-		_colors->set(v, f);
+		_colors.set(v, f);
 	}
 
 	//	for (int i = 0; i < _colors->size(); ++i) {
@@ -235,111 +206,110 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > *ligh
 }
 
 Vector<Vector3> *VoxelMesher::get_vertices() {
-	return _vertices;
+	return &_vertices;
 }
 
 int VoxelMesher::get_vertex_count() {
-	return _vertices->size();
+	return _vertices.size();
 }
 
 void VoxelMesher::add_vertex(Vector3 vertex) {
-	_vertices->push_back(vertex);
+	_vertices.push_back(vertex);
 }
 
 Vector3 VoxelMesher::get_vertex(int idx) {
-	return _vertices->get(idx);
+	return _vertices.get(idx);
 }
 
 void VoxelMesher::remove_vertex(int idx) {
-	_vertices->remove(idx);
+	_vertices.remove(idx);
 }
 
 Vector<Vector3> *VoxelMesher::get_normals() {
-	return _normals;
+	return &_normals;
 }
 
 int VoxelMesher::get_normal_count() {
-	return _normals->size();
+	return _normals.size();
 }
 
 void VoxelMesher::add_normal(Vector3 normal) {
-	_normals->push_back(normal);
+	_normals.push_back(normal);
 }
 
 Vector3 VoxelMesher::get_normal(int idx) {
-	return _normals->get(idx);
+	return _normals.get(idx);
 }
 
 void VoxelMesher::remove_normal(int idx) {
-	_normals->remove(idx);
+	_normals.remove(idx);
 }
 
 Vector<Color> *VoxelMesher::get_colors() {
-	return _colors;
+	return &_colors;
 }
 
 int VoxelMesher::get_color_count() {
-	return _colors->size();
+	return _colors.size();
 }
 
 void VoxelMesher::add_color(Color color) {
-	_colors->push_back(color);
+	_colors.push_back(color);
 }
 
 Color VoxelMesher::get_color(int idx) {
-	return _colors->get(idx);
+	return _colors.get(idx);
 }
 
 void VoxelMesher::remove_color(int idx) {
-	_colors->remove(idx);
+	_colors.remove(idx);
 }
 
 Vector<Vector2> *VoxelMesher::get_uvs() {
-	return _uvs;
+	return &_uvs;
 }
 
 int VoxelMesher::get_uv_count() {
-	return _uvs->size();
+	return _uvs.size();
 }
 
 void VoxelMesher::add_uv(Vector2 uv) {
-	_uvs->push_back(uv);
+	_uvs.push_back(uv);
 }
 
 Vector2 VoxelMesher::get_uv(int idx) {
-	return _uvs->get(idx);
+	return _uvs.get(idx);
 }
 
 void VoxelMesher::remove_uv(int idx) {
-	_uvs->remove(idx);
+	_uvs.remove(idx);
 }
 
 
 Vector<int> *VoxelMesher::get_indices() {
-	return _indices;
+	return &_indices;
 }
 
 int VoxelMesher::get_indices_count() {
-	return _indices->size();
+	return _indices.size();
 }
 
 void VoxelMesher::add_indices(int index) {
-	_indices->push_back(index);
+	_indices.push_back(index);
 }
 
 int VoxelMesher::get_indice(int idx) {
-	return _indices->get(idx);
+	return _indices.get(idx);
 }
 
 void VoxelMesher::remove_indices(int idx) {
-	_indices->remove(idx);
+	_indices.remove(idx);
 }
 
 
 void VoxelMesher::_bind_methods() {
 	//BIND_VMETHOD(MethodInfo("_build_mesh", PropertyInfo(Variant::BOOL, "recal", PROPERTY_HINT_RESOURCE_TYPE, "SpellCastInfo")));
-	BIND_VMETHOD(MethodInfo("_add_voxels", PropertyInfo(Variant::ARRAY, "voxels")));
-	BIND_VMETHOD(MethodInfo("_add_voxel", PropertyInfo(Variant::OBJECT, "voxel", PROPERTY_HINT_RESOURCE_TYPE, "Voxel")));
+	BIND_VMETHOD(MethodInfo("_add_voxels", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
 	BIND_VMETHOD(MethodInfo("_create_mesh_for_marching_cubes_query", PropertyInfo(Variant::OBJECT, "query", PROPERTY_HINT_RESOURCE_TYPE, "MarchingCubesVoxelQuery")));
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);

@@ -35,12 +35,11 @@ public:
 	enum ChannelId {
 		CHANNEL_TYPE = 0,
 		CHANNEL_ISOLEVEL,
+		CHANNEL_LIGHT_COLOR_R,
+		CHANNEL_LIGHT_COLOR_G,
+		CHANNEL_LIGHT_COLOR_B,
+		CHANNEL_DATA1,
 		CHANNEL_DATA2,
-		CHANNEL_DATA3,
-		CHANNEL_DATA4,
-		CHANNEL_DATA5,
-		CHANNEL_DATA6,
-		CHANNEL_DATA7,
 		// Arbitrary value, 8 should be enough. Tweak for your needs.
 		MAX_CHANNELS
 	};

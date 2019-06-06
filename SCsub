@@ -17,3 +17,5 @@ env.add_source_files(env.modules_sources,"meshers/transvoxel_tables.cpp")
 env.add_source_files(env.modules_sources,"utility/marching_cubes_voxel_query.cpp")
 
 env.add_source_files(env.modules_sources,"world/voxel_buffer.cpp")
+env.add_source_files(env.modules_sources,"world/voxel_world.cpp")
+env.add_source_files(env.modules_sources,"world/voxel_chunk.cpp")
