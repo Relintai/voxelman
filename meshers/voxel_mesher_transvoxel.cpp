@@ -214,4 +214,24 @@ void VoxelMesherTransvoxel::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_transition_vertex_data_second_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_data_second_vertex);
 	ClassDB::bind_method(D_METHOD("get_transition_vertex_start_position", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_start_position);
 	ClassDB::bind_method(D_METHOD("get_transition_vertex_direction", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_direction);
+
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_000);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_100);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_010);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_110);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_001);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_101);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_011);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_111);
+
+	BIND_ENUM_CONSTANT(VOXEL_ENTRIES_SIZE);
+
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_MASK_000);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_MASK_100);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_MASK_010);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_MASK_110);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_MASK_001);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_MASK_101);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_MASK_011);
+	BIND_ENUM_CONSTANT(VOXEL_ENTRY_MASK_111);
 }

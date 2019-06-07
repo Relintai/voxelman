@@ -3,12 +3,9 @@
 #include "library/voxel_surface.h"
 #include "library/voxelman_library.h"
 
-#include "data/voxel.h"
 #include "data/voxel_light.h"
 #include "meshers/voxel_mesher.h"
 #include "meshers/voxel_mesher_transvoxel.h"
-
-#include "utility/marching_cubes_voxel_query.h"
 
 #include "world/voxel_buffer.h"
 #include "world/voxel_world.h"
@@ -23,10 +20,7 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelSurface>();
 	ClassDB::register_class<VoxelmanLibrary>();
 
-	ClassDB::register_class<Voxel>();
 	ClassDB::register_class<VoxelLight>();
-
-	ClassDB::register_class<MarchingCubesVoxelQuery>();
     
     ClassDB::register_class<VoxelBuffer>();
     ClassDB::register_class<VoxelWorld>();

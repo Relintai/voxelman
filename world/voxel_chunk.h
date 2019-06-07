@@ -10,7 +10,6 @@
 #include "scene/3d/physics_body.h"
 #include "scene/resources/concave_polygon_shape.h"
 
-#include "../data/voxel.h"
 #include "../data/voxel_light.h"
 
 #include "../meshers/voxel_mesher.h"
@@ -18,7 +17,6 @@
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
 
-#include "../utility/marching_cubes_voxel_query.h"
 #include "voxel_buffer.h"
 
 
@@ -50,18 +48,6 @@ public:
 	bool get_bake_lights();
 	void set_bake_lights(bool value);
 
-	bool get_bake_ambient_occlusion();
-	void set_bake_ambient_occlusion(bool value);
-
-	float get_ao_radius();
-	void set_ao_radius(float value);
-
-	float get_ao_intensity();
-	void set_ao_intensity(float value);
-
-	int get_ao_sample_count();
-	void set_ao_sample_count(int value);
-
 	NodePath get_debug_drawer_path();
 	void set_debug_drawer_path(NodePath value);
 
@@ -82,9 +68,6 @@ public:
 
 	StaticBody *create_trimesh_collision_node();
 
-	void query_marching_cubes_data(Ref<MarchingCubesVoxelQuery> query);
-	void create_mesh_for_marching_cubes_query(Ref<MarchingCubesVoxelQuery> query);
-
 	VoxelChunk();
 	virtual ~VoxelChunk();
 
@@ -95,7 +78,6 @@ public:
 
 protected:
 	static void _bind_methods();
-	void _notification(int p_what);
 
 	bool _enabled;
 
@@ -119,11 +101,6 @@ protected:
 	bool _create_collider;
 
 	bool _bake_lights;
-	bool _bake_ambient_occlusion;
-
-	float _ao_radius;
-	float _ao_intensity;
-	int _ao_sample_count;
 };
 
 #endif

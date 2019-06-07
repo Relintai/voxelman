@@ -52,6 +52,36 @@ class VoxelMesherTransvoxel : public VoxelMesher {
 	GDCLASS(VoxelMesherTransvoxel, VoxelMesher)
 
 public:
+	static const String BINDING_STRING_VOXEL_ENTRY_INDICES;
+	static const String BINDING_STRING_VOXEL_ENTRY_MASK;
+
+	enum VoxelEntryIndices {
+		VOXEL_ENTRY_INDEX_000 = 0,
+		VOXEL_ENTRY_INDEX_100 = 1,
+		VOXEL_ENTRY_INDEX_001 = 2,
+		VOXEL_ENTRY_INDEX_101 = 3,
+
+		VOXEL_ENTRY_INDEX_010 = 4,
+		VOXEL_ENTRY_INDEX_110 = 5,
+		VOXEL_ENTRY_INDEX_011 = 6,
+		VOXEL_ENTRY_INDEX_111 = 7,
+
+		VOXEL_ENTRIES_SIZE = 8,
+	};
+
+	enum VoxelEntryMask {
+		VOXEL_ENTRY_MASK_000 = 1 << 0,
+		VOXEL_ENTRY_MASK_100 = 1 << 1,
+		VOXEL_ENTRY_MASK_001 = 1 << 2,
+		VOXEL_ENTRY_MASK_101 = 1 << 3,
+
+		VOXEL_ENTRY_MASK_010 = 1 << 4,
+		VOXEL_ENTRY_MASK_110 = 1 << 5,
+		VOXEL_ENTRY_MASK_011 = 1 << 6,
+		VOXEL_ENTRY_MASK_111 = 1 << 7,
+	};
+
+
 	int get_regular_cell_class(int index) const;
 
 	Ref<TransvoxelRegularCellData> get_regular_cell_data(int index) const;
@@ -80,5 +110,8 @@ protected:
 	Ref<TransvoxelRegularCellData> _regular_cell_datas[16];
 	Ref<TransvoxelTransitionCellData> _transition_cell_data[56];
 };
+
+VARIANT_ENUM_CAST(VoxelMesherTransvoxel::VoxelEntryIndices);
+VARIANT_ENUM_CAST(VoxelMesherTransvoxel::VoxelEntryMask);
 
 #endif // VOXEL_MESHER_SMOOTH_H

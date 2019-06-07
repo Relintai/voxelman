@@ -56,34 +56,6 @@ void VoxelChunk::set_bake_lights(bool value) {
 	_bake_lights = value;
 }
 
-bool VoxelChunk::get_bake_ambient_occlusion() {
-	return _bake_ambient_occlusion;
-}
-void VoxelChunk::set_bake_ambient_occlusion(bool value) {
-	_bake_ambient_occlusion = value;
-}
-
-float VoxelChunk::get_ao_radius() {
-	return _ao_radius;
-}
-void VoxelChunk::set_ao_radius(float value) {
-	_ao_radius = value;
-}
-
-float VoxelChunk::get_ao_intensity() {
-	return _ao_intensity;
-}
-void VoxelChunk::set_ao_intensity(float value) {
-	_ao_intensity = value;
-}
-
-int VoxelChunk::get_ao_sample_count() {
-	return _ao_sample_count;
-}
-void VoxelChunk::set_ao_sample_count(int value) {
-	_ao_sample_count = value;
-}
-
 NodePath VoxelChunk::get_debug_drawer_path() {
 	return _debug_drawer_path;
 }
@@ -106,19 +78,19 @@ void VoxelChunk::build() {
 	_mesher->set_library(_library);
 
 	if (_debug_drawer == NULL) {
-		Node *n = get_node(_debug_drawer_path);
+		Node *n = get_node_or_null(_debug_drawer_path);
 
 		if (n != NULL) {
 			_debug_drawer = Object::cast_to<ImmediateGeometry>(n);
 		}
 	}
 
-	_mesher->add_buffer(_buffer);
-
 	if (get_build_mesh()) {
-		ERR_FAIL_COND(!has_method("_build_mesh"));
-
-		call("_build_mesh");
+		if (has_method("_create_mesh")) {
+			call("_create_mesh");
+		} else {
+			_mesher->add_buffer(_buffer);
+		}
 
 		finalize_mesh();
 	}
@@ -133,20 +105,19 @@ void VoxelChunk::finalize_mesh() {
 
 	Node *node = get_node(_mesh_instance_path);
 
-	if (node != NULL) {
+	ERR_FAIL_COND(node == NULL);
 
-		_mesh_instance = Object::cast_to<MeshInstance>(node);
+	_mesh_instance = Object::cast_to<MeshInstance>(node);
 
-		if (_mesh_instance != NULL) {
-			//if (get_bake_ambient_occlusion()) {
-			//	set_enabled(true);
-			//} else {
-				Ref<ArrayMesh> mesh = get_mesher()->build_mesh();
+	ERR_FAIL_COND(_mesh_instance == NULL);
 
-				_mesh_instance->set_mesh(mesh);
-			//}
-		}
-	}
+	//if (get_bake_ambient_occlusion()) {
+	//	set_enabled(true);
+	//} else {
+	Ref<ArrayMesh> mesh = get_mesher()->build_mesh();
+
+	_mesh_instance->set_mesh(mesh);
+	//}
 }
 
 void VoxelChunk::update_collider() {
@@ -178,25 +149,6 @@ StaticBody *VoxelChunk::create_trimesh_collision_node() {
 	return static_body;
 }
 
-void VoxelChunk::query_marching_cubes_data(Ref<MarchingCubesVoxelQuery> query) {
-	ERR_FAIL_COND(!query.is_valid());
-
-	Vector3i position = query->get_position();
-	int size = query->get_size();
-	/*
-	query->set_entries(Ref<Voxel>(_VoxelChunk->getptr(position)), Ref<Voxel>(_VoxelChunk->getptr(Vector3i(size, 0, 0) + position)),
-			Ref<Voxel>(_VoxelChunk->getptr(Vector3i(0, size, 0) + position)), Ref<Voxel>(_VoxelChunk->getptr(Vector3i(size, size, 0) + position)),
-			Ref<Voxel>(_VoxelChunk->getptr(Vector3i(0, 0, size) + position)), Ref<Voxel>(_VoxelChunk->getptr(Vector3i(size, 0, size) + position)),
-			Ref<Voxel>(_VoxelChunk->getptr(Vector3i(0, size, size) + position)), Ref<Voxel>(_VoxelChunk->getptr(Vector3i(size, size, size) + position)));*/
-}
-
-void VoxelChunk::create_mesh_for_marching_cubes_query(Ref<MarchingCubesVoxelQuery> query) {
-	ERR_FAIL_COND(!query.is_valid());
-	ERR_FAIL_COND(!_mesher.is_valid());
-
-	_mesher->create_mesh_for_marching_cubes_query(query);
-}
-
 void VoxelChunk::set_enabled(bool p_enabled) {
 
 	_enabled = p_enabled;
@@ -207,51 +159,6 @@ void VoxelChunk::set_enabled(bool p_enabled) {
 
 bool VoxelChunk::is_enabled() const {
 	return _enabled;
-}
-
-void VoxelChunk::_notification(int p_what) {
-
-	switch (p_what) {
-
-		case NOTIFICATION_ENTER_TREE: {
-			if (!_mesher.is_valid()) {
-				if (has_method("_create_mesher")) {
-					call("_create_mesher");
-
-					if (!Engine::get_singleton()->is_editor_hint()) {
-						ERR_FAIL_COND(!_mesher.is_valid());
-					}
-				} else {
-					_mesher = Ref<VoxelMesher>(memnew(VoxelMesher()));
-				}
-			}
-		} break;
-		case NOTIFICATION_EXIT_TREE: {
-
-			//if (_mesher != NULL) {
-			//	memdelete(_mesher);
-			//}
-
-		} break;
-		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
-
-			//if (!_enabled)
-			//	break;
-
-			//if (_mesh_instance != NULL) {
-			//	if (get_bake_ambient_occlusion()) {
-					//get_mesher()->calculate_vertex_ambient_occlusion(_mesh_instance, get_ao_radius(), get_ao_intensity(), get_ao_sample_count());
-			//	}
-
-				//Ref<ArrayMesh> mesh = get_mesher()->build_mesh();
-
-				//_mesh_instance->set_mesh(mesh);
-			//}
-
-			//set_enabled(false);
-
-		} break;
-	}
 }
 
 void VoxelChunk::add_voxel_light_bind(Vector3 position, Color color, float strength) {
@@ -393,8 +300,7 @@ void VoxelChunk::draw_debug_voxel_lights(int max, bool localPosition) {
 }
 
 void VoxelChunk::_bind_methods() {
-	BIND_VMETHOD(MethodInfo("_create_mesher"));
-	BIND_VMETHOD(MethodInfo("_build_mesh"));
+	BIND_VMETHOD(MethodInfo("_create_mesh"));
 
 	ClassDB::bind_method(D_METHOD("get_library_path"), &VoxelChunk::get_library_path);
 	ClassDB::bind_method(D_METHOD("set_library_path", "value"), &VoxelChunk::set_library_path);
@@ -428,28 +334,11 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("meshing_set_bake_lights", "value"), &VoxelChunk::set_bake_lights);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "meshing_bake_lights"), "meshing_set_bake_lights", "meshing_get_bake_lights");
 
-	ClassDB::bind_method(D_METHOD("meshing_get_bake_ambient_occlusion"), &VoxelChunk::get_bake_ambient_occlusion);
-	ClassDB::bind_method(D_METHOD("meshing_set_bake_ambient_occlusion", "value"), &VoxelChunk::set_bake_ambient_occlusion);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "meshing_bake_ambient_occlusion"), "meshing_set_bake_ambient_occlusion", "meshing_get_bake_ambient_occlusion");
-
 	ADD_GROUP("Settings", "setting");
 
 	ClassDB::bind_method(D_METHOD("get_debug_drawer_path"), &VoxelChunk::get_debug_drawer_path);
 	ClassDB::bind_method(D_METHOD("set_debug_drawer_path", "value"), &VoxelChunk::set_debug_drawer_path);
 	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "debug_drawer_path"), "set_debug_drawer_path", "get_debug_drawer_path");
-
-	ADD_GROUP("Ambient Occlusion", "ao");
-	ClassDB::bind_method(D_METHOD("get_ao_radius"), &VoxelChunk::get_ao_radius);
-	ClassDB::bind_method(D_METHOD("set_ao_radius", "value"), &VoxelChunk::set_ao_radius);
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "ao_radius"), "set_ao_radius", "get_ao_radius");
-
-	ClassDB::bind_method(D_METHOD("get_ao_intensity"), &VoxelChunk::get_ao_intensity);
-	ClassDB::bind_method(D_METHOD("set_ao_intensity", "value"), &VoxelChunk::set_ao_intensity);
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "ao_intensity"), "set_ao_intensity", "get_ao_intensity");
-
-	ClassDB::bind_method(D_METHOD("get_ao_sample_count"), &VoxelChunk::get_ao_sample_count);
-	ClassDB::bind_method(D_METHOD("set_ao_sample_count", "value"), &VoxelChunk::set_ao_sample_count);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "ao_sample_count"), "set_ao_sample_count", "get_ao_sample_count");
 
 	ClassDB::bind_method(D_METHOD("get_mesher"), &VoxelChunk::get_mesher);
 	ClassDB::bind_method(D_METHOD("set_mesher", "Mesher"), &VoxelChunk::set_mesher);
@@ -460,9 +349,6 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("clear"), &VoxelChunk::clear);
 
-	ClassDB::bind_method(D_METHOD("query_marching_cubes_data", "query"), &VoxelChunk::query_marching_cubes_data);
-	ClassDB::bind_method(D_METHOD("create_mesh_for_marching_cubes_query", "query"), &VoxelChunk::create_mesh_for_marching_cubes_query);
-
 	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "max"), &VoxelChunk::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights", "max", "localPosition"), &VoxelChunk::draw_debug_voxel_lights);
 }
@@ -471,11 +357,6 @@ VoxelChunk::VoxelChunk() {
 	_build_mesh = true;
 	_create_collider = true;
 	_bake_lights = true;
-	_bake_ambient_occlusion = true;
-
-	_ao_radius = 6;
-	_ao_intensity = 1;
-	_ao_sample_count = 5;
 
 	_voxel_scale = 1;
 
@@ -494,4 +375,12 @@ VoxelChunk::~VoxelChunk() {
 	_buffer.unref();
 
 	_debug_drawer = NULL;
+
+	if (_library.is_valid()) {
+		_library.unref();
+	}
+
+	if (_mesh.is_valid()) {
+		_mesh.unref();
+	}
 }

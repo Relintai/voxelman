@@ -15,6 +15,7 @@ public:
 	void set_player_path(NodePath player_path);
 
 	VoxelWorld() {}
+	~VoxelWorld();
 
 protected:
 	static void _bind_methods();

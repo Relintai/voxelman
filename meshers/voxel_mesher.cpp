@@ -25,7 +25,12 @@ VoxelMesher::~VoxelMesher() {
 	_uvs.clear();
 	_indices.clear();
 	_bones.clear();
+
 	memdelete(_surface_tool);
+
+	if (_library.is_valid()) {
+		_library.unref();
+	}
 }
 
 Ref<ArrayMesh> VoxelMesher::build_mesh() {
@@ -70,17 +75,10 @@ void VoxelMesher::reset() {
 	_bones.clear();
 }
 
-void VoxelMesher::create_mesh_for_marching_cubes_query(Ref<MarchingCubesVoxelQuery> query) {
-	ERR_FAIL_COND(!query.is_valid());
-	ERR_FAIL_COND(!has_method("_create_mesh_for_marching_cubes_query"));
-
-	call("_create_mesh_for_marching_cubes_query", query);
-}
-
 void VoxelMesher::add_buffer(Ref<VoxelBuffer> voxels) {
-	ERR_FAIL_COND(!has_method("_add_voxel"));
+	ERR_FAIL_COND(!has_method("_add_buffer"));
 	
-	call("_add_voxel", voxels);
+	call("_add_buffer", voxels);
 }
 
 void VoxelMesher::create_trimesh_shape(Ref<ConcavePolygonShape> shape) const {
@@ -308,9 +306,9 @@ void VoxelMesher::remove_indices(int idx) {
 
 
 void VoxelMesher::_bind_methods() {
-	//BIND_VMETHOD(MethodInfo("_build_mesh", PropertyInfo(Variant::BOOL, "recal", PROPERTY_HINT_RESOURCE_TYPE, "SpellCastInfo")));
-	BIND_VMETHOD(MethodInfo("_add_voxels", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
-	BIND_VMETHOD(MethodInfo("_create_mesh_for_marching_cubes_query", PropertyInfo(Variant::OBJECT, "query", PROPERTY_HINT_RESOURCE_TYPE, "MarchingCubesVoxelQuery")));
+	BIND_VMETHOD(MethodInfo("_add_buffer", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
+
+	ClassDB::bind_method(D_METHOD("add_buffer", "buffer"), &VoxelMesher::add_buffer);
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);
