@@ -202,7 +202,6 @@ void VoxelChunk::draw_cross_voxels(Vector3 pos, float fill) {
 }
 
 void VoxelChunk::draw_debug_voxels(int max, Color color) {
-	/*
 	if (_debug_drawer == NULL) {
 		Node *n = get_node(_debug_drawer_path);
 
@@ -213,47 +212,36 @@ void VoxelChunk::draw_debug_voxels(int max, Color color) {
 
 	ERR_FAIL_COND(_debug_drawer == NULL);
 
-	//if (_debug_drawer->emt)
-
 	_debug_drawer->clear();
 	_debug_drawer->begin(Mesh::PRIMITIVE_LINES);
 	_debug_drawer->set_color(color);
 
-	HashMap<int, Ref<Voxel> > *map = _voxels->get_map();
-
-	ERR_FAIL_COND(map == NULL);
-
-	const int *k = NULL;
-
-	//Vector3 pos = get_transform().get_origin();
-
 	int a = 0;
-	while ((k = map->next(k))) {
-		Ref<Voxel> v = map->get(*k);
-		ERR_FAIL_COND(!v.is_valid());
+	Vector3i size = _buffer->get_size();
 
-		Vector3i lp = v->get_local_position();
-		//print_error(Vector3(lp.x, lp.y, lp.z));
-		draw_cross_voxels(Vector3(lp.x + 0.5, lp.y + 0.5, lp.z + 0.5), v->get_fill() / 255.0);
+	for (int y = 0; y < size.y; ++y) {
+		for (int z = 0; z < size.z; ++z) {
+			for (int x = 0; x < size.x; ++x) {
 
-		a++;
+				int type = _buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_TYPE);
 
-		if (a > max) {
-			break;
+				if (type == 0) {
+					continue;
+				}
+
+				draw_cross_voxels(Vector3(x + 0.5, y + 0.5, z + 0.5), _buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_ISOLEVEL) / 255.0);
+
+				++a;
+
+				if (a > max) {
+					break;
+				}
+
+			}
 		}
 	}
 
-	//for (int x = 0; x < 30; x++) {
-	//	for (int y = 0; y < 30; y++) {
-	//		for (int z = 0; z < 30; z++) {
-	//draw_cross_voxels(Vector3(x, y, z));
-	//
-	//		}
-	//	}
-	//}
-	//_debug_drawer->add_sphere(4, 4, 0.5, true);
-
-	_debug_drawer->end();*/
+	_debug_drawer->end();
 }
 
 void VoxelChunk::draw_debug_voxel_lights(int max, bool localPosition) {

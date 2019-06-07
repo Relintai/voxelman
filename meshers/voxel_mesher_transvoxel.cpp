@@ -75,36 +75,18 @@ int VoxelMesherTransvoxel::get_regular_vertex_data(int index1, int index2) const
 
 int VoxelMesherTransvoxel::get_regular_vertex_data_first_vertex(int index1, int index2) const {
 	int vert1 = regularVertexData[index1][index2] & 0x000F;
-	int vert2 = (regularVertexData[index1][index2] & 0x00F0) >> 4;
-
-	//The paper says, that the smaller vertex index should be considered first
-	if (vert2 < vert1) {
-		return vert2;
-	}
 
 	return vert1;
 }
 
 int VoxelMesherTransvoxel::get_regular_vertex_data_second_vertex(int index1, int index2) const {
-	int vert1 = regularVertexData[index1][index2] & 0x000F;
 	int vert2 = (regularVertexData[index1][index2] & 0x00F0) >> 4;
 
-	//The paper says, that the smaller vertex index should be considered first
-	if (vert2 > vert1) {
-		return vert2;
-	}
-
-	return vert1;
+	return vert2;
 }
 
 Vector3 VoxelMesherTransvoxel::get_regular_vertex_start_position(int index1, int index2) const {
 	int vert1 = regularVertexData[index1][index2] & 0x000F;
-	int vert2 = (regularVertexData[index1][index2] & 0x00F0) >> 4;
-
-	//The paper says, that the smaller vertex index should be considered first
-	if (vert2 < vert1) {
-		return transvoxel_vertices[vert2];
-	}
 
 	return transvoxel_vertices[vert1];
 }
@@ -112,13 +94,6 @@ Vector3 VoxelMesherTransvoxel::get_regular_vertex_start_position(int index1, int
 Vector3 VoxelMesherTransvoxel::get_regular_vertex_direction(int index1, int index2) const {
 	int vert1 = regularVertexData[index1][index2] & 0x000F;
 	int vert2 = (regularVertexData[index1][index2] & 0x00F0) >> 4;
-
-	//The paper says, that the smaller vertex index should be considered first
-	if (vert2 < vert1) {
-		int t = vert2;
-		vert2 = vert1;
-		vert1 = t;
-	}
 
 	return transvoxel_vertices[vert2] - transvoxel_vertices[vert1];
 }
@@ -157,12 +132,6 @@ int VoxelMesherTransvoxel::get_transition_vertex_data_second_vertex(int index1, 
 
 Vector3 VoxelMesherTransvoxel::get_transition_vertex_start_position(int index1, int index2) const {
 	int vert1 = regularVertexData[index1][index2] & 0x000F;
-	int vert2 = (regularVertexData[index1][index2] & 0x00F0) >> 4;
-
-	//The paper says, that the smaller vertex index should be considered first
-	if (vert2 < vert1) {
-		return transvoxel_vertices[vert2];
-	}
 
 	return transvoxel_vertices[vert1];
 }
@@ -170,13 +139,6 @@ Vector3 VoxelMesherTransvoxel::get_transition_vertex_start_position(int index1, 
 Vector3 VoxelMesherTransvoxel::get_transition_vertex_direction(int index1, int index2) const {
 	int vert1 = regularVertexData[index1][index2] & 0x000F;
 	int vert2 = (regularVertexData[index1][index2] & 0x00F0) >> 4;
-
-	//The paper says, that the smaller vertex index should be considered first
-	if (vert2 < vert1) {
-		int t = vert2;
-		vert2 = vert1;
-		vert1 = t;
-	}
 
 	return transvoxel_vertices[vert2] - transvoxel_vertices[vert1];
 }
