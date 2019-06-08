@@ -73,7 +73,12 @@ void VoxelChunk::clear() {
 
 void VoxelChunk::build() {
 	ERR_FAIL_COND(!_library.is_valid());
-	ERR_FAIL_COND(!_mesher.is_valid());
+
+	if (!_mesher.is_valid()) {
+		call("_create_mesher");
+
+		ERR_FAIL_COND(!_mesher.is_valid());
+	}
 
 	_mesher->set_library(_library);
 
@@ -98,6 +103,10 @@ void VoxelChunk::build() {
 	if (get_create_collider()) {
 		update_collider();
 	}
+}
+
+void VoxelChunk::_create_mesher() {
+	_mesher = Ref<VoxelMesher>(memnew(VoxelMesher()));
 }
 
 void VoxelChunk::finalize_mesh() {
@@ -229,7 +238,7 @@ void VoxelChunk::draw_debug_voxels(int max, Color color) {
 					continue;
 				}
 
-				draw_cross_voxels(Vector3(x + 0.5, y + 0.5, z + 0.5), _buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_ISOLEVEL) / 255.0);
+				draw_cross_voxels(Vector3(x, y, z), _buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_ISOLEVEL) / 255.0);
 
 				++a;
 
@@ -289,6 +298,9 @@ void VoxelChunk::draw_debug_voxel_lights(int max, bool localPosition) {
 
 void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_create_mesh"));
+	BIND_VMETHOD(MethodInfo("_create_mesher"));
+
+	ClassDB::bind_method(D_METHOD("_create_mesher"), &VoxelChunk::_create_mesher);
 
 	ClassDB::bind_method(D_METHOD("get_library_path"), &VoxelChunk::get_library_path);
 	ClassDB::bind_method(D_METHOD("set_library_path", "value"), &VoxelChunk::set_library_path);

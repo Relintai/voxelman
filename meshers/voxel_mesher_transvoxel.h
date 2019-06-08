@@ -81,6 +81,7 @@ public:
 		VOXEL_ENTRY_MASK_111 = 1 << 7,
 	};
 
+	Vector3 corner_id_to_vertex(int corner_id) const;
 
 	int get_regular_cell_class(int index) const;
 
@@ -88,9 +89,9 @@ public:
 	int get_regular_vertex_data(int index10, int index2) const;
 	int get_regular_vertex_data_first_vertex(int index1, int index2) const;
 	int get_regular_vertex_data_second_vertex(int index1, int index2) const;
-	Vector3 get_regular_vertex_start_position(int index1, int index2) const;
+	Vector3 get_regular_vertex_first_position(int index1, int index2) const;
+	Vector3 get_regular_vertex_second_position(int index1, int index2) const;
 	Vector3 get_regular_vertex_direction(int index1, int index2) const;
-
 
 	int get_transition_cell_class(int index) const;
 
@@ -99,7 +100,8 @@ public:
 	int get_transition_vertex_data(int index1, int index2) const;
 	int get_transition_vertex_data_first_vertex(int index1, int index2) const;
 	int get_transition_vertex_data_second_vertex(int index1, int index2) const;
-	Vector3 get_transition_vertex_start_position(int index1, int index2) const;
+	Vector3 get_transition_vertex_first_position(int index1, int index2) const;
+	Vector3 get_transition_vertex_second_position(int index1, int index2) const;
 	Vector3 get_transition_vertex_direction(int index1, int index2) const;
 
 	VoxelMesherTransvoxel();

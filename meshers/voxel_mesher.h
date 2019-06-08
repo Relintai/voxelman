@@ -1,7 +1,7 @@
 #ifndef VOXEL_TOOLS_H
 #define VOXEL_TOOLS_H
 
-#include "core/resource.h"
+#include "core/reference.h"
 #include "core/color.h"
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
@@ -25,8 +25,8 @@ const double PI = 3.141592653589793238463;
 class VoxelmanLibrary;
 class Voxel;
 
-class VoxelMesher : public Resource {
-	GDCLASS(VoxelMesher, Resource);
+class VoxelMesher : public Reference {
+	GDCLASS(VoxelMesher, Reference);
 
 public:
 	Ref<VoxelmanLibrary> get_library() { return _library; }
