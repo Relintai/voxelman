@@ -78,7 +78,6 @@ public:
 protected:
 	static void _bind_methods();
 
-private:
 	Vector<Vector3> _vertices;
 	Vector<Vector3> _normals;
 	Vector<Color> _colors;
