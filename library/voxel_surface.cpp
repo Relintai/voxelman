@@ -188,4 +188,12 @@ void VoxelSurface::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_voxel_name", "name"), &VoxelSurface::set_voxel_name);
     ClassDB::bind_method(D_METHOD("get_voxel_name"), &VoxelSurface::get_voxel_name);
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "voxel_name"), "set_name", "get_name");
+
+	BIND_ENUM_CONSTANT(VOXEL_SIDE_TOP);
+	BIND_ENUM_CONSTANT(VOXEL_SIDE_BOTTOM);
+	BIND_ENUM_CONSTANT(VOXEL_SIDE_LEFT);
+	BIND_ENUM_CONSTANT(VOXEL_SIDE_FRONT);
+	BIND_ENUM_CONSTANT(VOXEL_SIDE_RIGHT);
+	BIND_ENUM_CONSTANT(VOXEL_SIDE_BACK);
+	BIND_ENUM_CONSTANT(VOXEL_SIDES_COUNT);
 }

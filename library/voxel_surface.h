@@ -14,6 +14,32 @@ class VoxelSurface : public Resource {
 	GDCLASS(VoxelSurface, Resource)
 
 public:
+	/*
+	   _____
+	 /_____/I
+	I     I I  <- BACK
+	I  F  I I
+	I_____I/
+
+
+	    I y 
+	    I        I
+	    O----- x I B
+	  /  I F  I /
+	/ z+ I ---I/
+	*/
+
+	enum VoxelSurfaceSides {
+		VOXEL_SIDE_TOP = 1 << 0,
+		VOXEL_SIDE_BOTTOM = 1 << 1,
+		VOXEL_SIDE_LEFT = 1 << 2,
+		VOXEL_SIDE_FRONT = 1 << 3,
+		VOXEL_SIDE_RIGHT = 1 << 4,
+		VOXEL_SIDE_BACK = 1 << 5,
+
+		VOXEL_SIDES_COUNT = 6,
+	};
+
 	int get_id() const;
 	void set_id(int value);
 
@@ -91,5 +117,7 @@ private:
 
 	bool _is_transparent;
 };
+
+VARIANT_ENUM_CAST(VoxelSurface::VoxelSurfaceSides);
 
 #endif
