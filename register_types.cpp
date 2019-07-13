@@ -12,6 +12,8 @@
 #include "world/voxel_world.h"
 #include "world/voxel_chunk.h"
 
+#include "meshers/cubic_mesher/voxel_mesher_cubic.h"
+
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherTransvoxel>();
@@ -27,6 +29,8 @@ void register_voxelman_types() {
     ClassDB::register_class<VoxelBuffer>();
     ClassDB::register_class<VoxelWorld>();
     ClassDB::register_class<VoxelChunk>();
+
+    ClassDB::register_class<VoxelMesherCubic>();
 }	
 
 void unregister_voxelman_types() {
