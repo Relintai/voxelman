@@ -1,8 +1,4 @@
-#include "sub_voxel_points_helper.h"
-
-#if MEM_TOOLS
-int SubVoxelFacePointsHelper::allocs = 0;
-#endif
+#include "sub_voxel_face_points_helper.h"
 
 Vector2i SubVoxelFacePointsHelper::gettlv2() {
 	return SubVoxelFacePointsHelper::transform_to_vector2i(_face, _tl);
@@ -36,29 +32,20 @@ int SubVoxelFacePointsHelper::getbr_depth() {
 	return SubVoxelFacePointsHelper::get_depth(_face, _br);
 }
 
-SubVoxelFacePointsHelper::SubVoxelFacePointsHelper(int face, SubVoxelPoints *points) {
+SubVoxelFacePointsHelper::SubVoxelFacePointsHelper(int face, VoxelCubePoints *points) {
 	_size = 255;
 	set_sub_voxel_points(face, points);
-
-#if MEM_TOOLS
-	SubVoxelFacePointsHelper::allocs++;
-	print_error("SubVoxelFacePointsHelper alloc " + String::num(SubVoxelFacePointsHelper::allocs));
-#endif
 }
 
 SubVoxelFacePointsHelper::~SubVoxelFacePointsHelper() {
-#if MEM_TOOLS
-	SubVoxelFacePointsHelper::allocs--;
-	print_error("SubVoxelFacePointsHelper dealloc " + String::num(SubVoxelFacePointsHelper::allocs));
-#endif
 }
 
-void SubVoxelFacePointsHelper::set_sub_voxel_points(int face, SubVoxelPoints *points) {
+void SubVoxelFacePointsHelper::set_sub_voxel_points(int face, VoxelCubePoints *points) {
 	_face = face;
-	_tl = Vector3i(SubVoxelPoints::get_top_left_point(face, points));
-	_tr = Vector3i(SubVoxelPoints::get_top_right_point(face, points));
-	_bl = Vector3i(SubVoxelPoints::get_bottom_left_point(face, points));
-	_br = Vector3i(SubVoxelPoints::get_bottom_right_point(face, points));
+	_tl = Vector3i(VoxelCubePoints::get_top_left_point(face, points));
+	_tr = Vector3i(VoxelCubePoints::get_top_right_point(face, points));
+	_bl = Vector3i(VoxelCubePoints::get_bottom_left_point(face, points));
+	_br = Vector3i(VoxelCubePoints::get_bottom_right_point(face, points));
 }
 
 bool SubVoxelFacePointsHelper::is_face_fully_covered() {

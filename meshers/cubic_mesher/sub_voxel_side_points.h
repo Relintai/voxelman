@@ -1,13 +1,12 @@
 #ifndef SUB_VOXEL_SIDE_POINTS_H
 #define SUB_VOXEL_SIDE_POINTS_H
 
-#include "core/object.h"
-#include "../collections/vector3i.h"
+#include "core/reference.h"
+#include "../../math/vector3i.h"
 #include "core/vector.h"
 
-namespace voxelman {
-
-class SubVoxelSidePoints {
+class SubVoxelSidePoints : public Reference {
+	GDCLASS(SubVoxelSidePoints, Reference);
 
 public:
 	Vector3i get_point(int index) { return _points[index]; }
@@ -22,13 +21,7 @@ public:
 	~SubVoxelSidePoints();
 
 private:
-	Vector<Vector3i> _points;
-
-	#if MEM_TOOLS
-	static int allocs;
-	#endif
+	Vector3i _points[4];
 };
-
-} // namespace voxelman
 
 #endif

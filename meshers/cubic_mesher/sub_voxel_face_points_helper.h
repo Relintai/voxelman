@@ -1,17 +1,13 @@
 #ifndef SUB_VOXEL_FACE_POINTS_HELPER_H
 #define SUB_VOXEL_FACE_POINTS_HELPER_H
 
-#include "../collections/vector3i.h"
+#include "../../math/vector3i.h"
 #include "core/math/vector2.h"
 #include "core/vector.h"
-#include "sub_voxel_points.h"
-#include "voxel_face.h"
+#include "voxel_cube_points.h"
 
-using namespace voxelman;
 
-namespace voxelman {
-
-class SubVoxelPoints;
+class VoxelCubePoints;
 
 class SubVoxelFacePointsHelper {
 
@@ -26,10 +22,10 @@ public:
 	int getbl_depth();
 	int getbr_depth();
 
-	SubVoxelFacePointsHelper(int face, SubVoxelPoints *points);
+	SubVoxelFacePointsHelper(int face, VoxelCubePoints *points);
 	~SubVoxelFacePointsHelper();
 
-	void set_sub_voxel_points(int face, SubVoxelPoints *points);
+	void set_sub_voxel_points(int face, VoxelCubePoints *points);
 	bool is_face_fully_covered();
 	bool is_face_near_the_edges();
 	bool is_face_visible_against(SubVoxelFacePointsHelper *other);
@@ -49,12 +45,6 @@ private:
 	Vector3i _tr;
 	Vector3i _bl;
 	Vector3i _br;
-
-	#if MEM_TOOLS
-	static int allocs;
-	#endif
 };
-
-} // namespace voxelman
 
 #endif
