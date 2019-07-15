@@ -90,14 +90,14 @@ public:
 	void set_size(int value);
 
 	void refresh_points();
+	void recalculate_point(int point);
 	void refresh_neighbours(const Ref<VoxelBuffer> buffer);
 	void setup(const Ref<VoxelBuffer> buffer, int x, int y, int z, int size = 1);
 
 	void reset();
 
 	int get_point_index(int face, int index);
-	Vector3i get_points_for_face(int face, int index);
-	Vector3 get_points_for_face_bind(int face, int index);
+	Vector3 get_points_for_face(int face, int index);
 	bool is_face_visible(int face);
 	bool is_sub_voxel_point_vec(Vector3i point);
 	bool is_sub_voxel_point(int x, int y, int z);
@@ -105,20 +105,14 @@ public:
 	int get_point_id_vec(Vector3i point);
 	int get_point_id(int x, int y, int z);
 
-	Vector3 get_vector3_for_point(int face, int pointIndex);
+	Vector3 get_point_for_face(int face, int pointIndex);
 	Vector3 get_vertex_vector3_for_point(int face, int pointIndex);
 
-	Vector3i get_point(int index);
-	Vector3i get_top_left_point(int face);
-	Vector3i get_top_right_point(int face);
-	Vector3i get_bottom_left_point(int face);
-	Vector3i get_bottom_right_point(int face);
-
-	Vector3 get_point_bind(int index);
-	Vector3 get_top_left_point_bind(int face);
-	Vector3 get_top_right_point_bind(int face);
-	Vector3 get_bottom_left_point_bind(int face);
-	Vector3 get_bottom_right_point_bind(int face);
+	Vector3 get_point(int index);
+	Vector3 get_top_left_point(int face);
+	Vector3 get_top_right_point(int face);
+	Vector3 get_bottom_left_point(int face);
+	Vector3 get_bottom_right_point(int face);
 
 	bool has_points();
 	int get_opposite_face(int face);
@@ -130,13 +124,14 @@ protected:
 	static void _bind_methods();
 
 	void refresh_point(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axis4notx, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z, int axis4notz);
-	void refresh_point_full(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z);
 
 private:
 	static const unsigned int index_table[6][4];
-	static const unsigned int visibility_table[6];
+	static const unsigned int visibility_check_table[6];
+	static const float point_direction_table[8][3];
+	static const unsigned int point_direction_neighbour_table[8][3];
 
-	Vector3i _points[POINT_COUNT];
+	Vector3 _points[POINT_COUNT];
 
 	uint8_t _point_types[POINT_COUNT];
 	uint8_t _point_fills[POINT_COUNT];

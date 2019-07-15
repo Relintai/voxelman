@@ -9,13 +9,37 @@ const unsigned int VoxelCubePoints::index_table[6][4] = {
 	{ P001, P000, P100, P101 }, //VOXEL_FACE_BOTTOM 5
 };
 
-const unsigned int VoxelCubePoints::visibility_table[6] = {
+const unsigned int VoxelCubePoints::visibility_check_table[6] = {
 	VOXEL_NEIGHBOUR_FRONT, //VOXEL_FACE_FRONT 0
 	VOXEL_NEIGHBOUR_RIGHT, //VOXEL_FACE_RIGHT 1
 	VOXEL_NEIGHBOUR_BACK, //VOXEL_FACE_BACK 2
 	VOXEL_NEIGHBOUR_LEFT, //VOXEL_FACE_LEFT 3
 	VOXEL_NEIGHBOUR_TOP, //VOXEL_FACE_TOP 4
 	VOXEL_NEIGHBOUR_BOTTOM //VOXEL_FACE_BOTTOM 5
+};
+
+const float VoxelCubePoints::point_direction_table[8][3] = {
+	{ -0.5, -0.5, -0.5 }, //P000
+	{ 0.5, -0.5, -0.5 }, //P100
+	{ -0.5, 0.5, -0.5 }, //P010
+	{ -0.5, -0.5, 0.5 }, //P001
+
+	{ 0.5, 0.5, -0.5 }, //P110
+	{ -0.5, 0.5, 0.5 }, //P011
+	{ 0.5, -0.5, 0.5 }, //P101
+	{ 0.5, 0.5, 0.5 }, //P111
+};
+
+const unsigned int VoxelCubePoints::point_direction_neighbour_table[8][3] = {
+	{ VOXEL_NEIGHBOUR_LEFT, VOXEL_NEIGHBOUR_BOTTOM, VOXEL_NEIGHBOUR_FRONT }, //P000
+	{ VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_BOTTOM, VOXEL_NEIGHBOUR_FRONT }, //P100
+	{ VOXEL_NEIGHBOUR_LEFT, VOXEL_NEIGHBOUR_TOP, VOXEL_NEIGHBOUR_FRONT }, //P010
+	{ VOXEL_NEIGHBOUR_LEFT, VOXEL_NEIGHBOUR_BOTTOM, VOXEL_NEIGHBOUR_BACK }, //P001
+
+	{ VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_TOP, VOXEL_NEIGHBOUR_FRONT }, //P110
+	{ VOXEL_NEIGHBOUR_LEFT, VOXEL_NEIGHBOUR_TOP, VOXEL_NEIGHBOUR_BACK }, //P011
+	{ VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_BOTTOM, VOXEL_NEIGHBOUR_BACK }, //P101
+	{ VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_TOP, VOXEL_NEIGHBOUR_BACK }, //P111
 };
 
 int VoxelCubePoints::get_x() {
@@ -47,6 +71,11 @@ void VoxelCubePoints::set_size(int value) {
 }
 
 void VoxelCubePoints::refresh_points() {
+	for (int i = 0; i < POINT_COUNT; ++i) {
+		recalculate_point(i);
+	}
+
+	/*
 	//Front
 	//Bottom Left
 	refresh_point(P000, 0, 0, 0,
@@ -95,45 +124,30 @@ void VoxelCubePoints::refresh_points() {
 	refresh_point(P111, 255, 255, 255,
 			VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_TOP_RIGHT, VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_BACK,
 			VOXEL_NEIGHBOUR_TOP, VOXEL_NEIGHBOUR_TOP_RIGHT, VOXEL_NEIGHBOUR_TOP_BACK, VOXEL_NEIGHBOUR_TOP_RIGHT_BACK,
-			VOXEL_NEIGHBOUR_BACK, VOXEL_NEIGHBOUR_TOP_BACK, VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_BACK);
+			VOXEL_NEIGHBOUR_BACK, VOXEL_NEIGHBOUR_TOP_BACK, VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_BACK);*/
 }
 
-void VoxelCubePoints::refresh_point(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axis4notx, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z, int axis4notz) {
+void VoxelCubePoints::recalculate_point(int point) {
+	ERR_FAIL_INDEX(point, POINT_COUNT);
 
-	char fill = _point_fills[index];
-	unsigned int neighbours = _point_neighbours[index];
+	Vector3 static_offset;
+	Vector3 dynamic_offset;
 
-	Vector3i vector3i = Vector3i(vectx, vecty, vectz);
-	if ((neighbours & axisx) != axisx) {
-		if (vectx == 0) {
-			vector3i.x = (int)(128 - fill);
+	for (int i = 0; i < 3; ++i) {
+		int neighbour_check = point_direction_neighbour_table[point][i];
+
+		if ((_point_neighbours[point] & neighbour_check) == 0) {
+			dynamic_offset[i] = point_direction_table[point][i];
 		} else {
-			vector3i.x = (int)(fill + 128);
+			static_offset[i] = point_direction_table[point][i];
 		}
 	}
 
-	if ((neighbours & axisy) != axisy) {
-		if (vecty == 0) {
-			vector3i.y = (int)(128 - fill);
-		} else {
-			vector3i.y = (int)(fill + 128);
-		}
-	}
+	dynamic_offset *= (_point_fills[point] / 255.0);
+	dynamic_offset += static_offset;
+	dynamic_offset += Vector3(0.5 * _size, 0.5 * _size, 0.5 * _size);
 
-	if ((neighbours & axisz) != axisz) {
-		if (vectz == 0) {
-			vector3i.z = (int)(128 - fill);
-		} else {
-			vector3i.z = (int)(fill + 128);
-		}
-	}
-
-	_points[index] = vector3i;
-}
-
-void VoxelCubePoints::refresh_point_full(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z) {
-	Vector3i vector3i = Vector3i(vectx, vecty, vectz);
-	_points[index] = vector3i;
+	_points[point] = dynamic_offset;
 }
 
 void VoxelCubePoints::refresh_neighbours(const Ref<VoxelBuffer> buffer) {
@@ -144,112 +158,112 @@ void VoxelCubePoints::refresh_neighbours(const Ref<VoxelBuffer> buffer) {
 	int z = _z;
 
 	//000
-	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT;
 
-	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM;
 
-	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_FRONT;
 
-	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT_FRONT;
 
-	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT;
 
-	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_FRONT;
 
-	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y - _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT_FRONT;
 
 	_point_neighbours[P000] = neighbours;
 
 	neighbours = 0;
-	x = _x + 1;
+	x = _x + _size;
 	y = _y;
 	z = _z;
 
 	//100
-	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT;
 
-	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM;
 
-	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_FRONT;
 
-	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT_FRONT;
 
-	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
-		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT;
+	if (buffer->get_voxel(x + _size, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_RIGHT;
 
-	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_FRONT;
 
-	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y - _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_RIGHT_FRONT;
 
 	_point_neighbours[P100] = neighbours;
 
 	neighbours = 0;
 	x = _x;
-	y = _y + 1;
+	y = _y + _size;
 	z = _z;
 
 	//010
-	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT;
 
-	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP;
 
-	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_FRONT;
 
-	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT_FRONT;
 
-	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT;
 
-	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_FRONT;
 
-	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y + _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT_FRONT;
 
 	_point_neighbours[P010] = neighbours;
 
 	neighbours = 0;
-	x = _x;
-	y = _y;
+	x = _x + _size;
+	y = _y + _size;
 	z = _z;
 
 	//110
-	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT;
 
-	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP;
 
-	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_FRONT;
 
-	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT_FRONT;
 
-	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
-		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT;
+	if (buffer->get_voxel(x + _size, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_RIGHT;
 
-	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_FRONT;
 
-	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y + _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_RIGHT_FRONT;
 
 	_point_neighbours[P110] = neighbours;
@@ -257,117 +271,117 @@ void VoxelCubePoints::refresh_neighbours(const Ref<VoxelBuffer> buffer) {
 	neighbours = 0;
 	x = _x;
 	y = _y;
-	z = _z + 1;
+	z = _z + _size;
 
 	//001
-	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT;
 
-	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM;
 
-	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BACK;
 
-	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT_BACK;
 
-	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT;
 
-	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_BACK;
 
-	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y - _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT_BACK;
 
 	_point_neighbours[P001] = neighbours;
 
 
 	neighbours = 0;
-	x = _x + 1;
+	x = _x + _size;
 	y = _y;
-	z = _z + 1;
+	z = _z + _size;
 
 	//101
-	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT;
 
-	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM;
 
-	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BACK;
 
-	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT_BACK;
 
-	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
-		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT;
+	if (buffer->get_voxel(x + _size, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_RIGHT;
 
-	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_BACK;
 
-	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y - _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_RIGHT_BACK;
 
 	_point_neighbours[P101] = neighbours;
 
 	neighbours = 0;
 	x = _x;
-	y = _y + 1;
-	z = _z + 1;
+	y = _y + _size;
+	z = _z + _size;
 
 	//011
-	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT;
 
-	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP;
 
-	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BACK;
 
-	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT_BACK;
 
-	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT;
 
-	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_BACK;
 
-	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - _size, y + _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT_BACK;
 
 	_point_neighbours[P011] = neighbours;
 
 
 	neighbours = 0;
-	x = _x + 1;
-	y = _y + 1;
-	z = _z + 1;
+	x = _x + _size;
+	y = _y + _size;
+	z = _z + _size;
 
 	//111
-	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT;
 
-	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP;
 
-	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BACK;
 
-	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT_BACK;
 
-	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_RIGHT;
 
-	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_BACK;
 
-	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + _size, y + _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_RIGHT_BACK;
 
 	_point_neighbours[P111] = neighbours;
@@ -375,6 +389,7 @@ void VoxelCubePoints::refresh_neighbours(const Ref<VoxelBuffer> buffer) {
 
 void VoxelCubePoints::setup(const Ref<VoxelBuffer> buffer, int x, int y, int z, int size) {
 	ERR_FAIL_COND(size <= 0);
+	ERR_FAIL_COND(!buffer->validate_pos(x + size, y + size, z + size) || !buffer->validate_pos(x, y, z));
 
 	reset();
 
@@ -430,19 +445,14 @@ int VoxelCubePoints::get_point_index(int face, int index) {
 	return index_table[face][index];
 }
 
-Vector3i VoxelCubePoints::get_points_for_face(int face, int index) {
+Vector3 VoxelCubePoints::get_points_for_face(int face, int index) {
 	return _points[get_point_index(face, index)];
 }
-
-Vector3 VoxelCubePoints::get_points_for_face_bind(int face, int index) {
-	return _points[get_point_index(face, index)].to_vec3();
-}
-
 
 bool VoxelCubePoints::is_face_visible(int face) {
 	ERR_FAIL_INDEX_V(face, VOXEL_FACE_COUNT, false);
 
-	int target_neighbour = visibility_table[face];
+	int target_neighbour = visibility_check_table[face];
 
 	for (int i = 0; i < 4; ++i) {
 		int indx = get_point_index(face, i);
@@ -475,7 +485,7 @@ bool VoxelCubePoints::is_sub_voxel_point(int x, int y, int z) {
 }
 
 void VoxelCubePoints::set_point(int point, int x, int y, int z) {
-	_points[point] = Vector3i(x, y, z);
+	_points[point] = Vector3(x, y, z);
 }
 
 int VoxelCubePoints::get_point_id_vec(Vector3i point) {
@@ -496,18 +506,16 @@ int VoxelCubePoints::get_point_id(int x, int y, int z) {
 	return 0;
 }
 
-Vector3 VoxelCubePoints::get_vector3_for_point(int face, int index) {
-	Vector3i a = get_point_index(face, index);
+Vector3 VoxelCubePoints::get_point_for_face(int face, int index) {
+	int indx = get_point_index(face, index);
 
-	Vector3 b(a.x, a.y, a.z);
-
-	return b;
+	return _points[indx];
 }
 
 Vector3 VoxelCubePoints::get_vertex_vector3_for_point(int face, int index) {
 	int point_index = get_point_index(face, index);
 
-	Vector3i a = get_point(point_index);
+	Vector3 a = get_point(point_index);
 
 	Vector3 vector(a.x, a.y, a.z);
 
@@ -517,14 +525,16 @@ Vector3 VoxelCubePoints::get_vertex_vector3_for_point(int face, int index) {
 	vector.y -= num2;
 	vector.z -= num2;
 	vector /= num;
+
+
 	return vector;
 }
 
-Vector3i VoxelCubePoints::get_point(int index) {
+Vector3 VoxelCubePoints::get_point(int index) {
 	return _points[index];
 }
 
-Vector3i VoxelCubePoints::get_top_left_point(int face) {
+Vector3 VoxelCubePoints::get_top_left_point(int face) {
 	if (face == VOXEL_FACE_BACK) {
 		return _points[P011];
 	}
@@ -546,7 +556,7 @@ Vector3i VoxelCubePoints::get_top_left_point(int face) {
 	return _points[0];
 }
 
-Vector3i VoxelCubePoints::get_top_right_point(int face) {
+Vector3 VoxelCubePoints::get_top_right_point(int face) {
 	if (face == VOXEL_FACE_BACK) {
 		return _points[P111];
 	}
@@ -568,7 +578,7 @@ Vector3i VoxelCubePoints::get_top_right_point(int face) {
 	return _points[0];
 }
 
-Vector3i VoxelCubePoints::get_bottom_left_point(int face) {
+Vector3 VoxelCubePoints::get_bottom_left_point(int face) {
 	if (face == VOXEL_FACE_BACK) {
 		return _points[P001];
 	}
@@ -590,7 +600,7 @@ Vector3i VoxelCubePoints::get_bottom_left_point(int face) {
 	return _points[0];
 }
 
-Vector3i VoxelCubePoints::get_bottom_right_point(int face) {
+Vector3 VoxelCubePoints::get_bottom_right_point(int face) {
 	if (face == VOXEL_FACE_BACK) {
 		return _points[P101];
 	}
@@ -610,98 +620,6 @@ Vector3i VoxelCubePoints::get_bottom_right_point(int face) {
 		return _points[P101];
 	}
 	return _points[P000];
-}
-
-Vector3 VoxelCubePoints::get_point_bind(int index) {
-	return _points[index].to_vec3();
-}
-
-Vector3 VoxelCubePoints::get_top_left_point_bind(int face) {
-	if (face == VOXEL_FACE_BACK) {
-		return _points[P011].to_vec3();
-	}
-	if (face == VOXEL_FACE_FRONT) {
-		return _points[P010].to_vec3();
-	}
-	if (face == VOXEL_FACE_RIGHT) {
-		return _points[P111].to_vec3();
-	}
-	if (face == VOXEL_FACE_LEFT) {
-		return _points[P010].to_vec3();
-	}
-	if (face == VOXEL_FACE_TOP) {
-		return _points[P010].to_vec3();
-	}
-	if (face == VOXEL_FACE_BOTTOM) {
-		return _points[P000].to_vec3();
-	}
-	return _points[0].to_vec3();
-}
-
-Vector3 VoxelCubePoints::get_top_right_point_bind(int face) {
-	if (face == VOXEL_FACE_BACK) {
-		return _points[P111].to_vec3();
-	}
-	if (face == VOXEL_FACE_FRONT) {
-		return _points[P110].to_vec3();
-	}
-	if (face == VOXEL_FACE_RIGHT) {
-		return _points[P110].to_vec3();
-	}
-	if (face == VOXEL_FACE_LEFT) {
-		return _points[P011].to_vec3();
-	}
-	if (face == VOXEL_FACE_TOP) {
-		return _points[P110].to_vec3();
-	}
-	if (face == VOXEL_FACE_BOTTOM) {
-		return _points[P100].to_vec3();
-	}
-	return _points[0].to_vec3();
-}
-
-Vector3 VoxelCubePoints::get_bottom_left_point_bind(int face) {
-	if (face == VOXEL_FACE_BACK) {
-		return _points[P001].to_vec3();
-	}
-	if (face == VOXEL_FACE_FRONT) {
-		return _points[P000].to_vec3();
-	}
-	if (face == VOXEL_FACE_RIGHT) {
-		return _points[P101].to_vec3();
-	}
-	if (face == VOXEL_FACE_LEFT) {
-		return _points[P001].to_vec3();
-	}
-	if (face == VOXEL_FACE_TOP) {
-		return _points[P011].to_vec3();
-	}
-	if (face == VOXEL_FACE_BOTTOM) {
-		return _points[P001].to_vec3();
-	}
-	return _points[0].to_vec3();
-}
-
-Vector3 VoxelCubePoints::get_bottom_right_point_bind(int face) {
-	if (face == VOXEL_FACE_BACK) {
-		return _points[P101].to_vec3();
-	}
-	if (face == VOXEL_FACE_FRONT) {
-		return _points[P100].to_vec3();
-	}
-	if (face == VOXEL_FACE_RIGHT) {
-		return _points[P100].to_vec3();
-	}
-	if (face == VOXEL_FACE_LEFT) {
-		return _points[P001].to_vec3();
-	}
-	if (face == VOXEL_FACE_TOP) {
-		return _points[P111].to_vec3();
-	}
-	if (face == VOXEL_FACE_BOTTOM) {
-		return _points[P101].to_vec3();
-	}
-	return _points[P000].to_vec3();
 }
 
 bool VoxelCubePoints::has_points() {
@@ -759,23 +677,23 @@ void VoxelCubePoints::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("setup", "buffer", "x", "y", "z", "size"), &VoxelCubePoints::setup, DEFVAL(1));
 
 	ClassDB::bind_method(D_METHOD("get_point_index", "face", "index"), &VoxelCubePoints::get_point_index);
-	ClassDB::bind_method(D_METHOD("get_points_for_face", "face", "index"), &VoxelCubePoints::get_points_for_face_bind);
+	ClassDB::bind_method(D_METHOD("get_points_for_face", "face", "index"), &VoxelCubePoints::get_points_for_face);
 
-	ClassDB::bind_method(D_METHOD("face_fully_covered", "face"), &VoxelCubePoints::is_face_visible);
+	ClassDB::bind_method(D_METHOD("is_face_visible", "face"), &VoxelCubePoints::is_face_visible);
 
 	ClassDB::bind_method(D_METHOD("is_sub_voxel_point", "x", "y", "z"), &VoxelCubePoints::is_sub_voxel_point);
 	ClassDB::bind_method(D_METHOD("set_point", "point", "x", "y", "z"), &VoxelCubePoints::set_point);
 	ClassDB::bind_method(D_METHOD("get_point_id", "x", "y", "z"), &VoxelCubePoints::get_point_id);
 
-	ClassDB::bind_method(D_METHOD("get_vector3_for_point", "face", "index"), &VoxelCubePoints::get_vector3_for_point);
+	ClassDB::bind_method(D_METHOD("get_point_for_face", "face", "index"), &VoxelCubePoints::get_point_for_face);
 	ClassDB::bind_method(D_METHOD("get_vertex_vector3_for_point", "face", "index"), &VoxelCubePoints::get_vertex_vector3_for_point);
 
-	ClassDB::bind_method(D_METHOD("get_point", "index"), &VoxelCubePoints::get_point_bind);
+	ClassDB::bind_method(D_METHOD("get_point", "index"), &VoxelCubePoints::get_point);
 
-	ClassDB::bind_method(D_METHOD("get_top_left_point", "face"), &VoxelCubePoints::get_top_left_point_bind);
-	ClassDB::bind_method(D_METHOD("get_top_right_point", "face"), &VoxelCubePoints::get_top_right_point_bind);
-	ClassDB::bind_method(D_METHOD("get_bottom_left_point", "face"), &VoxelCubePoints::get_bottom_left_point_bind);
-	ClassDB::bind_method(D_METHOD("get_bottom_right_point", "face"), &VoxelCubePoints::get_bottom_right_point_bind);
+	ClassDB::bind_method(D_METHOD("get_top_left_point", "face"), &VoxelCubePoints::get_top_left_point);
+	ClassDB::bind_method(D_METHOD("get_top_right_point", "face"), &VoxelCubePoints::get_top_right_point);
+	ClassDB::bind_method(D_METHOD("get_bottom_left_point", "face"), &VoxelCubePoints::get_bottom_left_point);
+	ClassDB::bind_method(D_METHOD("get_bottom_right_point", "face"), &VoxelCubePoints::get_bottom_right_point);
 
 	ClassDB::bind_method(D_METHOD("has_points"), &VoxelCubePoints::has_points);
 	ClassDB::bind_method(D_METHOD("get_opposite_face", "face"), &VoxelCubePoints::get_opposite_face);
