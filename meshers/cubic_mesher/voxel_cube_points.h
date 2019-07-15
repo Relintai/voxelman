@@ -1,12 +1,10 @@
 #ifndef SUB_VOXEL_POINTS_H
 #define SUB_VOXEL_POINTS_H
 
-#include "core/reference.h"
 #include "../../math/vector3i.h"
-#include "core/vector.h"
 #include "../../world/voxel_buffer.h"
-
-#include "sub_voxel_side_points.h"
+#include "core/reference.h"
+#include "core/vector.h"
 
 class SubVoxelFacePointsHelper;
 
@@ -79,7 +77,6 @@ public:
 		VOXEL_FULL_SIDE_NEIGHBOURS_DOWN = VOXEL_NEIGHBOUR_LEFT | VOXEL_NEIGHBOUR_RIGHT | VOXEL_NEIGHBOUR_BACK | VOXEL_NEIGHBOUR_FRONT | VOXEL_NEIGHBOUR_BOTTOM,
 	};
 
-	
 	int get_x();
 	void set_x(int value);
 
@@ -93,17 +90,23 @@ public:
 	void set_size(int value);
 
 	void refresh_points();
+	void refresh_neighbours(const Ref<VoxelBuffer> buffer);
 	void setup(const Ref<VoxelBuffer> buffer, int x, int y, int z, int size = 1);
 
-	Ref<SubVoxelSidePoints> get_points_for_face(int face);
-	bool face_fully_covered(int face);
-	bool face_should_be_visible_against_full(int face);
-	bool face_should_be_visible_against(int face, Ref<VoxelCubePoints> other);
+	void reset();
+
+	int get_point_index(int face, int index);
+	Vector3i get_points_for_face(int face, int index);
+	Vector3 get_points_for_face_bind(int face, int index);
+	bool is_face_visible(int face);
 	bool is_sub_voxel_point_vec(Vector3i point);
 	bool is_sub_voxel_point(int x, int y, int z);
 	void set_point(int point, int x, int y, int z);
 	int get_point_id_vec(Vector3i point);
 	int get_point_id(int x, int y, int z);
+
+	Vector3 get_vector3_for_point(int face, int pointIndex);
+	Vector3 get_vertex_vector3_for_point(int face, int pointIndex);
 
 	Vector3i get_point(int index);
 	Vector3i get_top_left_point(int face);
@@ -130,13 +133,14 @@ protected:
 	void refresh_point_full(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z);
 
 private:
+	static const unsigned int index_table[6][4];
+	static const unsigned int visibility_table[6];
+
 	Vector3i _points[POINT_COUNT];
 
 	uint8_t _point_types[POINT_COUNT];
 	uint8_t _point_fills[POINT_COUNT];
 	unsigned int _point_neighbours[POINT_COUNT];
-
-	Ref<SubVoxelSidePoints> _face_helper;
 
 	int _size;
 	int _x;
@@ -147,6 +151,5 @@ private:
 VARIANT_ENUM_CAST(VoxelCubePoints::Points);
 VARIANT_ENUM_CAST(VoxelCubePoints::VoxelFaces);
 VARIANT_ENUM_CAST(VoxelCubePoints::VoxelNeighbours);
-
 
 #endif

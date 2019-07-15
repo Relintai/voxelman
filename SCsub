@@ -21,5 +21,3 @@ env.add_source_files(env.modules_sources,"world/voxel_chunk.cpp")
 
 env.add_source_files(env.modules_sources,"meshers/cubic_mesher/voxel_mesher_cubic.cpp")
 env.add_source_files(env.modules_sources,"meshers/cubic_mesher/voxel_cube_points.cpp")
-env.add_source_files(env.modules_sources,"meshers/cubic_mesher/sub_voxel_side_points.cpp")
-env.add_source_files(env.modules_sources,"meshers/cubic_mesher/sub_voxel_face_points_helper.cpp")
