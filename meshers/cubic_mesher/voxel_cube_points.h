@@ -8,7 +8,9 @@
 
 #include "sub_voxel_side_points.h"
 
-class VoxelCubePoints : Reference {
+class SubVoxelFacePointsHelper;
+
+class VoxelCubePoints : public Reference {
 	GDCLASS(VoxelCubePoints, Reference);
 
 public:
@@ -77,10 +79,18 @@ public:
 		VOXEL_FULL_SIDE_NEIGHBOURS_DOWN = VOXEL_NEIGHBOUR_LEFT | VOXEL_NEIGHBOUR_RIGHT | VOXEL_NEIGHBOUR_BACK | VOXEL_NEIGHBOUR_FRONT | VOXEL_NEIGHBOUR_BOTTOM,
 	};
 
+	
+	int get_x();
+	void set_x(int value);
 
-	Vector3i get_point(int index);
-	VoxelCubePoints();
-	~VoxelCubePoints();
+	int get_y();
+	void set_y(int value);
+
+	int get_z();
+	void set_z(int value);
+
+	int get_size();
+	void set_size(int value);
 
 	void refresh_points();
 	void setup(const Ref<VoxelBuffer> buffer, int x, int y, int z, int size = 1);
@@ -89,22 +99,35 @@ public:
 	bool face_fully_covered(int face);
 	bool face_should_be_visible_against_full(int face);
 	bool face_should_be_visible_against(int face, Ref<VoxelCubePoints> other);
-	bool is_sub_voxel_point(Vector3i point);
+	bool is_sub_voxel_point_vec(Vector3i point);
 	bool is_sub_voxel_point(int x, int y, int z);
 	void set_point(int point, int x, int y, int z);
-	int get_point_id(Vector3i point);
+	int get_point_id_vec(Vector3i point);
 	int get_point_id(int x, int y, int z);
 
+	Vector3i get_point(int index);
 	Vector3i get_top_left_point(int face);
 	Vector3i get_top_right_point(int face);
 	Vector3i get_bottom_left_point(int face);
 	Vector3i get_bottom_right_point(int face);
 
+	Vector3 get_point_bind(int index);
+	Vector3 get_top_left_point_bind(int face);
+	Vector3 get_top_right_point_bind(int face);
+	Vector3 get_bottom_left_point_bind(int face);
+	Vector3 get_bottom_right_point_bind(int face);
+
 	bool has_points();
 	int get_opposite_face(int face);
 
+	VoxelCubePoints();
+	~VoxelCubePoints();
+
 protected:
 	static void _bind_methods();
+
+	void refresh_point(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axis4notx, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z, int axis4notz);
+	void refresh_point_full(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z);
 
 private:
 	Vector3i _points[POINT_COUNT];
@@ -115,8 +138,10 @@ private:
 
 	Ref<SubVoxelSidePoints> _face_helper;
 
-	void refresh_point(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axis4notx, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z, int axis4notz);
-	void refresh_point_full(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z);
+	int _size;
+	int _x;
+	int _y;
+	int _z;
 };
 
 VARIANT_ENUM_CAST(VoxelCubePoints::Points);

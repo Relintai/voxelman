@@ -15,6 +15,7 @@
 #include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 #include "meshers/cubic_mesher/voxel_cube_points.h"
 #include "meshers/cubic_mesher/sub_voxel_side_points.h"
+#include "meshers/cubic_mesher/sub_voxel_face_points_helper.h"
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
@@ -35,6 +36,7 @@ void register_voxelman_types() {
     ClassDB::register_class<VoxelMesherCubic>();
     ClassDB::register_class<VoxelCubePoints>();
     ClassDB::register_class<SubVoxelSidePoints>();
+	ClassDB::register_class<SubVoxelFacePointsHelper>();
 }	
 
 void unregister_voxelman_types() {
