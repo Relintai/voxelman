@@ -97,6 +97,8 @@ public:
 	void reset();
 
 	int get_point_index(int face, int index);
+	Vector2 get_point_uv_direction(int face, int index);
+
 	Vector3 get_points_for_face(int face, int index);
 	bool is_face_visible(int face);
 	bool is_sub_voxel_point_vec(Vector3i point);
@@ -107,6 +109,10 @@ public:
 
 	Vector3 get_point_for_face(int face, int pointIndex);
 	Vector3 get_vertex_vector3_for_point(int face, int pointIndex);
+
+	int get_point_type(int index);
+	int get_point_fill(int index);
+	int get_point_neighbours(int index);
 
 	Vector3 get_point(int index);
 	Vector3 get_top_left_point(int face);
@@ -123,14 +129,13 @@ public:
 protected:
 	static void _bind_methods();
 
-	void refresh_point(int index, int vectx, int vecty, int vectz, int axisx, int axis2x, int axis3x, int axis4notx, int axisy, int axis2y, int axis3y, int axis4y, int axisz, int axis2z, int axis3z, int axis4notz);
-
-private:
 	static const unsigned int index_table[6][4];
 	static const unsigned int visibility_check_table[6];
 	static const float point_direction_table[8][3];
 	static const unsigned int point_direction_neighbour_table[8][3];
+	static const float uv_direction_table[8][4][2];
 
+private:
 	Vector3 _points[POINT_COUNT];
 
 	uint8_t _point_types[POINT_COUNT];

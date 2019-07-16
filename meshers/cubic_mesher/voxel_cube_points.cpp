@@ -42,6 +42,15 @@ const unsigned int VoxelCubePoints::point_direction_neighbour_table[8][3] = {
 	{ VOXEL_NEIGHBOUR_RIGHT, VOXEL_NEIGHBOUR_TOP, VOXEL_NEIGHBOUR_BACK }, //P111
 };
 
+const float VoxelCubePoints::uv_direction_table[8][4][2] = {
+	{ { -0.5, -0.5 }, { 0.5, -0.5 }, { 0.5, 0.5 }, { 0.5, -0.5 } }, //VOXEL_FACE_FRONT 0, P000, P010, P110, P100
+	{ { -0.5, -0.5 }, { 0.5, -0.5 }, { 0.5, 0.5 }, { 0.5, -0.5 } }, //VOXEL_FACE_RIGHT 1, P100, P110, P111, P101
+	{ { -0.5, -0.5 }, { 0.5, -0.5 }, { 0.5, 0.5 }, { 0.5, -0.5 } }, //VOXEL_FACE_BACK 2, P101, P111, P011, P001
+	{ { -0.5, -0.5 }, { 0.5, -0.5 }, { 0.5, 0.5 }, { 0.5, -0.5 } }, //VOXEL_FACE_LEFT 3, P001, P011, P010, P000
+	{ { -0.5, -0.5 }, { 0.5, -0.5 }, { 0.5, 0.5 }, { 0.5, -0.5 } }, //VOXEL_FACE_TOP 4, P111, P110, P010, P011
+	{ { -0.5, -0.5 }, { 0.5, -0.5 }, { 0.5, 0.5 }, { 0.5, -0.5 } }, //VOXEL_FACE_BOTTOM 5, P001, P000, P100, P101
+};
+
 int VoxelCubePoints::get_x() {
 	return _x;
 }
@@ -445,6 +454,13 @@ int VoxelCubePoints::get_point_index(int face, int index) {
 	return index_table[face][index];
 }
 
+Vector2 VoxelCubePoints::get_point_uv_direction(int face, int index) {
+	ERR_FAIL_INDEX_V(face, VOXEL_FACE_COUNT, Vector2());
+	ERR_FAIL_INDEX_V(index, 4, Vector2());
+
+	return Vector2(uv_direction_table[face][index][0], uv_direction_table[face][index][1]);
+}
+
 Vector3 VoxelCubePoints::get_points_for_face(int face, int index) {
 	return _points[get_point_index(face, index)];
 }
@@ -530,7 +546,27 @@ Vector3 VoxelCubePoints::get_vertex_vector3_for_point(int face, int index) {
 	return vector;
 }
 
+int VoxelCubePoints::get_point_type(int index) {
+	ERR_FAIL_INDEX_V(index, POINT_COUNT, 0);
+
+	return _point_types[index];
+}
+
+int VoxelCubePoints::get_point_fill(int index) {
+	ERR_FAIL_INDEX_V(index, POINT_COUNT, 0);
+
+	return _point_fills[index];
+}
+
+int VoxelCubePoints::get_point_neighbours(int index) {
+	ERR_FAIL_INDEX_V(index, POINT_COUNT, 0);
+
+	return _point_neighbours[index];
+}
+
 Vector3 VoxelCubePoints::get_point(int index) {
+	ERR_FAIL_INDEX_V(index, POINT_COUNT, Vector3());
+
 	return _points[index];
 }
 
@@ -677,6 +713,8 @@ void VoxelCubePoints::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("setup", "buffer", "x", "y", "z", "size"), &VoxelCubePoints::setup, DEFVAL(1));
 
 	ClassDB::bind_method(D_METHOD("get_point_index", "face", "index"), &VoxelCubePoints::get_point_index);
+	ClassDB::bind_method(D_METHOD("get_point_uv_direction", "face", "index"), &VoxelCubePoints::get_point_uv_direction);
+
 	ClassDB::bind_method(D_METHOD("get_points_for_face", "face", "index"), &VoxelCubePoints::get_points_for_face);
 
 	ClassDB::bind_method(D_METHOD("is_face_visible", "face"), &VoxelCubePoints::is_face_visible);
@@ -687,6 +725,10 @@ void VoxelCubePoints::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_point_for_face", "face", "index"), &VoxelCubePoints::get_point_for_face);
 	ClassDB::bind_method(D_METHOD("get_vertex_vector3_for_point", "face", "index"), &VoxelCubePoints::get_vertex_vector3_for_point);
+
+	ClassDB::bind_method(D_METHOD("get_point_type", "index"), &VoxelCubePoints::get_point_type);
+	ClassDB::bind_method(D_METHOD("get_point_fill", "index"), &VoxelCubePoints::get_point_fill);
+	ClassDB::bind_method(D_METHOD("get_point_neighbours", "index"), &VoxelCubePoints::get_point_neighbours);
 
 	ClassDB::bind_method(D_METHOD("get_point", "index"), &VoxelCubePoints::get_point);
 
