@@ -113,6 +113,9 @@ public:
 	int get_point_type(int index);
 	int get_point_fill(int index);
 	int get_point_neighbours(int index);
+    
+    int get_point_ao(int index);
+    int get_face_point_ao(int face, int index);
 
 	Vector3 get_point(int index);
 	Vector3 get_top_left_point(int face);
@@ -140,6 +143,7 @@ private:
 
 	uint8_t _point_types[POINT_COUNT];
 	uint8_t _point_fills[POINT_COUNT];
+    uint8_t _point_aos[POINT_COUNT];
 	unsigned int _point_neighbours[POINT_COUNT];
 
 	int _size;

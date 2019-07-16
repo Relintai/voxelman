@@ -38,6 +38,7 @@ public:
 		CHANNEL_LIGHT_COLOR_R,
 		CHANNEL_LIGHT_COLOR_G,
 		CHANNEL_LIGHT_COLOR_B,
+        CHANNEL_AO,
 		CHANNEL_DATA1,
 		CHANNEL_DATA2,
 		// Arbitrary value, 8 should be enough. Tweak for your needs.
@@ -121,6 +122,10 @@ public:
 	}
 
 	uint8_t *get_channel_raw(unsigned int channel_index) const;
+    
+    void generate_ao();
+    void add_light(int local_x, int local_y, int local_z, int size, Color color);
+    void remove_light(int local_x, int local_y, int local_z);
 
 private:
 	void create_channel_noinit(int i, Vector3i size);
@@ -142,6 +147,14 @@ protected:
 	_FORCE_INLINE_ void _fill_area_binding(int defval, Vector3 min, Vector3 max, unsigned int channel_index) { fill_area(defval, Vector3i(min), Vector3i(max), channel_index); }
 	_FORCE_INLINE_ void _set_voxel_f_binding(real_t value, int x, int y, int z, unsigned int channel) { set_voxel_f(value, x, y, z, channel); }
 
+	struct VoxelBufferLight {
+        int x;
+        int y;
+        int z;
+        Color _color;
+        int _size;
+    };
+	
 private:
 	struct Channel {
 		// Allocated when the channel is populated.
@@ -162,6 +175,8 @@ private:
 
 	// How many voxels are there in the three directions. All populated channels have the same size.
 	Vector3i _size;
+    
+    Vector<VoxelBufferLight> _lights;
 };
 
 VARIANT_ENUM_CAST(VoxelBuffer::ChannelId)

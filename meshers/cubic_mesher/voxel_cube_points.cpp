@@ -428,6 +428,15 @@ void VoxelCubePoints::setup(const Ref<VoxelBuffer> buffer, int x, int y, int z, 
 	_point_fills[P101] = buffer->get_voxel(x + size, y, z + size, VoxelBuffer::CHANNEL_ISOLEVEL);
 	_point_fills[P111] = buffer->get_voxel(x + size, y + size, z + size, VoxelBuffer::CHANNEL_ISOLEVEL);
 
+    _point_aos[P000] = buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_AO);
+	_point_aos[P100] = buffer->get_voxel(x + size, y, z, VoxelBuffer::CHANNEL_AO);
+	_point_aos[P010] = buffer->get_voxel(x, y + size, z, VoxelBuffer::CHANNEL_AO);
+	_point_aos[P001] = buffer->get_voxel(x, y, z + size, VoxelBuffer::CHANNEL_AO);
+	_point_aos[P110] = buffer->get_voxel(x + size, y + size, z, VoxelBuffer::CHANNEL_AO);
+	_point_aos[P011] = buffer->get_voxel(x, y + size, z + size, VoxelBuffer::CHANNEL_AO);
+	_point_aos[P101] = buffer->get_voxel(x + size, y, z + size, VoxelBuffer::CHANNEL_AO);
+	_point_aos[P111] = buffer->get_voxel(x + size, y + size, z + size, VoxelBuffer::CHANNEL_AO);
+    
 	refresh_neighbours(buffer);
 
 	refresh_points();
@@ -562,6 +571,18 @@ int VoxelCubePoints::get_point_neighbours(int index) {
 	ERR_FAIL_INDEX_V(index, POINT_COUNT, 0);
 
 	return _point_neighbours[index];
+}
+
+int VoxelCubePoints::get_point_ao(int index) {
+    ERR_FAIL_INDEX_V(index, POINT_COUNT, 0);
+    
+    return _point_aos[index];
+}
+
+int VoxelCubePoints::get_face_point_ao(int face, int index) {
+    int indx = get_point_index(face, index);
+
+	return _point_aos[indx];
 }
 
 Vector3 VoxelCubePoints::get_point(int index) {
@@ -729,7 +750,10 @@ void VoxelCubePoints::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_point_type", "index"), &VoxelCubePoints::get_point_type);
 	ClassDB::bind_method(D_METHOD("get_point_fill", "index"), &VoxelCubePoints::get_point_fill);
 	ClassDB::bind_method(D_METHOD("get_point_neighbours", "index"), &VoxelCubePoints::get_point_neighbours);
-
+    
+    ClassDB::bind_method(D_METHOD("get_point_ao", "index"), &VoxelCubePoints::get_point_ao);
+    ClassDB::bind_method(D_METHOD("get_face_point_ao", "face", "index"), &VoxelCubePoints::get_face_point_ao);
+    
 	ClassDB::bind_method(D_METHOD("get_point", "index"), &VoxelCubePoints::get_point);
 
 	ClassDB::bind_method(D_METHOD("get_top_left_point", "face"), &VoxelCubePoints::get_top_left_point);

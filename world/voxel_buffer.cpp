@@ -284,6 +284,60 @@ uint8_t *VoxelBuffer::get_channel_raw(unsigned int channel_index) const {
 	return channel.data;
 }
 
+void VoxelBuffer::generate_ao() {
+    unsigned int size_x = _size.x;
+    unsigned int size_y = _size.y;
+    unsigned int size_z = _size.z;
+    
+    ERR_FAIL_COND(size_x == 0 || size_y == 0 || size_z == 0);
+    
+    for (unsigned int y = 1; y < size_y - 1; ++y) {
+        for (unsigned int z = 1; z < size_z - 1; ++z) {
+            for (unsigned int x = 1; x < size_x - 1; ++x) {
+                int current = get_voxel(x, y, z, CHANNEL_ISOLEVEL);
+                
+                int sum = get_voxel(x + 1, y, z, CHANNEL_ISOLEVEL);
+                sum += get_voxel(x - 1, y, z, CHANNEL_ISOLEVEL);
+                sum += get_voxel(x, y + 1, z, CHANNEL_ISOLEVEL);
+                sum += get_voxel(x, y - 1, z, CHANNEL_ISOLEVEL);
+                sum += get_voxel(x, y, z + 1, CHANNEL_ISOLEVEL);
+                sum += get_voxel(x, y, z - 1, CHANNEL_ISOLEVEL);
+                
+                sum /= 6;
+                
+                sum -= current;
+                
+                if (sum < 0)
+                    sum = 0;
+                
+                set_voxel(sum, x, y, z, CHANNEL_AO);
+            }
+        }
+    }
+}
+
+void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Color color){
+    VoxelBufferLight l;
+    
+    l.x = local_x;
+    l.y = local_y;
+    l.z = local_z;
+    l.color = color;
+    l.size = size;
+    
+    _lights.push_back(l);
+}
+void VoxelBuffer::remove_light(int local_x, int local_y, int local_z) {
+    for (int i = 0; i < _lights.size(); ++i) {
+        VoxelBufferLight l = _lights.get(i);
+        
+        if (l.x == local_x && l.y == local_y && l-z == local_z) {
+            _lights.remove(i);
+            return;
+        }
+    }
+}
+
 void VoxelBuffer::create_channel(int i, Vector3i size, uint8_t defval) {
 	create_channel_noinit(i, size);
 	memset(_channels[i].data, defval, get_volume() * sizeof(uint8_t));
@@ -327,6 +381,11 @@ void VoxelBuffer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_uniform", "channel"), &VoxelBuffer::is_uniform);
 	ClassDB::bind_method(D_METHOD("optimize"), &VoxelBuffer::compress_uniform_channels);
 
+    ClassDB::bind_method(D_METHOD("generate_ao"), &VoxelBuffer::generate_ao);
+    
+    ClassDB::bind_method(D_METHOD("add_light", "local_x", "local_y", "local_z", "size", "color"), &VoxelBuffer::add_light);
+    ClassDB::bind_method(D_METHOD("remove_light", "local_x", "local_y", "local_z"), &VoxelBuffer::remove_light);
+    
 	BIND_ENUM_CONSTANT(CHANNEL_TYPE);
 	BIND_ENUM_CONSTANT(CHANNEL_ISOLEVEL);
 	BIND_ENUM_CONSTANT(CHANNEL_LIGHT_COLOR_R);
