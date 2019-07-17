@@ -113,12 +113,14 @@ public:
 	int get_point_type(int index);
 	int get_point_fill(int index);
 	int get_point_neighbours(int index);
-    
+
     int get_point_ao(int index);
     int get_face_point_ao(int face, int index);
 	Color get_face_point_ao_color(int face, int index);
 	Color get_face_point_light_color(int face, int index);
 	Color get_face_point_color_mixed(int face, int index);
+
+	Vector3 get_face_light_direction(int face);
 
 	Vector3 get_point(int index);
 	Vector3 get_top_left_point(int face);
@@ -137,6 +139,7 @@ protected:
 
 	static const unsigned int index_table[6][4];
 	static const unsigned int visibility_check_table[6];
+	static const int face_light_direction_table[6][3];
 	static const float point_direction_table[8][3];
 	static const unsigned int point_direction_neighbour_table[8][3];
 	static const float uv_direction_table[8][4][2];

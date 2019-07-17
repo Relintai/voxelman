@@ -74,11 +74,26 @@ void VoxelChunk::set_library(Ref<VoxelmanLibrary> value) {
 	_library = value;
 }
 
+int VoxelChunk::get_lod_size() const {
+	return _lod_size;
+}
+void VoxelChunk::set_lod_size(const int lod_size) {
+	_lod_size = lod_size;
+
+	if (_mesher.is_valid()) {
+		_mesher->set_lod_size(_lod_size);
+	}
+}
+
 float VoxelChunk::get_voxel_scale() const {
 	return _voxel_scale;
 }
 void VoxelChunk::set_voxel_scale(float value) {
 	_voxel_scale = value;
+
+	if (_mesher.is_valid()) {
+		_mesher->set_voxel_scale(_voxel_scale);
+	}
 }
 
 Ref<VoxelMesher> VoxelChunk::get_mesher() const {
@@ -131,6 +146,9 @@ void VoxelChunk::build() {
 		call("_create_mesher");
 
 		ERR_FAIL_COND(!_mesher.is_valid());
+
+		_mesher->set_lod_size(get_lod_size());
+		_mesher->set_voxel_scale(get_voxel_scale());
 	}
 
 	_mesher->set_library(_library);
@@ -159,7 +177,7 @@ void VoxelChunk::build() {
 }
 
 void VoxelChunk::_create_mesher() {
-	_mesher = Ref<VoxelMesher>(memnew(VoxelMesher()));
+	_mesher = Ref<VoxelMesher>(memnew(VoxelMesherCubic()));
 }
 
 void VoxelChunk::finalize_mesh() {
@@ -420,6 +438,10 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelChunk::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelChunk::set_library);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary"), "set_library", "get_library");
+
+	ClassDB::bind_method(D_METHOD("get_lod_size"), &VoxelChunk::get_lod_size);
+	ClassDB::bind_method(D_METHOD("set_lod_size", "value"), &VoxelChunk::set_lod_size);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_size"), "set_lod_size", "get_lod_size");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelChunk::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelChunk::set_voxel_scale);

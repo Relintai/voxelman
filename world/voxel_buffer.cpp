@@ -323,9 +323,9 @@ void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Col
 	int size_z = _size.z;
 
 	float sizef = static_cast<float>(size);
-	float rf = (color.r / sizef);
-	float gf = (color.g / sizef);
-	float bf = (color.b / sizef);
+	//float rf = (color.r / sizef);
+	//float gf = (color.g / sizef);
+	//float bf = (color.b / sizef);
 
 	for (int y = local_y - size; y <= local_y + size; ++y) {
 		if (y < 0 || y > size_y)
@@ -339,11 +339,19 @@ void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Col
 				if (x < 0 || x > size_x)
 					continue;
 
-				float len = (Math::sqrt((real_t)x * x + y * y + z * z))  / sizef;
+				int lx = x - local_x;
+				int ly = y - local_y;
+				int lz = z - local_z;
 
-				int r = rf * len * 255.0;
-				int g = gf * len * 255.0;
-				int b = bf * len * 255.0;
+				float str = size - (((float)lx * lx + ly * ly + lz * lz));
+				str /= size;
+
+				if (str < 0)
+					continue;
+
+				int r = color.r * str * 255.0;
+				int g = color.g * str * 255.0;
+				int b = color.b * str * 255.0;
 
 				r += get_voxel(x, y, z, CHANNEL_LIGHT_COLOR_R);
 				g += get_voxel(x, y, z, CHANNEL_LIGHT_COLOR_G);

@@ -36,6 +36,12 @@ public:
 
 	void add_buffer(Ref<VoxelBuffer> voxels);
 
+	float get_voxel_scale() const;
+	void set_voxel_scale(const float voxel_scale);
+
+	int get_lod_size() const;
+	void set_lod_size(const int lod_size);
+
 	void create_trimesh_shape(Ref<ConcavePolygonShape> shape) const;
 	void bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights);
 
@@ -87,11 +93,10 @@ protected:
 
 	Ref<VoxelmanLibrary> _library;
 
-	float size;
-	Vector3 vertexOffset;
-	bool _debug_voxel_face;
+	float _voxel_scale;
+	int _lod_size;
 
-	SurfaceTool *_surface_tool;
+	Ref<SurfaceTool> _surface_tool;
 };
 
 #endif

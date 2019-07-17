@@ -3,19 +3,18 @@
 VoxelMesher::VoxelMesher(Ref<VoxelmanLibrary> library) {
 	_library = library;
 
-	_debug_voxel_face = false;
-	size = (float)1;
-	vertexOffset = Vector3((float)0.5, (float)0.5, (float)0.5);
+	_voxel_scale = 1;
+	_lod_size = 1;
 
-	_surface_tool = memnew(SurfaceTool());
+	_surface_tool.instance();
 }
 
 VoxelMesher::VoxelMesher() {
-	_debug_voxel_face = false;
-	size = (float)1;
-	vertexOffset = Vector3((float)0.5, (float)0.5, (float)0.5);
 
-	_surface_tool = memnew(SurfaceTool());
+	_voxel_scale = 1;
+	_lod_size = 1;
+
+	_surface_tool.instance();
 }
 
 VoxelMesher::~VoxelMesher() {
@@ -26,7 +25,7 @@ VoxelMesher::~VoxelMesher() {
 	_indices.clear();
 	_bones.clear();
 
-	memdelete(_surface_tool);
+	_surface_tool.unref();
 
 	if (_library.is_valid()) {
 		_library.unref();
@@ -59,7 +58,9 @@ Ref<ArrayMesh> VoxelMesher::build_mesh() {
 		_surface_tool->add_index(_indices.get(i));
 	}
 
-	_surface_tool->generate_normals();
+	if (_normals.size() == 0) {
+		_surface_tool->generate_normals();
+	}
 
 	Ref<ArrayMesh> m = _surface_tool->commit();
 
@@ -81,6 +82,20 @@ void VoxelMesher::add_buffer(Ref<VoxelBuffer> voxels) {
 	call("_add_buffer", voxels);
 }
 
+float VoxelMesher::get_voxel_scale() const {
+	return _voxel_scale;
+}
+void VoxelMesher::set_voxel_scale(const float voxel_scale) {
+	_voxel_scale = voxel_scale;
+}
+
+int VoxelMesher::get_lod_size() const {
+	return _lod_size;
+}
+void VoxelMesher::set_lod_size(const int lod_size) {
+	_lod_size = lod_size;
+}
+
 void VoxelMesher::create_trimesh_shape(Ref<ConcavePolygonShape> shape) const {
 	if (_vertices.size() == 0)
 		return;
@@ -88,8 +103,6 @@ void VoxelMesher::create_trimesh_shape(Ref<ConcavePolygonShape> shape) const {
 	PoolVector<Vector3> face_points;
 
 	if (_indices.size() == 0) {
-
-		//face_points.resize(_vertices.size());
 
 		int len = (_vertices.size() / 4);
 
@@ -309,6 +322,14 @@ void VoxelMesher::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_add_buffer", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
 
 	ClassDB::bind_method(D_METHOD("add_buffer", "buffer"), &VoxelMesher::add_buffer);
+
+	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelMesher::get_voxel_scale);
+	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelMesher::set_voxel_scale);
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "voxel_scale"), "set_voxel_scale", "get_voxel_scale");
+
+	ClassDB::bind_method(D_METHOD("get_lod_size"), &VoxelMesher::get_lod_size);
+	ClassDB::bind_method(D_METHOD("set_lod_size", "value"), &VoxelMesher::set_lod_size);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_size"), "set_lod_size", "get_lod_size");
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);

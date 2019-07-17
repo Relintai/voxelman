@@ -14,6 +14,7 @@
 #include "../data/voxel_light.h"
 
 #include "../meshers/voxel_mesher.h"
+#include "../meshers/cubic_mesher/voxel_mesher_cubic.h"
 
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
@@ -50,6 +51,9 @@ public:
 
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(Ref<VoxelmanLibrary> value);
+
+	int get_lod_size() const;
+	void set_lod_size(int lod_size);
 
 	float get_voxel_scale() const;
 	void set_voxel_scale(float value);
@@ -97,7 +101,7 @@ public:
 	StaticBody *create_trimesh_collision_node();
 
 	VoxelChunk();
-	virtual ~VoxelChunk();
+	~VoxelChunk();
 
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
@@ -114,6 +118,8 @@ protected:
 
 	Ref<VoxelBuffer> _buffer;
 	Vector<Ref<VoxelLight> > _voxel_lights;
+
+	int _lod_size;
 	float _voxel_scale;
 
 	NodePath _library_path;

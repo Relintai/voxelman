@@ -18,6 +18,15 @@ const unsigned int VoxelCubePoints::visibility_check_table[6] = {
 	VOXEL_NEIGHBOUR_BOTTOM //VOXEL_FACE_BOTTOM 5
 };
 
+const int VoxelCubePoints::face_light_direction_table[6][3] = {
+	{ 0, 0, -1 }, //VOXEL_FACE_FRONT 0
+	{ -1, 0, 0 }, //VOXEL_FACE_RIGHT 1
+	{ 0, 0, 1 }, //VOXEL_FACE_BACK 2
+	{ 1, 0, 0 }, //VOXEL_FACE_LEFT 3
+	{ 0, -1, 0 }, //VOXEL_FACE_TOP 4
+	{ 0, 1, 0 } //VOXEL_FACE_BOTTOM 5
+};
+
 const float VoxelCubePoints::point_direction_table[8][3] = {
 	{ -0.5, -0.5, -0.5 }, //P000
 	{ 0.5, -0.5, -0.5 }, //P100
@@ -615,6 +624,12 @@ Color VoxelCubePoints::get_face_point_color_mixed(int face, int index) {
 	return _point_colors[indx] - Color(ao_value, ao_value, ao_value);
 }
 
+Vector3 VoxelCubePoints::get_face_light_direction(int face) {
+	ERR_FAIL_INDEX_V(face, VOXEL_FACE_COUNT, Vector3());
+
+	return Vector3(face_light_direction_table[face][0], face_light_direction_table[face][1], face_light_direction_table[face][2]);
+}
+
 Vector3 VoxelCubePoints::get_point(int index) {
 	ERR_FAIL_INDEX_V(index, POINT_COUNT, Vector3());
 
@@ -786,6 +801,8 @@ void VoxelCubePoints::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_face_point_ao_color", "face", "index"), &VoxelCubePoints::get_face_point_ao_color);
 	ClassDB::bind_method(D_METHOD("get_face_point_light_color", "face", "index"), &VoxelCubePoints::get_face_point_light_color);
 	ClassDB::bind_method(D_METHOD("get_face_point_color_mixed", "face", "index"), &VoxelCubePoints::get_face_point_color_mixed);
+
+	ClassDB::bind_method(D_METHOD("get_face_light_direction", "face"), &VoxelCubePoints::get_face_light_direction);
 
 	ClassDB::bind_method(D_METHOD("get_point", "index"), &VoxelCubePoints::get_point);
 
