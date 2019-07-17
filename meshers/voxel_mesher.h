@@ -42,10 +42,11 @@ public:
 	int get_lod_size() const;
 	void set_lod_size(const int lod_size);
 
-	void create_trimesh_shape(Ref<ConcavePolygonShape> shape) const;
+	void build_collider(RID shape) const;
+
 	void bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights);
 
-	Ref<ArrayMesh> build_mesh();
+	void build_mesh(RID mesh);
 
 	Vector<Vector3> *get_vertices();
 	int get_vertex_count();

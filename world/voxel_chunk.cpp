@@ -60,13 +60,6 @@ void VoxelChunk::set_chunk_size(int x, int y, int z) {
 	_chunk_size.z = z;
 }
 
-NodePath VoxelChunk::get_mesh_instance_path() const {
-	return _mesh_instance_path;
-}
-void VoxelChunk::set_mesh_instance_path(NodePath value) {
-	_mesh_instance_path = value;
-}
-
 Ref<VoxelmanLibrary> VoxelChunk::get_library() {
 	return _library;
 }
@@ -124,13 +117,6 @@ void VoxelChunk::set_bake_lights(bool value) {
 	_bake_lights = value;
 }
 
-NodePath VoxelChunk::get_debug_drawer_path() {
-	return _debug_drawer_path;
-}
-void VoxelChunk::set_debug_drawer_path(NodePath value) {
-	_debug_drawer_path = value;
-}
-
 Ref<VoxelBuffer> VoxelChunk::get_buffer() const {
 	return _buffer;
 }
@@ -148,14 +134,6 @@ void VoxelChunk::build() {
 
 	_mesher->set_library(_library);
 
-	if (_debug_drawer == NULL) {
-		Node *n = get_node_or_null(_debug_drawer_path);
-
-		if (n != NULL) {
-			_debug_drawer = Object::cast_to<ImmediateGeometry>(n);
-		}
-	}
-
 	if (get_build_mesh()) {
 		if (has_method("_create_mesh")) {
 			call("_create_mesh");
@@ -167,7 +145,11 @@ void VoxelChunk::build() {
 	}
 
 	if (get_create_collider()) {
-		update_collider();
+		if (_body_rid == RID()) {
+			create_colliders();
+		}
+
+		build_collider();
 	}
 }
 
@@ -187,50 +169,38 @@ void VoxelChunk::_create_mesher() {
 void VoxelChunk::finalize_mesh() {
 	_mesher->set_library(_library);
 
-	Node *node = get_node(_mesh_instance_path);
-
-	ERR_FAIL_COND(node == NULL);
-
-	_mesh_instance = Object::cast_to<MeshInstance>(node);
-
-	ERR_FAIL_COND(_mesh_instance == NULL);
-
-	//if (get_bake_ambient_occlusion()) {
-	//	set_enabled(true);
-	//} else {
-	Ref<ArrayMesh> mesh = get_mesher()->build_mesh();
-
-	_mesh_instance->set_mesh(mesh);
-	//}
-}
-
-void VoxelChunk::update_collider() {
-	//_mesh_instance->create_trimesh_collision();
-	//StaticBody *static_body = Object::cast_to<StaticBody>(create_trimesh_collision_node());
-
-	StaticBody *static_body = create_trimesh_collision_node();
-	ERR_FAIL_COND(!static_body);
-	static_body->set_name(String(get_name()) + "_col");
-
-	add_child(static_body);
-	if (get_owner()) {
-		CollisionShape *cshape = Object::cast_to<CollisionShape>(static_body->get_child(0));
-		static_body->set_owner(get_owner());
-		cshape->set_owner(get_owner());
+	if (_mesh_rid == RID()) {
+		create_meshes();
 	}
+
+	get_mesher()->build_mesh(_mesh_rid);
 }
 
-StaticBody *VoxelChunk::create_trimesh_collision_node() {
+void VoxelChunk::create_colliders() {
+	_shape_rid = PhysicsServer::get_singleton()->shape_create(PhysicsServer::SHAPE_CONCAVE_POLYGON);
+	_body_rid = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
 
-	Ref<ConcavePolygonShape> shape = memnew(ConcavePolygonShape);
+	PhysicsServer::get_singleton()->body_set_collision_layer(_body_rid, 1);
+	PhysicsServer::get_singleton()->body_set_collision_mask(_body_rid, 1);
 
-	_mesher->create_trimesh_shape(shape);
+	PhysicsServer::get_singleton()->body_add_shape(_body_rid, _shape_rid);
 
-	StaticBody *static_body = memnew(StaticBody);
-	CollisionShape *cshape = memnew(CollisionShape);
-	cshape->set_shape(shape);
-	static_body->add_child(cshape);
-	return static_body;
+	PhysicsServer::get_singleton()->body_set_state(_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+	PhysicsServer::get_singleton()->body_set_space(_body_rid, get_world()->get_space());
+}
+
+void VoxelChunk::build_collider() {
+	_mesher->build_collider(_shape_rid);
+}
+
+void VoxelChunk::remove_colliders() {
+	if (_body_rid != RID()) {
+		PhysicsServer::get_singleton()->free(_body_rid);
+		PhysicsServer::get_singleton()->free(_shape_rid);
+
+		_body_rid = RID();
+		_shape_rid = RID();
+	}
 }
 
 void VoxelChunk::set_enabled(bool p_enabled) {
@@ -291,7 +261,6 @@ void VoxelChunk::bake_light(Ref<VoxelLight> light) {
 	int wpy = wp.y - (_chunk_position.y * _chunk_size.y);
 	int wpz = wp.z - (_chunk_position.z * _chunk_size.z);
 
-
 	//int wpx = (int)(wp.x / _chunk_size.x) - _chunk_position.x;
 	//int wpy = (int)(wp.y / _chunk_size.y) - _chunk_position.y;
 	//int wpz = (int)(wp.z / _chunk_size.z) - _chunk_position.z;
@@ -301,6 +270,54 @@ void VoxelChunk::bake_light(Ref<VoxelLight> light) {
 
 void VoxelChunk::clear_baked_lights() {
 	_buffer->clear_lights();
+}
+
+void VoxelChunk::create_meshes() {
+	ERR_FAIL_COND(!get_library().is_valid());
+
+	_mesh_instance_rid = VS::get_singleton()->instance_create();
+
+	if (get_library()->get_material().is_valid()) {
+		VS::get_singleton()->instance_geometry_set_material_override(_mesh_instance_rid, get_library()->get_material()->get_rid());
+	}
+
+	if (get_world().is_valid())
+		VS::get_singleton()->instance_set_scenario(_mesh_instance_rid, get_world()->get_scenario());
+
+	_mesh_rid = VS::get_singleton()->mesh_create();
+
+	VS::get_singleton()->instance_set_base(_mesh_instance_rid, _mesh_rid);
+
+	VS::get_singleton()->instance_set_transform(_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+}
+
+void VoxelChunk::remove_meshes() {
+	if (_mesh_instance_rid != RID()) {
+		VS::get_singleton()->free(_mesh_instance_rid);
+		VS::get_singleton()->free(_mesh_rid);
+
+		_mesh_instance_rid = RID();
+		_mesh_rid = RID();
+	}
+}
+
+void VoxelChunk::create_debug_immediate_geometry() {
+	ERR_FAIL_COND(_debug_drawer != NULL);
+
+	_debug_drawer = memnew(ImmediateGeometry());
+
+	get_parent()->add_child(_debug_drawer);
+	_debug_drawer->set_owner(get_parent());
+
+	_debug_drawer->set_transform(Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+}
+
+void VoxelChunk::free_debug_immediate_geometry() {
+	if (_debug_drawer != NULL) {
+		_debug_drawer->queue_delete();
+
+		_debug_drawer = NULL;
+	}
 }
 
 void VoxelChunk::draw_cross_voxels(Vector3 pos) {
@@ -331,11 +348,7 @@ void VoxelChunk::draw_cross_voxels(Vector3 pos, float fill) {
 
 void VoxelChunk::draw_debug_voxels(int max, Color color) {
 	if (_debug_drawer == NULL) {
-		Node *n = get_node(_debug_drawer_path);
-
-		if (n != NULL) {
-			_debug_drawer = Object::cast_to<ImmediateGeometry>(n);
-		}
+		create_debug_immediate_geometry();
 	}
 
 	ERR_FAIL_COND(_debug_drawer == NULL);
@@ -373,11 +386,7 @@ void VoxelChunk::draw_debug_voxels(int max, Color color) {
 
 void VoxelChunk::draw_debug_voxel_lights() {
 	if (_debug_drawer == NULL) {
-		Node *n = get_node(_debug_drawer_path);
-
-		if (n != NULL) {
-			_debug_drawer = Object::cast_to<ImmediateGeometry>(n);
-		}
+		create_debug_immediate_geometry();
 	}
 
 	ERR_FAIL_COND(_debug_drawer == NULL);
@@ -399,6 +408,36 @@ void VoxelChunk::draw_debug_voxel_lights() {
 	}
 
 	_debug_drawer->end();
+}
+
+VoxelChunk::VoxelChunk() {
+	_build_mesh = true;
+	_create_collider = true;
+	_bake_lights = true;
+
+	_voxel_scale = 1;
+	_lod_size = 1;
+
+	_buffer.instance();
+
+	_debug_drawer = NULL;
+}
+
+VoxelChunk::~VoxelChunk() {
+	remove_meshes();
+	remove_colliders();
+
+	_voxel_lights.clear();
+
+	if (_mesher.is_valid()) {
+		_mesher.unref();
+	}
+
+	_buffer.unref();
+
+	if (_library.is_valid()) {
+		_library.unref();
+	}
 }
 
 void VoxelChunk::_bind_methods() {
@@ -435,10 +474,6 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_chunk_size", "x", "y", "z"), &VoxelChunk::set_chunk_size);
 
-	ClassDB::bind_method(D_METHOD("get_mesh_instance_path"), &VoxelChunk::get_mesh_instance_path);
-	ClassDB::bind_method(D_METHOD("set_mesh_instance_path", "value"), &VoxelChunk::set_mesh_instance_path);
-	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "mesh_instance_path"), "set_mesh_instance_path", "get_mesh_instance_path");
-
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelChunk::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelChunk::set_library);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary"), "set_library", "get_library");
@@ -469,10 +504,6 @@ void VoxelChunk::_bind_methods() {
 
 	ADD_GROUP("Settings", "setting");
 
-	ClassDB::bind_method(D_METHOD("get_debug_drawer_path"), &VoxelChunk::get_debug_drawer_path);
-	ClassDB::bind_method(D_METHOD("set_debug_drawer_path", "value"), &VoxelChunk::set_debug_drawer_path);
-	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "debug_drawer_path"), "set_debug_drawer_path", "get_debug_drawer_path");
-
 	ClassDB::bind_method(D_METHOD("get_mesher"), &VoxelChunk::get_mesher);
 	ClassDB::bind_method(D_METHOD("set_mesher", "Mesher"), &VoxelChunk::set_mesher);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher"), "set_mesher", "get_mesher");
@@ -495,36 +526,7 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "max"), &VoxelChunk::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunk::draw_debug_voxel_lights);
-}
 
-VoxelChunk::VoxelChunk() {
-	_build_mesh = true;
-	_create_collider = true;
-	_bake_lights = true;
-
-	_voxel_scale = 1;
-
-	_buffer.instance();
-
-	_debug_drawer = NULL;
-}
-
-VoxelChunk::~VoxelChunk() {
-	_voxel_lights.clear();
-
-	if (_mesher.is_valid()) {
-		_mesher.unref();
-	}
-
-	_buffer.unref();
-
-	_debug_drawer = NULL;
-
-	if (_library.is_valid()) {
-		_library.unref();
-	}
-
-	if (_mesh.is_valid()) {
-		_mesh.unref();
-	}
+	ClassDB::bind_method(D_METHOD("create_debug_immediate_geometry"), &VoxelChunk::create_debug_immediate_geometry);
+	ClassDB::bind_method(D_METHOD("free_debug_immediate_geometry"), &VoxelChunk::free_debug_immediate_geometry);
 }

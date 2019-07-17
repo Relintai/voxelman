@@ -46,9 +46,6 @@ public:
 	Vector3i get_chunk_size() const;
 	void set_chunk_size(int x, int y, int z);
 
-	NodePath get_mesh_instance_path() const;
-	void set_mesh_instance_path(NodePath value);
-
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(Ref<VoxelmanLibrary> value);
 
@@ -70,9 +67,6 @@ public:
 	bool get_bake_lights() const;
 	void set_bake_lights(bool value);
 
-	NodePath get_debug_drawer_path();
-	void set_debug_drawer_path(NodePath value);
-
 	Ref<VoxelBuffer> get_buffer() const;
 
 	void create_mesher();
@@ -83,7 +77,9 @@ public:
 	void clear();
 	void build();
 
-	void update_collider();
+	void create_colliders();
+	void build_collider();
+	void remove_colliders();
 
 	void set_enabled(bool p_enabled);
 	bool is_enabled() const;
@@ -99,15 +95,19 @@ public:
 	void bake_light(Ref<VoxelLight> light);
 	void clear_baked_lights();
 
-	StaticBody *create_trimesh_collision_node();
+	void create_meshes();
+	void remove_meshes();
 
-	VoxelChunk();
-	~VoxelChunk();
+	void create_debug_immediate_geometry();
+	void free_debug_immediate_geometry();
 
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
 	void draw_cross_voxels(Vector3 pos);
 	void draw_cross_voxels(Vector3 pos, float fill);
+
+	VoxelChunk();
+	~VoxelChunk();
 
 protected:
 	static void _bind_methods();
@@ -126,14 +126,15 @@ protected:
 	NodePath _library_path;
 	Ref<VoxelmanLibrary> _library;
 
-	NodePath _mesh_instance_path;
-	MeshInstance *_mesh_instance;
-	Ref<ArrayMesh> _mesh;
+	RID _mesh_rid;
+	RID _mesh_instance_rid;
+
+	RID _shape_rid;
+	RID _body_rid;
 
 	Ref<VoxelMesher> _mesher;
 
 	ImmediateGeometry *_debug_drawer;
-	NodePath _debug_drawer_path;
 
 	bool _build_mesh;
 	bool _create_collider;

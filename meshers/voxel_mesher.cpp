@@ -32,7 +32,11 @@ VoxelMesher::~VoxelMesher() {
 	}
 }
 
-Ref<ArrayMesh> VoxelMesher::build_mesh() {
+void VoxelMesher::build_mesh(RID mesh) {
+	ERR_FAIL_COND(mesh == RID());
+
+	VS::get_singleton()->mesh_clear(mesh);
+
 	_surface_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
 	_surface_tool->set_material(_library->get_material());
 
@@ -62,9 +66,9 @@ Ref<ArrayMesh> VoxelMesher::build_mesh() {
 		_surface_tool->generate_normals();
 	}
 
-	Ref<ArrayMesh> m = _surface_tool->commit();
+	Array arr = _surface_tool->commit_to_arrays();
 
-	return m;
+	VS::get_singleton()->mesh_add_surface_from_arrays(mesh, VisualServer::PRIMITIVE_TRIANGLES, arr);
 }
 
 void VoxelMesher::reset() {
@@ -96,7 +100,9 @@ void VoxelMesher::set_lod_size(const int lod_size) {
 	_lod_size = lod_size;
 }
 
-void VoxelMesher::create_trimesh_shape(Ref<ConcavePolygonShape> shape) const {
+void VoxelMesher::build_collider(RID shape) const {
+	ERR_FAIL_COND(shape == RID());
+
 	if (_vertices.size() == 0)
 		return;
 
@@ -117,7 +123,7 @@ void VoxelMesher::create_trimesh_shape(Ref<ConcavePolygonShape> shape) const {
 			face_points.push_back(_vertices.get((i * 4) + 2));
 		}
 
-		shape->set_faces(face_points);
+		PhysicsServer::get_singleton()->shape_set_data(shape, face_points);
 
 		return;
 	}
@@ -127,7 +133,7 @@ void VoxelMesher::create_trimesh_shape(Ref<ConcavePolygonShape> shape) const {
 		face_points.set(i, _vertices.get(_indices.get(i)));
 	}
 
-	shape->set_faces(face_points);
+	PhysicsServer::get_singleton()->shape_set_data(shape, face_points);
 }
 
 void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights) {
@@ -364,5 +370,5 @@ void VoxelMesher::_bind_methods() {
 
 	//ClassDB::bind_method(D_METHOD("calculate_vertex_ambient_occlusion", "meshinstance_path", "radius", "intensity", "sampleCount"), &VoxelMesher::calculate_vertex_ambient_occlusion_path);
 
-	ClassDB::bind_method(D_METHOD("build_mesh"), &VoxelMesher::build_mesh);
+	ClassDB::bind_method(D_METHOD("build_mesh", "mesh_rid"), &VoxelMesher::build_mesh);
 }
