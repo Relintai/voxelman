@@ -143,12 +143,7 @@ void VoxelChunk::build() {
 	ERR_FAIL_COND(!_library.is_valid());
 
 	if (!_mesher.is_valid()) {
-		call("_create_mesher");
-
-		ERR_FAIL_COND(!_mesher.is_valid());
-
-		_mesher->set_lod_size(get_lod_size());
-		_mesher->set_voxel_scale(get_voxel_scale());
+		create_mesher();
 	}
 
 	_mesher->set_library(_library);
@@ -174,6 +169,15 @@ void VoxelChunk::build() {
 	if (get_create_collider()) {
 		update_collider();
 	}
+}
+
+void VoxelChunk::create_mesher() {
+	call("_create_mesher");
+
+	ERR_FAIL_COND(!_mesher.is_valid());
+
+	_mesher->set_lod_size(get_lod_size());
+	_mesher->set_voxel_scale(get_voxel_scale());
 }
 
 void VoxelChunk::_create_mesher() {
@@ -486,6 +490,8 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("finalize_mesh"), &VoxelChunk::finalize_mesh);
 
 	ClassDB::bind_method(D_METHOD("clear"), &VoxelChunk::clear);
+
+	ClassDB::bind_method(D_METHOD("create_mesher"), &VoxelChunk::create_mesher);
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "max"), &VoxelChunk::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunk::draw_debug_voxel_lights);

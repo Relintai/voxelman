@@ -16,6 +16,9 @@ public:
 	float get_ao_strength() const;
 	void set_ao_strength(float value);
 
+	float get_base_light_value() const;
+	void set_base_light_value(float value);
+
 	void _add_buffer(Ref<VoxelBuffer> buffer);
 
 	VoxelMesherCubic();
@@ -26,6 +29,7 @@ protected:
 
 private:
 	float _ao_strength;
+	float _base_light_value;
 };
 
 #endif

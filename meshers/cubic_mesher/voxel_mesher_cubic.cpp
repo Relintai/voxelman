@@ -7,6 +7,14 @@ void VoxelMesherCubic::set_ao_strength(float value) {
 	_ao_strength = value;
 }
 
+float VoxelMesherCubic::get_base_light_value() const {
+	return _base_light_value;
+}
+void VoxelMesherCubic::set_base_light_value(float value) {
+	_base_light_value = value;
+}
+
+
 void VoxelMesherCubic::_add_buffer(Ref<VoxelBuffer> buffer) {
 	buffer->generate_ao();
 
@@ -23,7 +31,7 @@ void VoxelMesherCubic::_add_buffer(Ref<VoxelBuffer> buffer) {
 	cube_points.instance();
 
 	float tile_uv_size = 1 / 4.0;
-	Color base_light(0.4, 0.4, 0.4);
+	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
 	for (int y = lod_size; y < y_size - lod_size; y += lod_size) {
 		for (int z = lod_size; z < z_size - lod_size; z += lod_size) {
@@ -88,6 +96,7 @@ void VoxelMesherCubic::_add_buffer(Ref<VoxelBuffer> buffer) {
 
 VoxelMesherCubic::VoxelMesherCubic() {
 	_ao_strength = 0.25;
+	_base_light_value = 0.5;
 }
 
 VoxelMesherCubic::~VoxelMesherCubic() {
@@ -99,4 +108,8 @@ void VoxelMesherCubic::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_ao_strength"), &VoxelMesherCubic::get_ao_strength);
 	ClassDB::bind_method(D_METHOD("set_ao_strength", "value"), &VoxelMesherCubic::set_ao_strength);
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "ao_strength"), "set_ao_strength", "get_ao_strength");
+
+	ClassDB::bind_method(D_METHOD("get_base_light_value"), &VoxelMesherCubic::get_base_light_value);
+	ClassDB::bind_method(D_METHOD("set_base_light_value", "value"), &VoxelMesherCubic::set_base_light_value);
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "base_light_value"), "set_base_light_value", "get_base_light_value");
 }

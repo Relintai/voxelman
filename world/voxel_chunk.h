@@ -75,6 +75,7 @@ public:
 
 	Ref<VoxelBuffer> get_buffer() const;
 
+	void create_mesher();
 	void _create_mesher();
 
 	void finalize_mesh();
