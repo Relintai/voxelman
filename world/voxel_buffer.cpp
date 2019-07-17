@@ -25,7 +25,6 @@
 const char *VoxelBuffer::CHANNEL_ID_HINT_STRING = "Type,Sdf,Data2,Data3,Data4,Data5,Data6,Data7";
 
 VoxelBuffer::VoxelBuffer() {
-	_channels[CHANNEL_ISOLEVEL].defval = 255;
 }
 
 VoxelBuffer::~VoxelBuffer() {
@@ -285,57 +284,91 @@ uint8_t *VoxelBuffer::get_channel_raw(unsigned int channel_index) const {
 }
 
 void VoxelBuffer::generate_ao() {
-    unsigned int size_x = _size.x;
-    unsigned int size_y = _size.y;
-    unsigned int size_z = _size.z;
-    
-    ERR_FAIL_COND(size_x == 0 || size_y == 0 || size_z == 0);
-    
-    for (unsigned int y = 1; y < size_y - 1; ++y) {
-        for (unsigned int z = 1; z < size_z - 1; ++z) {
-            for (unsigned int x = 1; x < size_x - 1; ++x) {
-                int current = get_voxel(x, y, z, CHANNEL_ISOLEVEL);
-                
-                int sum = get_voxel(x + 1, y, z, CHANNEL_ISOLEVEL);
-                sum += get_voxel(x - 1, y, z, CHANNEL_ISOLEVEL);
-                sum += get_voxel(x, y + 1, z, CHANNEL_ISOLEVEL);
-                sum += get_voxel(x, y - 1, z, CHANNEL_ISOLEVEL);
-                sum += get_voxel(x, y, z + 1, CHANNEL_ISOLEVEL);
-                sum += get_voxel(x, y, z - 1, CHANNEL_ISOLEVEL);
-                
-                sum /= 6;
-                
-                sum -= current;
-                
-                if (sum < 0)
-                    sum = 0;
-                
-                set_voxel(sum, x, y, z, CHANNEL_AO);
-            }
-        }
-    }
+	unsigned int size_x = _size.x;
+	unsigned int size_y = _size.y;
+	unsigned int size_z = _size.z;
+
+	ERR_FAIL_COND(size_x == 0 || size_y == 0 || size_z == 0);
+
+	for (unsigned int y = 1; y < size_y - 1; ++y) {
+		for (unsigned int z = 1; z < size_z - 1; ++z) {
+			for (unsigned int x = 1; x < size_x - 1; ++x) {
+				int current = get_voxel(x, y, z, CHANNEL_ISOLEVEL);
+
+				int sum = get_voxel(x + 1, y, z, CHANNEL_ISOLEVEL);
+				sum += get_voxel(x - 1, y, z, CHANNEL_ISOLEVEL);
+				sum += get_voxel(x, y + 1, z, CHANNEL_ISOLEVEL);
+				sum += get_voxel(x, y - 1, z, CHANNEL_ISOLEVEL);
+				sum += get_voxel(x, y, z + 1, CHANNEL_ISOLEVEL);
+				sum += get_voxel(x, y, z - 1, CHANNEL_ISOLEVEL);
+
+				sum /= 6;
+
+				sum -= current;
+
+				if (sum < 0)
+					sum = 0;
+
+				set_voxel(sum, x, y, z, CHANNEL_AO);
+			}
+		}
+	}
 }
 
-void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Color color){
-    VoxelBufferLight l;
-    
-    l.x = local_x;
-    l.y = local_y;
-    l.z = local_z;
-    l.color = color;
-    l.size = size;
-    
-    _lights.push_back(l);
+void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Color color) {
+	ERR_FAIL_COND(size < 0);
+
+	int size_x = _size.x;
+	int size_y = _size.y;
+	int size_z = _size.z;
+
+	float sizef = static_cast<float>(size);
+	float rf = (color.r / sizef);
+	float gf = (color.g / sizef);
+	float bf = (color.b / sizef);
+
+	for (int y = local_y - size; y <= local_y + size; ++y) {
+		if (y < 0 || y > size_y)
+			continue;
+
+		for (int z = local_z - size; z <= local_z + size; ++z) {
+			if (z < 0 || z > size_z)
+				continue;
+
+			for (int x = local_x - size; x <= local_x + size; ++x) {
+				if (x < 0 || x > size_x)
+					continue;
+
+				float len = (Math::sqrt((real_t)x * x + y * y + z * z))  / sizef;
+
+				int r = rf * len * 255.0;
+				int g = gf * len * 255.0;
+				int b = bf * len * 255.0;
+
+				r += get_voxel(x, y, z, CHANNEL_LIGHT_COLOR_R);
+				g += get_voxel(x, y, z, CHANNEL_LIGHT_COLOR_G);
+				b += get_voxel(x, y, z, CHANNEL_LIGHT_COLOR_B);
+
+				if (r > 255)
+					r = 255;
+
+				if (g > 255)
+					g = 255;
+
+				if (b > 255)
+					b = 255;
+
+				set_voxel(r, x, y, z, CHANNEL_LIGHT_COLOR_R);
+				set_voxel(g, x, y, z, CHANNEL_LIGHT_COLOR_G);
+				set_voxel(b, x, y, z, CHANNEL_LIGHT_COLOR_B);
+			}
+		}
+	}
 }
-void VoxelBuffer::remove_light(int local_x, int local_y, int local_z) {
-    for (int i = 0; i < _lights.size(); ++i) {
-        VoxelBufferLight l = _lights.get(i);
-        
-        if (l.x == local_x && l.y == local_y && l-z == local_z) {
-            _lights.remove(i);
-            return;
-        }
-    }
+void VoxelBuffer::clear_lights() {
+	fill(0, CHANNEL_LIGHT_COLOR_R);
+	fill(0, CHANNEL_LIGHT_COLOR_G);
+	fill(0, CHANNEL_LIGHT_COLOR_B);
 }
 
 void VoxelBuffer::create_channel(int i, Vector3i size, uint8_t defval) {
@@ -381,11 +414,11 @@ void VoxelBuffer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_uniform", "channel"), &VoxelBuffer::is_uniform);
 	ClassDB::bind_method(D_METHOD("optimize"), &VoxelBuffer::compress_uniform_channels);
 
-    ClassDB::bind_method(D_METHOD("generate_ao"), &VoxelBuffer::generate_ao);
-    
-    ClassDB::bind_method(D_METHOD("add_light", "local_x", "local_y", "local_z", "size", "color"), &VoxelBuffer::add_light);
-    ClassDB::bind_method(D_METHOD("remove_light", "local_x", "local_y", "local_z"), &VoxelBuffer::remove_light);
-    
+	ClassDB::bind_method(D_METHOD("generate_ao"), &VoxelBuffer::generate_ao);
+
+	ClassDB::bind_method(D_METHOD("add_light", "local_x", "local_y", "local_z", "size", "color"), &VoxelBuffer::add_light);
+	ClassDB::bind_method(D_METHOD("clear_lights"), &VoxelBuffer::clear_lights);
+
 	BIND_ENUM_CONSTANT(CHANNEL_TYPE);
 	BIND_ENUM_CONSTANT(CHANNEL_ISOLEVEL);
 	BIND_ENUM_CONSTANT(CHANNEL_LIGHT_COLOR_R);

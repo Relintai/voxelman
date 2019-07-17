@@ -436,6 +436,15 @@ void VoxelCubePoints::setup(const Ref<VoxelBuffer> buffer, int x, int y, int z, 
 	_point_aos[P011] = buffer->get_voxel(x, y + size, z + size, VoxelBuffer::CHANNEL_AO);
 	_point_aos[P101] = buffer->get_voxel(x + size, y, z + size, VoxelBuffer::CHANNEL_AO);
 	_point_aos[P111] = buffer->get_voxel(x + size, y + size, z + size, VoxelBuffer::CHANNEL_AO);
+
+	_point_colors[P000] = Color(buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+	_point_colors[P100] = Color(buffer->get_voxel(x + size, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x + size, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x + size, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+	_point_colors[P010] = Color(buffer->get_voxel(x, y + size, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x, y + size, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x, y + size, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+	_point_colors[P001] = Color(buffer->get_voxel(x, y, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x, y, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x, y, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+	_point_colors[P110] = Color(buffer->get_voxel(x + size, y + size, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x + size, y + size, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x + size, y + size, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+	_point_colors[P011] = Color(buffer->get_voxel(x, y + size, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x, y + size, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x, y + size, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+	_point_colors[P101] = Color(buffer->get_voxel(x + size, y, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x + size, y, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x + size, y, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+	_point_colors[P111] = Color(buffer->get_voxel(x + size, y + size, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x + size, y + size, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x + size, y + size, z + size, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
     
 	refresh_neighbours(buffer);
 
@@ -583,6 +592,27 @@ int VoxelCubePoints::get_face_point_ao(int face, int index) {
     int indx = get_point_index(face, index);
 
 	return _point_aos[indx];
+}
+
+Color VoxelCubePoints::get_face_point_ao_color(int face, int index) {
+    int indx = get_point_index(face, index);
+
+	float ao_value = (_point_aos[indx] / 255.0) * 0.75;
+
+	return Color(ao_value, ao_value, ao_value);
+}
+
+Color VoxelCubePoints::get_face_point_light_color(int face, int index) {
+	int indx = get_point_index(face, index);
+
+	return _point_colors[indx];
+}
+Color VoxelCubePoints::get_face_point_color_mixed(int face, int index) {
+	int indx = get_point_index(face, index);
+
+	float ao_value = (_point_aos[indx] / 255.0) * 0.75;
+
+	return _point_colors[indx] - Color(ao_value, ao_value, ao_value);
 }
 
 Vector3 VoxelCubePoints::get_point(int index) {
@@ -753,7 +783,10 @@ void VoxelCubePoints::_bind_methods() {
     
     ClassDB::bind_method(D_METHOD("get_point_ao", "index"), &VoxelCubePoints::get_point_ao);
     ClassDB::bind_method(D_METHOD("get_face_point_ao", "face", "index"), &VoxelCubePoints::get_face_point_ao);
-    
+	ClassDB::bind_method(D_METHOD("get_face_point_ao_color", "face", "index"), &VoxelCubePoints::get_face_point_ao_color);
+	ClassDB::bind_method(D_METHOD("get_face_point_light_color", "face", "index"), &VoxelCubePoints::get_face_point_light_color);
+	ClassDB::bind_method(D_METHOD("get_face_point_color_mixed", "face", "index"), &VoxelCubePoints::get_face_point_color_mixed);
+
 	ClassDB::bind_method(D_METHOD("get_point", "index"), &VoxelCubePoints::get_point);
 
 	ClassDB::bind_method(D_METHOD("get_top_left_point", "face"), &VoxelCubePoints::get_top_left_point);

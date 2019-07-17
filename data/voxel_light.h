@@ -11,12 +11,6 @@ class VoxelLight : public Reference {
 	GDCLASS(VoxelLight, Reference);
 
 public:
-    int get_chunk_position_x();
-    int get_chunk_position_y();
-    int get_chunk_position_z();
-	Vector3i get_chunk_position();
-	void set_chunk_position(int x, int y, int z);
-
     int get_world_position_x();
     int get_world_position_y();
     int get_world_position_z();

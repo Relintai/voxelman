@@ -136,7 +136,7 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &ligh
 		for (int i = 0; i < lights.size(); ++i) {
 			Ref<VoxelLight> light = lights.get(i);
 
-			Vector3 lightDir = light->get_world_position() - vertex;
+			Vector3 lightDir = light->get_world_position().to_vec3() - vertex;
 
 			float dist2 = lightDir.dot(lightDir);
 			//inverse sqrt
@@ -155,7 +155,7 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &ligh
 
 			Vector3 value = cv * (NdotL / (1.0 + dist2));
 
-			value *= light->get_strength();
+			value *= light->get_size();
 			v_lightDiffuse += value;
 
 			/*
