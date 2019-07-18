@@ -96,6 +96,21 @@ void VoxelChunk::set_mesher(Ref<VoxelMesher> mesher) {
 	_mesher = mesher;
 }
 
+VoxelWorld *VoxelChunk::get_voxel_world() const {
+	return _voxel_world;
+}
+void VoxelChunk::set_voxel_world(VoxelWorld *world) {
+	_voxel_world = world;
+}
+void VoxelChunk::set_voxel_world_bind(Node *world) {
+	if (world == NULL) {
+		_voxel_world = NULL;
+		return;
+	}
+
+	_voxel_world = Object::cast_to<VoxelWorld>(world);
+}
+
 bool VoxelChunk::get_build_mesh() const {
 	return _build_mesh;
 }
@@ -177,6 +192,8 @@ void VoxelChunk::finalize_mesh() {
 }
 
 void VoxelChunk::create_colliders() {
+	ERR_FAIL_COND(_voxel_world == NULL);
+
 	_shape_rid = PhysicsServer::get_singleton()->shape_create(PhysicsServer::SHAPE_CONCAVE_POLYGON);
 	_body_rid = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
 
@@ -186,7 +203,7 @@ void VoxelChunk::create_colliders() {
 	PhysicsServer::get_singleton()->body_add_shape(_body_rid, _shape_rid);
 
 	PhysicsServer::get_singleton()->body_set_state(_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
-	PhysicsServer::get_singleton()->body_set_space(_body_rid, get_world()->get_space());
+	PhysicsServer::get_singleton()->body_set_space(_body_rid, get_voxel_world()->get_world()->get_space());
 }
 
 void VoxelChunk::build_collider() {
@@ -207,8 +224,6 @@ void VoxelChunk::set_enabled(bool p_enabled) {
 
 	_enabled = p_enabled;
 
-	if (is_inside_tree())
-		set_physics_process_internal(p_enabled);
 }
 
 bool VoxelChunk::is_enabled() const {
@@ -273,6 +288,8 @@ void VoxelChunk::clear_baked_lights() {
 }
 
 void VoxelChunk::create_meshes() {
+	ERR_FAIL_COND(_voxel_world == NULL);
+
 	ERR_FAIL_COND(!get_library().is_valid());
 
 	_mesh_instance_rid = VS::get_singleton()->instance_create();
@@ -281,8 +298,8 @@ void VoxelChunk::create_meshes() {
 		VS::get_singleton()->instance_geometry_set_material_override(_mesh_instance_rid, get_library()->get_material()->get_rid());
 	}
 
-	if (get_world().is_valid())
-		VS::get_singleton()->instance_set_scenario(_mesh_instance_rid, get_world()->get_scenario());
+	if (get_voxel_world()->get_world().is_valid())
+		VS::get_singleton()->instance_set_scenario(_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
 
 	_mesh_rid = VS::get_singleton()->mesh_create();
 
@@ -302,12 +319,13 @@ void VoxelChunk::remove_meshes() {
 }
 
 void VoxelChunk::create_debug_immediate_geometry() {
+	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(_debug_drawer != NULL);
 
 	_debug_drawer = memnew(ImmediateGeometry());
 
-	get_parent()->add_child(_debug_drawer);
-	_debug_drawer->set_owner(get_parent());
+	get_voxel_world()->add_child(_debug_drawer);
+	_debug_drawer->set_owner(get_voxel_world());
 
 	_debug_drawer->set_transform(Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
 }
@@ -421,6 +439,7 @@ VoxelChunk::VoxelChunk() {
 	_buffer.instance();
 
 	_debug_drawer = NULL;
+	_voxel_world = NULL;
 }
 
 VoxelChunk::~VoxelChunk() {
@@ -507,6 +526,10 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_mesher"), &VoxelChunk::get_mesher);
 	ClassDB::bind_method(D_METHOD("set_mesher", "Mesher"), &VoxelChunk::set_mesher);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher"), "set_mesher", "get_mesher");
+
+	ClassDB::bind_method(D_METHOD("get_voxel_world"), &VoxelChunk::get_voxel_world);
+	ClassDB::bind_method(D_METHOD("set_voxel_world", "world"), &VoxelChunk::set_voxel_world_bind);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "voxel_world", PROPERTY_HINT_RESOURCE_TYPE, "VoxelWorld"), "set_voxel_world", "get_voxel_world");
 
 	ClassDB::bind_method(D_METHOD("add_lights", "lights"), &VoxelChunk::add_lights);
 	ClassDB::bind_method(D_METHOD("add_voxel_light", "light"), &VoxelChunk::add_voxel_light);

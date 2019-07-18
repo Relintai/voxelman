@@ -3,13 +3,16 @@
 
 #include "core/engine.h"
 #include "core/object.h"
+#include "core/reference.h"
 #include "core/ustring.h"
 #include "scene/3d/mesh_instance.h"
-#include "scene/3d/spatial.h"
+//#include "scene/3d/spatial.h"
 #include "scene/3d/collision_shape.h"
 #include "scene/3d/physics_body.h"
 #include "scene/resources/concave_polygon_shape.h"
 #include "core/array.h"
+
+#include "voxel_world.h"
 
 #include "../data/voxel_light.h"
 
@@ -22,8 +25,8 @@
 #include "voxel_buffer.h"
 
 
-class VoxelChunk : public Spatial {
-	GDCLASS(VoxelChunk, Spatial);
+class VoxelChunk : public Reference {
+	GDCLASS(VoxelChunk, Reference);
 
 public:
 	int get_chunk_position_x();
@@ -57,6 +60,10 @@ public:
 
 	Ref<VoxelMesher> get_mesher() const;
 	void set_mesher(Ref<VoxelMesher> mesher);
+
+	VoxelWorld *get_voxel_world() const;
+	void set_voxel_world(VoxelWorld *world);
+	void set_voxel_world_bind(Node *world);
 
 	bool get_build_mesh() const;
 	void set_build_mesh(bool value);
@@ -113,6 +120,8 @@ protected:
 	static void _bind_methods();
 
 	bool _enabled;
+
+	VoxelWorld *_voxel_world;
 
 	Vector3i _chunk_position;
 	Vector3i _chunk_size;
