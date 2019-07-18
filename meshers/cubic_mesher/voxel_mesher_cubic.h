@@ -20,6 +20,7 @@ public:
 	void set_base_light_value(float value);
 
 	void _add_buffer(Ref<VoxelBuffer> buffer);
+	void _bake_colors(Ref<VoxelBuffer> buffer);
 
 	VoxelMesherCubic();
 	~VoxelMesherCubic();

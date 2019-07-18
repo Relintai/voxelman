@@ -6,24 +6,26 @@
 #include "core/reference.h"
 #include "core/ustring.h"
 #include "scene/3d/mesh_instance.h"
-//#include "scene/3d/spatial.h"
+#include "scene/resources/packed_scene.h"
+#include "core/array.h"
 #include "scene/3d/collision_shape.h"
 #include "scene/3d/physics_body.h"
 #include "scene/resources/concave_polygon_shape.h"
-#include "core/array.h"
+#include "scene/3d/spatial.h"
 
 #include "voxel_world.h"
 
 #include "../data/voxel_light.h"
 
-#include "../meshers/voxel_mesher.h"
 #include "../meshers/cubic_mesher/voxel_mesher_cubic.h"
+#include "../meshers/voxel_mesher.h"
 
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
 
 #include "voxel_buffer.h"
 
+#include "../../entity_spell_system/meshes/mesh_data_resource.h"
 
 class VoxelChunk : public Reference {
 	GDCLASS(VoxelChunk, Reference);
@@ -65,9 +67,6 @@ public:
 	void set_voxel_world(VoxelWorld *world);
 	void set_voxel_world_bind(Node *world);
 
-	bool get_build_mesh() const;
-	void set_build_mesh(bool value);
-
 	bool get_create_collider() const;
 	void set_create_collider(bool value);
 
@@ -105,8 +104,24 @@ public:
 	void create_meshes();
 	void remove_meshes();
 
+	void add_prop(const Transform transform, const Ref<MeshDataResource> mesh);
+	void clear_props();
+	void create_prop_mesh();
+	void remove_prop_mesh();
+	void build_prop_mesh();
+
+	void create_prop_colliders();
+	void build_prop_collider();
+	void remove_prop_colliders();
+
+	void add_spawned_prop(const Ref<PackedScene> scene);
+	void add_spawned_prop_spatial(const Transform transform, const Ref<PackedScene> scene);
+	void clear_spawned_props();
+
 	void create_debug_immediate_geometry();
 	void free_debug_immediate_geometry();
+
+	void free();
 
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
@@ -115,6 +130,12 @@ public:
 
 	VoxelChunk();
 	~VoxelChunk();
+
+protected:
+	struct VCPropData {
+		Transform transform;
+		Ref<MeshDataResource> mesh_data;
+	};
 
 protected:
 	static void _bind_methods();
@@ -135,6 +156,7 @@ protected:
 	NodePath _library_path;
 	Ref<VoxelmanLibrary> _library;
 
+	//voxel mesh
 	RID _mesh_rid;
 	RID _mesh_instance_rid;
 
@@ -143,6 +165,19 @@ protected:
 
 	Ref<VoxelMesher> _mesher;
 
+	//mergeable props
+	Vector<VCPropData> _props;
+
+	RID _prop_mesh_rid;
+	RID _prop_mesh_instance_rid;
+
+	RID _prop_shape_rid;
+	RID _prop_body_rid;
+
+	//spawned props
+	Vector<Node *> _spawned_props;
+
+	//debug
 	ImmediateGeometry *_debug_drawer;
 
 	bool _build_mesh;

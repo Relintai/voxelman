@@ -33,9 +33,9 @@ void VoxelMesherCubic::_add_buffer(Ref<VoxelBuffer> buffer) {
 	float tile_uv_size = 1 / 4.0;
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
-	for (int y = lod_size; y < y_size - lod_size; y += lod_size) {
-		for (int z = lod_size; z < z_size - lod_size; z += lod_size) {
-			for (int x = lod_size; x < x_size - lod_size; x += lod_size) {
+	for (int y = 1; y < y_size - 1; y += lod_size) {
+		for (int z = 1; z < z_size - 1; z += lod_size) {
+			for (int x = 1; x < x_size - 1; x += lod_size) {
 
 				cube_points->setup(buffer, x, y, z, lod_size);
 
@@ -78,17 +78,73 @@ void VoxelMesherCubic::_add_buffer(Ref<VoxelBuffer> buffer) {
 						light *= NdotL;
 
 						light -= cube_points->get_face_point_ao_color(face, i) * _ao_strength;
-						add_color(light);
 
 						light.r = CLAMP(light.r, 0, 1.0);
 						light.g = CLAMP(light.g, 0, 1.0);
 						light.b = CLAMP(light.b, 0, 1.0);
+
+						add_color(light);
 
 						add_uv((cube_points->get_point_uv_direction(face, i) + Vector2(0.5, 0.5)) * Vector2(tile_uv_size, tile_uv_size));
 
 						add_vertex((vertices[i] * voxel_size + Vector3(x, y, z)) * voxel_scale);
 					}
 				}
+			}
+		}
+	}
+}
+
+void VoxelMesherCubic::_bake_colors(Ref<VoxelBuffer> buffer) {
+	Color base_light(_base_light_value, _base_light_value, _base_light_value);
+
+	ERR_FAIL_COND(_vertices.size() != _normals.size());
+
+	/*
+	if (_vertices.size() != _normals.size()) {
+		print_error("VoxelMesherCubic: Generating normals!");
+	}*/
+	
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vector3 vert = _vertices[i];
+
+		if (vert.x < 0 || vert.y < 0 || vert.z < 0) {
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(base_light);
+			}
+
+			continue;
+		}
+
+		unsigned int x = (unsigned int)(vert.x / _voxel_scale);
+		unsigned int y = (unsigned int)(vert.y / _voxel_scale);
+		unsigned int z = (unsigned int)(vert.z / _voxel_scale);
+
+		if (buffer->validate_pos(x, y, z)) {
+			int ao = buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_AO);
+			Color light = Color(buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+			Color ao_color(ao, ao, ao);
+
+			light += base_light;
+
+			float NdotL = CLAMP(_normals[i].dot(vert - Vector3(x, y, z)), 0, 1.0);
+
+			light *= NdotL;
+
+			light -= ao_color * _ao_strength;
+
+			light.r = CLAMP(light.r, 0, 1.0);
+			light.g = CLAMP(light.g, 0, 1.0);
+			light.b = CLAMP(light.b, 0, 1.0);
+
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(light);
+			} else {
+				_colors.set(i, light);
+			}
+		} else {
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(base_light);
 			}
 		}
 	}
@@ -104,6 +160,7 @@ VoxelMesherCubic::~VoxelMesherCubic() {
 
 void VoxelMesherCubic::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_add_buffer", "buffer"), &VoxelMesherCubic::_add_buffer);
+	ClassDB::bind_method(D_METHOD("_bake_colors", "buffer"), &VoxelMesherCubic::_bake_colors);
 
 	ClassDB::bind_method(D_METHOD("get_ao_strength"), &VoxelMesherCubic::get_ao_strength);
 	ClassDB::bind_method(D_METHOD("set_ao_strength", "value"), &VoxelMesherCubic::set_ao_strength);

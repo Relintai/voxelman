@@ -176,112 +176,112 @@ void VoxelCubePoints::refresh_neighbours(const Ref<VoxelBuffer> buffer) {
 	int z = _z;
 
 	//000
-	if (buffer->get_voxel(x - _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT;
 
-	if (buffer->get_voxel(x, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM;
 
-	if (buffer->get_voxel(x, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_FRONT;
 	/*
-	if (buffer->get_voxel(x - _size, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT_FRONT;
 
-	if (buffer->get_voxel(x - _size, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT;
 
-	if (buffer->get_voxel(x, y - _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_FRONT;
 
-	if (buffer->get_voxel(x - _size, y - _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT_FRONT;*/
 
 	_point_neighbours[P000] = neighbours;
 
 	neighbours = 0;
-	x = _x + _size;
+	x = _x + 1;
 	y = _y;
 	z = _z;
 
 	//100
-	if (buffer->get_voxel(x + _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT;
 
-	if (buffer->get_voxel(x, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM;
 
-	if (buffer->get_voxel(x, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_FRONT;
 	/*
-	if (buffer->get_voxel(x + _size, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT_FRONT;
 
-	if (buffer->get_voxel(x + _size, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_RIGHT;
 
-	if (buffer->get_voxel(x, y - _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_FRONT;
 
-	if (buffer->get_voxel(x + _size, y - _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y - 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_RIGHT_FRONT;*/
 
 	_point_neighbours[P100] = neighbours;
 
 	neighbours = 0;
 	x = _x;
-	y = _y + _size;
+	y = _y + 1;
 	z = _z;
 
 	//010
-	if (buffer->get_voxel(x - _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT;
 
-	if (buffer->get_voxel(x, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP;
 
-	if (buffer->get_voxel(x, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_FRONT;
 	/*
-	if (buffer->get_voxel(x - _size, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT_FRONT;
 
-	if (buffer->get_voxel(x - _size, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y + 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT;
 
-	if (buffer->get_voxel(x, y + _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_FRONT;
 
-	if (buffer->get_voxel(x - _size, y + _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y + 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT_FRONT;*/
 
 	_point_neighbours[P010] = neighbours;
 
 	neighbours = 0;
-	x = _x + _size;
-	y = _y + _size;
+	x = _x + 1;
+	y = _y + 1;
 	z = _z;
 
 	//110
-	if (buffer->get_voxel(x + _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT;
 
-	if (buffer->get_voxel(x, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP;
 
-	if (buffer->get_voxel(x, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_FRONT;
 	/*
-	if (buffer->get_voxel(x + _size, y, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT_FRONT;
 
-	if (buffer->get_voxel(x + _size, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y + 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_RIGHT;
 
-	if (buffer->get_voxel(x, y + _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_FRONT;
 
-	if (buffer->get_voxel(x + _size, y + _size, z - _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y + 1, z - 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_RIGHT_FRONT;*/
 
 	_point_neighbours[P110] = neighbours;
@@ -289,117 +289,117 @@ void VoxelCubePoints::refresh_neighbours(const Ref<VoxelBuffer> buffer) {
 	neighbours = 0;
 	x = _x;
 	y = _y;
-	z = _z + _size;
+	z = _z + 1;
 
 	//001
-	if (buffer->get_voxel(x - _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT;
 
-	if (buffer->get_voxel(x, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM;
 
-	if (buffer->get_voxel(x, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BACK;
 	/*
-	if (buffer->get_voxel(x - _size, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT_BACK;
 
-	if (buffer->get_voxel(x - _size, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT;
 
-	if (buffer->get_voxel(x, y - _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - 1, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_BACK;
 
-	if (buffer->get_voxel(x - _size, y - _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y - 1, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_LEFT_BACK;*/
 
 	_point_neighbours[P001] = neighbours;
 
 
 	neighbours = 0;
-	x = _x + _size;
+	x = _x + 1;
 	y = _y;
-	z = _z + _size;
+	z = _z + 1;
 
 	//101
-	if (buffer->get_voxel(x + _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT;
 
-	if (buffer->get_voxel(x, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM;
 
-	if (buffer->get_voxel(x, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BACK;
 	/*
-	if (buffer->get_voxel(x + _size, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT_BACK;
 
-	if (buffer->get_voxel(x + _size, y - _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y - 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_RIGHT;
 
-	if (buffer->get_voxel(x, y - _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y - 1, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_BACK;
 
-	if (buffer->get_voxel(x + _size, y - _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y - 1, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BOTTOM_RIGHT_BACK;*/
 
 	_point_neighbours[P101] = neighbours;
 
 	neighbours = 0;
 	x = _x;
-	y = _y + _size;
-	z = _z + _size;
+	y = _y + 1;
+	z = _z + 1;
 
 	//011
-	if (buffer->get_voxel(x - _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT;
 
-	if (buffer->get_voxel(x, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP;
 
-	if (buffer->get_voxel(x, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BACK;
 	/*
-	if (buffer->get_voxel(x - _size, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_LEFT_BACK;
 
-	if (buffer->get_voxel(x - _size, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y + 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT;
 
-	if (buffer->get_voxel(x, y + _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + 1, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_BACK;
 
-	if (buffer->get_voxel(x - _size, y + _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x - 1, y + 1, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT_BACK;*/
 
 	_point_neighbours[P011] = neighbours;
 
 
 	neighbours = 0;
-	x = _x + _size;
-	y = _y + _size;
-	z = _z + _size;
+	x = _x + 1;
+	y = _y + 1;
+	z = _z + 1;
 
 	//111
-	if (buffer->get_voxel(x + _size, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT;
 
-	if (buffer->get_voxel(x, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP;
 
-	if (buffer->get_voxel(x, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_BACK;
 	/*
-	if (buffer->get_voxel(x + _size, y, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_RIGHT_BACK;
 
-	if (buffer->get_voxel(x + _size, y + _size, z, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y + 1, z, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_RIGHT;
 
-	if (buffer->get_voxel(x, y + _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x, y + 1, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_BACK;
 
-	if (buffer->get_voxel(x + _size, y + _size, z + _size, VoxelBuffer::CHANNEL_TYPE) != 0)
+	if (buffer->get_voxel(x + 1, y + 1, z + 1, VoxelBuffer::CHANNEL_TYPE) != 0)
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_RIGHT_BACK;*/
 
 	_point_neighbours[P111] = neighbours;

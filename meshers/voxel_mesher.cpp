@@ -40,6 +40,11 @@ void VoxelMesher::build_mesh(RID mesh) {
 	_surface_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
 	_surface_tool->set_material(_library->get_material());
 
+	if (_colors.size() != _vertices.size()) {
+		print_error("Colors.size() != vertices.size() -> " + String::num(_colors.size()) + " " + String::num(_vertices.size()));
+		_colors.clear();
+	}
+
 	int len = _vertices.size();
 
 	for (int i = 0; i < len; ++i) {
@@ -78,12 +83,136 @@ void VoxelMesher::reset() {
 	_uvs.clear();
 	_indices.clear();
 	_bones.clear();
+
+	_surface_tool->clear();
 }
 
 void VoxelMesher::add_buffer(Ref<VoxelBuffer> voxels) {
 	ERR_FAIL_COND(!has_method("_add_buffer"));
 	
 	call("_add_buffer", voxels);
+}
+
+void VoxelMesher::add_mesh_data_resource(Transform local_transform, Ref<MeshDataResource> mesh) {
+	ERR_FAIL_COND(mesh->get_array().size() == 0);
+
+	Array verts = mesh->get_array().get(Mesh::ARRAY_VERTEX);
+
+	for (int i = 0; i < verts.size(); ++i) {
+		Vector3 vert = verts[i];
+
+		vert = local_transform.xform(vert);
+		
+		add_vertex(vert);
+	}
+
+	if (mesh->get_array().size() <= Mesh::ARRAY_NORMAL)
+		return;
+
+	Array normals = mesh->get_array().get(Mesh::ARRAY_NORMAL);
+
+	for (int i = 0; i < normals.size(); ++i) {
+		Vector3 normal = normals[i];
+
+		normal = local_transform.basis.xform(normal);
+
+		add_normal(normal);
+	}
+
+	/*
+	if (mesh->get_array().size() <= Mesh::ARRAY_TANGENT)
+		return;
+
+	Array tangents = mesh->get_array().get(Mesh::ARRAY_TANGENT);
+
+	for (int i = 0; i < verts.size(); ++i) {
+
+		Plane p(tangents[i * 4 + 0], tangents[i * 4 + 1], tangents[i * 4 + 2], tangents[i * 4 + 3]);
+
+		Vector3 tangent = p.normal;
+		Vector3 binormal = p.normal.cross(tangent).normalized() * p.d;
+
+		tangent = local_transform.basis.xform(tangent);
+		binormal = local_transform.basis.xform(binormal);
+
+		add_t(normal);
+		add_binorm
+	}*/
+
+	if (mesh->get_array().size() <= Mesh::ARRAY_COLOR)
+		return;
+
+	Array colors = mesh->get_array().get(Mesh::ARRAY_COLOR);
+
+	for (int i = 0; i < colors.size(); ++i) {
+		Color color = colors[i];
+
+		add_color(color);
+	}
+
+	if (mesh->get_array().size() <= Mesh::ARRAY_TEX_UV)
+		return;
+
+	Array tex_uv = mesh->get_array().get(Mesh::ARRAY_TEX_UV);
+
+	for (int i = 0; i < tex_uv.size(); ++i) {
+		Vector2 uv = tex_uv[i];
+
+		add_uv(uv);
+	}
+
+	/*
+	if (mesh->get_array().size() <= Mesh::ARRAY_TEX_UV2)
+		return;
+
+	Array tex_uv2 = mesh->get_array().get(Mesh::ARRAY_TEX_UV2);
+
+	for (int i = 0; i < tex_uv.size(); ++i) {
+		Vector2 uv = tex_uv2[i];
+
+		add_uv2(uv);
+	}*/
+
+	/*
+	if (mesh->get_array().size() <= Mesh::ARRAY_BONES)
+		return;
+
+	Array bones = mesh->get_array().get(Mesh::ARRAY_BONES);
+
+	for (int i = 0; i < bones.size(); ++i) {
+		int bone = bones[i];
+
+		add_bone(bone);
+	}*/
+
+	/*
+	if (mesh->get_array().size() <= Mesh::ARRAY_WEIGHTS)
+		return;
+
+	Array weights = mesh->get_array().get(Mesh::ARRAY_WEIGHTS);
+
+	for (int i = 0; i < weights.size(); ++i) {
+		float weight = weights[i];
+
+		add_weight(weight);
+	}*/
+
+	if (mesh->get_array().size() <= Mesh::ARRAY_INDEX)
+		return;
+
+	Array indices = mesh->get_array().get(Mesh::ARRAY_INDEX);
+	int ic = get_vertex_count() - verts.size();
+
+	for (int i = 0; i < indices.size(); ++i) {
+		int index = indices[i];
+
+		add_indices(ic + index);
+	}
+}
+
+void VoxelMesher::bake_colors(Ref<VoxelBuffer> voxels) {
+	if (has_method("_bake_colors"))
+		call("_bake_colors", voxels);
 }
 
 float VoxelMesher::get_voxel_scale() const {
@@ -326,8 +455,11 @@ void VoxelMesher::remove_indices(int idx) {
 
 void VoxelMesher::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_add_buffer", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
+	BIND_VMETHOD(MethodInfo("_bake_colors", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
 
 	ClassDB::bind_method(D_METHOD("add_buffer", "buffer"), &VoxelMesher::add_buffer);
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "local_transform", "mesh"), &VoxelMesher::add_mesh_data_resource);
+	ClassDB::bind_method(D_METHOD("bake_colors", "buffer"), &VoxelMesher::bake_colors);
 
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelMesher::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelMesher::set_voxel_scale);

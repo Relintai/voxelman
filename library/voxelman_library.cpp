@@ -136,6 +136,10 @@ void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_material", "value"), &VoxelmanLibrary::set_material);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
 
+	ClassDB::bind_method(D_METHOD("get_prop_material"), &VoxelmanLibrary::get_prop_material);
+	ClassDB::bind_method(D_METHOD("set_prop_material", "value"), &VoxelmanLibrary::set_prop_material);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop_material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_prop_material", "get_prop_material");
+
 	ClassDB::bind_method(D_METHOD("get_voxel_types_count"), &VoxelmanLibrary::get_voxel_types_count);
 	ClassDB::bind_method(D_METHOD("set_voxel_types_count", "value"), &VoxelmanLibrary::set_voxel_types_count);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "voxel_types_count", PROPERTY_HINT_RANGE, "0," + itos(MAX_VOXEL_TYPES), PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED), "set_voxel_types_count", "get_voxel_types_count");

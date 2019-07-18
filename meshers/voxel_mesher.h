@@ -18,6 +18,7 @@
 #include "../library/voxelman_library.h"
 #include "../math/vector3i.h"
 #include "../world/voxel_buffer.h"
+#include "../../entity_spell_system/meshes/mesh_data_resource.h"
 
 const double PI_2 = 3.141592653589793238463 / 2;
 const double PI = 3.141592653589793238463;
@@ -35,6 +36,8 @@ public:
 	void reset();
 
 	void add_buffer(Ref<VoxelBuffer> voxels);
+	void add_mesh_data_resource(Transform local_transform, Ref<MeshDataResource> mesh);
+	void bake_colors(Ref<VoxelBuffer> voxels);
 
 	float get_voxel_scale() const;
 	void set_voxel_scale(const float voxel_scale);

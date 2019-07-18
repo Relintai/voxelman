@@ -30,6 +30,9 @@ public:
 	Ref<Material> get_material() const { return _material; }
 	void set_material(Ref<Material> mat) { _material = mat; }
 
+	Ref<Material> get_prop_material() const { return _prop_material; }
+	void set_prop_material(Ref<Material> mat) { _prop_material = mat; }
+
 	Ref<VoxelSurface> create_voxel(int id, String name);
 
 	int get_voxel_count() const;
@@ -66,6 +69,7 @@ private:
 	Ref<VoxelSurface> _voxel_types[MAX_VOXEL_TYPES];
 
 	Ref<Material> _material;
+	Ref<Material> _prop_material;
 
 	//atlas
 	int _atlas_columns;
