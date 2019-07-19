@@ -15,6 +15,9 @@
 #include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 #include "meshers/cubic_mesher/voxel_cube_points.h"
 
+#include "props/voxelman_prop_data.h"
+#include "props/voxelman_prop.h"
+
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherTransvoxel>();
@@ -33,6 +36,9 @@ void register_voxelman_types() {
 
     ClassDB::register_class<VoxelMesherCubic>();
     ClassDB::register_class<VoxelCubePoints>();
+
+    ClassDB::register_class<VoxelmanPropData>();
+	ClassDB::register_class<VoxelmanProp>();
 }	
 
 void unregister_voxelman_types() {
