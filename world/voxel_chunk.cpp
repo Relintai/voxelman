@@ -158,7 +158,7 @@ void VoxelChunk::build() {
 
 	_mesher->reset();
 
-	if (_props.size() > 0) {
+	if (_meshes.size() > 0) {
 		build_prop_mesh();
 
 		if (get_create_collider()) {
@@ -223,15 +223,6 @@ void VoxelChunk::remove_colliders() {
 		_body_rid = RID();
 		_shape_rid = RID();
 	}
-}
-
-void VoxelChunk::set_enabled(bool p_enabled) {
-
-	_enabled = p_enabled;
-}
-
-bool VoxelChunk::is_enabled() const {
-	return _enabled;
 }
 
 void VoxelChunk::add_lights(Array lights) {
@@ -323,18 +314,46 @@ void VoxelChunk::remove_meshes() {
 	}
 }
 
-void VoxelChunk::add_prop(const Transform local_transform, const Ref<MeshDataResource> mesh) {
+void VoxelChunk::add_prop_mesh(const Ref<MeshDataResource> mesh, const Vector3 position, const Vector3 rotation, const Vector3 scale) {
 	VCPropData data;
 
-	data.transform = local_transform;
-	data.mesh_data = mesh;
+	data.position = position;
+    data.rotation = rotation;
+    data.scale = scale;
+    
+	data.mesh = mesh;
 
-	_props.push_back(data);
+	_meshes.push_back(data);
 }
+
+void VoxelChunk::add_prop_spawned(const Ref<PackedScene> scene, const Vector3 position, const Vector3 rotation, const Vector3 scale) {
+	VCPropData data;
+
+	data.position = position;
+    data.rotation = rotation;
+    data.scale = scale;
+    
+	data.scene = scene;
+
+	_meshes.push_back(data);
+}
+
+void VoxelChunk::add_prop(const Ref<VoxelmanProp> prop, const Vector3 position, const Vector3 rotation, const Vector3 scale) {
+	VCPropData data;
+
+	data.position = position;
+    data.rotation = rotation;
+    data.scale = scale;
+    
+	data.mesh = prop;
+
+	_meshes.push_back(prop);
+}
+
 void VoxelChunk::clear_props() {
-	_props.clear();
+	_meshes.clear();
 }
-void VoxelChunk::create_prop_mesh() {
+void VoxelChunk::allocate_prop_mesh() {
 	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(!get_library().is_valid());
 	ERR_FAIL_COND(!get_library()->get_prop_material().is_valid());
@@ -354,7 +373,7 @@ void VoxelChunk::create_prop_mesh() {
 
 	VS::get_singleton()->instance_set_transform(_prop_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
 }
-void VoxelChunk::remove_prop_mesh() {
+void VoxelChunk::free_prop_mesh() {
 	if (_prop_mesh_instance_rid != RID()) {
 		VS::get_singleton()->free(_prop_mesh_instance_rid);
 		VS::get_singleton()->free(_prop_mesh_rid);
@@ -368,8 +387,8 @@ void VoxelChunk::build_prop_mesh() {
 		create_prop_mesh();
 	}
 
-	for (int i = 0; i < _props.size(); ++i) {
-		_mesher->add_mesh_data_resource(_props[i].transform, _props[i].mesh_data);
+	for (int i = 0; i < _meshes.size(); ++i) {
+		_mesher->add_mesh_data_resource(_meshes[i].transform, _meshes[i].mesh_data);
 	}
 
 	_mesher->bake_colors(_buffer);
@@ -421,7 +440,7 @@ void VoxelChunk::add_spawned_prop(const Ref<PackedScene> scene) {
 	get_voxel_world()->add_child(n);
 	n->set_owner(get_voxel_world());
 
-	_spawned_props.push_back(n);
+	_spawned_meshes.push_back(n);
 }
 void VoxelChunk::add_spawned_prop_spatial(const Transform transform, const Ref<PackedScene> scene) {
 	ERR_FAIL_COND(!scene.is_valid());
@@ -434,7 +453,7 @@ void VoxelChunk::add_spawned_prop_spatial(const Transform transform, const Ref<P
 	get_voxel_world()->add_child(n);
 	n->set_owner(get_voxel_world());
 
-	_spawned_props.push_back(n);
+	_spawned_meshes.push_back(n);
 
 	Spatial *spatial = Object::cast_to<Spatial>(n);
 
@@ -442,12 +461,12 @@ void VoxelChunk::add_spawned_prop_spatial(const Transform transform, const Ref<P
 
 	spatial->set_transform(transform);
 }
-void VoxelChunk::clear_spawned_props() {
-	for (int i = 0; i < _spawned_props.size(); ++i) {
-		_spawned_props[i]->queue_delete();
+void VoxelChunk::clear_spawned_meshes() {
+	for (int i = 0; i < _spawned_meshes.size(); ++i) {
+		_spawned_meshes[i]->queue_delete();
 	}
 
-	_spawned_props.clear();
+	_spawned_meshes.clear();
 }
 
 void VoxelChunk::create_debug_immediate_geometry() {
@@ -476,7 +495,7 @@ void VoxelChunk::free() {
 	remove_colliders();
 	remove_prop_mesh();
 	remove_prop_colliders();
-	clear_spawned_props();
+	clear_spawned_meshes();
 }
 
 void VoxelChunk::draw_cross_voxels(Vector3 pos) {
@@ -681,14 +700,14 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
 
 	ClassDB::bind_method(D_METHOD("add_prop", "transform", "mesh"), &VoxelChunk::add_prop);
-	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
+	ClassDB::bind_method(D_METHOD("clear_meshes"), &VoxelChunk::clear_meshes);
 	ClassDB::bind_method(D_METHOD("create_prop_mesh"), &VoxelChunk::create_prop_mesh);
 	ClassDB::bind_method(D_METHOD("remove_prop_mesh"), &VoxelChunk::remove_prop_mesh);
 	ClassDB::bind_method(D_METHOD("build_prop_mesh"), &VoxelChunk::build_prop_mesh);
 
 	ClassDB::bind_method(D_METHOD("add_spawned_prop", "scene"), &VoxelChunk::add_spawned_prop);
 	ClassDB::bind_method(D_METHOD("add_spawned_prop_spatial", "transform", "scene"), &VoxelChunk::add_spawned_prop_spatial);
-	ClassDB::bind_method(D_METHOD("clear_spawned_props"), &VoxelChunk::clear_spawned_props);
+	ClassDB::bind_method(D_METHOD("clear_spawned_meshes"), &VoxelChunk::clear_spawned_meshes);
 
 	ClassDB::bind_method(D_METHOD("build"), &VoxelChunk::build);
 	ClassDB::bind_method(D_METHOD("finalize_mesh"), &VoxelChunk::finalize_mesh);

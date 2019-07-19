@@ -93,9 +93,11 @@ void VoxelMesher::add_buffer(Ref<VoxelBuffer> voxels) {
 	call("_add_buffer", voxels);
 }
 
-void VoxelMesher::add_mesh_data_resource(Transform local_transform, Ref<MeshDataResource> mesh) {
+void VoxelMesher::add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position, const Vector3 rotation, const Vector3 scale) {
 	ERR_FAIL_COND(mesh->get_array().size() == 0);
 
+    Transform local_transform = Transform(Basis(rotation).scaled(scale), position);
+    
 	Array verts = mesh->get_array().get(Mesh::ARRAY_VERTEX);
 
 	for (int i = 0; i < verts.size(); ++i) {
@@ -458,7 +460,7 @@ void VoxelMesher::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_bake_colors", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
 
 	ClassDB::bind_method(D_METHOD("add_buffer", "buffer"), &VoxelMesher::add_buffer);
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "local_transform", "mesh"), &VoxelMesher::add_mesh_data_resource);
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
 	ClassDB::bind_method(D_METHOD("bake_colors", "buffer"), &VoxelMesher::bake_colors);
 
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelMesher::get_voxel_scale);

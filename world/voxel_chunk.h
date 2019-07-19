@@ -26,6 +26,8 @@
 #include "voxel_buffer.h"
 
 #include "../../entity_spell_system/meshes/mesh_data_resource.h"
+#include "../props/voxelman_prop.h"
+#include "../props/voxelman_prop_data.h"
 
 class VoxelChunk : public Reference {
 	GDCLASS(VoxelChunk, Reference);
@@ -87,37 +89,40 @@ public:
 	void build_collider();
 	void remove_colliders();
 
-	void set_enabled(bool p_enabled);
-	bool is_enabled() const;
-
 	void add_lights(Array lights);
 	void add_voxel_light(Ref<VoxelLight> light);
 	void remove_voxel_light(Ref<VoxelLight> light);
 	void clear_voxel_lights();
 
-	void get_lights(Array lights);
+	void append_lights(Array lights);
+    Array get_lights();
 
-	void bake_lights();
+    void bake_lights();
 	void bake_light(Ref<VoxelLight> light);
 	void clear_baked_lights();
-
-	void create_meshes();
-	void remove_meshes();
-
-	void add_prop(const Transform transform, const Ref<MeshDataResource> mesh);
+    
+	void add_prop_mesh(const Ref<MeshDataResource> mesh, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
+    void add_prop_spawned(const Ref<PackedScene> scene, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
+    void add_prop(const Ref<VoxelmanProp> prop, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
 	void clear_props();
-	void create_prop_mesh();
-	void remove_prop_mesh();
-	void build_prop_mesh();
-
-	void create_prop_colliders();
+    
+    void build_props();
+    
+    void build_prop_mesh();
 	void build_prop_collider();
-	void remove_prop_colliders();
+	
+	void spawn_spawned_props();
+    void free_spawned_props();
 
-	void add_spawned_prop(const Ref<PackedScene> scene);
-	void add_spawned_prop_spatial(const Transform transform, const Ref<PackedScene> scene);
-	void clear_spawned_props();
-
+    void allocate_main_mesh();
+	void free_main_mesh();
+    
+	void allocate_prop_mesh();
+	void free_prop_mesh();
+    
+    void allocate_prop_colliders();
+	void free_prop_colliders();
+    
 	void create_debug_immediate_geometry();
 	void free_debug_immediate_geometry();
 
@@ -133,10 +138,15 @@ public:
 
 protected:
 	struct VCPropData {
-		Transform transform;
-		Ref<MeshDataResource> mesh_data;
+		Vector3 position;
+		Vector3 rotation;
+        Vector3 scale;
+        
+		Ref<MeshDataResource> mesh;
+        Ref<VoxelmanProp> prop;
+        Ref<PackedScene> scene;
 	};
-
+    
 protected:
 	static void _bind_methods();
 
