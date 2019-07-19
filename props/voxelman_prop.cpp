@@ -11,21 +11,19 @@ void VoxelmanProp::set_prop(const int index, const Ref<VoxelmanPropData> prop) {
 	_props.set(index, prop);
 }
 
-int VoxelmanProp::get_num_props(const int index) const {
-	return _num_props;
+int VoxelmanProp::get_prop_count() const {
+	return _props.size();
 }
-void VoxelmanProp::set_num_props(const int size) {
-	_num_props = size;
-
-	if (_num_props > MAX_PROPS) {
-		_num_props = MAX_PROPS;
+void VoxelmanProp::set_prop_count(const int size) {
+	if (size > MAX_PROPS) {
+		_props.resize(MAX_PROPS);
+		return;
 	}
 
 	_props.resize(size);
 }
 
 VoxelmanProp::VoxelmanProp() {
-	_num_props = 0;
 }
 VoxelmanProp::~VoxelmanProp() {
 	_props.clear();
@@ -36,16 +34,16 @@ void VoxelmanProp::_validate_property(PropertyInfo &property) const {
 	String prop = property.name;
 	if (prop.begins_with("Prop_")) {
 		int num = prop.get_slicec('/', 0).get_slicec('_', 1).to_int();
-		if (num >= _num_props) {
+		if (num >= _props.size()) {
 			property.usage = 0;
 		}
 	}
 }
 
 void VoxelmanProp::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_num_props"), &VoxelmanProp::get_num_props);
-	ClassDB::bind_method(D_METHOD("set_num_props", "value"), &VoxelmanProp::set_num_props);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "num_props", PROPERTY_HINT_RANGE, "0," + itos(MAX_PROPS), PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED), "set_num_props", "get_num_props");
+	ClassDB::bind_method(D_METHOD("get_prop_count"), &VoxelmanProp::get_prop_count);
+	ClassDB::bind_method(D_METHOD("set_prop_count", "value"), &VoxelmanProp::set_prop_count);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "prop_count", PROPERTY_HINT_RANGE, "0," + itos(MAX_PROPS), PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED), "set_prop_count", "get_prop_count");
 
 	ClassDB::bind_method(D_METHOD("get_prop", "index"), &VoxelmanProp::get_prop);
 	ClassDB::bind_method(D_METHOD("set_prop", "index", "spell"), &VoxelmanProp::set_prop);

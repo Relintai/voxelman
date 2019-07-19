@@ -82,8 +82,8 @@ public:
 
 	void finalize_mesh();
 
-	void clear();
 	void build();
+	void clear();
 
 	void create_colliders();
 	void build_collider();
@@ -91,10 +91,11 @@ public:
 
 	void add_lights(Array lights);
 	void add_voxel_light(Ref<VoxelLight> light);
+	void create_voxel_light(const Color color, const int size, const int x, const int y, const int z);
 	void remove_voxel_light(Ref<VoxelLight> light);
 	void clear_voxel_lights();
 
-	void append_lights(Array lights);
+	void add_lights_into(Array target);
     Array get_lights();
 
     void bake_lights();
@@ -106,13 +107,13 @@ public:
     void add_prop(const Ref<VoxelmanProp> prop, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
 	void clear_props();
     
-    void build_props();
+    void process_props();
+	void process_prop(Ref<VoxelmanProp> prop, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
+	void spawn_prop(const Ref<PackedScene> scene, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
     
-    void build_prop_mesh();
+	void build_prop_meshes();
 	void build_prop_collider();
-	
-	void spawn_spawned_props();
-    void free_spawned_props();
+    void free_spawn_props();
 
     void allocate_main_mesh();
 	void free_main_mesh();
@@ -128,10 +129,10 @@ public:
 
 	void free();
 
-	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
-	void draw_debug_voxel_lights();
 	void draw_cross_voxels(Vector3 pos);
-	void draw_cross_voxels(Vector3 pos, float fill);
+	void draw_cross_voxels_fill(Vector3 pos, float fill);
+	void draw_debug_voxels_colored(int max, Color color = Color(1, 1, 1));
+	void draw_debug_voxel_lights();
 
 	VoxelChunk();
 	~VoxelChunk();

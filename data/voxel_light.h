@@ -11,17 +11,17 @@ class VoxelLight : public Reference {
 	GDCLASS(VoxelLight, Reference);
 
 public:
-    int get_world_position_x();
-    int get_world_position_y();
-    int get_world_position_z();
+	int get_world_position_x() const;
+	int get_world_position_y() const;
+	int get_world_position_z() const;
 	Vector3i get_world_position();
-	void set_world_position(int x, int y, int z);
+	void set_world_position(const int x, const int y, const int z);
 
-	Color get_color();
-	void set_color(Color color);
+	Color get_color() const;
+	void set_color(const Color color);
 
-	float get_size();
-	void set_size(float strength);
+	float get_size() const;
+	void set_size(const float strength);
 
 	VoxelLight();
 	~VoxelLight();

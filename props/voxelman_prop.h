@@ -13,8 +13,8 @@ public:
 	Ref<VoxelmanPropData> get_prop(const int index) const;
 	void set_prop(const int index, const Ref<VoxelmanPropData> prop);
 
-	int get_num_props(const int index) const;
-	void set_num_props(const int size);
+	int get_prop_count() const;
+	void set_prop_count(const int size);
 
 	VoxelmanProp();
 	~VoxelmanProp();
@@ -29,7 +29,6 @@ protected:
 
 private:
 	Vector<Ref<VoxelmanPropData> > _props;
-	int _num_props;
 };
 
 #endif
