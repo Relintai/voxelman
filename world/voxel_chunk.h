@@ -106,10 +106,12 @@ public:
     void add_prop_spawned(const Ref<PackedScene> scene, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
     void add_prop(const Ref<VoxelmanProp> prop, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
 	void clear_props();
-    
+
+	void process_prop_lights();
     void process_props();
-	void process_prop(Ref<VoxelmanProp> prop, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
-	void spawn_prop(const Ref<PackedScene> scene, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
+	void process_prop(Ref<VoxelmanProp> prop, const Transform transform = Transform());
+	void process_prop_light(Ref<VoxelmanProp> prop, const Transform transform = Transform());
+	void spawn_prop(const Ref<PackedScene> scene, const Transform transform = Transform());
     
 	void build_prop_meshes();
 	void build_prop_collider();

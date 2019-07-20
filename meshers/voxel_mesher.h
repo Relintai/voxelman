@@ -37,6 +37,7 @@ public:
 
 	void add_buffer(Ref<VoxelBuffer> voxels);
 	void add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position = Vector3(0, 0, 0), const Vector3 rotation = Vector3(0, 0, 0), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
+	void add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform);
 	void bake_colors(Ref<VoxelBuffer> voxels);
 
 	float get_voxel_scale() const;
