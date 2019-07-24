@@ -625,7 +625,7 @@ void VoxelChunk::draw_cross_voxels_fill(Vector3 pos, float fill) {
 	_debug_drawer->add_vertex(pos + Vector3(0.5 * fill, 0, 0));
 }
 
-void VoxelChunk::draw_debug_voxels_colored(int max, Color color) {
+void VoxelChunk::draw_debug_voxels(int max, Color color) {
 	if (_debug_drawer == NULL) {
 		create_debug_immediate_geometry();
 	}
@@ -846,7 +846,7 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels", "pos"), &VoxelChunk::draw_cross_voxels);
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels_fill", "pos", "fill"), &VoxelChunk::draw_cross_voxels_fill);
-	ClassDB::bind_method(D_METHOD("draw_debug_voxels_colored", "pos", "color"), &VoxelChunk::draw_debug_voxels_colored, DEFVAL(Color(1, 1, 1)));
+	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "pos", "color"), &VoxelChunk::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunk::draw_debug_voxel_lights);
 }

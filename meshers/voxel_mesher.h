@@ -30,8 +30,20 @@ class VoxelMesher : public Reference {
 	GDCLASS(VoxelMesher, Reference);
 
 public:
-	Ref<VoxelmanLibrary> get_library() { return _library; }
-	void set_library(Ref<VoxelmanLibrary> library) { _library = library; }
+	Ref<VoxelmanLibrary> get_library();
+	void set_library(Ref<VoxelmanLibrary> library);
+
+	float get_ao_strength() const;
+	void set_ao_strength(float value);
+
+	float get_base_light_value() const;
+	void set_base_light_value(float value);
+
+	float get_voxel_scale() const;
+	void set_voxel_scale(const float voxel_scale);
+
+	int get_lod_size() const;
+	void set_lod_size(const int lod_size);
 
 	void reset();
 
@@ -40,11 +52,7 @@ public:
 	void add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform);
 	void bake_colors(Ref<VoxelBuffer> voxels);
 
-	float get_voxel_scale() const;
-	void set_voxel_scale(const float voxel_scale);
-
-	int get_lod_size() const;
-	void set_lod_size(const int lod_size);
+	void _bake_colors(Ref<VoxelBuffer> buffer);
 
 	void build_collider(RID shape) const;
 
@@ -102,6 +110,9 @@ protected:
 	int _lod_size;
 
 	Ref<SurfaceTool> _surface_tool;
+
+	float _ao_strength;
+	float _base_light_value;
 };
 
 #endif

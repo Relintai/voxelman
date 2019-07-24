@@ -1,35 +1,38 @@
 #include "voxel_mesher.h"
 
-VoxelMesher::VoxelMesher(Ref<VoxelmanLibrary> library) {
+Ref<VoxelmanLibrary> VoxelMesher::get_library() {
+	return _library;
+}
+void VoxelMesher::set_library(Ref<VoxelmanLibrary> library) {
 	_library = library;
-
-	_voxel_scale = 1;
-	_lod_size = 1;
-
-	_surface_tool.instance();
 }
 
-VoxelMesher::VoxelMesher() {
-
-	_voxel_scale = 1;
-	_lod_size = 1;
-
-	_surface_tool.instance();
+float VoxelMesher::get_ao_strength() const {
+	return _ao_strength;
+}
+void VoxelMesher::set_ao_strength(float value) {
+	_ao_strength = value;
 }
 
-VoxelMesher::~VoxelMesher() {
-	_vertices.clear();
-	_normals.clear();
-	_colors.clear();
-	_uvs.clear();
-	_indices.clear();
-	_bones.clear();
+float VoxelMesher::get_base_light_value() const {
+	return _base_light_value;
+}
+void VoxelMesher::set_base_light_value(float value) {
+	_base_light_value = value;
+}
 
-	_surface_tool.unref();
+float VoxelMesher::get_voxel_scale() const {
+	return _voxel_scale;
+}
+void VoxelMesher::set_voxel_scale(const float voxel_scale) {
+	_voxel_scale = voxel_scale;
+}
 
-	if (_library.is_valid()) {
-		_library.unref();
-	}
+int VoxelMesher::get_lod_size() const {
+	return _lod_size;
+}
+void VoxelMesher::set_lod_size(const int lod_size) {
+	_lod_size = lod_size;
 }
 
 void VoxelMesher::build_mesh(RID mesh) {
@@ -221,18 +224,59 @@ void VoxelMesher::bake_colors(Ref<VoxelBuffer> voxels) {
 		call("_bake_colors", voxels);
 }
 
-float VoxelMesher::get_voxel_scale() const {
-	return _voxel_scale;
-}
-void VoxelMesher::set_voxel_scale(const float voxel_scale) {
-	_voxel_scale = voxel_scale;
-}
+void VoxelMesher::_bake_colors(Ref<VoxelBuffer> buffer) {
+	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
-int VoxelMesher::get_lod_size() const {
-	return _lod_size;
-}
-void VoxelMesher::set_lod_size(const int lod_size) {
-	_lod_size = lod_size;
+	ERR_FAIL_COND(_vertices.size() != _normals.size());
+
+	/*
+	if (_vertices.size() != _normals.size()) {
+		print_error("VoxelMesherCubic: Generating normals!");
+	}*/
+	
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vector3 vert = _vertices[i];
+
+		if (vert.x < 0 || vert.y < 0 || vert.z < 0) {
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(base_light);
+			}
+
+			continue;
+		}
+
+		unsigned int x = (unsigned int)(vert.x / _voxel_scale);
+		unsigned int y = (unsigned int)(vert.y / _voxel_scale);
+		unsigned int z = (unsigned int)(vert.z / _voxel_scale);
+
+		if (buffer->validate_pos(x, y, z)) {
+			int ao = buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_AO);
+			Color light = Color(buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+			Color ao_color(ao, ao, ao);
+
+			light += base_light;
+
+			float NdotL = CLAMP(_normals[i].dot(vert - Vector3(x, y, z)), 0, 1.0);
+
+			light *= NdotL;
+
+			light -= ao_color * _ao_strength;
+
+			light.r = CLAMP(light.r, 0, 1.0);
+			light.g = CLAMP(light.g, 0, 1.0);
+			light.b = CLAMP(light.b, 0, 1.0);
+
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(light);
+			} else {
+				_colors.set(i, light);
+			}
+		} else {
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(base_light);
+			}
+		}
+	}
 }
 
 void VoxelMesher::build_collider(RID shape) const {
@@ -458,15 +502,47 @@ void VoxelMesher::remove_indices(int idx) {
 	_indices.remove(idx);
 }
 
+VoxelMesher::VoxelMesher(Ref<VoxelmanLibrary> library) {
+	_library = library;
+
+	_voxel_scale = 1;
+	_lod_size = 1;
+
+	_surface_tool.instance();
+}
+
+VoxelMesher::VoxelMesher() {
+
+	_voxel_scale = 1;
+	_lod_size = 1;
+	_ao_strength = 0.25;
+	_base_light_value = 0.5;
+
+	_surface_tool.instance();
+}
+
+VoxelMesher::~VoxelMesher() {
+	_vertices.clear();
+	_normals.clear();
+	_colors.clear();
+	_uvs.clear();
+	_indices.clear();
+	_bones.clear();
+
+	_surface_tool.unref();
+
+	if (_library.is_valid()) {
+		_library.unref();
+	}
+}
 
 void VoxelMesher::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_add_buffer", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
 	BIND_VMETHOD(MethodInfo("_bake_colors", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
 
-	ClassDB::bind_method(D_METHOD("add_buffer", "buffer"), &VoxelMesher::add_buffer);
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform", "transform"), &VoxelMesher::add_mesh_data_resource_transform);
-	ClassDB::bind_method(D_METHOD("bake_colors", "buffer"), &VoxelMesher::bake_colors);
+	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
+	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library"), "set_library", "get_library");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelMesher::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelMesher::set_voxel_scale);
@@ -476,9 +552,21 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_lod_size", "value"), &VoxelMesher::set_lod_size);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_size"), "set_lod_size", "get_lod_size");
 
-	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
-	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library"), "set_library", "get_library");
+	ClassDB::bind_method(D_METHOD("get_ao_strength"), &VoxelMesher::get_ao_strength);
+	ClassDB::bind_method(D_METHOD("set_ao_strength", "value"), &VoxelMesher::set_ao_strength);
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "ao_strength"), "set_ao_strength", "get_ao_strength");
+
+	ClassDB::bind_method(D_METHOD("get_base_light_value"), &VoxelMesher::get_base_light_value);
+	ClassDB::bind_method(D_METHOD("set_base_light_value", "value"), &VoxelMesher::set_base_light_value);
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "base_light_value"), "set_base_light_value", "get_base_light_value");
+
+
+	ClassDB::bind_method(D_METHOD("add_buffer", "buffer"), &VoxelMesher::add_buffer);
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform", "transform"), &VoxelMesher::add_mesh_data_resource_transform);
+	ClassDB::bind_method(D_METHOD("bake_colors", "buffer"), &VoxelMesher::bake_colors);
+
+	ClassDB::bind_method(D_METHOD("_bake_colors", "buffer"), &VoxelMesher::_bake_colors);
 
 	ClassDB::bind_method(D_METHOD("get_vertex_count"), &VoxelMesher::get_vertex_count);
 	ClassDB::bind_method(D_METHOD("get_vertex", "idx"), &VoxelMesher::get_vertex);

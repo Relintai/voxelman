@@ -133,7 +133,7 @@ public:
 
 	void draw_cross_voxels(Vector3 pos);
 	void draw_cross_voxels_fill(Vector3 pos, float fill);
-	void draw_debug_voxels_colored(int max, Color color = Color(1, 1, 1));
+	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
 
 	VoxelChunk();
