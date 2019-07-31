@@ -590,7 +590,7 @@ void VoxelChunk::free_debug_immediate_geometry() {
 	}
 }
 
-void VoxelChunk::free() {
+void VoxelChunk::free_chunk() {
 	free_debug_immediate_geometry();
 	free_main_mesh();
 	remove_colliders();
@@ -842,7 +842,7 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("create_debug_immediate_geometry"), &VoxelChunk::create_debug_immediate_geometry);
 	ClassDB::bind_method(D_METHOD("free_debug_immediate_geometry"), &VoxelChunk::free_debug_immediate_geometry);
 
-	ClassDB::bind_method(D_METHOD("free"), &VoxelChunk::free);
+	ClassDB::bind_method(D_METHOD("free_chunk"), &VoxelChunk::free_chunk);
 
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels", "pos"), &VoxelChunk::draw_cross_voxels);
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels_fill", "pos", "fill"), &VoxelChunk::draw_cross_voxels_fill);

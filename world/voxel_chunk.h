@@ -129,7 +129,7 @@ public:
 	void create_debug_immediate_geometry();
 	void free_debug_immediate_geometry();
 
-	void free();
+	void free_chunk();
 
 	void draw_cross_voxels(Vector3 pos);
 	void draw_cross_voxels_fill(Vector3 pos, float fill);
