@@ -96,6 +96,7 @@ public:
 	void clear_voxel_lights();
 
 	void add_lights_into(Array target);
+    void add_unique_lights_into(Array target);
     Array get_lights();
 
     void bake_lights();

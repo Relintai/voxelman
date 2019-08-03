@@ -271,6 +271,28 @@ void VoxelChunk::add_lights_into(Array target) {
 	}
 }
 
+void VoxelChunk::add_unique_lights_into(Array target) {
+	for (int i = 0; i < _voxel_lights.size(); ++i) {
+        Ref<VoxelLight> l = _voxel_lights.get(i);
+        
+        bool append = true;
+        for (int j = 0; j < target.size(); ++j) {
+            Ref<VoxelLight> l2 = target.get(j);
+            
+            if (!l2.is_valid())
+                continue;
+            
+            if (l2->get_world_position() == l->get_world_position() && l2->get_size() == l->get_size()) {
+                append = false;
+                break;
+            }
+        }
+        
+        if (append)
+            target.append(l);
+	}
+}
+
 Array VoxelChunk::get_lights() {
 	Array target;
 
@@ -807,6 +829,7 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_voxel_light", "light"), &VoxelChunk::remove_voxel_light);
 	ClassDB::bind_method(D_METHOD("clear_voxel_lights"), &VoxelChunk::clear_voxel_lights);
 	ClassDB::bind_method(D_METHOD("add_lights_into", "lights"), &VoxelChunk::add_lights_into);
+	ClassDB::bind_method(D_METHOD("add_unique_lights_into", "lights"), &VoxelChunk::add_unique_lights_into);
 	ClassDB::bind_method(D_METHOD("get_lights"), &VoxelChunk::get_lights);
 
 	ClassDB::bind_method(D_METHOD("bake_lights"), &VoxelChunk::bake_lights);
