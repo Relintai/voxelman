@@ -39,6 +39,7 @@ public:
 		CHANNEL_LIGHT_COLOR_G,
 		CHANNEL_LIGHT_COLOR_B,
         CHANNEL_AO,
+		CHANNEL_RANDOM_AO,
 		CHANNEL_DATA1,
 		CHANNEL_DATA2,
 		// Arbitrary value, 8 should be enough. Tweak for your needs.
