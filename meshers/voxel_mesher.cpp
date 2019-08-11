@@ -40,6 +40,11 @@ void VoxelMesher::build_mesh(RID mesh) {
 
 	VS::get_singleton()->mesh_clear(mesh);
 
+	if (_vertices.size() == 0) {
+		//Nothing to do
+		return;
+	}
+
 	_surface_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
 	_surface_tool->set_material(_library->get_material());
 

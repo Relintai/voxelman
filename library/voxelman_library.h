@@ -14,7 +14,6 @@ class VoxelmanLibrary : public Resource {
 	GDCLASS(VoxelmanLibrary, Resource)
 
 public:
-
 	VoxelmanLibrary();
 	~VoxelmanLibrary();
 
@@ -37,8 +36,6 @@ public:
 
 	int get_voxel_count() const;
 
-	void load_default();
-
 	Ref<VoxelSurface> get_voxel_surface(int index) const;
 	void set_voxel_surface(int index, Ref<VoxelSurface> value);
 
@@ -49,14 +46,11 @@ public:
 	void set_voxel_types_page(int value);
 
 	_FORCE_INLINE_ bool has_voxel(int id) const { return _voxel_types[id].is_valid(); }
-	_FORCE_INLINE_ const VoxelSurface &get_voxel_const(int id) const { return **_voxel_types[id]; }
-	_FORCE_INLINE_ Ref<VoxelSurface> get_surface(int id) { return Ref<VoxelSurface>(*_voxel_types[id]); }
+	_FORCE_INLINE_ Ref<VoxelSurface> get_surface(int id) const { return _voxel_types[id]; }
 
 protected:
 	static void _bind_methods();
 	void _validate_property(PropertyInfo &property) const;
-
-	Ref<VoxelSurface> _get_voxel_bind(int id);
 
 private:
 	enum {

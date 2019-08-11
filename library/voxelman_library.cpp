@@ -16,7 +16,6 @@ VoxelmanLibrary::VoxelmanLibrary() {
 			_voxel_types[i]->set_library(Ref<VoxelmanLibrary>(this));
 		}
 	}
-
 }
 
 VoxelmanLibrary::~VoxelmanLibrary() {
@@ -33,7 +32,7 @@ void VoxelmanLibrary::set_voxel_surface(int index, Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(value == NULL);
 
 	if (value != NULL) {
-	
+
 		value->set_library(Ref<VoxelmanLibrary>(this));
 
 		_voxel_types[index] = Ref<VoxelSurface>(value);
@@ -69,16 +68,13 @@ int VoxelmanLibrary::get_voxel_count() const {
 	return count;
 }
 
-void VoxelmanLibrary::load_default() {
-}
-
 void VoxelmanLibrary::set_atlas_columns(int s) {
-	ERR_FAIL_COND(s <= 0);
+	ERR_FAIL_COND(s < 0);
 	_atlas_columns = s;
 }
 
 void VoxelmanLibrary::set_atlas_rows(int s) {
-	ERR_FAIL_COND(s <= 0);
+	ERR_FAIL_COND(s < 0);
 	_atlas_rows = s;
 }
 
@@ -100,11 +96,6 @@ Ref<VoxelSurface> VoxelmanLibrary::create_voxel(int id, String name) {
 	return voxel;
 }
 
-Ref<VoxelSurface> VoxelmanLibrary::_get_voxel_bind(int id) {
-	ERR_FAIL_COND_V(id < 0 || id >= MAX_VOXEL_TYPES, Ref<VoxelSurface>());
-	return _voxel_types[id];
-}
-
 void VoxelmanLibrary::_validate_property(PropertyInfo &property) const {
 
 	String prop = property.name;
@@ -118,12 +109,12 @@ void VoxelmanLibrary::_validate_property(PropertyInfo &property) const {
 
 void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("create_voxel", "id", "name"), &VoxelmanLibrary::create_voxel);
-	ClassDB::bind_method(D_METHOD("get_voxel", "id"), &VoxelmanLibrary::_get_voxel_bind);
+	ClassDB::bind_method(D_METHOD("get_surface", "id"), &VoxelmanLibrary::get_surface);
 
 	ClassDB::bind_method(D_METHOD("get_atlas_columns"), &VoxelmanLibrary::get_atlas_columns);
 	ClassDB::bind_method(D_METHOD("set_atlas_columns", "value"), &VoxelmanLibrary::set_atlas_columns);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "atlas_columns"), "set_atlas_columns", "get_atlas_columns");
-	
+
 	ClassDB::bind_method(D_METHOD("get_atlas_rows"), &VoxelmanLibrary::get_atlas_rows);
 	ClassDB::bind_method(D_METHOD("set_atlas_rows", "value"), &VoxelmanLibrary::set_atlas_rows);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "atlas_rows"), "set_atlas_rows", "get_atlas_rows");

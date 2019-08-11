@@ -30,24 +30,22 @@ public:
 	*/
 
 	enum VoxelSurfaceSides {
-		VOXEL_SIDE_TOP = 1 << 0,
-		VOXEL_SIDE_BOTTOM = 1 << 1,
-		VOXEL_SIDE_LEFT = 1 << 2,
-		VOXEL_SIDE_FRONT = 1 << 3,
-		VOXEL_SIDE_RIGHT = 1 << 4,
-		VOXEL_SIDE_BACK = 1 << 5,
+		VOXEL_SIDE_TOP = 0,
+		VOXEL_SIDE_BOTTOM = 1,
+		VOXEL_SIDE_SIDE = 2,
 
-		VOXEL_SIDES_COUNT = 6,
+		VOXEL_SIDES_COUNT = 3,
+		VOXEL_SIDES_ARRAY_SIZE = VOXEL_SIDES_COUNT * 2,
 	};
 
 	int get_id() const;
 	void set_id(int value);
 
-	int get_atlas_x() const;
-	void set_atlas_x(int value);
+	int get_atlas_x(const int side) const;
+	void set_atlas_x(const int side, int value);
 
-	int get_atlas_y() const;
-	void set_atlas_y(int value);
+	int get_atlas_y(const int side) const;
+	void set_atlas_y(const int side, int value);
 
     bool is_transparent() const;
 	void set_transparent(bool transparent);
@@ -57,6 +55,8 @@ public:
 	
     Ref<VoxelmanLibrary> get_library() const;
 	void set_library(Ref<VoxelmanLibrary> library);
+
+	Vector2 transform_uv(const int side, const Vector2 uv) const;
 	
 	VoxelSurface();
 	VoxelSurface(int id);
@@ -70,8 +70,7 @@ private:
 
 	int _id;
 	String _name;
-	int _atlas_x;
-	int _atlas_y;
+	int _atlas_positions[VOXEL_SIDES_ARRAY_SIZE];
 
 	bool _is_transparent;
 };
