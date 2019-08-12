@@ -29,6 +29,8 @@
 #include "../props/voxelman_prop.h"
 #include "../props/voxelman_prop_data.h"
 
+class VoxelWorld;
+
 class VoxelChunk : public Reference {
 	GDCLASS(VoxelChunk, Reference);
 

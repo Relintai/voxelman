@@ -1,5 +1,7 @@
 #include "voxel_chunk.h"
 
+#include "voxel_world.h"
+
 int VoxelChunk::get_chunk_position_x() {
 	return _chunk_position.x;
 }
