@@ -12,13 +12,21 @@ VoxelmanLibrary::VoxelmanLibrary() {
 
 	for (int i = 0; i < MAX_VOXEL_TYPES; ++i) {
 		if (_voxel_types[i] != NULL) {
-			print_error("set_this");
 			_voxel_types[i]->set_library(Ref<VoxelmanLibrary>(this));
 		}
 	}
 }
 
 VoxelmanLibrary::~VoxelmanLibrary() {
+	for (int i = 0; i < MAX_VOXEL_TYPES; ++i) {
+		if (_voxel_types[i].is_valid()) {
+			_voxel_types[i]->set_library(Ref<VoxelmanLibrary>(NULL));
+			_voxel_types[i].unref();
+		}
+	}
+
+	_material.unref();
+	_prop_material.unref();
 }
 
 Ref<VoxelSurface> VoxelmanLibrary::get_voxel_surface(int index) const {
@@ -29,10 +37,12 @@ Ref<VoxelSurface> VoxelmanLibrary::get_voxel_surface(int index) const {
 
 void VoxelmanLibrary::set_voxel_surface(int index, Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(index < 0 || index > _voxel_types_count);
-	ERR_FAIL_COND(value == NULL);
 
-	if (value != NULL) {
+	if (_voxel_types[index].is_valid()) {
+		_voxel_types[index]->set_library(Ref<VoxelmanLibrary>(NULL));
+	}
 
+	if (value.is_valid()) {
 		value->set_library(Ref<VoxelmanLibrary>(this));
 
 		_voxel_types[index] = Ref<VoxelSurface>(value);

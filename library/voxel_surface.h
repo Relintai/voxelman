@@ -66,7 +66,7 @@ protected:
 	static void _bind_methods();
 
 private:
-	Ref<VoxelmanLibrary> _library;
+	VoxelmanLibrary *_library;
 
 	int _id;
 	String _name;

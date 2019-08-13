@@ -56,7 +56,7 @@ Ref<VoxelmanLibrary> VoxelSurface::get_library() const {
 }
 
 void VoxelSurface::set_library(Ref<VoxelmanLibrary> library) {
-	_library = library;
+	_library = (*library);
 }
 
 Vector2 VoxelSurface::transform_uv(const int side, const Vector2 uv) const {
@@ -74,6 +74,8 @@ VoxelSurface::VoxelSurface() {
 	}
 
 	_is_transparent = false;
+
+	_library = NULL;
 }
 
 VoxelSurface::VoxelSurface(int id) {
@@ -84,10 +86,12 @@ VoxelSurface::VoxelSurface(int id) {
 	}
 
 	_is_transparent = false;
+
+	_library = NULL;
 }
 
 VoxelSurface::~VoxelSurface() {
-	_library.unref();
+	//_library = NULL;
 }
 
 void VoxelSurface::_bind_methods() {
