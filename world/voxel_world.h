@@ -6,6 +6,7 @@
 
 #include "../math/vector3i.h"
 #include "../library/voxelman_library.h"
+#include "../level_generator/voxelman_level_generator.h"
 #include "voxel_buffer.h"
 
 class VoxelChunk;
@@ -25,6 +26,9 @@ public:
     
     Ref<VoxelmanLibrary> get_library() const;
     void set_library(const Ref<VoxelmanLibrary> library);
+    
+    Ref<VoxelmanLevelGenerator> get_level_generator() const;
+    void set_level_generator(const Ref<VoxelmanLevelGenerator> level_generator);
 
 	float get_voxel_scale() const;
 	void set_voxel_scale(const float value);
@@ -57,6 +61,7 @@ protected:
 private:
     Vector3i _chunk_size;
     Ref<VoxelmanLibrary> _library;
+    Ref<VoxelmanLevelGenerator> _level_generator;
 	float _voxel_scale;
 	int _chunk_spawn_range;
     

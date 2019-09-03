@@ -30,6 +30,13 @@ void VoxelWorld::set_library(const Ref<VoxelmanLibrary> library) {
 	_library = library;
 }
 
+Ref<VoxelmanLevelGenerator> VoxelWorld::get_level_generator() const {
+    return _level_generator;
+}
+void VoxelWorld::set_level_generator(const Ref<VoxelmanLevelGenerator> level_generator) {
+    _level_generator = level_generator;
+}
+
 float VoxelWorld::get_voxel_scale() const {
 	return _voxel_scale;
 }
@@ -141,7 +148,11 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelWorld::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "library"), &VoxelWorld::set_library);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary"), "set_library", "get_library");
-
+    
+    ClassDB::bind_method(D_METHOD("get_level_generator"), &VoxelWorld::get_level_generator);
+	ClassDB::bind_method(D_METHOD("set_level_generator", "level_generator"), &VoxelWorld::set_level_generator);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "level_generator", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLevelGenerator"), "set_level_generator", "get_level_generator");
+    
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelWorld::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelWorld::set_voxel_scale);
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "voxel_scale"), "set_voxel_scale", "get_voxel_scale");

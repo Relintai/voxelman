@@ -18,6 +18,8 @@
 #include "props/voxelman_prop_data.h"
 #include "props/voxelman_prop.h"
 
+#include "level_generator/voxelman_level_generator.h"
+
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherTransvoxel>();
@@ -39,6 +41,8 @@ void register_voxelman_types() {
 
     ClassDB::register_class<VoxelmanPropData>();
 	ClassDB::register_class<VoxelmanProp>();
+    
+    ClassDB::register_class<VoxelmanLevelGenerator>();
 }	
 
 void unregister_voxelman_types() {
