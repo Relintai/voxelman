@@ -4,49 +4,11 @@
 #include "core/reference.h"
 #include "voxel_mesher.h"
 
+#include "transvoxel_cell_data.h"
+
 #include "transvoxel_tables.h"
 
 using namespace Transvoxel;
-
-class TransvoxelRegularCellData : public Reference {
-	GDCLASS(TransvoxelRegularCellData, Reference)
-
-public:
-	int get_vertex_index(int index) const;
-	int get_vertex_count() const;
-	int get_triangle_count() const;
-
-	TransvoxelRegularCellData();
-	TransvoxelRegularCellData(RegularCellData cell_data);
-	~TransvoxelRegularCellData();
-
-protected:
-	static void _bind_methods();
-
-private:
-	RegularCellData _cell_data;
-};
-
-class TransvoxelTransitionCellData : public Reference {
-	GDCLASS(TransvoxelTransitionCellData, Reference)
-
-public:
-	int get_vertex_index(int index) const;
-	int get_vertex_count() const;
-	int get_triangle_count() const;
-
-	TransvoxelTransitionCellData();
-	TransvoxelTransitionCellData(TransitionCellData cell_data);
-	~TransvoxelTransitionCellData();
-
-protected:
-	static void _bind_methods();
-
-private:
-	TransitionCellData _cell_data;
-};
-
-
 
 class VoxelMesherTransvoxel : public VoxelMesher {
 	GDCLASS(VoxelMesherTransvoxel, VoxelMesher)
@@ -85,8 +47,9 @@ public:
 
 	int get_regular_cell_class(int index) const;
 
-	Ref<TransvoxelRegularCellData> get_regular_cell_data(int index) const;
+	Ref<TransvoxelCellData> get_regular_cell_data(int index) const;
 	int get_regular_vertex_data(int index10, int index2) const;
+    void set_regular_vertex_data(int index1, int index2, int value);
 	int get_regular_vertex_data_first_vertex(int index1, int index2) const;
 	int get_regular_vertex_data_second_vertex(int index1, int index2) const;
 	Vector3 get_regular_vertex_first_position(int index1, int index2) const;
@@ -95,7 +58,7 @@ public:
 
 	int get_transition_cell_class(int index) const;
 
-	Ref<TransvoxelTransitionCellData> get_transition_cell_data(int index) const;
+	Ref<TransvoxelCellData> get_transition_cell_data(int index) const;
 	int get_transition_corner_data(int index) const;
 	int get_transition_vertex_data(int index1, int index2) const;
 	int get_transition_vertex_data_first_vertex(int index1, int index2) const;
@@ -109,8 +72,8 @@ public:
 
 protected:
 	static void _bind_methods();
-	Ref<TransvoxelRegularCellData> _regular_cell_datas[16];
-	Ref<TransvoxelTransitionCellData> _transition_cell_data[56];
+	Ref<TransvoxelCellData> _regular_cell_datas[16];
+	Ref<TransvoxelCellData> _transition_cell_data[56];
 };
 
 VARIANT_ENUM_CAST(VoxelMesherTransvoxel::VoxelEntryIndices);

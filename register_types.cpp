@@ -5,6 +5,7 @@
 
 #include "data/voxel_light.h"
 #include "meshers/voxel_mesher.h"
+#include "meshers/transvoxel_cell_data.h"
 #include "meshers/voxel_mesher_transvoxel.h"
 #include "meshers/voxel_mesher_transvoxel_terrarin.h"
 
@@ -24,8 +25,7 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherTransvoxel>();
 	ClassDB::register_class<VoxelMesherTransvoxelTerrarin>();
-	ClassDB::register_class<TransvoxelRegularCellData>();
-	ClassDB::register_class<TransvoxelTransitionCellData>();
+	ClassDB::register_class<TransvoxelCellData>();
 
 	ClassDB::register_class<VoxelSurface>();
 	ClassDB::register_class<VoxelmanLibrary>();

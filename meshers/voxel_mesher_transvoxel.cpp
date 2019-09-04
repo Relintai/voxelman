@@ -1,81 +1,29 @@
 #include "voxel_mesher_transvoxel.h"
 
-int TransvoxelRegularCellData::get_vertex_index(int index) const {
-	return static_cast<int>(_cell_data.vertexIndex[index]);
-}
-
-int TransvoxelRegularCellData::get_vertex_count() const {
-	return _cell_data.GetVertexCount();
-}
-
-int TransvoxelRegularCellData::get_triangle_count() const {
-	return _cell_data.GetTriangleCount();
-}
-
-TransvoxelRegularCellData::TransvoxelRegularCellData() {
-}
-
-TransvoxelRegularCellData::TransvoxelRegularCellData(RegularCellData cell_data) {
-	_cell_data = cell_data;
-}
-
-TransvoxelRegularCellData::~TransvoxelRegularCellData() {
-}
-
-void TransvoxelRegularCellData::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_vertex_index", "index"), &TransvoxelRegularCellData::get_vertex_index);
-	ClassDB::bind_method(D_METHOD("get_vertex_count"), &TransvoxelRegularCellData::get_vertex_count);
-	ClassDB::bind_method(D_METHOD("get_triangle_count"), &TransvoxelRegularCellData::get_triangle_count);
-}
-
-
-int TransvoxelTransitionCellData::get_vertex_index(int index) const {
-	return static_cast<int>(_cell_data.vertexIndex[index]);
-}
-
-int TransvoxelTransitionCellData::get_vertex_count() const {
-	return _cell_data.GetVertexCount();
-}
-
-int TransvoxelTransitionCellData::get_triangle_count() const {
-	return _cell_data.GetTriangleCount();
-}
-
-TransvoxelTransitionCellData::TransvoxelTransitionCellData() {
-}
-
-TransvoxelTransitionCellData::TransvoxelTransitionCellData(TransitionCellData cell_data) {
-	_cell_data = cell_data;
-}
-
-TransvoxelTransitionCellData::~TransvoxelTransitionCellData() {
-}
-
-void TransvoxelTransitionCellData::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_vertex_index", "index"), &TransvoxelTransitionCellData::get_vertex_index);
-	ClassDB::bind_method(D_METHOD("get_vertex_count"), &TransvoxelTransitionCellData::get_vertex_count);
-	ClassDB::bind_method(D_METHOD("get_triangle_count"), &TransvoxelTransitionCellData::get_triangle_count);
-}
-
-
 Vector3 VoxelMesherTransvoxel::corner_id_to_vertex(int corner_id) const {
 	ERR_FAIL_COND_V(corner_id < 0 || corner_id > 8, Vector3());
 
 	return transvoxel_vertices[corner_id];
 }
 
-
 int VoxelMesherTransvoxel::get_regular_cell_class(int index) const {
 	return static_cast<int>(regularCellClass[index]);
 }
 
-Ref<TransvoxelRegularCellData> VoxelMesherTransvoxel::get_regular_cell_data(int index) const {
+Ref<TransvoxelCellData> VoxelMesherTransvoxel::get_regular_cell_data(int index) const {
 	return _regular_cell_datas[index];
 }
 
 int VoxelMesherTransvoxel::get_regular_vertex_data(int index1, int index2) const {
 	//return static_cast<int>(regularVertexData[index1][index2]);
 	return regularVertexData[index1][index2];
+}
+
+void VoxelMesherTransvoxel::set_regular_vertex_data(int index1, int index2, int value) {
+    ERR_FAIL_INDEX(index1, 256);
+    ERR_FAIL_INDEX(index2, 12);
+    
+    regularVertexData[index1][index2] = value;
 }
 
 int VoxelMesherTransvoxel::get_regular_vertex_data_first_vertex(int index1, int index2) const {
@@ -113,7 +61,7 @@ int VoxelMesherTransvoxel::get_transition_cell_class(int index) const {
 	return static_cast<int>(transitionCellClass[index]);
 }
 
-Ref<TransvoxelTransitionCellData> VoxelMesherTransvoxel::get_transition_cell_data(int index) const {
+Ref<TransvoxelCellData> VoxelMesherTransvoxel::get_transition_cell_data(int index) const {
 	return _transition_cell_data[index];
 }
 
@@ -163,11 +111,11 @@ Vector3 VoxelMesherTransvoxel::get_transition_vertex_direction(int index1, int i
 
 VoxelMesherTransvoxel::VoxelMesherTransvoxel() {
 	for (int i = 0; i < 16; ++i) {
-		_regular_cell_datas[i] = Ref<TransvoxelRegularCellData>(memnew(TransvoxelRegularCellData(regularCellData[i])));
+		_regular_cell_datas[i] = Ref<TransvoxelCellData>(memnew(TransvoxelCellData(regularCellData[i])));
 	}
 
 	for (int i = 0; i < 56; ++i) {
-		_transition_cell_data[i] = Ref<TransvoxelTransitionCellData>(memnew(TransvoxelTransitionCellData(transitionCellData[i])));
+		_transition_cell_data[i] = Ref<TransvoxelCellData>(memnew(TransvoxelCellData(transitionCellData[i])));
 	}
 
 }
@@ -182,6 +130,7 @@ void VoxelMesherTransvoxel::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_regular_cell_class", "index"), &VoxelMesherTransvoxel::get_regular_cell_class);
 	ClassDB::bind_method(D_METHOD("get_regular_cell_data", "index"), &VoxelMesherTransvoxel::get_regular_cell_data);
 	ClassDB::bind_method(D_METHOD("get_regular_vertex_data", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data);
+    ClassDB::bind_method(D_METHOD("set_regular_vertex_data", "index1", "index2", "value"), &VoxelMesherTransvoxel::set_regular_vertex_data);
 	ClassDB::bind_method(D_METHOD("get_regular_vertex_data_first_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data_first_vertex);
 	ClassDB::bind_method(D_METHOD("get_regular_vertex_data_second_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data_second_vertex);
 	ClassDB::bind_method(D_METHOD("get_regular_vertex_first_position", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_first_position);
