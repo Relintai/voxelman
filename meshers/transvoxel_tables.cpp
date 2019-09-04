@@ -76,7 +76,7 @@ const RegularCellData regularCellData[16] = {
 	{ 0xC4, { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 } },
 	{ 0xC4, { 0, 4, 5,  6, 7, 8,  9, 10, 11,  1, 2, 3 } }, //A { 0x64, { 0, 4, 5,  0, 1, 4,  1, 3, 4,  1, 2, 3 } },
 	{ 0xC4, { 0, 5, 4,  6, 8, 7,  9, 11, 10,  1, 3, 2 } }, //B { 0x64, { 0, 5, 4,  0, 4, 1,  1, 4, 3,  1, 3, 2 } }, 
-	{ 0xC4, { 6, 9, 5,  0, 10, 11, 0, 1, 3,  7, 2, 8, } }, //{ 0x64, { 0, 4, 5,  0, 3, 4, 0, 1, 3,   1, 2, 3, } }, //C  2   0,4 -> 6,9  | 1,3->7,8  copy 0-5, del 2, then copy 3-4 to the end
+	{ 0xC4, { 6, 9, 5,  4, 10, 11, 0, 1, 3,  7, 2, 8, } }, //C { 0x64, { 0, 4, 5,  0, 3, 4, 0, 1, 3,   1, 2, 3, } }, //C  2   0,4 -> 6,9  | 1,3->7,8  copy 0-5, del 2, then copy 3-4 to the end then 0
 	{ 0x64, { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 } },
 	{ 0x75, { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6 } },
 	{ 0x95, { 0, 4, 5, 0, 3, 4, 0, 1, 3, 1, 2, 3, 6, 7, 8 } }
@@ -87,8 +87,8 @@ const RegularCellData regularCellData[16] = {
 // about whether a vertex can be reused from a neighboring cell. See Section 3.3 for details.
 // The low byte contains the indexes for the two endpoints of the edge on which the vertex lies,
 // as numbered in Figure 3.7. The high byte contains the vertex reuse data shown in Figure 3.8.
-//TODO add back const
-unsigned short regularVertexData[256][12] = {
+
+const unsigned short regularVertexData[256][12] = {
 	{},
 	{ 0x6201, 0x5102, 0x3304 },
 	{ 0x6201, 0x2315, 0x4113 },

@@ -19,12 +19,12 @@ int VoxelMesherTransvoxel::get_regular_vertex_data(int index1, int index2) const
 	return regularVertexData[index1][index2];
 }
 
-void VoxelMesherTransvoxel::set_regular_vertex_data(int index1, int index2, int value) {
-    ERR_FAIL_INDEX(index1, 256);
-    ERR_FAIL_INDEX(index2, 12);
+//void VoxelMesherTransvoxel::set_regular_vertex_data(int index1, int index2, int value) {
+ //   ERR_FAIL_INDEX(index1, 256);
+//    ERR_FAIL_INDEX(index2, 13);
     
-    regularVertexData[index1][index2] = value;
-}
+//    regularVertexData[index1][index2] = value;
+//}
 
 int VoxelMesherTransvoxel::get_regular_vertex_data_first_vertex(int index1, int index2) const {
 	int vert1 = regularVertexData[index1][index2] & 0x000F;
@@ -130,7 +130,7 @@ void VoxelMesherTransvoxel::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_regular_cell_class", "index"), &VoxelMesherTransvoxel::get_regular_cell_class);
 	ClassDB::bind_method(D_METHOD("get_regular_cell_data", "index"), &VoxelMesherTransvoxel::get_regular_cell_data);
 	ClassDB::bind_method(D_METHOD("get_regular_vertex_data", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data);
-    ClassDB::bind_method(D_METHOD("set_regular_vertex_data", "index1", "index2", "value"), &VoxelMesherTransvoxel::set_regular_vertex_data);
+  //  ClassDB::bind_method(D_METHOD("set_regular_vertex_data", "index1", "index2", "value"), &VoxelMesherTransvoxel::set_regular_vertex_data);
 	ClassDB::bind_method(D_METHOD("get_regular_vertex_data_first_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data_first_vertex);
 	ClassDB::bind_method(D_METHOD("get_regular_vertex_data_second_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data_second_vertex);
 	ClassDB::bind_method(D_METHOD("get_regular_vertex_first_position", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_first_position);

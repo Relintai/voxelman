@@ -49,7 +49,7 @@ public:
 
 	Ref<TransvoxelCellData> get_regular_cell_data(int index) const;
 	int get_regular_vertex_data(int index10, int index2) const;
-    void set_regular_vertex_data(int index1, int index2, int value);
+   // void set_regular_vertex_data(int index1, int index2, int value);
 	int get_regular_vertex_data_first_vertex(int index1, int index2) const;
 	int get_regular_vertex_data_second_vertex(int index1, int index2) const;
 	Vector3 get_regular_vertex_first_position(int index1, int index2) const;
