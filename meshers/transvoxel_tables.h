@@ -73,7 +73,7 @@ struct TransitionCellData {
 
 extern const unsigned char regularCellClass[256];
 extern const RegularCellData regularCellData[16];
-extern const unsigned short regularVertexData[256][12];
+extern const unsigned short regularVertexData[256][15];
 extern const unsigned char transitionCellClass[512];
 extern const TransitionCellData transitionCellData[56];
 extern const unsigned char transitionCornerData[13];
