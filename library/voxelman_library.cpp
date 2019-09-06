@@ -58,7 +58,10 @@ void VoxelmanLibrary::set_voxel_surfaces(const Vector<Variant> &effects) {
 	_voxel_surfaces.clear();
 	for (int i = 0; i < effects.size(); i++) {
 		Ref<VoxelSurface> surface = Ref<VoxelSurface>(effects[i]);
-		surface->set_library(this);
+
+		if (surface.is_valid())
+			surface->set_library(this);
+
 		_voxel_surfaces.push_back(surface);
 	}
 }
