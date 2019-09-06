@@ -123,5 +123,5 @@ void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_voxel_surfaces"), &VoxelmanLibrary::get_voxel_surfaces);
 	ClassDB::bind_method(D_METHOD("set_voxel_surfaces"), &VoxelmanLibrary::set_voxel_surfaces);
 
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", (PropertyHint)(PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE), "17/17:VoxelSurface", PROPERTY_USAGE_DEFAULT, "VoxelSurface"), "set_voxel_surfaces", "get_voxel_surfaces");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurface", PROPERTY_USAGE_DEFAULT, "VoxelSurface"), "set_voxel_surfaces", "get_voxel_surfaces");
 }
