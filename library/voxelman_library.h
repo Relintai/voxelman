@@ -32,35 +32,24 @@ public:
 	Ref<Material> get_prop_material() const { return _prop_material; }
 	void set_prop_material(Ref<Material> mat) { _prop_material = mat; }
 
-	Ref<VoxelSurface> create_voxel(int id, String name);
-
 	int get_voxel_count() const;
 
 	Ref<VoxelSurface> get_voxel_surface(int index) const;
 	void set_voxel_surface(int index, Ref<VoxelSurface> value);
 
+	Vector<Variant> get_voxel_surfaces();
+	void set_voxel_surfaces(const Vector<Variant> &effects);
+
 	int get_voxel_types_count();
-	void set_voxel_types_count(int value);
 
-	int get_voxel_types_page();
-	void set_voxel_types_page(int value);
-
-	_FORCE_INLINE_ bool has_voxel(int id) const { return _voxel_types[id].is_valid(); }
-	_FORCE_INLINE_ Ref<VoxelSurface> get_surface(int id) const { return _voxel_types[id]; }
+	_FORCE_INLINE_ bool has_voxel(int id) const { return _voxel_surfaces[id].is_valid(); }
+	_FORCE_INLINE_ Ref<VoxelSurface> get_surface(int id) const { return _voxel_surfaces[id]; }
 
 protected:
 	static void _bind_methods();
-	void _validate_property(PropertyInfo &property) const;
 
 private:
-	enum {
-		MAX_VOXEL_TYPES = 256,
-		ITEMS_PER_PAGE = 10,
-	};
-
-	int _voxel_types_count;
-	int _voxel_types_page;
-	Ref<VoxelSurface> _voxel_types[MAX_VOXEL_TYPES];
+	Vector<Ref<VoxelSurface> > _voxel_surfaces;
 
 	Ref<Material> _material;
 	Ref<Material> _prop_material;
