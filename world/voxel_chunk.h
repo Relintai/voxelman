@@ -27,7 +27,7 @@
 
 #include "../../entity_spell_system/meshes/mesh_data_resource.h"
 #include "../props/voxelman_prop.h"
-#include "../props/voxelman_prop_data.h"
+#include "../props/voxelman_prop_entry.h"
 
 class VoxelWorld;
 

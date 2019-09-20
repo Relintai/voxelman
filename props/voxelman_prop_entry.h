@@ -10,8 +10,8 @@
 
 class VoxelmanProp;
 
-class VoxelmanPropData : public Resource {
-	GDCLASS(VoxelmanPropData, Resource);
+class VoxelmanPropEntry : public Resource {
+	GDCLASS(VoxelmanPropEntry, Resource);
 	
 public:
 	Ref<MeshDataResource> get_mesh() const;
@@ -41,8 +41,8 @@ public:
 	Ref<VoxelmanProp> get_prop() const;
 	void set_prop(const Ref<VoxelmanProp> prop);
 
-	VoxelmanPropData();
-	~VoxelmanPropData();
+	VoxelmanPropEntry();
+	~VoxelmanPropEntry();
 
 protected:
 	static void _bind_methods();

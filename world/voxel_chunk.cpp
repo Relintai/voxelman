@@ -437,7 +437,7 @@ void VoxelChunk::process_prop_light(Ref<VoxelmanProp> prop, const Transform tran
 	ERR_FAIL_COND(!prop.is_valid());
 
 	for (int i = 0; i < prop->get_prop_count(); ++i) {
-		Ref<VoxelmanPropData> data = prop->get_prop(i);
+		Ref<VoxelmanPropEntry> data = prop->get_prop(i);
 
 		if (!data.is_valid())
 			continue;
@@ -462,7 +462,7 @@ void VoxelChunk::process_prop(Ref<VoxelmanProp> prop, const Transform transform)
 	ERR_FAIL_COND(!prop.is_valid());
 
 	for (int i = 0; i < prop->get_prop_count(); ++i) {
-		Ref<VoxelmanPropData> data = prop->get_prop(i);
+		Ref<VoxelmanPropEntry> data = prop->get_prop(i);
 
 		if (!data.is_valid())
 			continue;

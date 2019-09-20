@@ -16,7 +16,7 @@
 #include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 #include "meshers/cubic_mesher/voxel_cube_points.h"
 
-#include "props/voxelman_prop_data.h"
+#include "props/voxelman_prop_entry.h"
 #include "props/voxelman_prop.h"
 
 #include "level_generator/voxelman_level_generator.h"
@@ -39,7 +39,7 @@ void register_voxelman_types() {
     ClassDB::register_class<VoxelMesherCubic>();
     ClassDB::register_class<VoxelCubePoints>();
 
-    ClassDB::register_class<VoxelmanPropData>();
+    ClassDB::register_class<VoxelmanPropEntry>();
 	ClassDB::register_class<VoxelmanProp>();
     
     ClassDB::register_class<VoxelmanLevelGenerator>();
