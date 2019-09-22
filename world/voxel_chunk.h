@@ -28,6 +28,9 @@
 #include "../../entity_spell_system/meshes/mesh_data_resource.h"
 #include "../props/voxelman_prop.h"
 #include "../props/voxelman_prop_entry.h"
+#include "../props/voxelman_prop_scene.h"
+#include "../props/voxelman_prop_mesh.h"
+#include "../props/voxelman_prop_light.h"
 
 class VoxelWorld;
 
@@ -113,7 +116,7 @@ public:
 	void process_prop_lights();
     void process_props();
 	void process_prop(Ref<VoxelmanProp> prop, const Transform transform = Transform());
-	void process_prop_light(Ref<VoxelmanProp> prop, const Transform transform = Transform());
+	void process_prop_light(Ref<VoxelmanPropLight> prop, const Transform transform = Transform());
 	void spawn_prop(const Ref<PackedScene> scene, const Transform transform = Transform());
     
 	void build_prop_meshes();
@@ -144,9 +147,7 @@ public:
 
 protected:
 	struct VCPropData {
-		Vector3 position;
-		Vector3 rotation;
-        Vector3 scale;
+		Transform transform;
         
 		Ref<MeshDataResource> mesh;
         Ref<VoxelmanProp> prop;

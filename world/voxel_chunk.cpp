@@ -275,23 +275,23 @@ void VoxelChunk::add_lights_into(Array target) {
 
 void VoxelChunk::add_unique_lights_into(Array target) {
 	for (int i = 0; i < _voxel_lights.size(); ++i) {
-        Ref<VoxelLight> l = _voxel_lights.get(i);
-        
-        bool append = true;
-        for (int j = 0; j < target.size(); ++j) {
-            Ref<VoxelLight> l2 = target.get(j);
-            
-            if (!l2.is_valid())
-                continue;
-            
-            if (l2->get_world_position() == l->get_world_position() && l2->get_size() == l->get_size()) {
-                append = false;
-                break;
-            }
-        }
-        
-        if (append)
-            target.append(l);
+		Ref<VoxelLight> l = _voxel_lights.get(i);
+
+		bool append = true;
+		for (int j = 0; j < target.size(); ++j) {
+			Ref<VoxelLight> l2 = target.get(j);
+
+			if (!l2.is_valid())
+				continue;
+
+			if (l2->get_world_position() == l->get_world_position() && l2->get_size() == l->get_size()) {
+				append = false;
+				break;
+			}
+		}
+
+		if (append)
+			target.append(l);
 	}
 }
 
@@ -335,9 +335,7 @@ void VoxelChunk::clear_baked_lights() {
 void VoxelChunk::add_prop_mesh(const Ref<MeshDataResource> mesh, const Vector3 position, const Vector3 rotation, const Vector3 scale) {
 	VCPropData data;
 
-	data.position = position;
-	data.rotation = rotation;
-	data.scale = scale;
+	data.transform = Transform(Basis(rotation).scaled(scale), position);
 
 	data.mesh = mesh;
 
@@ -347,9 +345,7 @@ void VoxelChunk::add_prop_mesh(const Ref<MeshDataResource> mesh, const Vector3 p
 void VoxelChunk::add_prop_spawned(const Ref<PackedScene> scene, const Vector3 position, const Vector3 rotation, const Vector3 scale) {
 	VCPropData data;
 
-	data.position = position;
-	data.rotation = rotation;
-	data.scale = scale;
+	data.transform = Transform(Basis(rotation).scaled(scale), position);
 
 	data.scene = scene;
 
@@ -359,9 +355,7 @@ void VoxelChunk::add_prop_spawned(const Ref<PackedScene> scene, const Vector3 po
 void VoxelChunk::add_prop(const Ref<VoxelmanProp> prop, const Vector3 position, const Vector3 rotation, const Vector3 scale) {
 	VCPropData data;
 
-	data.position = position;
-	data.rotation = rotation;
-	data.scale = scale;
+	data.transform = Transform(Basis(rotation).scaled(scale), position);
 
 	data.mesh = prop;
 
@@ -413,19 +407,7 @@ void VoxelChunk::process_props() {
 	for (int i = 0; i < _props.size(); ++i) {
 		VCPropData prop = _props[i];
 
-		Transform transform(Basis(prop.rotation).scaled(prop.scale), prop.position);
-
-		if (prop.mesh.is_valid()) {
-			_mesher->add_mesh_data_resource_transform(prop.mesh, transform);
-		}
-
-		if (prop.prop.is_valid()) {
-			process_prop(prop.prop, transform);
-		}
-
-		if (prop.scene.is_valid()) {
-			spawn_prop(prop.scene, transform);
-		}
+		process_prop(prop.prop, prop.transform);
 	}
 
 	_mesher->bake_colors(_buffer);
@@ -433,29 +415,16 @@ void VoxelChunk::process_props() {
 	_mesher->build_mesh(_prop_mesh_rid);
 }
 
-void VoxelChunk::process_prop_light(Ref<VoxelmanProp> prop, const Transform transform) {
+void VoxelChunk::process_prop_light(Ref<VoxelmanPropLight> prop, const Transform transform) {
 	ERR_FAIL_COND(!prop.is_valid());
 
-	for (int i = 0; i < prop->get_prop_count(); ++i) {
-		Ref<VoxelmanPropEntry> data = prop->get_prop(i);
+	Transform pt = prop->get_transform();
 
-		if (!data.is_valid())
-			continue;
+	pt = transform * pt;
 
-		Transform pt(Basis(data->get_rotation()).scaled(data->get_scale()), data->get_position());
+	Vector3 lp = pt.xform_inv(Vector3());
 
-		pt = transform * pt;
-
-		if (data->get_has_light()) {
-			Vector3 lp = pt.xform_inv(Vector3());
-
-			create_voxel_light(data->get_light_color(), data->get_light_size(), (int)lp.x, (int)lp.y, (int)lp.z);
-		}
-
-		if (data->get_prop().is_valid()) {
-			process_prop_light(data->get_prop(), pt);
-		}
-	}
+	create_voxel_light(prop->get_light_color(), prop->get_light_size(), (int)lp.x, (int)lp.y, (int)lp.z);
 }
 
 void VoxelChunk::process_prop(Ref<VoxelmanProp> prop, const Transform transform) {
@@ -467,18 +436,21 @@ void VoxelChunk::process_prop(Ref<VoxelmanProp> prop, const Transform transform)
 		if (!data.is_valid())
 			continue;
 
-		Transform pt(Basis(data->get_rotation()).scaled(data->get_scale()), data->get_position());
+		Transform pt = data->get_transform();
 
-		if (data->get_mesh().is_valid()) {
-			_mesher->add_mesh_data_resource_transform(data->get_mesh(), pt);
+		Ref<VoxelmanPropMesh> mesh = data;
+		if (mesh.is_valid()) {
+			_mesher->add_mesh_data_resource_transform(mesh->get_mesh(), pt);
 		}
 
-		if (data->get_scene().is_valid()) {
-			spawn_prop(data->get_scene(), pt);
+		Ref<VoxelmanPropScene> scene = data;
+		if (scene.is_valid()) {
+			spawn_prop(scene->get_scene(), pt);
 		}
 
-		if (data->get_prop().is_valid()) {
-			process_prop(data->get_prop(), pt);
+		Ref<VoxelmanPropLight> light = data;
+		if (light.is_valid()) {
+			process_prop_light(data, transform);
 		}
 	}
 }
@@ -875,4 +847,3 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunk::draw_debug_voxel_lights);
 }
-
