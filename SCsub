@@ -18,6 +18,7 @@ env.add_source_files(env.modules_sources,"meshers/transvoxel_tables.cpp")
 env.add_source_files(env.modules_sources,"world/voxel_buffer.cpp")
 env.add_source_files(env.modules_sources,"world/voxel_world.cpp")
 env.add_source_files(env.modules_sources,"world/voxel_chunk.cpp")
+env.add_source_files(env.modules_sources,"world/voxel_structure.cpp")
 
 
 env.add_source_files(env.modules_sources,"meshers/cubic_mesher/voxel_mesher_cubic.cpp")

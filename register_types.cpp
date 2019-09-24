@@ -12,6 +12,7 @@
 #include "world/voxel_buffer.h"
 #include "world/voxel_world.h"
 #include "world/voxel_chunk.h"
+#include "world/voxel_structure.h"
 
 #include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 #include "meshers/cubic_mesher/voxel_cube_points.h"
@@ -38,6 +39,7 @@ void register_voxelman_types() {
     ClassDB::register_class<VoxelBuffer>();
     ClassDB::register_class<VoxelWorld>();
     ClassDB::register_class<VoxelChunk>();
+	ClassDB::register_class<VoxelStructure>();
 
     ClassDB::register_class<VoxelMesherCubic>();
     ClassDB::register_class<VoxelCubePoints>();
