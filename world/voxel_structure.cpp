@@ -21,7 +21,6 @@ void VoxelStructure::set_chunk_size_z(const int value) {
 	_chunk_size.z = value;
 }
 
-
 int VoxelStructure::get_world_position_x() const {
 	return _world_position.x;
 }
@@ -43,25 +42,39 @@ void VoxelStructure::set_world_position_z(const int value) {
 	_world_position.z = value;
 }
 
-Ref<VoxelBuffer> VoxelStructure::get_chunk_pos(int x, int y, int z) {
-	//get, or create if not exists
-	return Ref<VoxelBuffer>();
+Ref<VoxelBuffer> VoxelStructure::get_chunk_voxel_pos(int x, int y, int z) {
+
+	Ref<VoxelBuffer> b = get_chunk(x / _chunk_size.x, y / _chunk_size.y, z / _chunk_size.z);
+
+	if (!b.is_valid()) {
+		b.instance();
+
+		add_chunk(b, x / _chunk_size.x, y / _chunk_size.y, z / _chunk_size.z);
+	}
+
+	return b;
 }
 
-int VoxelStructure::get_voxel(int x, int y, int z, unsigned int channel_index) const {
-	//vb = get_chunk_pos
-	//err fail cond
-	//get, ret
+int VoxelStructure::get_voxel(int x, int y, int z, unsigned int channel_index) {
+	Ref<VoxelBuffer> b = get_chunk_voxel_pos(x, y, z);
 
-	return 0;
+	ERR_FAIL_COND_V(!b.is_valid(), 0);
+
+	return b->get_voxel(x, y, z, channel_index);
 }
 void VoxelStructure::set_voxel(int value, int x, int y, int z, unsigned int channel_index) {
-	//vb = get_chunk_pos
-	//err fail cond
-	//set
+	Ref<VoxelBuffer> b = get_chunk_voxel_pos(x, y, z);
+
+	ERR_FAIL_COND(!b.is_valid());
+
+	return b->set_voxel(value, x, y, z, channel_index);
 }
 void VoxelStructure::set_voxel_v(int value, Vector3 pos, unsigned int channel_index) {
+	Ref<VoxelBuffer> b = get_chunk_voxel_pos(pos.x, pos.y, pos.z);
 
+	ERR_FAIL_COND(!b.is_valid());
+
+	return b->set_voxel_v(value, pos, channel_index);
 }
 
 void VoxelStructure::add_chunk(Ref<VoxelBuffer> chunk, const int x, const int y, const int z) {
@@ -73,7 +86,7 @@ void VoxelStructure::add_chunk(Ref<VoxelBuffer> chunk, const int x, const int y,
 
 	_chunks_vector.push_back(c);
 }
-Ref<VoxelBuffer> VoxelStructure::get_chunk(const int x, const int y, const int z) const {
+Ref<VoxelBuffer> VoxelStructure::get_chunk(const int x, const int y, const int z) {
 	const Ref<VoxelBuffer> *chunk = _chunks.getptr(Vector3i(x, y, z));
 
 	return Ref<VoxelBuffer>(chunk);
@@ -113,7 +126,6 @@ void VoxelStructure::clear_chunks() {
 	_chunks.clear();
 }
 
-
 VoxelStructure::VoxelStructure() {
 	_chunk_size = Vector3i(16, 16, 16);
 	_world_position = Vector3i(0, 0, 0);
@@ -141,7 +153,6 @@ void VoxelStructure::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_chunk_size_z", "value"), &VoxelStructure::set_chunk_size_z);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_z"), "set_chunk_size_z", "get_chunk_size_z");
 
-
 	ClassDB::bind_method(D_METHOD("get_world_position_x"), &VoxelStructure::get_world_position_x);
 	ClassDB::bind_method(D_METHOD("set_world_position_x", "value"), &VoxelStructure::set_world_position_x);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "world_position_x"), "set_world_position_x", "get_world_position_x");
@@ -153,6 +164,8 @@ void VoxelStructure::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_world_position_z"), &VoxelStructure::get_world_position_z);
 	ClassDB::bind_method(D_METHOD("set_world_position_z", "value"), &VoxelStructure::set_world_position_z);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "world_position_z"), "set_world_position_z", "get_world_position_z");
+
+	ClassDB::bind_method(D_METHOD("get_chunk_voxel_pos", "x", "y", "z"), &VoxelStructure::get_chunk_voxel_pos);
 
 	ClassDB::bind_method(D_METHOD("get_voxel", "x", "y", "z", "channel_index"), &VoxelStructure::get_voxel, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "channel_index"), &VoxelStructure::set_voxel, DEFVAL(0));

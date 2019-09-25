@@ -30,14 +30,14 @@ public:
 	int get_world_position_z() const;
 	void set_world_position_z(const int value);
 
-	Ref<VoxelBuffer> get_chunk_pos(int x, int y, int z);
+	Ref<VoxelBuffer> get_chunk_voxel_pos(int x, int y, int z);
 
-	int get_voxel(int x, int y, int z, unsigned int channel_index = 0) const;
+	int get_voxel(int x, int y, int z, unsigned int channel_index = 0);
 	void set_voxel(int value, int x, int y, int z, unsigned int channel_index = 0);
 	void set_voxel_v(int value, Vector3 pos, unsigned int channel_index = 0);
 
 	void add_chunk(Ref<VoxelBuffer> chunk, const int x, const int y, const int z);
-	Ref<VoxelBuffer> get_chunk(const int x, const int y, const int z) const;
+	Ref<VoxelBuffer> get_chunk(const int x, const int y, const int z);
 	Ref<VoxelBuffer> remove_chunk(const int x, const int y, const int z);
 
 	Ref<VoxelBuffer> get_chunk_index(const int index);
