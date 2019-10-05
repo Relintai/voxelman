@@ -1,7 +1,7 @@
 #ifndef VOXEL_WORLD_H
 #define VOXEL_WORLD_H
 
-#include "scene/3d/spatial.h"
+#include "scene/3d/navigation.h"
 #include "core/hash_map.h"
 
 #include "../math/vector3i.h"
@@ -11,8 +11,8 @@
 
 class VoxelChunk;
 
-class VoxelWorld : public Spatial {
-	GDCLASS(VoxelWorld, Spatial);
+class VoxelWorld : public Navigation {
+	GDCLASS(VoxelWorld, Navigation);
 
 public:
     int get_chunk_size_x() const;
