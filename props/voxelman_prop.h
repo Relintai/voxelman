@@ -10,6 +10,12 @@ class VoxelmanProp : public Resource {
 	GDCLASS(VoxelmanProp, Resource);
 
 public:
+	bool get_snap_to_mesh();
+	void set_snap_to_mesh(bool value);
+
+	Vector3 get_snap_axis();
+	void set_snap_axis(Vector3 value);
+
 	Ref<VoxelmanPropEntry> get_prop(const int index) const;
 	void set_prop(const int index, const Ref<VoxelmanPropEntry> prop);
 	void add_prop(const Ref<VoxelmanPropEntry> prop);
@@ -27,6 +33,9 @@ protected:
 	static void _bind_methods();
 
 private:
+	bool _snap_to_mesh;
+	Vector3 _snap_axis;
+
 	Vector<Ref<VoxelmanPropEntry> > _props;
 };
 

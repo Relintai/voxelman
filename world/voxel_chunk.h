@@ -31,6 +31,7 @@
 #include "../props/voxelman_prop_scene.h"
 #include "../props/voxelman_prop_mesh.h"
 #include "../props/voxelman_prop_light.h"
+#include "voxel_chunk_prop_data.h"
 
 class VoxelWorld;
 
@@ -38,6 +39,7 @@ class VoxelChunk : public Reference {
 	GDCLASS(VoxelChunk, Reference);
 
 public:
+	//Properties
 	int get_chunk_position_x();
 	void set_chunk_position_x(int value);
 	int get_chunk_position_y();
@@ -67,6 +69,9 @@ public:
 	float get_voxel_scale() const;
 	void set_voxel_scale(float value);
 
+	int get_current_build_phase();
+	void set_current_build_phase(int value);
+
 	Ref<VoxelMesher> get_mesher() const;
 	void set_mesher(Ref<VoxelMesher> mesher);
 
@@ -82,18 +87,35 @@ public:
 
 	Ref<VoxelBuffer> get_buffer() const;
 
+	RID get_mesh_rid();
+	RID get_mesh_instance_rid();
+	RID get_shape_rid();
+	RID get_body_rid();
+
+	RID get_prop_mesh_rid();
+	RID get_prop_mesh_instance_rid();
+	RID get_prop_shape_rid();
+	RID get_prop_body_rid();
+
+	//Meshing
 	void create_mesher();
 	void _create_mesher();
 
 	void finalize_mesh();
 
 	void build();
+	void build_phase(int phase);
+	void _build_phase(int phase);
+	void next_phase();
+	
 	void clear();
 
+	//Colliders
 	void create_colliders();
 	void build_collider();
 	void remove_colliders();
 
+	//lights
 	void add_lights(Array lights);
 	void add_voxel_light(Ref<VoxelLight> light);
 	void create_voxel_light(const Color color, const int size, const int x, const int y, const int z);
@@ -107,22 +129,21 @@ public:
     void bake_lights();
 	void bake_light(Ref<VoxelLight> light);
 	void clear_baked_lights();
-    
-	void add_prop_mesh(const Ref<MeshDataResource> mesh, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
-    void add_prop_spawned(const Ref<PackedScene> scene, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
-    void add_prop(const Ref<VoxelmanProp> prop, const Vector3 position = Vector3(), const Vector3 rotation = Vector3(), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
+
+	//props
+	void add_prop(Ref<VoxelChunkPropData> prop);
+	Ref<VoxelChunkPropData> get_prop(int index);
+	int get_prop_count();
+	void remove_prop(int index);
 	void clear_props();
 
-	void process_prop_lights();
     void process_props();
-	void process_prop(Ref<VoxelmanProp> prop, const Transform transform = Transform());
-	void process_prop_light(Ref<VoxelmanPropLight> prop, const Transform transform = Transform());
-	void spawn_prop(const Ref<PackedScene> scene, const Transform transform = Transform());
     
 	void build_prop_meshes();
 	void build_prop_collider();
     void free_spawn_props();
 
+	//Meshes
     void allocate_main_mesh();
 	void free_main_mesh();
     
@@ -131,32 +152,36 @@ public:
     
     void allocate_prop_colliders();
 	void free_prop_colliders();
-    
+
+	//Debug
 	void create_debug_immediate_geometry();
 	void free_debug_immediate_geometry();
-
-	void free_chunk();
 
 	void draw_cross_voxels(Vector3 pos);
 	void draw_cross_voxels_fill(Vector3 pos, float fill);
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
 
+	//free
+	void free_chunk();
+
 	VoxelChunk();
 	~VoxelChunk();
 
-protected:
-	struct VCPropData {
-		Transform transform;
-        
-		Ref<MeshDataResource> mesh;
-        Ref<VoxelmanProp> prop;
-        Ref<PackedScene> scene;
+public:
+	enum {
+		BUILD_PHASE_DONE = 0,
+		BUILD_PHASE_SETUP = 1,
+		BUILD_PHASE_TERRARIN_MESH = 2,
+		BUILD_PHASE_TERRARIN_MESH_COLLIDER = 3,
+		BUILD_PHASE_PROP_MESH = 4,
+		BUILD_PHASE_PROP_COLLIDER = 5,
+		BUILD_PHASE_MAX = 6
 	};
-    
+
 protected:
 	static void _bind_methods();
-
+	int _current_build_phase;
 	bool _enabled;
 
 	VoxelWorld *_voxel_world;
@@ -183,7 +208,7 @@ protected:
 	Ref<VoxelMesher> _mesher;
 
 	//mergeable props
-	Vector<VCPropData> _props;
+	Vector<Ref<VoxelChunkPropData> > _props;
 
 	RID _prop_mesh_rid;
 	RID _prop_mesh_instance_rid;

@@ -1,5 +1,19 @@
 #include "voxelman_prop.h"
 
+bool VoxelmanProp::get_snap_to_mesh() {
+	return _snap_to_mesh;
+}
+void VoxelmanProp::set_snap_to_mesh(bool value) {
+	_snap_to_mesh = value;
+}
+
+Vector3 VoxelmanProp::get_snap_axis() {
+	return _snap_axis;
+}
+void VoxelmanProp::set_snap_axis(Vector3 value) {
+	_snap_axis = value;
+}
+
 Ref<VoxelmanPropEntry> VoxelmanProp::get_prop(const int index) const {
 	ERR_FAIL_INDEX_V(index, _props.size(), Ref<VoxelmanPropEntry>());
 
@@ -40,12 +54,22 @@ void VoxelmanProp::set_props(const Vector<Variant> &props) {
 }
 
 VoxelmanProp::VoxelmanProp() {
+	_snap_to_mesh = true;
+	_snap_axis = Vector3(0, 1, 0);
 }
 VoxelmanProp::~VoxelmanProp() {
 	_props.clear();
 }
 
 void VoxelmanProp::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_snap_to_mesh"), &VoxelmanProp::get_snap_to_mesh);
+	ClassDB::bind_method(D_METHOD("set_snap_to_mesh", "value"), &VoxelmanProp::set_snap_to_mesh);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_to_mesh"), "set_snap_to_mesh", "get_snap_to_mesh");
+
+	ClassDB::bind_method(D_METHOD("get_snap_axis"), &VoxelmanProp::get_snap_axis);
+	ClassDB::bind_method(D_METHOD("set_snap_axis", "value"), &VoxelmanProp::set_snap_axis);
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "snap_axis"), "set_snap_axis", "get_snap_axis");
+
 	ClassDB::bind_method(D_METHOD("get_prop", "index"), &VoxelmanProp::get_prop);
 	ClassDB::bind_method(D_METHOD("set_prop", "index", "spell"), &VoxelmanProp::set_prop);
 	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelmanProp::add_prop);

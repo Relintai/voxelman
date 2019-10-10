@@ -20,6 +20,7 @@ env.add_source_files(env.modules_sources,"world/voxel_world.cpp")
 env.add_source_files(env.modules_sources,"world/voxel_chunk.cpp")
 env.add_source_files(env.modules_sources,"world/voxel_structure.cpp")
 env.add_source_files(env.modules_sources,"world/environment_data.cpp")
+env.add_source_files(env.modules_sources,"world/voxel_chunk_prop_data.cpp")
 
 
 env.add_source_files(env.modules_sources,"meshers/cubic_mesher/voxel_mesher_cubic.cpp")
