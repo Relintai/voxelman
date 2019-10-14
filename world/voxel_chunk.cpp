@@ -429,6 +429,9 @@ void VoxelChunk::clear_baked_lights() {
 
 void VoxelChunk::add_prop(Ref<VoxelChunkPropData> prop) {
 	_props.push_back(prop);
+
+	if (has_method("_prop_added"))
+		call("_prop_added", prop);
 }
 Ref<VoxelChunkPropData> VoxelChunk::get_prop(int index) {
 	return _props.get(index);
@@ -730,6 +733,8 @@ void VoxelChunk::_bind_methods() {
 
 	BIND_VMETHOD(MethodInfo("_create_mesh"));
 	BIND_VMETHOD(MethodInfo("_create_mesher"));
+
+	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
 
 	ClassDB::bind_method(D_METHOD("_create_mesher"), &VoxelChunk::_create_mesher);
 
