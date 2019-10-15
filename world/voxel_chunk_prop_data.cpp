@@ -121,11 +121,11 @@ void VoxelChunkPropData::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "snap_axis"), "set_snap_axis", "get_snap_axis");
 
 	ClassDB::bind_method(D_METHOD("get_mesh"), &VoxelChunkPropData::get_mesh);
-	ClassDB::bind_method(D_METHOD("set_mesh", "value"), &VoxelChunkPropData::set_scene);
+	ClassDB::bind_method(D_METHOD("set_mesh", "value"), &VoxelChunkPropData::set_mesh);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesh", PROPERTY_HINT_RESOURCE_TYPE, "MeshDataResource"), "set_mesh", "get_mesh");
 
 	ClassDB::bind_method(D_METHOD("get_light"), &VoxelChunkPropData::get_light);
-	ClassDB::bind_method(D_METHOD("set_light", "value"), &VoxelChunkPropData::set_scene);
+	ClassDB::bind_method(D_METHOD("set_light", "value"), &VoxelChunkPropData::set_light);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanPropLight"), "set_light", "get_light");
 
 	ClassDB::bind_method(D_METHOD("get_prop"), &VoxelChunkPropData::get_prop);

@@ -328,15 +328,15 @@ void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Col
 	//float bf = (color.b / sizef);
 
 	for (int y = local_y - size; y <= local_y + size; ++y) {
-		if (y < 0 || y > size_y)
+		if (y < 0 || y >= size_y)
 			continue;
 
 		for (int z = local_z - size; z <= local_z + size; ++z) {
-			if (z < 0 || z > size_z)
+			if (z < 0 || z >= size_z)
 				continue;
 
 			for (int x = local_x - size; x <= local_x + size; ++x) {
-				if (x < 0 || x > size_x)
+				if (x < 0 || x >= size_x)
 					continue;
 
 				int lx = x - local_x;
