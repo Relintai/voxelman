@@ -24,6 +24,7 @@
 #include "props/voxelman_prop_scene.h"
 #include "props/voxelman_prop_mesh.h"
 #include "props/voxelman_prop_light.h"
+#include "props/voxelman_prop_prop.h"
 
 #include "level_generator/voxelman_level_generator.h"
 
@@ -53,6 +54,7 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelmanPropScene>();
 	ClassDB::register_class<VoxelmanPropMesh>();
 	ClassDB::register_class<VoxelmanPropLight>();
+	ClassDB::register_class<VoxelmanPropProp>();
     
     ClassDB::register_class<VoxelmanLevelGenerator>();
 }	
