@@ -7,6 +7,13 @@ void VoxelMesher::set_library(Ref<VoxelmanLibrary> library) {
 	_library = library;
 }
 
+Ref<Material> VoxelMesher::get_material() {
+	return _material;
+}
+void VoxelMesher::set_material(Ref<Material> material) {
+	_material = material;
+}
+
 float VoxelMesher::get_ao_strength() const {
 	return _ao_strength;
 }
@@ -35,6 +42,13 @@ void VoxelMesher::set_lod_size(const int lod_size) {
 	_lod_size = lod_size;
 }
 
+Rect2 VoxelMesher::get_uv_margin() const {
+	return _uv_margin;
+}
+void VoxelMesher::set_uv_margin(const Rect2 margin) {
+	_uv_margin = margin;
+}
+
 void VoxelMesher::build_mesh(RID mesh) {
 	ERR_FAIL_COND(mesh == RID());
 
@@ -46,7 +60,11 @@ void VoxelMesher::build_mesh(RID mesh) {
 	}
 
 	_surface_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
-	_surface_tool->set_material(_library->get_material());
+
+	if (_material.is_valid())
+		_surface_tool->set_material(_material);
+	else
+		_surface_tool->set_material(_library->get_material());
 
 	if (_colors.size() != _vertices.size()) {
 		print_error("Colors.size() != vertices.size() -> " + String::num(_colors.size()) + " " + String::num(_vertices.size()));
@@ -97,17 +115,17 @@ void VoxelMesher::reset() {
 
 void VoxelMesher::add_buffer(Ref<VoxelBuffer> voxels) {
 	ERR_FAIL_COND(!has_method("_add_buffer"));
-	
+
 	call("_add_buffer", voxels);
 }
 
-void VoxelMesher::add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position, const Vector3 rotation, const Vector3 scale) {
+void VoxelMesher::add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position, const Vector3 rotation, const Vector3 scale, const Rect2 uv_rect) {
 	Transform transform = Transform(Basis(rotation).scaled(scale), position);
 
-	add_mesh_data_resource_transform(mesh, transform);
+	add_mesh_data_resource_transform(mesh, transform, uv_rect);
 }
 
-void VoxelMesher::add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform) {
+void VoxelMesher::add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform, const Rect2 uv_rect) {
 	ERR_FAIL_COND(mesh->get_array().size() == 0);
 
 	Array verts = mesh->get_array().get(Mesh::ARRAY_VERTEX);
@@ -116,7 +134,7 @@ void VoxelMesher::add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, c
 		Vector3 vert = verts[i];
 
 		vert = transform.xform(vert);
-		
+
 		add_vertex(vert);
 	}
 
@@ -171,6 +189,12 @@ void VoxelMesher::add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, c
 
 	for (int i = 0; i < tex_uv.size(); ++i) {
 		Vector2 uv = tex_uv[i];
+
+		uv.x *= uv_rect.size.x;
+		uv.y *= uv_rect.size.y;
+
+		uv.x += uv_rect.position.x;
+		uv.y += uv_rect.position.y;
 
 		add_uv(uv);
 	}
@@ -238,7 +262,7 @@ void VoxelMesher::_bake_colors(Ref<VoxelBuffer> buffer) {
 	if (_vertices.size() != _normals.size()) {
 		print_error("VoxelMesherCubic: Generating normals!");
 	}*/
-	
+
 	for (int i = 0; i < _vertices.size(); ++i) {
 		Vector3 vert = _vertices[i];
 
@@ -486,7 +510,6 @@ void VoxelMesher::remove_uv(int idx) {
 	_uvs.remove(idx);
 }
 
-
 Vector<int> *VoxelMesher::get_indices() {
 	return &_indices;
 }
@@ -522,6 +545,7 @@ VoxelMesher::VoxelMesher() {
 	_lod_size = 1;
 	_ao_strength = 0.25;
 	_base_light_value = 0.5;
+	_uv_margin = Rect2(0, 0, 1, 1);
 
 	_surface_tool.instance();
 }
@@ -547,7 +571,11 @@ void VoxelMesher::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library"), "set_library", "get_library");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary"), "set_library", "get_library");
+
+	ClassDB::bind_method(D_METHOD("get_material"), &VoxelMesher::get_material);
+	ClassDB::bind_method(D_METHOD("set_material", "value"), &VoxelMesher::set_material);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelMesher::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelMesher::set_voxel_scale);
@@ -565,10 +593,13 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_base_light_value", "value"), &VoxelMesher::set_base_light_value);
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "base_light_value"), "set_base_light_value", "get_base_light_value");
 
+	ClassDB::bind_method(D_METHOD("get_uv_margin"), &VoxelMesher::get_uv_margin);
+	ClassDB::bind_method(D_METHOD("set_uv_margin", "value"), &VoxelMesher::set_uv_margin);
+	ADD_PROPERTY(PropertyInfo(Variant::RECT2, "uv_margin"), "set_uv_margin", "get_uv_margin");
 
 	ClassDB::bind_method(D_METHOD("add_buffer", "buffer"), &VoxelMesher::add_buffer);
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform", "transform"), &VoxelMesher::add_mesh_data_resource_transform);
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale", "uv_rect"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Rect2(0, 0, 1, 1)), DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform", "mesh", "transform", "uv_rect"), &VoxelMesher::add_mesh_data_resource_transform, DEFVAL(Rect2(0, 0, 1, 1)));
 	ClassDB::bind_method(D_METHOD("bake_colors", "buffer"), &VoxelMesher::bake_colors);
 
 	ClassDB::bind_method(D_METHOD("_bake_colors", "buffer"), &VoxelMesher::_bake_colors);

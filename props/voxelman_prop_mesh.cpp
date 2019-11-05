@@ -7,6 +7,13 @@ void VoxelmanPropMesh::set_mesh(const Ref<MeshDataResource> mesh) {
 	_mesh = mesh;
 }
 
+Ref<Texture> VoxelmanPropMesh::get_texture() const {
+	return _texture;
+}
+void VoxelmanPropMesh::set_texture(const Ref<Texture> texture) {
+	_texture = texture;
+}
+
 bool VoxelmanPropMesh::get_snap_to_mesh() {
 	return _snap_to_mesh;
 }
@@ -34,6 +41,10 @@ void VoxelmanPropMesh::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_mesh"), &VoxelmanPropMesh::get_mesh);
 	ClassDB::bind_method(D_METHOD("set_mesh", "value"), &VoxelmanPropMesh::set_mesh);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesh", PROPERTY_HINT_RESOURCE_TYPE, "MeshDataResource"), "set_mesh", "get_mesh");
+
+	ClassDB::bind_method(D_METHOD("get_texture"), &VoxelmanPropMesh::get_texture);
+	ClassDB::bind_method(D_METHOD("set_texture", "value"), &VoxelmanPropMesh::set_texture);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
 
 	ClassDB::bind_method(D_METHOD("get_snap_to_mesh"), &VoxelmanPropMesh::get_snap_to_mesh);
 	ClassDB::bind_method(D_METHOD("set_snap_to_mesh", "value"), &VoxelmanPropMesh::set_snap_to_mesh);

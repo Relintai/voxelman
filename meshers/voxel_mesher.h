@@ -5,6 +5,7 @@
 #include "core/color.h"
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
+#include "core/math/rect2.h"
 #include "core/vector.h"
 #include "scene/3d/mesh_instance.h"
 #include "scene/resources/material.h"
@@ -33,6 +34,9 @@ public:
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(Ref<VoxelmanLibrary> library);
 
+	Ref<Material> get_material();
+	void set_material(Ref<Material> material);
+
 	float get_ao_strength() const;
 	void set_ao_strength(float value);
 
@@ -45,11 +49,14 @@ public:
 	int get_lod_size() const;
 	void set_lod_size(const int lod_size);
 
+	Rect2 get_uv_margin() const;
+	void set_uv_margin(const Rect2 margin);
+
 	void reset();
 
 	void add_buffer(Ref<VoxelBuffer> voxels);
-	void add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position = Vector3(0, 0, 0), const Vector3 rotation = Vector3(0, 0, 0), const Vector3 scale = Vector3(1.0, 1.0, 1.0));
-	void add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform);
+	void add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position = Vector3(0, 0, 0), const Vector3 rotation = Vector3(0, 0, 0), const Vector3 scale = Vector3(1.0, 1.0, 1.0), const Rect2 uv_rect = Rect2(0, 0, 1, 1));
+	void add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform, const Rect2 uv_rect = Rect2(0, 0, 1, 1));
 	void bake_colors(Ref<VoxelBuffer> voxels);
 
 	void _bake_colors(Ref<VoxelBuffer> buffer);
@@ -105,6 +112,7 @@ protected:
 	Vector<int> _bones;
 
 	Ref<VoxelmanLibrary> _library;
+	Ref<Material> _material;
 
 	float _voxel_scale;
 	int _lod_size;
@@ -113,6 +121,7 @@ protected:
 
 	float _ao_strength;
 	float _base_light_value;
+	Rect2 _uv_margin;
 };
 
 #endif
