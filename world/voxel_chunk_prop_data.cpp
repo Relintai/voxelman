@@ -56,6 +56,13 @@ void VoxelChunkPropData::set_mesh(const Ref<MeshDataResource> value) {
 	_mesh = value;
 }
 
+Ref<Texture> VoxelChunkPropData::get_mesh_texture() const {
+	return _texture;
+}
+void VoxelChunkPropData::set_mesh_texture(const Ref<Texture> value) {
+	_texture = value;
+}
+
 Ref<VoxelmanPropLight> VoxelChunkPropData::get_light() const {
 	return _light;
 }
@@ -86,6 +93,7 @@ VoxelChunkPropData::VoxelChunkPropData() {
 }
 VoxelChunkPropData::~VoxelChunkPropData() {
 	_mesh.unref();
+	_texture.unref();
 	_light.unref();
 	_prop.unref();
 	_scene.unref();
@@ -123,6 +131,10 @@ void VoxelChunkPropData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_mesh"), &VoxelChunkPropData::get_mesh);
 	ClassDB::bind_method(D_METHOD("set_mesh", "value"), &VoxelChunkPropData::set_mesh);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesh", PROPERTY_HINT_RESOURCE_TYPE, "MeshDataResource"), "set_mesh", "get_mesh");
+
+	ClassDB::bind_method(D_METHOD("get_mesh_texture"), &VoxelChunkPropData::get_mesh_texture);
+	ClassDB::bind_method(D_METHOD("set_mesh_texture", "value"), &VoxelChunkPropData::set_mesh_texture);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesh_texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_mesh_texture", "get_mesh_texture");
 
 	ClassDB::bind_method(D_METHOD("get_light"), &VoxelChunkPropData::get_light);
 	ClassDB::bind_method(D_METHOD("set_light", "value"), &VoxelChunkPropData::set_light);

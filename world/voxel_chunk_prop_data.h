@@ -4,6 +4,7 @@
 #include "core/reference.h"
 #include "core/math/vector3.h"
 
+#include "scene/resources/texture.h"
 #include "scene/resources/packed_scene.h"
 #include "../props/voxelman_prop.h"
 #include "../props/voxelman_prop_light.h"
@@ -37,6 +38,9 @@ public:
 	Ref<MeshDataResource> get_mesh() const;
 	void set_mesh(const Ref<MeshDataResource> value);
 
+	Ref<Texture> get_mesh_texture() const;
+	void set_mesh_texture(const Ref<Texture> value);
+
 	Ref<VoxelmanPropLight> get_light() const;
 	void set_light(const Ref<VoxelmanPropLight> value);
 
@@ -63,6 +67,7 @@ private:
 	Vector3 _snap_axis;
 
 	Ref<MeshDataResource> _mesh;
+	Ref<Texture> _texture;
 	Ref<VoxelmanPropLight> _light;
 	Ref<VoxelmanProp> _prop;
 	Ref<PackedScene> _scene;
