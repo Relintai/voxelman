@@ -32,5 +32,6 @@ env.add_source_files(env.modules_sources,"props/voxelman_prop_scene.cpp")
 env.add_source_files(env.modules_sources,"props/voxelman_prop_mesh.cpp")
 env.add_source_files(env.modules_sources,"props/voxelman_prop_light.cpp")
 env.add_source_files(env.modules_sources,"props/voxelman_prop_prop.cpp")
+env.add_source_files(env.modules_sources,"props/voxelman_prop_entity.cpp")
 
 env.add_source_files(env.modules_sources,"level_generator/voxelman_level_generator.cpp")
