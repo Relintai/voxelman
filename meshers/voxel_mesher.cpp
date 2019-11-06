@@ -284,8 +284,8 @@ void VoxelMesher::_bake_colors(Ref<VoxelBuffer> buffer) {
 					buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0,
 					buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-			int ao = (buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_AO) / 255.0) * _ao_strength;
-			int rao = buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_RANDOM_AO) / 255.0;
+			float ao = (buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_AO) / 255.0) * _ao_strength;
+			float rao = buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_RANDOM_AO) / 255.0;
 			ao += rao;
 
 			light.r += _base_light_value;
