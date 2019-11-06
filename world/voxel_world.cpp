@@ -31,10 +31,10 @@ void VoxelWorld::set_library(const Ref<VoxelmanLibrary> library) {
 }
 
 Ref<VoxelmanLevelGenerator> VoxelWorld::get_level_generator() const {
-    return _level_generator;
+	return _level_generator;
 }
 void VoxelWorld::set_level_generator(const Ref<VoxelmanLevelGenerator> level_generator) {
-    _level_generator = level_generator;
+	_level_generator = level_generator;
 }
 
 float VoxelWorld::get_voxel_scale() const {
@@ -69,36 +69,43 @@ void VoxelWorld::set_player_bind(Node *player) {
 	set_player(Object::cast_to<Spatial>(player));
 }
 
-void VoxelWorld::add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z) {
+void VoxelWorld::add_chunk(VoxelChunk *chunk, const int x, const int y, const int z) {
 	chunk->set_chunk_position(x, y, z);
 
 	_chunks.set(Vector3i(x, y, z), chunk);
 	_chunks_vector.push_back(chunk);
 }
-Ref<VoxelChunk> VoxelWorld::get_chunk(const int x, const int y, const int z) const {
-	const Ref<VoxelChunk> *chunk = _chunks.getptr(Vector3i(x, y, z));
+void VoxelWorld::add_chunk_bind(Node *chunk, const int x, const int y, const int z) {
+	VoxelChunk *v = Object::cast_to<VoxelChunk>(chunk);
 
-	return Ref<VoxelChunk>(chunk);
+	ERR_FAIL_COND(!ObjectDB::instance_validate(v));
+
+	add_chunk(v, x, y, z);
 }
-Ref<VoxelChunk> VoxelWorld::remove_chunk(const int x, const int y, const int z) {
-	Ref<VoxelChunk> *chunk = _chunks.getptr(Vector3i(x, y, z));
+VoxelChunk *VoxelWorld::get_chunk(const int x, const int y, const int z) const {
+	if (_chunks.has(Vector3i(x, y, z)))
+		return _chunks.get(Vector3i(x, y, z));
 
-	Ref<VoxelChunk> c(chunk);
+	return NULL;
+}
+VoxelChunk *VoxelWorld::remove_chunk(const int x, const int y, const int z) {
+	ERR_FAIL_COND_V(!_chunks.has(Vector3i(x, y, z)), NULL);
 
-	if (c.is_valid()) {
-	
-		for (int i = 0; i < _chunks_vector.size(); ++i) {
-			if (_chunks_vector.get(i) == c) {
-				_chunks_vector.remove(i);
-				break;
-			}
+	VoxelChunk *chunk = _chunks.get(Vector3i(x, y, z));
+
+	for (int i = 0; i < _chunks_vector.size(); ++i) {
+		if (_chunks_vector.get(i) == chunk) {
+			_chunks_vector.remove(i);
+			break;
 		}
 	}
 
-	return c;
+	return chunk;
 }
 
-Ref<VoxelChunk> VoxelWorld::get_chunk_index(const int index) {
+VoxelChunk *VoxelWorld::get_chunk_index(const int index) {
+	ERR_FAIL_INDEX_V(index, _chunks_vector.size(), NULL);
+
 	return _chunks_vector.get(index);
 }
 int VoxelWorld::get_chunk_count() const {
@@ -107,7 +114,7 @@ int VoxelWorld::get_chunk_count() const {
 
 void VoxelWorld::clear_chunks() {
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
-		_chunks_vector.get(i)->free_chunk();
+		_chunks_vector.get(i)->queue_delete();
 	}
 
 	_chunks_vector.clear();
@@ -148,11 +155,11 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelWorld::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "library"), &VoxelWorld::set_library);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary"), "set_library", "get_library");
-    
-    ClassDB::bind_method(D_METHOD("get_level_generator"), &VoxelWorld::get_level_generator);
+
+	ClassDB::bind_method(D_METHOD("get_level_generator"), &VoxelWorld::get_level_generator);
 	ClassDB::bind_method(D_METHOD("set_level_generator", "level_generator"), &VoxelWorld::set_level_generator);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "level_generator", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLevelGenerator"), "set_level_generator", "get_level_generator");
-    
+
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelWorld::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelWorld::set_voxel_scale);
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "voxel_scale"), "set_voxel_scale", "get_voxel_scale");
@@ -169,7 +176,7 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_player", "player"), &VoxelWorld::set_player_bind);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "player", PROPERTY_HINT_RESOURCE_TYPE, "Spatial"), "set_player", "get_player");
 
-	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelWorld::add_chunk);
+	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelWorld::add_chunk_bind);
 	ClassDB::bind_method(D_METHOD("get_chunk", "x", "y", "z"), &VoxelWorld::get_chunk);
 	ClassDB::bind_method(D_METHOD("remove_chunk", "x", "y", "z"), &VoxelWorld::remove_chunk);
 

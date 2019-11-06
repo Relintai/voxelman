@@ -1,9 +1,9 @@
 #ifndef VOXEL_CHUNK_H
 #define VOXEL_CHUNK_H
 
+#include "scene/3d/spatial.h"
+
 #include "core/engine.h"
-#include "core/object.h"
-#include "core/reference.h"
 #include "core/ustring.h"
 #include "scene/3d/mesh_instance.h"
 #include "scene/resources/packed_scene.h"
@@ -35,8 +35,8 @@
 
 class VoxelWorld;
 
-class VoxelChunk : public Reference {
-	GDCLASS(VoxelChunk, Reference);
+class VoxelChunk : public Spatial {
+	GDCLASS(VoxelChunk, Spatial);
 
 public:
 	//Properties

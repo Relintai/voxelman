@@ -278,7 +278,7 @@ void VoxelChunk::next_phase() {
 	if (_current_build_phase >= BUILD_PHASE_MAX) {
 		_current_build_phase = BUILD_PHASE_DONE;
 
-		emit_signal("mesh_generation_finished", Ref<VoxelChunk>(this));
+		emit_signal("mesh_generation_finished", this);
 
 		return;
 	}

@@ -43,11 +43,12 @@ public:
 	void set_player(Spatial *player);
 	void set_player_bind(Node *player);
 
-	void add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z);
-	Ref<VoxelChunk> get_chunk(const int x, const int y, const int z) const;
-	Ref<VoxelChunk> remove_chunk(const int x, const int y, const int z);
+	void add_chunk(VoxelChunk *chunk, const int x, const int y, const int z);
+	void add_chunk_bind(Node *chunk, const int x, const int y, const int z);
+	VoxelChunk *get_chunk(const int x, const int y, const int z) const;
+	VoxelChunk *remove_chunk(const int x, const int y, const int z);
 
-	Ref<VoxelChunk> get_chunk_index(const int index);
+	VoxelChunk *get_chunk_index(const int index);
 	int get_chunk_count() const;
 
 	void clear_chunks();
@@ -65,8 +66,8 @@ private:
 	float _voxel_scale;
 	int _chunk_spawn_range;
     
-	HashMap<Vector3i, Ref<VoxelChunk>, Vector3iHasher> _chunks; 
-    Vector<Ref<VoxelChunk> > _chunks_vector;
+	HashMap<Vector3i, VoxelChunk *, Vector3iHasher> _chunks; 
+    Vector<VoxelChunk *> _chunks_vector;
 
 	NodePath _player_path;
 	Spatial *_player;
