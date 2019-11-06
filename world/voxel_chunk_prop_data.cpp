@@ -90,6 +90,7 @@ VoxelChunkPropData::VoxelChunkPropData() {
 	_z = 0;
 	_scale = Vector3(1, 1, 1);
 	_snap_to_mesh = false;
+	_snap_axis = Vector3(0, -1, 0);
 }
 VoxelChunkPropData::~VoxelChunkPropData() {
 	_mesh.unref();
