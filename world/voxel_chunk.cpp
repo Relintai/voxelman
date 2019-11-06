@@ -216,25 +216,32 @@ void VoxelChunk::_build_phase(int phase) {
 
 			return;
 		}
-		case BUILD_PHASE_TERRARIN_MESH: {
-
+		case BUILD_PHASE_TERRARIN_MESH_SETUP: {
 			if (has_method("_create_mesh")) {
 				call("_create_mesh");
 			} else {
 				_mesher->add_buffer(_buffer);
 			}
 
-			finalize_mesh();
+			//finalize_mesh();
 
 			next_phase();
 
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_COLLIDER: {
-
 			if (get_create_collider()) {
 				build_collider();
 			}
+
+			next_phase();
+
+			return;
+		}
+		case BUILD_PHASE_TERRARIN_MESH: {
+			_mesher->bake_colors(_buffer);
+
+			finalize_mesh();
 
 			next_phase();
 
@@ -578,14 +585,17 @@ void VoxelChunk::create_debug_immediate_geometry() {
 
 	_debug_drawer = memnew(ImmediateGeometry());
 
-	get_voxel_world()->add_child(_debug_drawer);
-	_debug_drawer->set_owner(get_voxel_world());
+	add_child(_debug_drawer);
 
-	_debug_drawer->set_transform(Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+	if (Engine::get_singleton()->is_editor_hint())
+		_debug_drawer->set_owner(get_tree()->get_edited_scene_root());
+
+	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
 }
 
 void VoxelChunk::free_debug_immediate_geometry() {
-	if (_debug_drawer != NULL) {
+	if (ObjectDB::instance_validate(_debug_drawer)) {
 		_debug_drawer->queue_delete();
 
 		_debug_drawer = NULL;
@@ -679,11 +689,13 @@ void VoxelChunk::draw_debug_voxel_lights() {
 		draw_cross_voxels_fill(Vector3(pos_x, pos_y, pos_z), 1.0);
 	}
 
+	if (has_method("_draw_debug_voxel_lights"))
+		call("_draw_debug_voxel_lights", _debug_drawer);
+
 	_debug_drawer->end();
 }
 
 void VoxelChunk::free_chunk() {
-	free_debug_immediate_geometry();
 	free_main_mesh();
 	remove_colliders();
 	free_prop_mesh();
@@ -871,6 +883,8 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("free_chunk"), &VoxelChunk::free_chunk);
 
+	BIND_VMETHOD(MethodInfo("_draw_debug_voxel_lights", PropertyInfo(Variant::OBJECT, "debug_drawer", PROPERTY_HINT_RESOURCE_TYPE, "ImmediateGeometry")));
+
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels", "pos"), &VoxelChunk::draw_cross_voxels);
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels_fill", "pos", "fill"), &VoxelChunk::draw_cross_voxels_fill);
 	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "pos", "color"), &VoxelChunk::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
@@ -879,9 +893,10 @@ void VoxelChunk::_bind_methods() {
 
 	BIND_CONSTANT(BUILD_PHASE_DONE);
 	BIND_CONSTANT(BUILD_PHASE_SETUP);
+	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH_SETUP);
+	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH_COLLIDER);
 	BIND_CONSTANT(BUILD_PHASE_LIGHTS);
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH);
-	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH_COLLIDER);
 	BIND_CONSTANT(BUILD_PHASE_PROP_MESH);
 	BIND_CONSTANT(BUILD_PHASE_PROP_COLLIDER);
 	BIND_CONSTANT(BUILD_PHASE_MAX);

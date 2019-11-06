@@ -279,17 +279,22 @@ void VoxelMesher::_bake_colors(Ref<VoxelBuffer> buffer) {
 		unsigned int z = (unsigned int)(vert.z / _voxel_scale);
 
 		if (buffer->validate_pos(x, y, z)) {
-			int ao = buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_AO);
-			Color light = Color(buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0, buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0, buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
-			Color ao_color(ao, ao, ao);
+			Color light = Color(
+					buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0,
+					buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0,
+					buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-			light += base_light;
+			int ao = (buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_AO) / 255.0) * _ao_strength;
+			int rao = buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_RANDOM_AO) / 255.0;
+			ao += rao;
 
-			float NdotL = CLAMP(_normals[i].dot(vert - Vector3(x, y, z)), 0, 1.0);
+			light.r += _base_light_value;
+			light.g += _base_light_value;
+			light.b += _base_light_value;
 
-			light *= NdotL;
-
-			light -= ao_color * _ao_strength;
+			light.r -= ao;
+			light.g -= ao;
+			light.b -= ao;
 
 			light.r = CLAMP(light.r, 0, 1.0);
 			light.g = CLAMP(light.g, 0, 1.0);
