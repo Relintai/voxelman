@@ -22,7 +22,7 @@ void VoxelmanPropProp::set_snap_axis(Vector3 value) {
 }
 
 VoxelmanPropProp::VoxelmanPropProp() {
-	_snap_to_mesh = true;
+	_snap_to_mesh = false;
 	_snap_axis = Vector3(0, 1, 0);
 }
 VoxelmanPropProp::~VoxelmanPropProp() {
