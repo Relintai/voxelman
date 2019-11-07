@@ -50,7 +50,7 @@ void register_voxelman_types() {
     ClassDB::register_class<VoxelMesherCubic>();
     ClassDB::register_class<VoxelCubePoints>();
 
-	ClassDB::register_class<PropDataProp>();
+	ClassDB::register_class<PropData>();
 	ClassDB::register_class<PropDataEntry>();
 	ClassDB::register_class<PropDataScene>();
 	ClassDB::register_class<PropDataMesh>();
