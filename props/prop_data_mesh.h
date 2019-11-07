@@ -1,15 +1,15 @@
-#ifndef VOXELMAN_PROP_MESH_H
-#define VOXELMAN_PROP_MESH_H
+#ifndef PROP_DATA_MESH_H
+#define PROP_DATA_MESH_H
 
-#include "voxelman_prop_entry.h"
+#include "prop_data_entry.h"
 #include "core/math/vector3.h"
 
 #include "scene/resources/texture.h"
 
 #include "../../entity_spell_system/meshes/mesh_data_resource.h"
 
-class VoxelmanPropMesh : public VoxelmanPropEntry {
-	GDCLASS(VoxelmanPropMesh, VoxelmanPropEntry);
+class PropDataMesh : public PropDataEntry {
+	GDCLASS(PropDataMesh, PropDataEntry);
 	
 public:
 	Ref<MeshDataResource> get_mesh() const;
@@ -24,8 +24,8 @@ public:
 	Vector3 get_snap_axis();
 	void set_snap_axis(Vector3 value);
 
-	VoxelmanPropMesh();
-	~VoxelmanPropMesh();
+	PropDataMesh();
+	~PropDataMesh();
 
 protected:
 	static void _bind_methods();

@@ -1,13 +1,13 @@
-#ifndef VOXELMAN_PROP_H
-#define VOXELMAN_PROP_H
+#ifndef PROP_DATA_H
+#define PROP_DATA_H
 
 #include "core/reference.h"
 #include "core/vector.h"
 
-#include "voxelman_prop_entry.h"
+#include "prop_data_entry.h"
 
-class VoxelmanProp : public Resource {
-	GDCLASS(VoxelmanProp, Resource);
+class PropData : public Resource {
+	GDCLASS(PropData, Resource);
 
 public:
 	bool get_snap_to_mesh();
@@ -16,9 +16,9 @@ public:
 	Vector3 get_snap_axis();
 	void set_snap_axis(Vector3 value);
 
-	Ref<VoxelmanPropEntry> get_prop(const int index) const;
-	void set_prop(const int index, const Ref<VoxelmanPropEntry> prop);
-	void add_prop(const Ref<VoxelmanPropEntry> prop);
+	Ref<PropDataEntry> get_prop(const int index) const;
+	void set_prop(const int index, const Ref<PropDataEntry> prop);
+	void add_prop(const Ref<PropDataEntry> prop);
 	void remove_prop(const int index);
 
 	int get_prop_count() const;
@@ -26,8 +26,8 @@ public:
 	Vector<Variant> get_props();
 	void set_props(const Vector<Variant> &props);
 
-	VoxelmanProp();
-	~VoxelmanProp();
+	PropData();
+	~PropData();
 
 protected:
 	static void _bind_methods();
@@ -36,7 +36,7 @@ private:
 	bool _snap_to_mesh;
 	Vector3 _snap_axis;
 
-	Vector<Ref<VoxelmanPropEntry> > _props;
+	Vector<Ref<PropDataEntry> > _props;
 };
 
 #endif

@@ -26,11 +26,11 @@
 #include "voxel_buffer.h"
 
 #include "../../entity_spell_system/meshes/mesh_data_resource.h"
-#include "../props/voxelman_prop.h"
-#include "../props/voxelman_prop_entry.h"
-#include "../props/voxelman_prop_scene.h"
-#include "../props/voxelman_prop_mesh.h"
-#include "../props/voxelman_prop_light.h"
+#include "../props/prop_data.h"
+#include "../props/prop_data_entry.h"
+#include "../props/prop_data_scene.h"
+#include "../props/prop_data_mesh.h"
+#include "../props/prop_data_light.h"
 #include "voxel_chunk_prop_data.h"
 
 class VoxelWorld;

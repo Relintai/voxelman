@@ -1,12 +1,12 @@
-#ifndef VOXELMAN_PROP_LIGHT_H
-#define VOXELMAN_PROP_LIGHT_H
+#ifndef PROP_DATA_LIGHT_H
+#define PROP_DATA_LIGHT_H
 
-#include "voxelman_prop_entry.h"
+#include "prop_data_entry.h"
 
 #include "core/color.h"
 
-class VoxelmanPropLight : public VoxelmanPropEntry {
-	GDCLASS(VoxelmanPropLight, VoxelmanPropEntry);
+class PropDataLight : public PropDataEntry {
+	GDCLASS(PropDataLight, PropDataEntry);
 	
 public:
 	Color get_light_color() const;
@@ -15,8 +15,8 @@ public:
 	int get_light_size() const;
 	void set_light_size(const int value);
 
-	VoxelmanPropLight();
-	~VoxelmanPropLight();
+	PropDataLight();
+	~PropDataLight();
 
 protected:
 	static void _bind_methods();

@@ -1,13 +1,13 @@
-#ifndef VOXELMAN_PROP_SCENE_H
-#define VOXELMAN_PROP_SCENE_H
+#ifndef PROP_DATA_SCENE_H
+#define PROP_DATA_SCENE_H
 
-#include "voxelman_prop_entry.h"
+#include "prop_data_entry.h"
 #include "core/math/vector3.h"
 
 #include "scene/resources/packed_scene.h"
 
-class VoxelmanPropScene : public VoxelmanPropEntry {
-	GDCLASS(VoxelmanPropScene, VoxelmanPropEntry);
+class PropDataScene : public PropDataEntry {
+	GDCLASS(PropDataScene, PropDataEntry);
 	
 public:
 	Ref<PackedScene> get_scene() const;
@@ -19,8 +19,8 @@ public:
 	Vector3 get_snap_axis();
 	void set_snap_axis(Vector3 value);
 
-	VoxelmanPropScene();
-	~VoxelmanPropScene();
+	PropDataScene();
+	~PropDataScene();
 
 protected:
 	static void _bind_methods();

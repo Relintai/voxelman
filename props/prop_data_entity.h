@@ -1,10 +1,10 @@
-#ifndef VOXELMAN_PROP_ENTITY_H
-#define VOXELMAN_PROP_ENTITY_H
+#ifndef PROP_DATA_ENTITY_H
+#define PROP_DATA_ENTITY_H
 
-#include "voxelman_prop_entry.h"
+#include "prop_data_entry.h"
 
-class VoxelmanPropEntity : public VoxelmanPropEntry {
-	GDCLASS(VoxelmanPropEntity, VoxelmanPropEntry);
+class PropDataEntity : public PropDataEntry {
+	GDCLASS(PropDataEntity, PropDataEntry);
 	
 public:
 	int get_entity_data_id() const;
@@ -13,8 +13,8 @@ public:
 	int get_level() const;
 	void set_level(const int value);
 
-	VoxelmanPropEntity();
-	~VoxelmanPropEntity();
+	PropDataEntity();
+	~PropDataEntity();
 
 protected:
 	static void _bind_methods();

@@ -19,13 +19,13 @@
 #include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 #include "meshers/cubic_mesher/voxel_cube_points.h"
 
-#include "props/voxelman_prop.h"
-#include "props/voxelman_prop_entry.h"
-#include "props/voxelman_prop_scene.h"
-#include "props/voxelman_prop_mesh.h"
-#include "props/voxelman_prop_light.h"
-#include "props/voxelman_prop_prop.h"
-#include "props/voxelman_prop_entity.h"
+#include "props/prop_data.h"
+#include "props/prop_data_entry.h"
+#include "props/prop_data_scene.h"
+#include "props/prop_data_mesh.h"
+#include "props/prop_data_light.h"
+#include "props/prop_data_prop.h"
+#include "props/prop_data_entity.h"
 
 #include "level_generator/voxelman_level_generator.h"
 
@@ -50,13 +50,13 @@ void register_voxelman_types() {
     ClassDB::register_class<VoxelMesherCubic>();
     ClassDB::register_class<VoxelCubePoints>();
 
-	ClassDB::register_class<VoxelmanProp>();
-	ClassDB::register_class<VoxelmanPropEntry>();
-	ClassDB::register_class<VoxelmanPropScene>();
-	ClassDB::register_class<VoxelmanPropMesh>();
-	ClassDB::register_class<VoxelmanPropLight>();
-	ClassDB::register_class<VoxelmanPropProp>();
-	ClassDB::register_class<VoxelmanPropEntity>();
+	ClassDB::register_class<PropDataProp>();
+	ClassDB::register_class<PropDataEntry>();
+	ClassDB::register_class<PropDataScene>();
+	ClassDB::register_class<PropDataMesh>();
+	ClassDB::register_class<PropDataLight>();
+	ClassDB::register_class<PropDataProp>();
+	ClassDB::register_class<PropDataEntity>();
     
     ClassDB::register_class<VoxelmanLevelGenerator>();
 }	

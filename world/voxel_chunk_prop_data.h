@@ -6,8 +6,8 @@
 
 #include "scene/resources/texture.h"
 #include "scene/resources/packed_scene.h"
-#include "../props/voxelman_prop.h"
-#include "../props/voxelman_prop_light.h"
+#include "../props/prop_data.h"
+#include "../props/prop_data_light.h"
 #include "../../entity_spell_system/meshes/mesh_data_resource.h"
 
 class VoxelChunkPropData : public Reference {
@@ -41,11 +41,11 @@ public:
 	Ref<Texture> get_mesh_texture() const;
 	void set_mesh_texture(const Ref<Texture> value);
 
-	Ref<VoxelmanPropLight> get_light() const;
-	void set_light(const Ref<VoxelmanPropLight> value);
+	Ref<PropDataLight> get_light() const;
+	void set_light(const Ref<PropDataLight> value);
 
-	Ref<VoxelmanProp> get_prop() const;
-	void set_prop(const Ref<VoxelmanProp> value);
+	Ref<PropData> get_prop() const;
+	void set_prop(const Ref<PropData> value);
 
 	Ref<PackedScene> get_scene() const;
 	void set_scene(const Ref<PackedScene> value);
@@ -68,8 +68,8 @@ private:
 
 	Ref<MeshDataResource> _mesh;
 	Ref<Texture> _texture;
-	Ref<VoxelmanPropLight> _light;
-	Ref<VoxelmanProp> _prop;
+	Ref<PropDataLight> _light;
+	Ref<PropData> _prop;
 	Ref<PackedScene> _scene;
 };
 
