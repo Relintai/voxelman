@@ -5,6 +5,9 @@
 #include "core/vector.h"
 
 #include "prop_data_entry.h"
+#include "prop_data_mesh.h"
+
+#include "../../texture_packer/texture_packer.h"
 
 class PropData : public Resource {
 	GDCLASS(PropData, Resource);
@@ -25,6 +28,8 @@ public:
 
 	Vector<Variant> get_props();
 	void set_props(const Vector<Variant> &props);
+    
+    void add_textures_into(Ref<TexturePacker> texture_packer);
 
 	PropData();
 	~PropData();
