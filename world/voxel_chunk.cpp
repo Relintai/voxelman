@@ -434,6 +434,10 @@ void VoxelChunk::clear_baked_lights() {
 	_buffer->clear_lights();
 }
 
+void VoxelChunk::add_prop_light(Ref<VoxelLight> light) {
+    bake_light(light);
+}
+
 void VoxelChunk::add_prop(Ref<VoxelChunkPropData> prop) {
 	_props.push_back(prop);
 
@@ -853,6 +857,8 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("bake_lights"), &VoxelChunk::bake_lights);
 	ClassDB::bind_method(D_METHOD("bake_light", "light"), &VoxelChunk::bake_light);
 	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
+    
+	ClassDB::bind_method(D_METHOD("add_prop_light", "light"), &VoxelChunk::add_prop_light);
 
 	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelChunk::add_prop);
 	ClassDB::bind_method(D_METHOD("get_prop", "index"), &VoxelChunk::get_prop);

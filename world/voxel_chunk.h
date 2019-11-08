@@ -129,6 +129,8 @@ public:
     void bake_lights();
 	void bake_light(Ref<VoxelLight> light);
 	void clear_baked_lights();
+    
+    void add_prop_light(Ref<VoxelLight> light);
 
 	//props
 	void add_prop(Ref<VoxelChunkPropData> prop);

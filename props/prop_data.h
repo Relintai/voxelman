@@ -3,11 +3,17 @@
 
 #include "core/reference.h"
 #include "core/vector.h"
+#include "core/math/transform.h"
+
+#include "servers/physics_server.h"
 
 #include "prop_data_entry.h"
 #include "prop_data_mesh.h"
 
 #include "../../texture_packer/texture_packer.h"
+
+class Spatial;
+class VoxelChunk;
 
 class PropData : public Resource {
 	GDCLASS(PropData, Resource);
@@ -30,6 +36,11 @@ public:
 	void set_props(const Vector<Variant> &props);
     
     void add_textures_into(Ref<TexturePacker> texture_packer);
+	void add_prop_lights_into(VoxelChunk *chunk, Transform parent_transform, bool allow_snap);
+	void add_prop_lights_into_bind(Node *chunk, Transform parent_transform, bool allow_snap);
+
+	Transform get_next_snapped_prop_transform(Spatial *s, Transform parent_transform, bool snap_to_mesh, Vector3 snap_axis);
+	Transform get_next_snapped_prop_transform_bind(Node *spatial, Transform parent_transform, bool snap_to_mesh, Vector3 snap_axis);
 
 	PropData();
 	~PropData();
