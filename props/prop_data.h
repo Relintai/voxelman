@@ -4,11 +4,16 @@
 #include "core/reference.h"
 #include "core/vector.h"
 #include "core/math/transform.h"
+#include "core/math/vector2.h"
+#include "core/math/vector3.h"
+#include "core/math/rect2.h"
 
 #include "servers/physics_server.h"
 
 #include "prop_data_entry.h"
 #include "prop_data_mesh.h"
+
+#include "../meshers/voxel_mesher.h"
 
 #include "../../texture_packer/texture_packer.h"
 
@@ -38,6 +43,8 @@ public:
     void add_textures_into(Ref<TexturePacker> texture_packer);
 	void add_prop_lights_into(VoxelChunk *chunk, Transform parent_transform, bool allow_snap);
 	void add_prop_lights_into_bind(Node *chunk, Transform parent_transform, bool allow_snap);
+	void add_meshes_into(Ref<VoxelMesher> mesher, Ref<TexturePacker> texture_packer, Transform parent_transform, Spatial *snap_spatial = NULL);
+	void add_meshes_into_bind(Ref<VoxelMesher> mesher, Ref<TexturePacker> texture_packer, Transform parent_transform, Node *snap_spatial = NULL);
 
 	Transform get_next_snapped_prop_transform(Spatial *s, Transform parent_transform, bool snap_to_mesh, Vector3 snap_axis);
 	Transform get_next_snapped_prop_transform_bind(Node *spatial, Transform parent_transform, bool snap_to_mesh, Vector3 snap_axis);
