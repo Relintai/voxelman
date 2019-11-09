@@ -2,9 +2,11 @@
 
 #include "library/voxel_surface.h"
 #include "library/voxel_surface_simple.h"
+#include "library/voxel_surface_merger.h"
 
 #include "library/voxelman_library.h"
 #include "library/voxelman_library_simple.h"
+#include "library/voxelman_library_merger.h"
 
 #include "data/voxel_light.h"
 #include "meshers/voxel_mesher.h"
@@ -56,9 +58,11 @@ void register_voxelman_types() {
 
 	ClassDB::register_class<VoxelSurface>();
 	ClassDB::register_class<VoxelSurfaceSimple>();
+	ClassDB::register_class<VoxelSurfaceMerger>();
 
 	ClassDB::register_class<VoxelmanLibrary>();
 	ClassDB::register_class<VoxelmanLibrarySimple>();
+	ClassDB::register_class<VoxelmanLibraryMerger>();
 
 	ClassDB::register_class<VoxelLight>();
     
