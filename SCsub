@@ -5,7 +5,10 @@ env.add_source_files(env.modules_sources,"register_types.cpp")
 env.add_source_files(env.modules_sources,"collections/vector3i.cpp")
 
 env.add_source_files(env.modules_sources,"library/voxelman_library.cpp")
+env.add_source_files(env.modules_sources,"library/voxelman_library_simple.cpp")
+
 env.add_source_files(env.modules_sources,"library/voxel_surface.cpp")
+env.add_source_files(env.modules_sources,"library/voxel_surface_simple.cpp")
 
 env.add_source_files(env.modules_sources,"data/voxel_light.cpp")
 

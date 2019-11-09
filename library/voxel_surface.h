@@ -1,8 +1,10 @@
-#ifndef VOXEL_SURFACE_DEFINITION_H
-#define VOXEL_SURFACE_DEFINITION_H
+#ifndef VOXEL_SURFACE_H
+#define VOXEL_SURFACE_H
+
+#include "core/resource.h"
 
 #include "core/color.h"
-#include "core/resource.h"
+#include "core/math/rect2.h"
 #include "core/vector.h"
 #include "scene/resources/material.h"
 
@@ -33,46 +35,40 @@ public:
 		VOXEL_SIDE_TOP = 0,
 		VOXEL_SIDE_BOTTOM = 1,
 		VOXEL_SIDE_SIDE = 2,
+	};
 
+	enum {
 		VOXEL_SIDES_COUNT = 3,
 		VOXEL_SIDES_ARRAY_SIZE = VOXEL_SIDES_COUNT * 2,
 	};
 
 	int get_id() const;
-	void set_id(int value);
-
-	int get_atlas_x(const int side) const;
-	void set_atlas_x(const int side, int value);
-
-	int get_atlas_y(const int side) const;
-	void set_atlas_y(const int side, int value);
+	void set_id(const int value);
 
     bool is_transparent() const;
-	void set_transparent(bool transparent);
+	void set_transparent(const bool transparent);
 	
-    String get_voxel_name() const;
-	void set_voxel_name(String name);
-	
+	Rect2 get_rect(const VoxelSurfaceSides side) const;
+	void set_rect(const VoxelSurfaceSides side, const Rect2 rect);
+
     Ref<VoxelmanLibrary> get_library() const;
 	void set_library(Ref<VoxelmanLibrary> library);
 
-	Vector2 transform_uv(const int side, const Vector2 uv) const;
+	Vector2 transform_uv(const VoxelSurfaceSides side, const Vector2 uv) const;
+
+	virtual void refresh_rects();
 	
 	VoxelSurface();
-	VoxelSurface(int id);
 	~VoxelSurface();
 
 protected:
 	static void _bind_methods();
 
-private:
 	VoxelmanLibrary *_library;
 
 	int _id;
-	String _name;
-	int _atlas_positions[VOXEL_SIDES_ARRAY_SIZE];
-
 	bool _is_transparent;
+	Rect2 _rects[VOXEL_SIDES_COUNT];
 };
 
 VARIANT_ENUM_CAST(VoxelSurface::VoxelSurfaceSides);
