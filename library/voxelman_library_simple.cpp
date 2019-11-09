@@ -66,6 +66,7 @@ void VoxelmanLibrarySimple::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 
 		if (surface.is_valid()) {
 			surface->set_library(this);
+			surface->refresh_rects();
 		}
 
 		_voxel_surfaces.push_back(surface);

@@ -27,9 +27,6 @@ Ref<VoxelmanLibrary> VoxelSurface::get_library() const {
 
 void VoxelSurface::set_library(Ref<VoxelmanLibrary> library) {
 	_library = (*library);
-
-	if (_library != NULL)
-		refresh_rects();
 }
 
 Vector2 VoxelSurface::transform_uv(const VoxelSurfaceSides p_side, const Vector2 p_uv) const {

@@ -1,21 +1,38 @@
 #include "voxelman_library_merger.h"
 
-int VoxelmanLibraryMerger::get_atlas_columns() const {
-	return _atlas_columns;
+int VoxelmanLibraryMerger::get_texture_flags() const {
+	return _packer->get_texture_flags();
+}
+void VoxelmanLibraryMerger::set_texture_flags(const int flags) {
+	_packer->set_texture_flags(flags);
 }
 
-void VoxelmanLibraryMerger::set_atlas_columns(int s) {
-	ERR_FAIL_COND(s < 0);
-	_atlas_columns = s;
+int VoxelmanLibraryMerger::get_max_atlas_size() const {
+	return _packer->get_max_atlas_size();
+}
+void VoxelmanLibraryMerger::set_max_atlas_size(const int size) {
+	_packer->set_max_atlas_size(size);
 }
 
-int VoxelmanLibraryMerger::get_atlas_rows() const {
-	return _atlas_rows;
+bool VoxelmanLibraryMerger::get_keep_original_atlases() const {
+	return _packer->get_keep_original_atlases();
+}
+void VoxelmanLibraryMerger::set_keep_original_atlases(const bool value) {
+	_packer->set_keep_original_atlases(value);
 }
 
-void VoxelmanLibraryMerger::set_atlas_rows(int s) {
-	ERR_FAIL_COND(s < 0);
-	_atlas_rows = s;
+Color VoxelmanLibraryMerger::get_background_color() const {
+	return _packer->get_background_color();
+}
+void VoxelmanLibraryMerger::set_background_color(const Color color) {
+	_packer->set_background_color(color);
+}
+
+int VoxelmanLibraryMerger::get_margin() const {
+	return _packer->get_margin();
+}
+void VoxelmanLibraryMerger::set_margin(const int margin) {
+	_packer->set_margin(margin);
 }
 
 Ref<VoxelSurface> VoxelmanLibraryMerger::get_voxel_surface(int index) const {
@@ -73,8 +90,43 @@ void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 }
 
 void VoxelmanLibraryMerger::refresh_rects() {
+	bool texture_added = false;
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
 		Ref<VoxelSurfaceMerger> surface = Ref<VoxelSurfaceMerger>(_voxel_surfaces[i]);
+
+		if (surface.is_valid()) {
+			for (int j = 0; j < VoxelSurface::VOXEL_SIDES_COUNT; ++j) {
+				Ref<Texture> tex = surface->get_texture(static_cast<VoxelSurface::VoxelSurfaceSides>(j));
+
+				if (!tex.is_valid())
+					continue;
+
+				if (!_packer->contains_texture(tex)) {
+					texture_added = true;
+					surface->set_region(static_cast<VoxelSurface::VoxelSurfaceSides>(j), _packer->add_texture(tex));
+				} else {
+					surface->set_region(static_cast<VoxelSurface::VoxelSurfaceSides>(j), _packer->get_texture(tex));
+				}
+			}
+		}
+	}
+
+	if (texture_added) {
+		_packer->merge();
+
+		ERR_FAIL_COND(_packer->get_texture_count() == 0);
+
+		Ref<Texture> tex = _packer->get_generated_texture(0);
+
+		Ref<SpatialMaterial> mat = get_material();
+
+		if (mat.is_valid()) {
+			mat->set_texture(SpatialMaterial::TEXTURE_ALBEDO, tex);
+		}
+	}
+
+	for (int i = 0; i < _voxel_surfaces.size(); i++) {
+		Ref<VoxelSurfaceMerger> surface = _voxel_surfaces[i];
 
 		if (surface.is_valid()) {
 			surface->refresh_rects();
@@ -83,8 +135,11 @@ void VoxelmanLibraryMerger::refresh_rects() {
 }
 
 VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
-	_atlas_rows = 8;
-	_atlas_columns = 8;
+	_packer.instance();
+	_packer->set_texture_flags(Texture::FLAG_MIPMAPS | Texture::FLAG_FILTER);
+	_packer->set_max_atlas_size(1024);
+	_packer->set_keep_original_atlases(false);
+	_packer->set_margin(0);
 }
 
 VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
@@ -98,17 +153,30 @@ VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
 	}
 
 	_voxel_surfaces.clear();
+
+	_packer.unref();
 }
 
-
 void VoxelmanLibraryMerger::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_atlas_columns"), &VoxelmanLibraryMerger::get_atlas_columns);
-	ClassDB::bind_method(D_METHOD("set_atlas_columns", "value"), &VoxelmanLibraryMerger::set_atlas_columns);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "atlas_columns"), "set_atlas_columns", "get_atlas_columns");
+	ClassDB::bind_method(D_METHOD("get_texture_flags"), &VoxelmanLibraryMerger::get_texture_flags);
+	ClassDB::bind_method(D_METHOD("set_texture_flags", "flags"), &VoxelmanLibraryMerger::set_texture_flags);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "texture_flags", PROPERTY_HINT_FLAGS, "Mipmaps,Repeat,Filter,Anisotropic Linear,Convert to Linear,Mirrored Repeat,Video Surface"), "set_texture_flags", "get_texture_flags");
 
-	ClassDB::bind_method(D_METHOD("get_atlas_rows"), &VoxelmanLibraryMerger::get_atlas_rows);
-	ClassDB::bind_method(D_METHOD("set_atlas_rows", "value"), &VoxelmanLibraryMerger::set_atlas_rows);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "atlas_rows"), "set_atlas_rows", "get_atlas_rows");
+	ClassDB::bind_method(D_METHOD("get_max_atlas_size"), &VoxelmanLibraryMerger::get_max_atlas_size);
+	ClassDB::bind_method(D_METHOD("set_max_atlas_size", "size"), &VoxelmanLibraryMerger::set_max_atlas_size);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_atlas_size"), "set_max_atlas_size", "get_max_atlas_size");
+
+	ClassDB::bind_method(D_METHOD("get_keep_original_atlases"), &VoxelmanLibraryMerger::get_keep_original_atlases);
+	ClassDB::bind_method(D_METHOD("set_keep_original_atlases", "value"), &VoxelmanLibraryMerger::set_keep_original_atlases);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "keep_original_atlases"), "set_keep_original_atlases", "get_keep_original_atlases");
+
+	ClassDB::bind_method(D_METHOD("get_background_color"), &VoxelmanLibraryMerger::get_background_color);
+	ClassDB::bind_method(D_METHOD("set_background_color", "color"), &VoxelmanLibraryMerger::set_background_color);
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "background_color"), "set_background_color", "get_background_color");
+
+	ClassDB::bind_method(D_METHOD("get_margin"), &VoxelmanLibraryMerger::get_margin);
+	ClassDB::bind_method(D_METHOD("set_margin", "size"), &VoxelmanLibraryMerger::set_margin);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "margin"), "set_margin", "get_margin");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_surfaces"), &VoxelmanLibraryMerger::get_voxel_surfaces);
 	ClassDB::bind_method(D_METHOD("set_voxel_surfaces"), &VoxelmanLibraryMerger::set_voxel_surfaces);

@@ -3,15 +3,19 @@
 
 #include "voxel_surface.h"
 
+#include "scene/resources/texture.h"
+
+#include "../../texture_packer/texture_packer.h"
+
 class VoxelSurfaceMerger : public VoxelSurface {
 	GDCLASS(VoxelSurfaceMerger, VoxelSurface)
 
 public:
-	int get_atlas_x(const VoxelSurfaceSides side) const;
-	void set_atlas_x(const VoxelSurfaceSides side, int value);
+	Ref<AtlasTexture> get_region(const VoxelSurfaceSides side);
+	void set_region(const VoxelSurfaceSides side, Ref<AtlasTexture> texture);
 
-	int get_atlas_y(const VoxelSurfaceSides side) const;
-	void set_atlas_y(const VoxelSurfaceSides side, int value);
+	Ref<Texture> get_texture(const VoxelSurfaceSides side);
+	void set_texture(const VoxelSurfaceSides side, Ref<Texture> texture);
 
 	void refresh_rects();
 
@@ -22,7 +26,8 @@ protected:
 	static void _bind_methods();
 
 private:
-	int _atlas_positions[VOXEL_SIDES_ARRAY_SIZE];
+	Ref<AtlasTexture> _regions[VOXEL_SIDES_COUNT];
+	Ref<Texture> _textures[VOXEL_SIDES_COUNT];
 };
 
 #endif

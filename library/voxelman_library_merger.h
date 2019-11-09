@@ -16,11 +16,20 @@ class VoxelmanLibraryMerger : public VoxelmanLibrary {
 	GDCLASS(VoxelmanLibraryMerger, VoxelmanLibrary)
 
 public:
-	int get_atlas_columns() const;
-	void set_atlas_columns(int s);
+	int get_texture_flags() const;
+	void set_texture_flags(const int flags);
 
-	int get_atlas_rows() const;
-	void set_atlas_rows(int s);
+	int get_max_atlas_size() const;
+	void set_max_atlas_size(const int size);
+
+	bool get_keep_original_atlases() const;
+	void set_keep_original_atlases(const bool value);
+
+	Color get_background_color() const;
+	void set_background_color(const Color color);
+
+	int get_margin() const;
+	void set_margin(const int margin);
 
 	Ref<VoxelSurface> get_voxel_surface(int index) const;
 	void set_voxel_surface(int index, Ref<VoxelSurface> value);
@@ -41,9 +50,7 @@ protected:
 private:
 	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
 
-	//atlas
-	int _atlas_columns;
-	int _atlas_rows;
+	Ref<TexturePacker> _packer;
 };
 
-#endif // VOXEL_LIBRARY_H
+#endif
