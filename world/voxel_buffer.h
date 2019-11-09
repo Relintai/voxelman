@@ -40,8 +40,9 @@ public:
 		CHANNEL_LIGHT_COLOR_B,
         CHANNEL_AO,
 		CHANNEL_RANDOM_AO,
-		CHANNEL_DATA1,
-		CHANNEL_DATA2,
+		CHANNEL_LIQUID_TYPES,
+		CHANNEL_LIQUID_FILL,
+		CHANNEL_LIQUID_FLOW,
 		// Arbitrary value, 8 should be enough. Tweak for your needs.
 		MAX_CHANNELS
 	};

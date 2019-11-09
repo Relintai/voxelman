@@ -35,6 +35,7 @@ void VoxelmanLibraryMerger::set_margin(const int margin) {
 	_packer->set_margin(margin);
 }
 
+//Surfaces
 Ref<VoxelSurface> VoxelmanLibraryMerger::get_voxel_surface(int index) const {
 	ERR_FAIL_INDEX_V(index, _voxel_surfaces.size(), Ref<VoxelSurface>(NULL));
 
@@ -67,6 +68,30 @@ int VoxelmanLibraryMerger::get_num_surfaces() {
 	return _voxel_surfaces.size();
 }
 
+void VoxelmanLibraryMerger::clear_surfaces() {
+	_packer->clear();
+
+	for (int i = 0; i < _voxel_surfaces.size(); i++) {
+		Ref<VoxelSurfaceMerger> surface = _voxel_surfaces[i];
+
+		if (surface.is_valid()) {
+			surface->set_library(NULL);
+		}
+	}
+
+	_voxel_surfaces.clear();
+
+	for (int i = 0; i < _liquid_surfaces.size(); i++) {
+		Ref<VoxelSurfaceMerger> surface = _liquid_surfaces[i];
+
+		if (surface.is_valid()) {
+			surface->set_library(NULL);
+		}
+	}
+
+	_liquid_surfaces.clear();
+}
+
 Vector<Variant> VoxelmanLibraryMerger::get_voxel_surfaces() {
 	Vector<Variant> r;
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
@@ -89,10 +114,100 @@ void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 	}
 }
 
+//Liquids
+Ref<VoxelSurface> VoxelmanLibraryMerger::get_liquid_voxel_surface(int index) const {
+	ERR_FAIL_INDEX_V(index, _liquid_surfaces.size(), Ref<VoxelSurface>(NULL));
+
+	return _liquid_surfaces[index];
+}
+
+void VoxelmanLibraryMerger::set_liquid_voxel_surface(int index, Ref<VoxelSurface> value) {
+	ERR_FAIL_COND(index < 0);
+
+	if (_liquid_surfaces.size() < index) {
+		_liquid_surfaces.resize(index + 1);
+	}
+
+	if (_liquid_surfaces[index].is_valid()) {
+		_liquid_surfaces.get(index)->set_library(Ref<VoxelmanLibraryMerger>(NULL));
+	}
+
+	if (value.is_valid()) {
+		value->set_library(Ref<VoxelmanLibraryMerger>(this));
+
+		_liquid_surfaces.set(index, value);
+	}
+}
+
+void VoxelmanLibraryMerger::remove_liquid_surface(int index) {
+	_liquid_surfaces.remove(index);
+}
+
+int VoxelmanLibraryMerger::get_liquid_num_surfaces() {
+	return _liquid_surfaces.size();
+}
+
+void VoxelmanLibraryMerger::clear_liquid_surfaces() {
+	_packer->clear();
+
+	for (int i = 0; i < _liquid_surfaces.size(); i++) {
+		Ref<VoxelSurfaceMerger> surface = _liquid_surfaces[i];
+
+		if (surface.is_valid()) {
+			surface->set_library(NULL);
+		}
+	}
+
+	_liquid_surfaces.clear();
+}
+
+Vector<Variant> VoxelmanLibraryMerger::get_liquid_voxel_surfaces() {
+	Vector<Variant> r;
+	for (int i = 0; i < _liquid_surfaces.size(); i++) {
+		r.push_back(_liquid_surfaces[i].get_ref_ptr());
+	}
+	return r;
+}
+
+void VoxelmanLibraryMerger::set_liquid_voxel_surfaces(const Vector<Variant> &surfaces) {
+	_liquid_surfaces.clear();
+
+	for (int i = 0; i < surfaces.size(); i++) {
+		Ref<VoxelSurfaceMerger> surface = Ref<VoxelSurfaceMerger>(surfaces[i]);
+
+		if (surface.is_valid()) {
+			surface->set_library(this);
+		}
+
+		_liquid_surfaces.push_back(surface);
+	}
+}
+
+
 void VoxelmanLibraryMerger::refresh_rects() {
 	bool texture_added = false;
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
 		Ref<VoxelSurfaceMerger> surface = Ref<VoxelSurfaceMerger>(_voxel_surfaces[i]);
+
+		if (surface.is_valid()) {
+			for (int j = 0; j < VoxelSurface::VOXEL_SIDES_COUNT; ++j) {
+				Ref<Texture> tex = surface->get_texture(static_cast<VoxelSurface::VoxelSurfaceSides>(j));
+
+				if (!tex.is_valid())
+					continue;
+
+				if (!_packer->contains_texture(tex)) {
+					texture_added = true;
+					surface->set_region(static_cast<VoxelSurface::VoxelSurfaceSides>(j), _packer->add_texture(tex));
+				} else {
+					surface->set_region(static_cast<VoxelSurface::VoxelSurfaceSides>(j), _packer->get_texture(tex));
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < _liquid_surfaces.size(); i++) {
+		Ref<VoxelSurfaceMerger> surface = Ref<VoxelSurfaceMerger>(_liquid_surfaces[i]);
 
 		if (surface.is_valid()) {
 			for (int j = 0; j < VoxelSurface::VOXEL_SIDES_COUNT; ++j) {
@@ -132,6 +247,14 @@ void VoxelmanLibraryMerger::refresh_rects() {
 			surface->refresh_rects();
 		}
 	}
+
+	for (int i = 0; i < _liquid_surfaces.size(); i++) {
+		Ref<VoxelSurfaceMerger> surface = _liquid_surfaces[i];
+
+		if (surface.is_valid()) {
+			surface->refresh_rects();
+		}
+	}
 }
 
 VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
@@ -148,11 +271,20 @@ VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
 
 		if (surface.is_valid()) {
 			surface->set_library(Ref<VoxelmanLibraryMerger>());
-			surface.unref();
 		}
 	}
 
 	_voxel_surfaces.clear();
+
+	for (int i = 0; i < _liquid_surfaces.size(); ++i) {
+		Ref<VoxelSurface> surface = _liquid_surfaces[i];
+
+		if (surface.is_valid()) {
+			surface->set_library(Ref<VoxelmanLibraryMerger>());
+		}
+	}
+
+	_liquid_surfaces.clear();
 
 	_packer.unref();
 }
@@ -180,6 +312,9 @@ void VoxelmanLibraryMerger::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_voxel_surfaces"), &VoxelmanLibraryMerger::get_voxel_surfaces);
 	ClassDB::bind_method(D_METHOD("set_voxel_surfaces"), &VoxelmanLibraryMerger::set_voxel_surfaces);
-
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurfaceMerger", PROPERTY_USAGE_DEFAULT, "VoxelSurfaceMerger"), "set_voxel_surfaces", "get_voxel_surfaces");
+
+	ClassDB::bind_method(D_METHOD("get_liquid_voxel_surfaces"), &VoxelmanLibraryMerger::get_liquid_voxel_surfaces);
+	ClassDB::bind_method(D_METHOD("set_liquid_voxel_surfaces"), &VoxelmanLibraryMerger::set_liquid_voxel_surfaces);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "liquid_voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurfaceMerger", PROPERTY_USAGE_DEFAULT, "VoxelSurfaceMerger"), "set_liquid_voxel_surfaces", "get_liquid_voxel_surfaces");
 }

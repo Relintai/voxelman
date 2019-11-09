@@ -26,9 +26,19 @@ public:
 	void set_voxel_surface(int index, Ref<VoxelSurface> value);
 	void remove_surface(int index);
 	int get_num_surfaces();
+	void clear_surfaces();
 
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
+
+	Ref<VoxelSurface> get_liquid_voxel_surface(int index) const;
+	void set_liquid_voxel_surface(int index, Ref<VoxelSurface> value);
+	void remove_liquid_surface(int index);
+	int get_liquid_num_surfaces();
+	void clear_liquid_surfaces();
+
+	Vector<Variant> get_liquid_voxel_surfaces();
+	void set_liquid_voxel_surfaces(const Vector<Variant> &surfaces);
 
 	void refresh_rects();
 
@@ -40,6 +50,7 @@ protected:
 
 private:
 	Vector<Ref<VoxelSurfaceSimple> > _voxel_surfaces;
+	Vector<Ref<VoxelSurfaceSimple> > _liquid_surfaces;
 
 	//atlas
 	int _atlas_columns;

@@ -24,6 +24,13 @@ public:
 	virtual void set_voxel_surface(int index, Ref<VoxelSurface> value);
 	virtual void remove_surface(int index);
 	virtual int get_num_surfaces();
+	virtual void clear_surfaces();
+
+	virtual Ref<VoxelSurface> get_liquid_voxel_surface(int index) const;
+	virtual void set_liquid_voxel_surface(int index, Ref<VoxelSurface> value);
+	virtual void remove_liquid_surface(int index);
+	virtual int get_liquid_num_surfaces();
+	virtual void clear_liquid_surfaces();
 
 	virtual void refresh_rects();
 
