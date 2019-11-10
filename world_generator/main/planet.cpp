@@ -72,7 +72,6 @@ void Planet::remove_dungeon(const int index) {
 
 	_dungeons.remove(index);
 }
-
 int Planet::get_dungeon_count() const {
 	return _dungeons.size();
 }
@@ -80,6 +79,12 @@ int Planet::get_dungeon_count() const {
 void Planet::setup() {
 	if (has_method("_setup")) {
 		call("_setup");
+	}
+}
+
+void Planet::setup_library(Ref<VoxelmanLibrary> library) {
+	if (has_method("_setup_library")) {
+		call("_setup_library", library);
 	}
 }
 
@@ -107,14 +112,17 @@ Planet::Planet() {
 Planet::~Planet() {
 	_environment.unref();
 	_biomes.clear();
+	_dungeons.clear();
 }
 
 void Planet::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_setup"));
+	BIND_VMETHOD(MethodInfo("_setup_library", PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary")));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk"), &Planet::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("setup"), &Planet::setup);
+	ClassDB::bind_method(D_METHOD("setup_library", "library"), &Planet::setup_library);
 
 	ClassDB::bind_method(D_METHOD("get_seed"), &Planet::get_seed);
 	ClassDB::bind_method(D_METHOD("set_seed", "value"), &Planet::set_seed);
@@ -137,7 +145,6 @@ void Planet::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_biome", "index", "data"), &Planet::set_biome);
 	ClassDB::bind_method(D_METHOD("add_biome", "biome"), &Planet::add_biome);
 	ClassDB::bind_method(D_METHOD("remove_biome", "index"), &Planet::remove_biome);
-
 	ClassDB::bind_method(D_METHOD("get_biome_count"), &Planet::get_biome_count);
 
 	//Dungeons
@@ -145,7 +152,6 @@ void Planet::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_dungeon", "index", "data"), &Planet::set_dungeon);
 	ClassDB::bind_method(D_METHOD("add_dungeon", "dungeon"), &Planet::add_dungeon);
 	ClassDB::bind_method(D_METHOD("remove_dungeon", "index"), &Planet::remove_dungeon);
-
 	ClassDB::bind_method(D_METHOD("get_dungeon_count"), &Planet::get_dungeon_count);
 
 	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "image", PROPERTY_HINT_RESOURCE_TYPE, "Image"), "_generate_map"));

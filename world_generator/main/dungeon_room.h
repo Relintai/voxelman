@@ -11,6 +11,7 @@
 #include "../../../entity_spell_system/entities/data/entity_data.h"
 
 #include "../data/dungeon_room_data.h"
+#include "../../library/voxelman_library.h"
 
 class DungeonRoomData;
 
@@ -60,7 +61,6 @@ public:
 	void set_prop_data(const int index, const Ref<WorldGeneratorPropData> prop_data);
 	void add_prop_data(const Ref<WorldGeneratorPropData> prop_data);
 	void remove_prop_data(const int index);
-
 	int get_prop_data_count() const;
 
 	//Entities
@@ -68,10 +68,10 @@ public:
 	void set_entity_data(const int index, const Ref<EntityData> entity_data);
 	void add_entity_data(const Ref<EntityData> entity_data);
 	void remove_entity_data(const int index);
-
 	int get_entity_data_count() const;
 
 	void setup();
+	void setup_library(Ref<VoxelmanLibrary> library);
 	void generate_chunk(VoxelChunk *chunk, bool spawn_mobs);
 	void generate_chunk_bind(Node *chunk, bool spawn_mobs);
 	void generate_room(Ref<VoxelStructure> structure, bool spawn_mobs);

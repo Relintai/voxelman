@@ -10,6 +10,7 @@
 #include "../../world/environment_data.h"
 
 #include "../../../entity_spell_system/entities/data/entity_data.h"
+#include "../../library/voxel_surface.h"
 
 class DungeonData : public Resource {
 	GDCLASS(DungeonData, Resource);
@@ -50,7 +51,6 @@ public:
 	void set_environment_data(const int index, const Ref<EnvironmentData> environment_data);
 	void add_environment_data(const Ref<EnvironmentData> environment_data);
 	void remove_environment_data(const int index);
-
 	int get_environment_data_count() const;
 
 	Vector<Variant> get_environment_datas();
@@ -61,7 +61,6 @@ public:
 	void set_dungeon_room_data(const int index, const Ref<DungeonRoomData> dungeon_room_data);
 	void add_dungeon_room_data(const Ref<DungeonRoomData> dungeon_room_data);
 	void remove_dungeon_room_data(const int index);
-
 	int get_dungeon_room_data_count() const;
 
 	Vector<Variant> get_dungeon_room_datas();
@@ -72,7 +71,6 @@ public:
 	void set_dungeon_start_room_data(const int index, const Ref<DungeonRoomData> dungeon_start_room_data);
 	void add_dungeon_start_room_data(const Ref<DungeonRoomData> dungeon_start_room_data);
 	void remove_dungeon_start_room_data(const int index);
-
 	int get_dungeon_start_room_data_count() const;
 
 	Vector<Variant> get_dungeon_start_room_datas();
@@ -83,7 +81,6 @@ public:
 	void set_dungeon_end_room_data(const int index, const Ref<DungeonRoomData> dungeon_end_room_data);
 	void add_dungeon_end_room_data(const Ref<DungeonRoomData> dungeon_end_room_data);
 	void remove_dungeon_end_room_data(const int index);
-
 	int get_dungeon_end_room_data_count() const;
 
 	Vector<Variant> get_dungeon_end_room_datas();
@@ -94,7 +91,6 @@ public:
 	void set_dungeon_corridor_data(const int index, const Ref<DungeonRoomData> dungeon_corridor_data);
 	void add_dungeon_corridor_data(const Ref<DungeonRoomData> dungeon_corridor_data);
 	void remove_dungeon_corridor_data(const int index);
-
 	int get_dungeon_corridor_data_count() const;
 
 	Vector<Variant> get_dungeon_corridor_datas();
@@ -105,11 +101,20 @@ public:
 	void set_entity_data(const int index, const Ref<EntityData> entity_data);
 	void add_entity_data(const Ref<EntityData> entity_data);
 	void remove_entity_data(const int index);
-
 	int get_entity_data_count() const;
 
 	Vector<Variant> get_entity_datas();
 	void set_entity_datas(const Vector<Variant> &entity_datas);
+
+	//Surfaces
+	Ref<VoxelSurface> get_voxel_surface(const int index) const;
+	void set_voxel_surface(const int index, const Ref<VoxelSurface> voxel_surface);
+	void add_voxel_surface(const Ref<VoxelSurface> voxel_surface);
+	void remove_voxel_surface(const int index);
+	int get_voxel_surface_count() const;
+
+	Vector<Variant> get_voxel_surfaces();
+	void set_voxel_surfaces(const Vector<Variant> &voxel_surfaces);
 
 	DungeonData();
 	~DungeonData();
@@ -138,6 +143,7 @@ private:
 	Vector<Ref<DungeonRoomData> > _dungeon_end_room_datas;
 	Vector<Ref<DungeonRoomData> > _dungeon_corridor_datas;
 	Vector<Ref<EntityData> > _entity_datas;
+	Vector<Ref<VoxelSurface> > _voxel_surfaces;
 };
 
 #endif

@@ -100,7 +100,6 @@ void DungeonRoom::remove_prop_data(const int index) {
 
 	_prop_datas.remove(index);
 }
-
 int DungeonRoom::get_prop_data_count() const {
 	return _prop_datas.size();
 }
@@ -124,15 +123,19 @@ void DungeonRoom::remove_entity_data(const int index) {
 
 	_entity_datas.remove(index);
 }
-
 int DungeonRoom::get_entity_data_count() const {
 	return _entity_datas.size();
 }
 
-
 void DungeonRoom::setup() {
 	if (has_method("_setup")) {
 		call("_setup");
+	}
+}
+
+void DungeonRoom::setup_library(Ref<VoxelmanLibrary> library) {
+	if (has_method("_setup_library")) {
+		call("_setup_library", library);
 	}
 }
 
@@ -173,10 +176,12 @@ DungeonRoom::~DungeonRoom() {
 
 void DungeonRoom::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_setup"));
+	BIND_VMETHOD(MethodInfo("_setup_library", PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary")));
 	BIND_VMETHOD(MethodInfo("_generate_room", PropertyInfo(Variant::OBJECT, "structure", PROPERTY_HINT_RESOURCE_TYPE, "VoxelStructure"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 
 	ClassDB::bind_method(D_METHOD("setup"), &DungeonRoom::setup);
+	ClassDB::bind_method(D_METHOD("setup_library", "library"), &DungeonRoom::setup_library);
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk", "spawn_mobs"), &DungeonRoom::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("generate_room", "structure", "spawn_mobs"), &DungeonRoom::generate_room);
 
@@ -231,7 +236,6 @@ void DungeonRoom::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_prop_data", "index", "data"), &DungeonRoom::set_prop_data);
 	ClassDB::bind_method(D_METHOD("add_prop_data", "prop_data"), &DungeonRoom::add_prop_data);
 	ClassDB::bind_method(D_METHOD("remove_prop_data", "index"), &DungeonRoom::remove_prop_data);
-
 	ClassDB::bind_method(D_METHOD("get_prop_data_count"), &DungeonRoom::get_prop_data_count);
 
 	//Entities
@@ -239,6 +243,5 @@ void DungeonRoom::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_entity_data", "index", "data"), &DungeonRoom::set_entity_data);
 	ClassDB::bind_method(D_METHOD("add_entity_data", "entity_data"), &DungeonRoom::add_entity_data);
 	ClassDB::bind_method(D_METHOD("remove_entity_data", "index"), &DungeonRoom::remove_entity_data);
-
 	ClassDB::bind_method(D_METHOD("get_entity_data_count"), &DungeonRoom::get_entity_data_count);
 }

@@ -10,6 +10,7 @@
 #include "world_generator_prop_data.h"
 #include "../../world/environment_data.h"
 #include "../../../entity_spell_system/entities/data/entity_data.h"
+#include "../../library/voxel_surface.h"
 
 class BiomeData : public Resource {
 	GDCLASS(BiomeData, Resource);
@@ -40,7 +41,6 @@ public:
 	void set_prop_data(const int index, const Ref<WorldGeneratorPropData> prop_data);
 	void add_prop_data(const Ref<WorldGeneratorPropData> prop_data);
 	void remove_prop_data(const int index);
-
 	int get_prop_data_count() const;
 
 	Vector<Variant> get_prop_datas();
@@ -51,7 +51,6 @@ public:
 	void set_entity_data(const int index, const Ref<EntityData> entity_data);
 	void add_entity_data(const Ref<EntityData> entity_data);
 	void remove_entity_data(const int index);
-
 	int get_entity_data_count() const;
 
 	Vector<Variant> get_entity_datas();
@@ -62,11 +61,20 @@ public:
 	void set_environment_data(const int index, const Ref<EnvironmentData> environment_data);
 	void add_environment_data(const Ref<EnvironmentData> environment_data);
 	void remove_environment_data(const int index);
-
 	int get_environment_data_count() const;
 
 	Vector<Variant> get_environment_datas();
 	void set_environment_datas(const Vector<Variant> &environment_datas);
+
+	//Surfaces
+	Ref<VoxelSurface> get_voxel_surface(const int index) const;
+	void set_voxel_surface(const int index, const Ref<VoxelSurface> voxel_surface);
+	void add_voxel_surface(const Ref<VoxelSurface> voxel_surface);
+	void remove_voxel_surface(const int index);
+	int get_voxel_surface_count() const;
+
+	Vector<Variant> get_voxel_surfaces();
+	void set_voxel_surfaces(const Vector<Variant> &voxel_surfaces);
 
 	BiomeData();
 	~BiomeData();
@@ -84,6 +92,7 @@ private:
 	Vector<Ref<WorldGeneratorPropData> > _prop_datas;
 	Vector<Ref<EntityData> > _entity_datas;
 	Vector<Ref<EnvironmentData> > _environment_datas;
+	Vector<Ref<VoxelSurface> > _voxel_surfaces;
 };
 
 #endif

@@ -8,6 +8,7 @@
 #include "../main/planet.h"
 #include "../data/biome_data.h"
 #include "../../world/environment_data.h"
+#include "../../library/voxel_surface.h"
 
 class PlanetData : public Resource {
 	GDCLASS(PlanetData, Resource);
@@ -30,7 +31,6 @@ public:
 	void set_biome_data(const int index, const Ref<BiomeData> biome_data);
 	void add_biome_data(const Ref<BiomeData> biome_data);
 	void remove_biome_data(const int index);
-
 	int get_biome_data_count() const;
 
 	Vector<Variant> get_biome_datas();
@@ -41,11 +41,20 @@ public:
 	void set_environment_data(const int index, const Ref<EnvironmentData> environment_data);
 	void add_environment_data(const Ref<EnvironmentData> environment_data);
 	void remove_environment_data(const int index);
-
 	int get_environment_data_count() const;
 
 	Vector<Variant> get_environment_datas();
 	void set_environment_datas(const Vector<Variant> &environment_datas);
+
+	//Surfaces
+	Ref<VoxelSurface> get_voxel_surface(const int index) const;
+	void set_voxel_surface(const int index, const Ref<VoxelSurface> voxel_surface);
+	void add_voxel_surface(const Ref<VoxelSurface> voxel_surface);
+	void remove_voxel_surface(const int index);
+	int get_voxel_surface_count() const;
+
+	Vector<Variant> get_voxel_surfaces();
+	void set_voxel_surfaces(const Vector<Variant> &voxel_surfaces);
 
 	PlanetData();
 	~PlanetData();
@@ -62,6 +71,7 @@ private:
 	Ref<FastnoiseNoiseParams> _temperature_noise_params;
 	Vector<Ref<BiomeData> > _biome_datas;
 	Vector<Ref<EnvironmentData> > _environment_datas;
+	Vector<Ref<VoxelSurface> > _voxel_surfaces;
 };
 
 #endif

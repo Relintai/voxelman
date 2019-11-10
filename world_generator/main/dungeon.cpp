@@ -172,7 +172,6 @@ void Dungeon::remove_dungeon_corridor(const int index) {
 
 	_dungeon_corridors.remove(index);
 }
-
 int Dungeon::get_dungeon_corridor_count() const {
 	return _dungeon_corridors.size();
 }
@@ -196,15 +195,19 @@ void Dungeon::remove_entity_data(const int index) {
 
 	_entity_datas.remove(index);
 }
-
 int Dungeon::get_entity_data_count() const {
 	return _entity_datas.size();
 }
 
-
 void Dungeon::setup() {
 	if (has_method("_setup")) {
 		call("_setup");
+	}
+}
+
+void Dungeon::setup_library(Ref<VoxelmanLibrary> library) {
+	if (has_method("_setup_library")) {
+		call("_setup_library", library);
 	}
 }
 
@@ -255,10 +258,12 @@ Dungeon::~Dungeon() {
 
 void Dungeon::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_setup"));
+	BIND_VMETHOD(MethodInfo("_setup_library", PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary")));
 	BIND_VMETHOD(MethodInfo("_generate_structure", PropertyInfo(Variant::OBJECT, "structure", PROPERTY_HINT_RESOURCE_TYPE, "VoxelStructure"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 
 	ClassDB::bind_method(D_METHOD("setup"), &Dungeon::setup);
+	ClassDB::bind_method(D_METHOD("setup_library", "library"), &Dungeon::setup_library);
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk", "spawn_mobs"), &Dungeon::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("generate_structure", "structure", "spawn_mobs"), &Dungeon::generate_structure);
 
@@ -331,7 +336,6 @@ void Dungeon::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_dungeon_end_room", "index", "data"), &Dungeon::set_dungeon_end_room);
 	ClassDB::bind_method(D_METHOD("add_dungeon_end_room", "dungeon_end_room"), &Dungeon::add_dungeon_end_room);
 	ClassDB::bind_method(D_METHOD("remove_dungeon_end_room", "index"), &Dungeon::remove_dungeon_end_room);
-
 	ClassDB::bind_method(D_METHOD("get_dungeon_end_room_count"), &Dungeon::get_dungeon_end_room_count);
 
 	//Corridors
@@ -339,7 +343,6 @@ void Dungeon::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_dungeon_corridor", "index", "data"), &Dungeon::set_dungeon_corridor);
 	ClassDB::bind_method(D_METHOD("add_dungeon_corridor", "dungeon_corridor"), &Dungeon::add_dungeon_corridor);
 	ClassDB::bind_method(D_METHOD("remove_dungeon_corridor", "index"), &Dungeon::remove_dungeon_corridor);
-
 	ClassDB::bind_method(D_METHOD("get_dungeon_corridor_count"), &Dungeon::get_dungeon_corridor_count);
 
 	//Entities
@@ -347,7 +350,6 @@ void Dungeon::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_entity_data", "index", "data"), &Dungeon::set_entity_data);
 	ClassDB::bind_method(D_METHOD("add_entity_data", "entity_data"), &Dungeon::add_entity_data);
 	ClassDB::bind_method(D_METHOD("remove_entity_data", "index"), &Dungeon::remove_entity_data);
-
 	ClassDB::bind_method(D_METHOD("get_entity_data_count"), &Dungeon::get_entity_data_count);
 
 	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "image", PROPERTY_HINT_RESOURCE_TYPE, "Image"), "_generate_map"));

@@ -10,6 +10,7 @@
 #include "../../../entity_spell_system/entities/data/entity_data.h"
 
 #include "../data/biome_data.h"
+#include "../../library/voxelman_library.h"
 
 class BiomeData;
 
@@ -40,7 +41,6 @@ public:
 	void set_entity_data(const int index, const Ref<EntityData> entity_data);
 	void add_entity_data(const Ref<EntityData> entity_data);
 	void remove_entity_data(const int index);
-
 	int get_entity_data_count() const;
 
 	//Dungeons
@@ -48,7 +48,6 @@ public:
 	void set_dungeon(const int index, const Ref<Dungeon> dungeon);
 	void add_dungeon(const Ref<Dungeon> dungeon);
 	void remove_dungeon(const int index);
-
 	int get_dungeon_count() const;
 
 	void generate_chunk(VoxelChunk *chunk, bool spawn_mobs);
@@ -57,6 +56,7 @@ public:
 	void generate_stack_bind(Node *chunk, int x, int z, bool spawn_mobs);
 
 	void setup();
+	void setup_library(Ref<VoxelmanLibrary> library);
 
 	Biome();
 	~Biome();

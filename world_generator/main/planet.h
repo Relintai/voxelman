@@ -10,6 +10,8 @@
 #include "../../world/environment_data.h"
 
 #include "../data/planet_data.h"
+#include "../../library/voxel_surface.h"
+#include "../../library/voxelman_library.h"
 
 class PlanetData;
 
@@ -35,7 +37,6 @@ public:
 	void set_biome(const int index, const Ref<Biome> biome);
 	void add_biome(const Ref<Biome> biome);
 	void remove_biome(const int index);
-
 	int get_biome_count() const;
 
 	//Dungeons
@@ -43,10 +44,10 @@ public:
 	void set_dungeon(const int index, const Ref<Dungeon> dungeon);
 	void add_dungeon(const Ref<Dungeon> dungeon);
 	void remove_dungeon(const int index);
-
 	int get_dungeon_count() const;
 
 	void setup();
+	void setup_library(Ref<VoxelmanLibrary> library);
 	void generate_chunk(VoxelChunk *chunk, bool spawn_mobs);
 	void generate_chunk_bind(Node *chunk, bool spawn_mobs);
 	Ref<Image> generate_map();

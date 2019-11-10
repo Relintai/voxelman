@@ -66,7 +66,6 @@ void Biome::remove_entity_data(const int index) {
 
 	_entity_datas.remove(index);
 }
-
 int Biome::get_entity_data_count() const {
 	return _entity_datas.size();
 }
@@ -90,11 +89,9 @@ void Biome::remove_dungeon(const int index) {
 
 	_dungeons.remove(index);
 }
-
 int Biome::get_dungeon_count() const {
 	return _dungeons.size();
 }
-
 
 void Biome::generate_chunk(VoxelChunk *chunk, bool spawn_mobs) {
 	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
@@ -123,6 +120,12 @@ void Biome::setup() {
 	}
 }
 
+void Biome::setup_library(Ref<VoxelmanLibrary> library) {
+	if (has_method("_setup_library")) {
+		call("_setup_library", library);
+	}
+}
+
 Biome::Biome() {
 
 }
@@ -135,10 +138,12 @@ Biome::~Biome() {
 
 void Biome::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_setup"));
+	BIND_VMETHOD(MethodInfo("_setup_library", PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary")));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 	BIND_VMETHOD(MethodInfo("_generate_stack", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), PropertyInfo(Variant::INT, "x"), PropertyInfo(Variant::INT, "z"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 
 	ClassDB::bind_method(D_METHOD("setup"), &Biome::setup);
+	ClassDB::bind_method(D_METHOD("setup_library", "library"), &Biome::setup_library);
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk", "spawn_mobs"), &Biome::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("generate_stack", "chunk", "x", "z", "spawn_mobs"), &Biome::generate_stack_bind);
 
@@ -159,7 +164,6 @@ void Biome::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_prop_data", "index", "data"), &Biome::set_prop_data);
 	ClassDB::bind_method(D_METHOD("add_prop_data", "prop_data"), &Biome::add_prop_data);
 	ClassDB::bind_method(D_METHOD("remove_prop_data", "index"), &Biome::remove_prop_data);
-
 	ClassDB::bind_method(D_METHOD("get_prop_data_count"), &Biome::get_prop_data_count);
 
 	//Entities
@@ -167,7 +171,6 @@ void Biome::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_entity_data", "index", "data"), &Biome::set_entity_data);
 	ClassDB::bind_method(D_METHOD("add_entity_data", "entity_data"), &Biome::add_entity_data);
 	ClassDB::bind_method(D_METHOD("remove_entity_data", "index"), &Biome::remove_entity_data);
-
 	ClassDB::bind_method(D_METHOD("get_entity_data_count"), &Biome::get_entity_data_count);
 
 	//Dungeons
@@ -175,6 +178,5 @@ void Biome::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_dungeon", "index", "data"), &Biome::set_dungeon);
 	ClassDB::bind_method(D_METHOD("add_dungeon", "dungeon"), &Biome::add_dungeon);
 	ClassDB::bind_method(D_METHOD("remove_dungeon", "index"), &Biome::remove_dungeon);
-
 	ClassDB::bind_method(D_METHOD("get_dungeon_count"), &Biome::get_dungeon_count);
 }

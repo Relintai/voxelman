@@ -183,6 +183,45 @@ void BiomeData::set_environment_datas(const Vector<Variant> &environment_datas) 
 	}
 }
 
+////    Surfaces    ////
+Ref<VoxelSurface> BiomeData::get_voxel_surface(const int index) const {
+	ERR_FAIL_INDEX_V(index, _voxel_surfaces.size(), Ref<VoxelSurface>());
+
+	return _voxel_surfaces.get(index);
+}
+void BiomeData::set_voxel_surface(const int index, const Ref<VoxelSurface> voxel_surface) {
+	ERR_FAIL_INDEX(index, _voxel_surfaces.size());
+
+	_voxel_surfaces.set(index, voxel_surface);
+}
+void BiomeData::add_voxel_surface(const Ref<VoxelSurface> voxel_surface) {
+	_voxel_surfaces.push_back(voxel_surface);
+}
+void BiomeData::remove_voxel_surface(const int index) {
+	ERR_FAIL_INDEX(index, _voxel_surfaces.size());
+
+	_voxel_surfaces.remove(index);
+}
+int BiomeData::get_voxel_surface_count() const {
+	return _voxel_surfaces.size();
+}
+
+Vector<Variant> BiomeData::get_voxel_surfaces() {
+	Vector<Variant> r;
+	for (int i = 0; i < _voxel_surfaces.size(); i++) {
+		r.push_back(_voxel_surfaces[i].get_ref_ptr());
+	}
+	return r;
+}
+void BiomeData::set_voxel_surfaces(const Vector<Variant> &voxel_surfaces) {
+	_voxel_surfaces.clear();
+	for (int i = 0; i < voxel_surfaces.size(); i++) {
+		Ref<EnvironmentData> voxel_surface = Ref<EnvironmentData>(voxel_surfaces[i]);
+
+		_voxel_surfaces.push_back(voxel_surface);
+	}
+}
+
 BiomeData::BiomeData() {
 
 }
@@ -210,7 +249,6 @@ void BiomeData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_dungeon_data", "index", "data"), &BiomeData::set_dungeon_data);
 	ClassDB::bind_method(D_METHOD("add_dungeon_data", "dungeon_data"), &BiomeData::add_dungeon_data);
 	ClassDB::bind_method(D_METHOD("remove_dungeon_data", "index"), &BiomeData::remove_dungeon_data);
-
 	ClassDB::bind_method(D_METHOD("get_dungeon_data_count"), &BiomeData::get_dungeon_data_count);
 
 	ClassDB::bind_method(D_METHOD("get_dungeon_datas"), &BiomeData::get_dungeon_datas);
@@ -222,7 +260,6 @@ void BiomeData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_prop_data", "index", "data"), &BiomeData::set_prop_data);
 	ClassDB::bind_method(D_METHOD("add_prop_data", "prop_data"), &BiomeData::add_prop_data);
 	ClassDB::bind_method(D_METHOD("remove_prop_data", "index"), &BiomeData::remove_prop_data);
-
 	ClassDB::bind_method(D_METHOD("get_prop_data_count"), &BiomeData::get_prop_data_count);
 
 	ClassDB::bind_method(D_METHOD("get_prop_datas"), &BiomeData::get_prop_datas);
@@ -234,7 +271,6 @@ void BiomeData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_entity_data", "index", "data"), &BiomeData::set_entity_data);
 	ClassDB::bind_method(D_METHOD("add_entity_data", "entity_data"), &BiomeData::add_entity_data);
 	ClassDB::bind_method(D_METHOD("remove_entity_data", "index"), &BiomeData::remove_entity_data);
-
 	ClassDB::bind_method(D_METHOD("get_entity_data_count"), &BiomeData::get_entity_data_count);
 
 	ClassDB::bind_method(D_METHOD("get_entity_datas"), &BiomeData::get_entity_datas);
@@ -246,10 +282,20 @@ void BiomeData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_environment_data", "index", "data"), &BiomeData::set_environment_data);
 	ClassDB::bind_method(D_METHOD("add_environment_data", "environment_data"), &BiomeData::add_environment_data);
 	ClassDB::bind_method(D_METHOD("remove_environment_data", "index"), &BiomeData::remove_environment_data);
-
 	ClassDB::bind_method(D_METHOD("get_environment_data_count"), &BiomeData::get_environment_data_count);
 
 	ClassDB::bind_method(D_METHOD("get_environment_datas"), &BiomeData::get_environment_datas);
 	ClassDB::bind_method(D_METHOD("set_environment_datas", "environment_datas"), &BiomeData::set_environment_datas);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "environment_datas", PROPERTY_HINT_NONE, "17/17:EnvironmentData", PROPERTY_USAGE_DEFAULT, "EnvironmentData"), "set_environment_datas", "get_environment_datas");
+
+	//Surfaces
+	ClassDB::bind_method(D_METHOD("get_voxel_surface", "index"), &BiomeData::get_voxel_surface);
+	ClassDB::bind_method(D_METHOD("set_voxel_surface", "index", "data"), &BiomeData::set_voxel_surface);
+	ClassDB::bind_method(D_METHOD("add_voxel_surface", "voxel_surface"), &BiomeData::add_voxel_surface);
+	ClassDB::bind_method(D_METHOD("remove_voxel_surface", "index"), &BiomeData::remove_voxel_surface);
+	ClassDB::bind_method(D_METHOD("get_voxel_surface_count"), &BiomeData::get_voxel_surface_count);
+
+	ClassDB::bind_method(D_METHOD("get_voxel_surfaces"), &BiomeData::get_voxel_surfaces);
+	ClassDB::bind_method(D_METHOD("set_voxel_surfaces", "voxel_surfaces"), &BiomeData::set_voxel_surfaces);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurface", PROPERTY_USAGE_DEFAULT, "VoxelSurface"), "set_voxel_surfaces", "get_voxel_surfaces");
 }
