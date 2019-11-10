@@ -14,11 +14,17 @@ class VoxelmanLibrary : public Resource {
 	GDCLASS(VoxelmanLibrary, Resource)
 
 public:
-	Ref<Material> get_material() const { return _material; }
-	void set_material(Ref<Material> mat) { _material = mat; }
+	Ref<Material> get_material() const;
+	void set_material(Ref<Material> mat);
 
-	Ref<Material> get_prop_material() const { return _prop_material; }
-	void set_prop_material(Ref<Material> mat) { _prop_material = mat; }
+	Ref<Material> get_prop_material() const;
+	void set_prop_material(Ref<Material> mat);
+
+	Ref<Material> get_liquid_material() const;
+	void set_liquid_material(Ref<Material> mat);
+
+	Ref<Material> get_clutter_material() const;
+	void set_clutter_material(Ref<Material> mat);
 
 	virtual Ref<VoxelSurface> get_voxel_surface(int index) const;
 	virtual void set_voxel_surface(int index, Ref<VoxelSurface> value);
@@ -43,6 +49,8 @@ protected:
 private:
 	Ref<Material> _material;
 	Ref<Material> _prop_material;
+	Ref<Material> _liquid_material;
+	Ref<Material> _clutter_material;
 };
 
 #endif // VOXEL_LIBRARY_H

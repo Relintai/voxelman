@@ -183,7 +183,6 @@ void VoxelmanLibraryMerger::set_liquid_voxel_surfaces(const Vector<Variant> &sur
 	}
 }
 
-
 void VoxelmanLibraryMerger::refresh_rects() {
 	bool texture_added = false;
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
@@ -202,6 +201,12 @@ void VoxelmanLibraryMerger::refresh_rects() {
 				} else {
 					surface->set_region(static_cast<VoxelSurface::VoxelSurfaceSides>(j), _packer->get_texture(tex));
 				}
+			}
+
+			Ref<GroundClutter> gc = surface->get_clutter();
+
+			if (gc.is_valid()) {
+				gc->add_textures_to(_packer);
 			}
 		}
 	}
@@ -286,6 +291,7 @@ VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
 
 	_liquid_surfaces.clear();
 
+	_packer->clear();
 	_packer.unref();
 }
 

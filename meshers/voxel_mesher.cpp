@@ -119,6 +119,12 @@ void VoxelMesher::add_buffer(Ref<VoxelBuffer> voxels) {
 	call("_add_buffer", voxels);
 }
 
+void VoxelMesher::add_buffer_liquid(Ref<VoxelBuffer> voxels) {
+	ERR_FAIL_COND(!has_method("_add_buffer_liquid"));
+
+	call("_add_buffer_liquid", voxels);
+}
+
 void VoxelMesher::add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position, const Vector3 rotation, const Vector3 scale, const Rect2 uv_rect) {
 	Transform transform = Transform(Basis(rotation).scaled(scale), position);
 
@@ -252,16 +258,69 @@ void VoxelMesher::bake_colors(Ref<VoxelBuffer> voxels) {
 	if (has_method("_bake_colors"))
 		call("_bake_colors", voxels);
 }
-
 void VoxelMesher::_bake_colors(Ref<VoxelBuffer> buffer) {
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
 	ERR_FAIL_COND(_vertices.size() != _normals.size());
 
-	/*
-	if (_vertices.size() != _normals.size()) {
-		print_error("VoxelMesherCubic: Generating normals!");
-	}*/
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vector3 vert = _vertices[i];
+
+		if (vert.x < 0 || vert.y < 0 || vert.z < 0) {
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(base_light);
+			}
+
+			continue;
+		}
+
+		unsigned int x = (unsigned int)(vert.x / _voxel_scale);
+		unsigned int y = (unsigned int)(vert.y / _voxel_scale);
+		unsigned int z = (unsigned int)(vert.z / _voxel_scale);
+
+		if (buffer->validate_pos(x, y, z)) {
+			Color light = Color(
+					buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_R) / 255.0,
+					buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_G) / 255.0,
+					buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_LIGHT_COLOR_B) / 255.0);
+
+			float ao = (buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_AO) / 255.0) * _ao_strength;
+			float rao = buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_RANDOM_AO) / 255.0;
+			ao += rao;
+
+			light.r += _base_light_value;
+			light.g += _base_light_value;
+			light.b += _base_light_value;
+
+			light.r -= ao;
+			light.g -= ao;
+			light.b -= ao;
+
+			light.r = CLAMP(light.r, 0, 1.0);
+			light.g = CLAMP(light.g, 0, 1.0);
+			light.b = CLAMP(light.b, 0, 1.0);
+
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(light);
+			} else {
+				_colors.set(i, light);
+			}
+		} else {
+			if (_colors.size() < _vertices.size()) {
+				_colors.push_back(base_light);
+			}
+		}
+	}
+}
+
+void VoxelMesher::bake_liquid_colors(Ref<VoxelBuffer> voxels) {
+	if (has_method("_bake_liquid_colors"))
+		call("_bake_liquid_colors", voxels);
+}
+void VoxelMesher::_bake_liquid_colors(Ref<VoxelBuffer> buffer) {
+	Color base_light(_base_light_value, _base_light_value, _base_light_value);
+
+	ERR_FAIL_COND(_vertices.size() != _normals.size());
 
 	for (int i = 0; i < _vertices.size(); ++i) {
 		Vector3 vert = _vertices[i];
@@ -572,7 +631,9 @@ VoxelMesher::~VoxelMesher() {
 
 void VoxelMesher::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_add_buffer", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
+	BIND_VMETHOD(MethodInfo("_add_buffer_liquid", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
 	BIND_VMETHOD(MethodInfo("_bake_colors", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
+	BIND_VMETHOD(MethodInfo("_bake_liquid_colors", PropertyInfo(Variant::OBJECT, "buffer", PROPERTY_HINT_RESOURCE_TYPE, "VoxelBuffer")));
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);
@@ -605,9 +666,12 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_buffer", "buffer"), &VoxelMesher::add_buffer);
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale", "uv_rect"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Rect2(0, 0, 1, 1)), DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform", "mesh", "transform", "uv_rect"), &VoxelMesher::add_mesh_data_resource_transform, DEFVAL(Rect2(0, 0, 1, 1)));
-	ClassDB::bind_method(D_METHOD("bake_colors", "buffer"), &VoxelMesher::bake_colors);
 
+	ClassDB::bind_method(D_METHOD("bake_colors", "buffer"), &VoxelMesher::bake_colors);
 	ClassDB::bind_method(D_METHOD("_bake_colors", "buffer"), &VoxelMesher::_bake_colors);
+
+	ClassDB::bind_method(D_METHOD("bake_liquid_colors", "buffer"), &VoxelMesher::bake_liquid_colors);
+	ClassDB::bind_method(D_METHOD("_bake_liquid_colors", "buffer"), &VoxelMesher::_bake_liquid_colors);
 
 	ClassDB::bind_method(D_METHOD("get_vertex_count"), &VoxelMesher::get_vertex_count);
 	ClassDB::bind_method(D_METHOD("get_vertex", "idx"), &VoxelMesher::get_vertex);

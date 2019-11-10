@@ -178,6 +178,20 @@ RID VoxelChunk::get_prop_body_rid() {
 	return _prop_body_rid;
 }
 
+RID VoxelChunk::get_liquid_mesh_rid() {
+	return _liquid_mesh_rid;
+}
+RID VoxelChunk::get_liquid_mesh_instance_rid() {
+	return _liquid_mesh_instance_rid;
+}
+
+RID VoxelChunk::get_clutter_mesh_rid() {
+	return _clutter_mesh_rid;
+}
+RID VoxelChunk::get_clutter_mesh_instance_rid() {
+	return _clutter_mesh_instance_rid;
+}
+
 void VoxelChunk::create_mesher() {
 	call("_create_mesher");
 
@@ -449,7 +463,7 @@ void VoxelChunk::clear_baked_lights() {
 }
 
 void VoxelChunk::add_prop_light(Ref<VoxelLight> light) {
-    bake_light(light);
+	bake_light(light);
 }
 
 void VoxelChunk::add_prop(Ref<VoxelChunkPropData> prop) {
@@ -469,27 +483,6 @@ void VoxelChunk::remove_prop(int index) {
 }
 void VoxelChunk::clear_props() {
 	_props.clear();
-}
-
-void VoxelChunk::allocate_prop_mesh() {
-	ERR_FAIL_COND(_voxel_world == NULL);
-	ERR_FAIL_COND(!get_library().is_valid());
-	ERR_FAIL_COND(!get_library()->get_prop_material().is_valid());
-
-	_prop_mesh_instance_rid = VS::get_singleton()->instance_create();
-
-	if (get_library()->get_prop_material().is_valid()) {
-		VS::get_singleton()->instance_geometry_set_material_override(_prop_mesh_instance_rid, get_library()->get_prop_material()->get_rid());
-	}
-
-	if (get_voxel_world()->get_world().is_valid())
-		VS::get_singleton()->instance_set_scenario(_prop_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
-
-	_prop_mesh_rid = VS::get_singleton()->mesh_create();
-
-	VS::get_singleton()->instance_set_base(_prop_mesh_instance_rid, _prop_mesh_rid);
-
-	VS::get_singleton()->instance_set_transform(_prop_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
 }
 
 void VoxelChunk::process_props() {
@@ -515,6 +508,60 @@ void VoxelChunk::build_prop_meshes() {
 
 	_mesher->build_mesh(_prop_mesh_rid);
 }
+
+void VoxelChunk::allocate_main_mesh() {
+	ERR_FAIL_COND(_voxel_world == NULL);
+
+	ERR_FAIL_COND(!get_library().is_valid());
+	ERR_FAIL_COND(!get_library()->get_material().is_valid());
+
+	_mesh_instance_rid = VS::get_singleton()->instance_create();
+
+	if (get_library()->get_material().is_valid()) {
+		VS::get_singleton()->instance_geometry_set_material_override(_mesh_instance_rid, get_library()->get_material()->get_rid());
+	}
+
+	if (get_voxel_world()->get_world().is_valid())
+		VS::get_singleton()->instance_set_scenario(_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
+
+	_mesh_rid = VS::get_singleton()->mesh_create();
+
+	VS::get_singleton()->instance_set_base(_mesh_instance_rid, _mesh_rid);
+
+	VS::get_singleton()->instance_set_transform(_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+}
+
+void VoxelChunk::free_main_mesh() {
+	if (_mesh_instance_rid != RID()) {
+		VS::get_singleton()->free(_mesh_instance_rid);
+		VS::get_singleton()->free(_mesh_rid);
+
+		_mesh_instance_rid = RID();
+		_mesh_rid = RID();
+	}
+}
+
+void VoxelChunk::allocate_prop_mesh() {
+	ERR_FAIL_COND(_voxel_world == NULL);
+	ERR_FAIL_COND(!get_library().is_valid());
+	ERR_FAIL_COND(!get_library()->get_prop_material().is_valid());
+
+	_prop_mesh_instance_rid = VS::get_singleton()->instance_create();
+
+	if (get_library()->get_prop_material().is_valid()) {
+		VS::get_singleton()->instance_geometry_set_material_override(_prop_mesh_instance_rid, get_library()->get_prop_material()->get_rid());
+	}
+
+	if (get_voxel_world()->get_world().is_valid())
+		VS::get_singleton()->instance_set_scenario(_prop_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
+
+	_prop_mesh_rid = VS::get_singleton()->mesh_create();
+
+	VS::get_singleton()->instance_set_base(_prop_mesh_instance_rid, _prop_mesh_rid);
+
+	VS::get_singleton()->instance_set_transform(_prop_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+}
+
 
 void VoxelChunk::free_prop_mesh() {
 	if (_prop_mesh_instance_rid != RID()) {
@@ -557,44 +604,78 @@ void VoxelChunk::free_prop_colliders() {
 	}
 }
 
+//Liquid mesh
+void VoxelChunk::allocate_liquid_mesh() {
+	ERR_FAIL_COND(_voxel_world == NULL);
+
+	ERR_FAIL_COND(!get_library().is_valid());
+	ERR_FAIL_COND(!get_library()->get_liquid_material().is_valid());
+
+	_liquid_mesh_instance_rid = VS::get_singleton()->instance_create();
+
+	if (get_library()->get_liquid_material().is_valid()) {
+		VS::get_singleton()->instance_geometry_set_material_override(_liquid_mesh_instance_rid, get_library()->get_liquid_material()->get_rid());
+	}
+
+	if (get_voxel_world()->get_world().is_valid())
+		VS::get_singleton()->instance_set_scenario(_liquid_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
+
+	_liquid_mesh_rid = VS::get_singleton()->mesh_create();
+
+	VS::get_singleton()->instance_set_base(_liquid_mesh_instance_rid, _liquid_mesh_rid);
+
+	VS::get_singleton()->instance_set_transform(_liquid_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+}
+
+void VoxelChunk::free_liquid_mesh() {
+	if (_liquid_mesh_instance_rid != RID()) {
+		VS::get_singleton()->free(_liquid_mesh_instance_rid);
+		VS::get_singleton()->free(_liquid_mesh_rid);
+
+		_liquid_mesh_instance_rid = RID();
+		_liquid_mesh_rid = RID();
+	}
+}
+
+//Clutter mesh
+void VoxelChunk::allocate_clutter_mesh() {
+	ERR_FAIL_COND(_voxel_world == NULL);
+
+	ERR_FAIL_COND(!get_library().is_valid());
+	ERR_FAIL_COND(!get_library()->get_clutter_material().is_valid());
+
+	_clutter_mesh_instance_rid = VS::get_singleton()->instance_create();
+
+	if (get_library()->get_clutter_material().is_valid()) {
+		VS::get_singleton()->instance_geometry_set_material_override(_clutter_mesh_instance_rid, get_library()->get_clutter_material()->get_rid());
+	}
+
+	if (get_voxel_world()->get_world().is_valid())
+		VS::get_singleton()->instance_set_scenario(_clutter_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
+
+	_clutter_mesh_rid = VS::get_singleton()->mesh_create();
+
+	VS::get_singleton()->instance_set_base(_clutter_mesh_instance_rid, _clutter_mesh_rid);
+
+	VS::get_singleton()->instance_set_transform(_clutter_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+}
+
+void VoxelChunk::free_clutter_mesh() {
+	if (_clutter_mesh_instance_rid != RID()) {
+		VS::get_singleton()->free(_clutter_mesh_instance_rid);
+		VS::get_singleton()->free(_clutter_mesh_rid);
+
+		_clutter_mesh_instance_rid = RID();
+		_clutter_mesh_rid = RID();
+	}
+}
+
 void VoxelChunk::free_spawn_props() {
 	for (int i = 0; i < _spawned_props.size(); ++i) {
 		_spawned_props[i]->queue_delete();
 	}
 
 	_spawned_props.clear();
-}
-
-void VoxelChunk::allocate_main_mesh() {
-	ERR_FAIL_COND(_voxel_world == NULL);
-
-	ERR_FAIL_COND(!get_library().is_valid());
-	ERR_FAIL_COND(!get_library()->get_material().is_valid());
-
-	_mesh_instance_rid = VS::get_singleton()->instance_create();
-
-	if (get_library()->get_material().is_valid()) {
-		VS::get_singleton()->instance_geometry_set_material_override(_mesh_instance_rid, get_library()->get_material()->get_rid());
-	}
-
-	if (get_voxel_world()->get_world().is_valid())
-		VS::get_singleton()->instance_set_scenario(_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
-
-	_mesh_rid = VS::get_singleton()->mesh_create();
-
-	VS::get_singleton()->instance_set_base(_mesh_instance_rid, _mesh_rid);
-
-	VS::get_singleton()->instance_set_transform(_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
-}
-
-void VoxelChunk::free_main_mesh() {
-	if (_mesh_instance_rid != RID()) {
-		VS::get_singleton()->free(_mesh_instance_rid);
-		VS::get_singleton()->free(_mesh_rid);
-
-		_mesh_instance_rid = RID();
-		_mesh_rid = RID();
-	}
 }
 
 void VoxelChunk::create_debug_immediate_geometry() {
@@ -719,6 +800,8 @@ void VoxelChunk::free_chunk() {
 	free_prop_mesh();
 	free_prop_colliders();
 	free_spawn_props();
+	free_liquid_mesh();
+	free_clutter_mesh();
 }
 
 VoxelChunk::VoxelChunk() {
@@ -744,6 +827,8 @@ VoxelChunk::~VoxelChunk() {
 	remove_colliders();
 	free_prop_mesh();
 	free_prop_colliders();
+	free_liquid_mesh();
+	free_clutter_mesh();
 	//do not call free here, the app will crash on exit, if you try to free nodes too.
 
 	_voxel_lights.clear();
@@ -855,6 +940,12 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_prop_shape_rid"), &VoxelChunk::get_prop_shape_rid);
 	ClassDB::bind_method(D_METHOD("get_prop_body_rid"), &VoxelChunk::get_prop_body_rid);
 
+	ClassDB::bind_method(D_METHOD("get_liquid_mesh_rid"), &VoxelChunk::get_liquid_mesh_rid);
+	ClassDB::bind_method(D_METHOD("get_liquid_mesh_instance_rid"), &VoxelChunk::get_liquid_mesh_instance_rid);
+
+	ClassDB::bind_method(D_METHOD("get_clutter_mesh_rid"), &VoxelChunk::get_clutter_mesh_rid);
+	ClassDB::bind_method(D_METHOD("get_clutter_mesh_instance_rid"), &VoxelChunk::get_clutter_mesh_instance_rid);
+
 	ClassDB::bind_method(D_METHOD("finalize_mesh"), &VoxelChunk::finalize_mesh);
 
 	BIND_VMETHOD(MethodInfo("_build_phase", PropertyInfo(Variant::INT, "phase")));
@@ -882,7 +973,7 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("bake_lights"), &VoxelChunk::bake_lights);
 	ClassDB::bind_method(D_METHOD("bake_light", "light"), &VoxelChunk::bake_light);
 	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
-    
+
 	ClassDB::bind_method(D_METHOD("add_prop_light", "light"), &VoxelChunk::add_prop_light);
 
 	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelChunk::add_prop);
@@ -906,6 +997,12 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("allocate_prop_colliders"), &VoxelChunk::allocate_prop_colliders);
 	ClassDB::bind_method(D_METHOD("free_prop_colliders"), &VoxelChunk::free_prop_colliders);
+
+	ClassDB::bind_method(D_METHOD("allocate_liquid_mesh"), &VoxelChunk::allocate_liquid_mesh);
+	ClassDB::bind_method(D_METHOD("free_liquid_mesh"), &VoxelChunk::free_liquid_mesh);
+
+	ClassDB::bind_method(D_METHOD("allocate_clutter_mesh"), &VoxelChunk::allocate_clutter_mesh);
+	ClassDB::bind_method(D_METHOD("free_clutter_mesh"), &VoxelChunk::free_clutter_mesh);
 
 	ClassDB::bind_method(D_METHOD("create_mesher"), &VoxelChunk::create_mesher);
 

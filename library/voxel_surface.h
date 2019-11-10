@@ -12,6 +12,7 @@
 #include "../clutter/ground_clutter.h"
 
 class VoxelmanLibrary;
+class GroundClutter;
 
 class VoxelSurface : public Resource {
 	GDCLASS(VoxelSurface, Resource)

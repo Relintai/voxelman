@@ -1,11 +1,31 @@
 #include "voxelman_library.h"
 
-VoxelmanLibrary::VoxelmanLibrary() {
+Ref<Material> VoxelmanLibrary::get_material() const {
+	return _material;
+}
+void VoxelmanLibrary::set_material(Ref<Material> mat) {
+	_material = mat;
 }
 
-VoxelmanLibrary::~VoxelmanLibrary() {
-	_material.unref();
-	_prop_material.unref();
+Ref<Material> VoxelmanLibrary::get_prop_material() const {
+	return _prop_material;
+}
+void VoxelmanLibrary::set_prop_material(Ref<Material> mat) {
+	_prop_material = mat;
+}
+
+Ref<Material> VoxelmanLibrary::get_liquid_material() const {
+	return _liquid_material;
+}
+void VoxelmanLibrary::set_liquid_material(Ref<Material> mat) {
+	_liquid_material = mat;
+}
+
+Ref<Material> VoxelmanLibrary::get_clutter_material() const {
+	return _clutter_material;
+}
+void VoxelmanLibrary::set_clutter_material(Ref<Material> mat) {
+	_clutter_material = mat;
 }
 
 //Surfaces
@@ -40,6 +60,16 @@ void VoxelmanLibrary::clear_liquid_surfaces() {
 void VoxelmanLibrary::refresh_rects() {
 }
 
+VoxelmanLibrary::VoxelmanLibrary() {
+}
+
+VoxelmanLibrary::~VoxelmanLibrary() {
+	_material.unref();
+	_prop_material.unref();
+	_liquid_material.unref();
+	_clutter_material.unref();
+}
+
 void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_material"), &VoxelmanLibrary::get_material);
 	ClassDB::bind_method(D_METHOD("set_material", "value"), &VoxelmanLibrary::set_material);
@@ -48,6 +78,14 @@ void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_prop_material"), &VoxelmanLibrary::get_prop_material);
 	ClassDB::bind_method(D_METHOD("set_prop_material", "value"), &VoxelmanLibrary::set_prop_material);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop_material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_prop_material", "get_prop_material");
+
+	ClassDB::bind_method(D_METHOD("get_liquid_material"), &VoxelmanLibrary::get_liquid_material);
+	ClassDB::bind_method(D_METHOD("set_liquid_material", "value"), &VoxelmanLibrary::set_liquid_material);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "liquid_material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_liquid_material", "get_liquid_material");
+
+	ClassDB::bind_method(D_METHOD("get_clutter_material"), &VoxelmanLibrary::get_clutter_material);
+	ClassDB::bind_method(D_METHOD("set_clutter_material", "value"), &VoxelmanLibrary::set_clutter_material);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "clutter_material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_clutter_material", "get_clutter_material");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_surface", "index"), &VoxelmanLibrary::get_voxel_surface);
 	ClassDB::bind_method(D_METHOD("set_voxel_surface", "index", "surface"), &VoxelmanLibrary::set_voxel_surface);

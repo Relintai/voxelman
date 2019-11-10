@@ -55,11 +55,15 @@ public:
 	void reset();
 
 	void add_buffer(Ref<VoxelBuffer> voxels);
+	void add_buffer_liquid(Ref<VoxelBuffer> voxels);
 	void add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position = Vector3(0, 0, 0), const Vector3 rotation = Vector3(0, 0, 0), const Vector3 scale = Vector3(1.0, 1.0, 1.0), const Rect2 uv_rect = Rect2(0, 0, 1, 1));
 	void add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform, const Rect2 uv_rect = Rect2(0, 0, 1, 1));
-	void bake_colors(Ref<VoxelBuffer> voxels);
 
+	void bake_colors(Ref<VoxelBuffer> voxels);
 	void _bake_colors(Ref<VoxelBuffer> buffer);
+
+	void bake_liquid_colors(Ref<VoxelBuffer> voxels);
+	void _bake_liquid_colors(Ref<VoxelBuffer> buffer);
 
 	void build_collider(RID shape) const;
 

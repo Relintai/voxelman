@@ -127,6 +127,12 @@ public:
 	RID get_prop_shape_rid();
 	RID get_prop_body_rid();
 
+	RID get_liquid_mesh_rid();
+	RID get_liquid_mesh_instance_rid();
+
+	RID get_clutter_mesh_rid();
+	RID get_clutter_mesh_instance_rid();
+
 	//Meshing
 	void create_mesher();
 	void _create_mesher();
@@ -185,6 +191,12 @@ public:
     void allocate_prop_colliders();
 	void free_prop_colliders();
 
+	void allocate_liquid_mesh();
+	void free_liquid_mesh();
+
+	void allocate_clutter_mesh();
+	void free_clutter_mesh();
+
 	//Debug
 	void create_debug_immediate_geometry();
 	void free_debug_immediate_geometry();
@@ -222,6 +234,7 @@ protected:
 
 	NodePath _library_path;
 	Ref<VoxelmanLibrary> _library;
+	Ref<VoxelMesher> _mesher;
 
 	//voxel mesh
 	RID _mesh_rid;
@@ -229,8 +242,6 @@ protected:
 
 	RID _shape_rid;
 	RID _body_rid;
-
-	Ref<VoxelMesher> _mesher;
 
 	//mergeable props
 	Vector<Ref<VoxelChunkPropData> > _props;
@@ -240,6 +251,14 @@ protected:
 
 	RID _prop_shape_rid;
 	RID _prop_body_rid;
+
+	//liquids
+	RID _liquid_mesh_rid;
+	RID _liquid_mesh_instance_rid;
+
+	//clutter
+	RID _clutter_mesh_rid;
+	RID _clutter_mesh_instance_rid;
 
 	//spawned props
 	Vector<Node *> _spawned_props;
