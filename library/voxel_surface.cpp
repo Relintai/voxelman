@@ -73,7 +73,7 @@ void VoxelSurface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_transparent"), &VoxelSurface::is_transparent);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transparent"), "set_transparent", "is_transparent");
 
-	ClassDB::bind_method(D_METHOD("get_clutter", "transparent"), &VoxelSurface::get_clutter);
+	ClassDB::bind_method(D_METHOD("get_clutter"), &VoxelSurface::get_clutter);
 	ClassDB::bind_method(D_METHOD("set_clutter"), &VoxelSurface::set_clutter);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "clutter", PROPERTY_HINT_RESOURCE_TYPE, "GroundClutter"), "set_clutter", "get_clutter");
 

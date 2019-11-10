@@ -39,6 +39,36 @@ class VoxelChunk : public Spatial {
 	GDCLASS(VoxelChunk, Spatial);
 
 public:
+	enum {
+		VOXEL_CHUNK_STATE_OK = 0,
+		VOXEL_CHUNK_STATE_GENERATION_QUEUED = 1,
+		VOXEL_CHUNK_STATE_GENERATION = 2,
+		VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED = 3,
+		VOXEL_CHUNK_STATE_MESH_GENERATION = 4,
+		VOXEL_CHUNK_STATE_MAX = 5,
+	};
+
+	enum {
+		BUILD_PHASE_DONE = 0,
+		BUILD_PHASE_SETUP = 1,
+		BUILD_PHASE_TERRARIN_MESH_SETUP = 2,
+		BUILD_PHASE_TERRARIN_MESH_COLLIDER = 3,
+		BUILD_PHASE_LIGHTS = 4,
+		BUILD_PHASE_TERRARIN_MESH = 5,
+		BUILD_PHASE_PROP_MESH = 6,
+		BUILD_PHASE_PROP_COLLIDER = 7,
+		BUILD_PHASE_LIQUID = 8,
+		BUILD_PHASE_CLUTTER = 9,
+		BUILD_PHASE_MAX = 10
+	};
+
+public:
+	bool get_dirty() const;
+	void set_dirty(bool value);
+
+	int get_state() const;
+	void set_state(int value);
+
 	//Properties
 	int get_chunk_position_x();
 	void set_chunk_position_x(int value);
@@ -170,23 +200,12 @@ public:
 	VoxelChunk();
 	~VoxelChunk();
 
-public:
-	enum {
-		BUILD_PHASE_DONE = 0,
-		BUILD_PHASE_SETUP = 1,
-		BUILD_PHASE_TERRARIN_MESH_SETUP = 2,
-		BUILD_PHASE_TERRARIN_MESH_COLLIDER = 3,
-		BUILD_PHASE_LIGHTS = 4,
-		BUILD_PHASE_TERRARIN_MESH = 5,
-		BUILD_PHASE_PROP_MESH = 6,
-		BUILD_PHASE_PROP_COLLIDER = 7,
-		BUILD_PHASE_LIQUID = 8,
-		BUILD_PHASE_CLUTTER = 9,
-		BUILD_PHASE_MAX = 10
-	};
-
 protected:
 	static void _bind_methods();
+
+	bool _dirty;
+	int _state;
+
 	int _current_build_phase;
 	bool _enabled;
 

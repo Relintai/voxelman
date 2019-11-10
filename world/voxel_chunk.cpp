@@ -2,6 +2,20 @@
 
 #include "voxel_world.h"
 
+bool VoxelChunk::get_dirty() const {
+	return _dirty;
+}
+void VoxelChunk::set_dirty(bool value) {
+	_dirty = value;
+}
+
+int VoxelChunk::get_state() const {
+	return _state;
+}
+void VoxelChunk::set_state(int value) {
+	_state = value;
+}
+
 int VoxelChunk::get_chunk_position_x() {
 	return _chunk_position.x;
 }
@@ -708,6 +722,9 @@ void VoxelChunk::free_chunk() {
 }
 
 VoxelChunk::VoxelChunk() {
+	_dirty = false;
+	_state = VOXEL_CHUNK_STATE_OK;
+
 	_build_mesh = true;
 	_create_collider = true;
 	_bake_lights = true;
@@ -753,6 +770,14 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
 
 	ClassDB::bind_method(D_METHOD("_create_mesher"), &VoxelChunk::_create_mesher);
+
+	ClassDB::bind_method(D_METHOD("get_dirty"), &VoxelChunk::get_dirty);
+	ClassDB::bind_method(D_METHOD("set_dirty", "value"), &VoxelChunk::set_dirty);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "dirty"), "set_dirty", "get_dirty");
+
+	ClassDB::bind_method(D_METHOD("get_state"), &VoxelChunk::get_state);
+	ClassDB::bind_method(D_METHOD("set_state", "value"), &VoxelChunk::set_state);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "state"), "set_state", "get_state");
 
 	ClassDB::bind_method(D_METHOD("get_chunk_position_x"), &VoxelChunk::get_chunk_position_x);
 	ClassDB::bind_method(D_METHOD("set_chunk_position_x", "value"), &VoxelChunk::set_chunk_position_x);
@@ -906,4 +931,11 @@ void VoxelChunk::_bind_methods() {
 	BIND_CONSTANT(BUILD_PHASE_PROP_MESH);
 	BIND_CONSTANT(BUILD_PHASE_PROP_COLLIDER);
 	BIND_CONSTANT(BUILD_PHASE_MAX);
+
+	BIND_CONSTANT(VOXEL_CHUNK_STATE_OK);
+	BIND_CONSTANT(VOXEL_CHUNK_STATE_GENERATION_QUEUED);
+	BIND_CONSTANT(VOXEL_CHUNK_STATE_GENERATION);
+	BIND_CONSTANT(VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED);
+	BIND_CONSTANT(VOXEL_CHUNK_STATE_MESH_GENERATION);
+	BIND_CONSTANT(VOXEL_CHUNK_STATE_MAX);
 }
