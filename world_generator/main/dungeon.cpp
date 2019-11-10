@@ -225,6 +225,14 @@ void Dungeon::_setup_library(Ref<VoxelmanLibrary> library) {
 			library->add_voxel_surface(s);
 		}
 	}
+
+	for (int i = 0; i < _data->get_liquid_voxel_surface_count(); ++i) {
+		Ref<VoxelSurface> s = _data->get_liquid_voxel_surface(i);
+
+		if (s.is_valid()) {
+			library->add_liquid_voxel_surface(s);
+		}
+	}
 }
 
 void Dungeon::generate_chunk(VoxelChunk *chunk, bool spawn_mobs) {
@@ -265,6 +273,7 @@ Dungeon::Dungeon() {
 }
 Dungeon::~Dungeon() {
 	_environment.unref();
+	_data.unref();
 	_dungeon_rooms.clear();
 	_dungeon_start_rooms.clear();
 	_dungeon_end_rooms.clear();

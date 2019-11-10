@@ -222,6 +222,45 @@ void BiomeData::set_voxel_surfaces(const Vector<Variant> &voxel_surfaces) {
 	}
 }
 
+////    Liquid Surfaces    ////
+Ref<VoxelSurface> BiomeData::get_liquid_voxel_surface(const int index) const {
+	ERR_FAIL_INDEX_V(index, _liquid_voxel_surfaces.size(), Ref<VoxelSurface>());
+
+	return _liquid_voxel_surfaces.get(index);
+}
+void BiomeData::set_liquid_voxel_surface(const int index, const Ref<VoxelSurface> voxel_surface) {
+	ERR_FAIL_INDEX(index, _liquid_voxel_surfaces.size());
+
+	_liquid_voxel_surfaces.set(index, voxel_surface);
+}
+void BiomeData::add_liquid_voxel_surface(const Ref<VoxelSurface> voxel_surface) {
+	_liquid_voxel_surfaces.push_back(voxel_surface);
+}
+void BiomeData::remove_liquid_voxel_surface(const int index) {
+	ERR_FAIL_INDEX(index, _liquid_voxel_surfaces.size());
+
+	_liquid_voxel_surfaces.remove(index);
+}
+int BiomeData::get_liquid_voxel_surface_count() const {
+	return _liquid_voxel_surfaces.size();
+}
+
+Vector<Variant> BiomeData::get_liquid_voxel_surfaces() {
+	Vector<Variant> r;
+	for (int i = 0; i < _liquid_voxel_surfaces.size(); i++) {
+		r.push_back(_liquid_voxel_surfaces[i].get_ref_ptr());
+	}
+	return r;
+}
+void BiomeData::set_liquid_voxel_surfaces(const Vector<Variant> &voxel_surfaces) {
+	_liquid_voxel_surfaces.clear();
+	for (int i = 0; i < voxel_surfaces.size(); i++) {
+		Ref<EnvironmentData> voxel_surface = Ref<EnvironmentData>(voxel_surfaces[i]);
+
+		_liquid_voxel_surfaces.push_back(voxel_surface);
+	}
+}
+
 BiomeData::BiomeData() {
 
 }
@@ -229,6 +268,10 @@ BiomeData::~BiomeData() {
 	_dungeon_datas.clear();
 	_prop_datas.clear();
 	_entity_datas.clear();
+
+	_environment_datas.clear();
+	_voxel_surfaces.clear();
+	_liquid_voxel_surfaces.clear();
 }
 
 void BiomeData::_bind_methods() {
@@ -298,4 +341,15 @@ void BiomeData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_voxel_surfaces"), &BiomeData::get_voxel_surfaces);
 	ClassDB::bind_method(D_METHOD("set_voxel_surfaces", "voxel_surfaces"), &BiomeData::set_voxel_surfaces);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurface", PROPERTY_USAGE_DEFAULT, "VoxelSurface"), "set_voxel_surfaces", "get_voxel_surfaces");
+
+	//Liquid Surfaces
+	ClassDB::bind_method(D_METHOD("get_liquid_voxel_surface", "index"), &BiomeData::get_liquid_voxel_surface);
+	ClassDB::bind_method(D_METHOD("set_liquid_voxel_surface", "index", "data"), &BiomeData::set_liquid_voxel_surface);
+	ClassDB::bind_method(D_METHOD("add_liquid_voxel_surface", "voxel_surface"), &BiomeData::add_liquid_voxel_surface);
+	ClassDB::bind_method(D_METHOD("remove_liquid_voxel_surface", "index"), &BiomeData::remove_liquid_voxel_surface);
+	ClassDB::bind_method(D_METHOD("get_liquid_voxel_surface_count"), &BiomeData::get_liquid_voxel_surface_count);
+
+	ClassDB::bind_method(D_METHOD("get_liquid_voxel_surfaces"), &BiomeData::get_liquid_voxel_surfaces);
+	ClassDB::bind_method(D_METHOD("set_liquid_voxel_surfaces", "voxel_surfaces"), &BiomeData::set_liquid_voxel_surfaces);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "liquid_voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurface", PROPERTY_USAGE_DEFAULT, "VoxelSurface"), "set_liquid_voxel_surfaces", "get_liquid_voxel_surfaces");
 }

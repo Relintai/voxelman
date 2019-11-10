@@ -140,6 +140,14 @@ void Biome::_setup_library(Ref<VoxelmanLibrary> library) {
 			library->add_voxel_surface(s);
 		}
 	}
+
+	for (int i = 0; i < _data->get_liquid_voxel_surface_count(); ++i) {
+		Ref<VoxelSurface> s = _data->get_liquid_voxel_surface(i);
+
+		if (s.is_valid()) {
+			library->add_liquid_voxel_surface(s);
+		}
+	}
 }
 
 Biome::Biome() {
@@ -147,6 +155,7 @@ Biome::Biome() {
 }
 Biome::~Biome() {
 	_environment.unref();
+	_data.unref();
 	_prop_datas.clear();
 	_entity_datas.clear();
 	_dungeons.clear();
