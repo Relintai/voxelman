@@ -68,8 +68,6 @@ public:
 	Vector<Variant> get_environment_datas();
 	void set_environment_datas(const Vector<Variant> &environment_datas);
 
-	Ref<Biome> setup_biome(int seed);
-
 	BiomeData();
 	~BiomeData();
 

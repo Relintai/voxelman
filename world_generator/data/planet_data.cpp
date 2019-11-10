@@ -106,14 +106,6 @@ void PlanetData::set_environment_datas(const Vector<Variant> &environment_datas)
 	}
 }
 
-Ref<Planet> PlanetData::setup_planet(int seed) {
-	if (has_method("_setup_planet")) {
-		return call("_setup_planet", seed);
-	}
-
-	return Ref<Planet>(NULL);
-}
-
 PlanetData::PlanetData() {
 	_id = 0;
 }
@@ -122,11 +114,6 @@ PlanetData::~PlanetData() {
 }
 
 void PlanetData::_bind_methods() {
-	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "biome", PROPERTY_HINT_RESOURCE_TYPE, "Planet"), "_setup_planet", PropertyInfo(Variant::INT, "seed")));
-
-	ClassDB::bind_method(D_METHOD("setup_planet", "seed"), &PlanetData::setup_planet);
-
-	
 	ClassDB::bind_method(D_METHOD("get_id"), &PlanetData::get_id);
 	ClassDB::bind_method(D_METHOD("set_id", "value"), &PlanetData::set_id);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "id"), "set_id", "get_id");

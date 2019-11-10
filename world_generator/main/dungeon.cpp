@@ -72,6 +72,15 @@ void Dungeon::set_environment(Ref<EnvironmentData> value) {
 	_environment = value;
 }
 
+Ref<DungeonData> Dungeon::get_data() {
+	return _data;
+}
+void Dungeon::set_data(Ref<DungeonData> value) {
+	_data = value;
+
+	setup();
+}
+
 //Rooms
 Ref<DungeonRoom> Dungeon::get_dungeon_room(const int index) const {
 	ERR_FAIL_INDEX_V(index, _dungeon_rooms.size(), Ref<DungeonRoom>());
@@ -296,6 +305,10 @@ void Dungeon::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_environment"), &Dungeon::get_environment);
 	ClassDB::bind_method(D_METHOD("set_environment", "value"), &Dungeon::set_environment);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "environment", PROPERTY_HINT_RESOURCE_TYPE, "EnvironmentData"), "set_environment", "get_environment");
+
+	ClassDB::bind_method(D_METHOD("get_data"), &Dungeon::get_data);
+	ClassDB::bind_method(D_METHOD("set_data", "value"), &Dungeon::set_data);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "data", PROPERTY_HINT_RESOURCE_TYPE, "PlanetData"), "set_data", "get_data");
 
 	//Rooms
 	ClassDB::bind_method(D_METHOD("get_dungeon_room", "index"), &Dungeon::get_dungeon_room);

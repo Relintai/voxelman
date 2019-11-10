@@ -14,6 +14,15 @@ void Biome::set_environment(Ref<EnvironmentData> value) {
 	_environment = value;
 }
 
+Ref<BiomeData> Biome::get_data() {
+	return _data;
+}
+void Biome::set_data(Ref<BiomeData> value) {
+	_data = value;
+
+	setup();
+}
+
 ////    Prop Data    ////
 Ref<WorldGeneratorPropData> Biome::get_prop_data(const int index) const {
 	ERR_FAIL_INDEX_V(index, _prop_datas.size(), Ref<WorldGeneratorPropData>());
@@ -108,6 +117,12 @@ void Biome::generate_stack_bind(Node *chunk, int x, int z, bool spawn_mobs) {
 	generate_stack(Object::cast_to<VoxelChunk>(chunk), x, z, spawn_mobs);
 }
 
+void Biome::setup() {
+	if (has_method("_setup")) {
+		call("_setup");
+	}
+}
+
 Biome::Biome() {
 
 }
@@ -119,9 +134,11 @@ Biome::~Biome() {
 }
 
 void Biome::_bind_methods() {
+	BIND_VMETHOD(MethodInfo("_setup"));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 	BIND_VMETHOD(MethodInfo("_generate_stack", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), PropertyInfo(Variant::INT, "x"), PropertyInfo(Variant::INT, "z"), PropertyInfo(Variant::BOOL, "spawn_mobs")));
 
+	ClassDB::bind_method(D_METHOD("setup"), &Biome::setup);
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk", "spawn_mobs"), &Biome::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("generate_stack", "chunk", "x", "z", "spawn_mobs"), &Biome::generate_stack_bind);
 
@@ -132,6 +149,10 @@ void Biome::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_environment"), &Biome::get_environment);
 	ClassDB::bind_method(D_METHOD("set_environment", "value"), &Biome::set_environment);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "environment", PROPERTY_HINT_RESOURCE_TYPE, "EnvironmentData"), "set_environment", "get_environment");
+
+	ClassDB::bind_method(D_METHOD("get_data"), &Biome::get_data);
+	ClassDB::bind_method(D_METHOD("set_data", "value"), &Biome::set_data);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "data", PROPERTY_HINT_RESOURCE_TYPE, "PlanetData"), "set_data", "get_data");
 
 	//Props
 	ClassDB::bind_method(D_METHOD("get_prop_data", "index"), &Biome::get_prop_data);

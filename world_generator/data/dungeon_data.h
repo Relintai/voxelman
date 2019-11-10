@@ -111,8 +111,6 @@ public:
 	Vector<Variant> get_entity_datas();
 	void set_entity_datas(const Vector<Variant> &entity_datas);
 
-	Ref<Dungeon> setup_dungeon(int seed);
-
 	DungeonData();
 	~DungeonData();
 

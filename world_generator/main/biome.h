@@ -9,6 +9,10 @@
 #include "../../world/environment_data.h"
 #include "../../../entity_spell_system/entities/data/entity_data.h"
 
+#include "../data/biome_data.h"
+
+class BiomeData;
+
 class Biome : public Reference {
 	GDCLASS(Biome, Reference);
 	
@@ -19,6 +23,9 @@ public:
 	//Environment
 	Ref<EnvironmentData> get_environment();
 	void set_environment(Ref<EnvironmentData> value);
+
+	Ref<BiomeData> get_data();
+	void set_data(Ref<BiomeData> value);
 
 	//WorldGeneratorPropData
 	Ref<WorldGeneratorPropData> get_prop_data(const int index) const;
@@ -49,6 +56,8 @@ public:
 	void generate_stack(VoxelChunk *chunk, int x, int z, bool spawn_mobs);
 	void generate_stack_bind(Node *chunk, int x, int z, bool spawn_mobs);
 
+	void setup();
+
 	Biome();
 	~Biome();
 
@@ -59,6 +68,7 @@ private:
 	Vector2 _level_range;
 
 	Ref<EnvironmentData> _environment;
+	Ref<BiomeData> _data;
 	Vector<Ref<WorldGeneratorPropData> > _prop_datas;
 	Vector<Ref<EntityData> > _entity_datas;
 	Vector<Ref<Dungeon> > _dungeons;

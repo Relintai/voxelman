@@ -183,14 +183,6 @@ void BiomeData::set_environment_datas(const Vector<Variant> &environment_datas) 
 	}
 }
 
-Ref<Biome> BiomeData::setup_biome(int seed) {
-	if (has_method("_setup_biome")) {
-		return call("_setup_biome", seed);
-	}
-
-	return Ref<Biome>(NULL);
-}
-
 BiomeData::BiomeData() {
 
 }
@@ -201,10 +193,6 @@ BiomeData::~BiomeData() {
 }
 
 void BiomeData::_bind_methods() {
-	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "room", PROPERTY_HINT_RESOURCE_TYPE, "Biome"), "_setup_biome", PropertyInfo(Variant::INT, "seed")));
-
-	ClassDB::bind_method(D_METHOD("setup_biome", "seed"), &BiomeData::setup_biome);
-
 	ClassDB::bind_method(D_METHOD("get_level_range"), &BiomeData::get_level_range);
 	ClassDB::bind_method(D_METHOD("set_level_range", "value"), &BiomeData::set_level_range);
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "level_range"), "set_level_range", "get_level_range");

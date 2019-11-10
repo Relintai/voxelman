@@ -65,6 +65,15 @@ void DungeonRoom::set_environment(Ref<EnvironmentData> value) {
 	_environment = value;
 }
 
+Ref<DungeonRoomData> DungeonRoom::get_data() {
+	return _data;
+}
+void DungeonRoom::set_data(Ref<DungeonRoomData> value) {
+	_data = value;
+
+	setup();
+}
+
 Ref<VoxelStructure> DungeonRoom::get_structure() {
 	return _structure;
 }
@@ -208,6 +217,10 @@ void DungeonRoom::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_environment"), &DungeonRoom::get_environment);
 	ClassDB::bind_method(D_METHOD("set_environment", "value"), &DungeonRoom::set_environment);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "environment", PROPERTY_HINT_RESOURCE_TYPE, "EnvironmentData"), "set_environment", "get_environment");
+
+	ClassDB::bind_method(D_METHOD("get_data"), &DungeonRoom::get_data);
+	ClassDB::bind_method(D_METHOD("set_data", "value"), &DungeonRoom::set_data);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "data", PROPERTY_HINT_RESOURCE_TYPE, "PlanetData"), "set_data", "get_data");
 
 	ClassDB::bind_method(D_METHOD("get_structure"), &DungeonRoom::get_structure);
 	ClassDB::bind_method(D_METHOD("set_structure", "value"), &DungeonRoom::set_structure);

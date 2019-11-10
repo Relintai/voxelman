@@ -168,14 +168,6 @@ void DungeonRoomData::set_entity_datas(const Vector<Variant> &entity_datas) {
 	}
 }
 
-Ref<DungeonRoom> DungeonRoomData::setup_room(int seed) {
-	if (has_method("_setup_room")) {
-		return call("_setup_room", seed);
-	}
-
-	return Ref<DungeonRoom>();
-}
-
 DungeonRoomData::DungeonRoomData() {
 	_min_sizex = 0;
 	_min_sizey = 0;
@@ -190,10 +182,6 @@ DungeonRoomData::~DungeonRoomData() {
 }
 
 void DungeonRoomData::_bind_methods() {
-	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "room", PROPERTY_HINT_RESOURCE_TYPE, "DungeonRoom"), "_setup_room", PropertyInfo(Variant::INT, "seed")));
-
-	ClassDB::bind_method(D_METHOD("setup_room", "seed"), &DungeonRoomData::setup_room);
-
 	ClassDB::bind_method(D_METHOD("get_level_range"), &DungeonRoomData::get_level_range);
 	ClassDB::bind_method(D_METHOD("set_level_range", "value"), &DungeonRoomData::set_level_range);
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "level_range"), "set_level_range", "get_level_range");

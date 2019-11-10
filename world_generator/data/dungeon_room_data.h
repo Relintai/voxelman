@@ -58,8 +58,6 @@ public:
 	Vector<Variant> get_environment_datas();
 	void set_environment_datas(const Vector<Variant> &environment_datas);
 
-	Ref<DungeonRoom> setup_room(int seed);
-
 	//Entities
 	Ref<EntityData> get_entity_data(const int index) const;
 	void set_entity_data(const int index, const Ref<EntityData> entity_data);

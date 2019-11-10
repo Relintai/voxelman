@@ -10,6 +10,10 @@
 #include "../../world/environment_data.h"
 #include "../../../entity_spell_system/entities/data/entity_data.h"
 
+#include "../data/dungeon_room_data.h"
+
+class DungeonRoomData;
+
 class DungeonRoom : public Reference {
 	GDCLASS(DungeonRoom, Reference);
 	
@@ -43,6 +47,9 @@ public:
 	//Environment
 	Ref<EnvironmentData> get_environment();
 	void set_environment(Ref<EnvironmentData> value);
+
+	Ref<DungeonRoomData> get_data();
+	void set_data(Ref<DungeonRoomData> value);
 
 	//Structure
 	Ref<VoxelStructure> get_structure();
@@ -89,6 +96,7 @@ private:
 	int _sizez;
 
 	Ref<EnvironmentData> _environment;
+	Ref<DungeonRoomData> _data;
 	Ref<VoxelStructure> _structure;
 	Vector<Ref<WorldGeneratorPropData> > _prop_datas;
 	Vector<Ref<EntityData> > _entity_datas;

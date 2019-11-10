@@ -21,6 +21,15 @@ void Planet::set_environment(Ref<EnvironmentData> value) {
 	_environment = value;
 }
 
+Ref<PlanetData> Planet::get_data() {
+	return _data;
+}
+void Planet::set_data(Ref<PlanetData> value) {
+	_data = value;
+
+	setup();
+}
+
 Ref<Biome> Planet::get_biome(const int index) const {
 	ERR_FAIL_INDEX_V(index, _biomes.size(), Ref<Biome>());
 
@@ -42,6 +51,30 @@ void Planet::remove_biome(const int index) {
 
 int Planet::get_biome_count() const {
 	return _biomes.size();
+}
+
+////    Dungeons    ////
+Ref<Dungeon> Planet::get_dungeon(const int index) const {
+	ERR_FAIL_INDEX_V(index, _dungeons.size(), Ref<Dungeon>());
+
+	return _dungeons.get(index);
+}
+void Planet::set_dungeon(const int index, const Ref<Dungeon> dungeon) {
+	ERR_FAIL_INDEX(index, _dungeons.size());
+
+	_dungeons.set(index, dungeon);
+}
+void Planet::add_dungeon(const Ref<Dungeon> dungeon) {
+	_dungeons.push_back(dungeon);
+}
+void Planet::remove_dungeon(const int index) {
+	ERR_FAIL_INDEX(index, _dungeons.size());
+
+	_dungeons.remove(index);
+}
+
+int Planet::get_dungeon_count() const {
+	return _dungeons.size();
 }
 
 void Planet::setup() {
@@ -95,12 +128,25 @@ void Planet::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_environment", "value"), &Planet::set_environment);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "environment", PROPERTY_HINT_RESOURCE_TYPE, "EnvironmentData"), "set_environment", "get_environment");
 
+	ClassDB::bind_method(D_METHOD("get_data"), &Planet::get_data);
+	ClassDB::bind_method(D_METHOD("set_data", "value"), &Planet::set_data);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "data", PROPERTY_HINT_RESOURCE_TYPE, "PlanetData"), "set_data", "get_data");
+
+	//biomes
 	ClassDB::bind_method(D_METHOD("get_biome", "index"), &Planet::get_biome);
 	ClassDB::bind_method(D_METHOD("set_biome", "index", "data"), &Planet::set_biome);
 	ClassDB::bind_method(D_METHOD("add_biome", "biome"), &Planet::add_biome);
 	ClassDB::bind_method(D_METHOD("remove_biome", "index"), &Planet::remove_biome);
 
 	ClassDB::bind_method(D_METHOD("get_biome_count"), &Planet::get_biome_count);
+
+	//Dungeons
+	ClassDB::bind_method(D_METHOD("get_dungeon", "index"), &Planet::get_dungeon);
+	ClassDB::bind_method(D_METHOD("set_dungeon", "index", "data"), &Planet::set_dungeon);
+	ClassDB::bind_method(D_METHOD("add_dungeon", "dungeon"), &Planet::add_dungeon);
+	ClassDB::bind_method(D_METHOD("remove_dungeon", "index"), &Planet::remove_dungeon);
+
+	ClassDB::bind_method(D_METHOD("get_dungeon_count"), &Planet::get_dungeon_count);
 
 	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "image", PROPERTY_HINT_RESOURCE_TYPE, "Image"), "_generate_map"));
 

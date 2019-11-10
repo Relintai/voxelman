@@ -12,6 +12,10 @@
 
 #include "../../../entity_spell_system/entities/data/entity_data.h"
 
+#include "../data/dungeon_data.h"
+
+class DungeonData;
+
 class Dungeon : public Reference {
 	GDCLASS(Dungeon, Reference);
 	
@@ -49,6 +53,9 @@ public:
 	//Environment
 	Ref<EnvironmentData> get_environment();
 	void set_environment(Ref<EnvironmentData> value);
+
+	Ref<DungeonData> get_data();
+	void set_data(Ref<DungeonData> value);
 
 	//Rooms
 	Ref<DungeonRoom> get_dungeon_room(const int index) const;
@@ -119,6 +126,7 @@ private:
 	int _room_count;
 
 	Ref<EnvironmentData> _environment;
+	Ref<DungeonData> _data;
 	Vector<Ref<DungeonRoom> > _dungeon_rooms;
 	Vector<Ref<DungeonRoom> > _dungeon_start_rooms;
 	Vector<Ref<DungeonRoom> > _dungeon_end_rooms;
