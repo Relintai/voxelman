@@ -61,3 +61,6 @@ env.add_source_files(env.modules_sources,"world_generator/world_generator.cpp")
 
 env.add_source_files(env.modules_sources,"areas/world_area.cpp")
 
+env.add_source_files(env.modules_sources,"clutter/ground_clutter.cpp")
+env.add_source_files(env.modules_sources,"clutter/ground_clutter_foliage.cpp")
+

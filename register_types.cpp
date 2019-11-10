@@ -51,6 +51,9 @@
 
 #include "areas/world_area.h"
 
+#include "clutter/ground_clutter.h"
+#include "clutter/ground_clutter_foliage.h"
+
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
@@ -104,6 +107,8 @@ void register_voxelman_types() {
 	ClassDB::register_class<WorldGenerator>();
 
 	ClassDB::register_class<WorldArea>();
+
+	ClassDB::register_class<GroundClutterFoliage>();
 }	
 
 void unregister_voxelman_types() {
