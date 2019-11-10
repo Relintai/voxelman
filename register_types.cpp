@@ -49,6 +49,8 @@
 
 #include "world_generator/world_generator.h"
 
+#include "areas/world_area.h"
+
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
@@ -100,6 +102,8 @@ void register_voxelman_types() {
 	ClassDB::register_class<Planet>();
 
 	ClassDB::register_class<WorldGenerator>();
+
+	ClassDB::register_class<WorldArea>();
 }	
 
 void unregister_voxelman_types() {

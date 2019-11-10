@@ -69,6 +69,26 @@ void VoxelWorld::set_player_bind(Node *player) {
 	set_player(Object::cast_to<Spatial>(player));
 }
 
+Ref<WorldArea> VoxelWorld::get_world_area(const int index) const {
+	ERR_FAIL_INDEX_V(index, _world_areas.size(), Ref<WorldArea>());
+
+	return _world_areas.get(index);
+}
+void VoxelWorld::add_world_area(Ref<WorldArea> area) {
+	_world_areas.push_back(area);
+}
+void VoxelWorld::remove_world_area(const int index) {
+	ERR_FAIL_INDEX(index, _world_areas.size());
+
+	_world_areas.remove(index);
+}
+void VoxelWorld::clear_world_areas() {
+	_world_areas.clear();
+}
+int VoxelWorld::get_world_area_count() const {
+	return _world_areas.size();
+}
+
 void VoxelWorld::add_chunk(VoxelChunk *chunk, const int x, const int y, const int z) {
 	chunk->set_chunk_position(x, y, z);
 
@@ -135,6 +155,7 @@ VoxelWorld::VoxelWorld() {
 VoxelWorld ::~VoxelWorld() {
 	_chunks.clear();
 	_chunks_vector.clear();
+	_world_areas.clear();
 
 	_library.unref();
 }
@@ -175,6 +196,12 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_player"), &VoxelWorld::get_player);
 	ClassDB::bind_method(D_METHOD("set_player", "player"), &VoxelWorld::set_player_bind);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "player", PROPERTY_HINT_RESOURCE_TYPE, "Spatial"), "set_player", "get_player");
+
+	ClassDB::bind_method(D_METHOD("get_world_area", "index"), &VoxelWorld::get_world_area);
+	ClassDB::bind_method(D_METHOD("add_world_area", "area"), &VoxelWorld::add_world_area);
+	ClassDB::bind_method(D_METHOD("remove_world_area", "index"), &VoxelWorld::remove_world_area);
+	ClassDB::bind_method(D_METHOD("clear_world_areas"), &VoxelWorld::clear_world_areas);
+	ClassDB::bind_method(D_METHOD("get_world_area_count"), &VoxelWorld::get_world_area_count);
 
 	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelWorld::add_chunk_bind);
 	ClassDB::bind_method(D_METHOD("get_chunk", "x", "y", "z"), &VoxelWorld::get_chunk);

@@ -8,6 +8,7 @@
 #include "../library/voxelman_library.h"
 #include "../level_generator/voxelman_level_generator.h"
 #include "voxel_buffer.h"
+#include "../areas/world_area.h"
 
 class VoxelChunk;
 
@@ -43,6 +44,12 @@ public:
 	void set_player(Spatial *player);
 	void set_player_bind(Node *player);
 
+	Ref<WorldArea> get_world_area(const int index) const;
+	void add_world_area(Ref<WorldArea> area);
+	void remove_world_area(const int index);
+	void clear_world_areas();
+	int get_world_area_count() const;
+
 	void add_chunk(VoxelChunk *chunk, const int x, const int y, const int z);
 	void add_chunk_bind(Node *chunk, const int x, const int y, const int z);
 	VoxelChunk *get_chunk(const int x, const int y, const int z) const;
@@ -68,6 +75,8 @@ private:
     
 	HashMap<Vector3i, VoxelChunk *, Vector3iHasher> _chunks; 
     Vector<VoxelChunk *> _chunks_vector;
+
+	Vector<Ref<WorldArea> > _world_areas;
 
 	NodePath _player_path;
 	Spatial *_player;

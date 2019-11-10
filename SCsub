@@ -59,3 +59,5 @@ env.add_source_files(env.modules_sources,"world_generator/data/world_generator_p
 
 env.add_source_files(env.modules_sources,"world_generator/world_generator.cpp")
 
+env.add_source_files(env.modules_sources,"areas/world_area.cpp")
+
