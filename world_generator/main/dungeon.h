@@ -95,6 +95,8 @@ public:
 
 	void setup();
 	void setup_library(Ref<VoxelmanLibrary> library);
+	void _setup_library(Ref<VoxelmanLibrary> library);
+
 	void generate_chunk(VoxelChunk *chunk, bool spawn_mobs);
 	void generate_chunk_bind(Node *chunk, bool spawn_mobs);
 	void generate_structure(Ref<VoxelStructure> structure, bool spawn_mobs);

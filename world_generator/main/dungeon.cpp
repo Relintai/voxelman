@@ -200,14 +200,30 @@ int Dungeon::get_entity_data_count() const {
 }
 
 void Dungeon::setup() {
+	if (!_data.is_valid())
+		return;
+
 	if (has_method("_setup")) {
 		call("_setup");
 	}
 }
 
 void Dungeon::setup_library(Ref<VoxelmanLibrary> library) {
+	if (!_data.is_valid())
+		return;
+
 	if (has_method("_setup_library")) {
 		call("_setup_library", library);
+	}
+}
+
+void Dungeon::_setup_library(Ref<VoxelmanLibrary> library) {
+	for (int i = 0; i < _data->get_voxel_surface_count(); ++i) {
+		Ref<VoxelSurface> s = _data->get_voxel_surface(i);
+
+		if (s.is_valid()) {
+			library->add_voxel_surface(s);
+		}
 	}
 }
 
@@ -264,6 +280,8 @@ void Dungeon::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("setup"), &Dungeon::setup);
 	ClassDB::bind_method(D_METHOD("setup_library", "library"), &Dungeon::setup_library);
+	ClassDB::bind_method(D_METHOD("_setup_library", "library"), &Dungeon::_setup_library);
+
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk", "spawn_mobs"), &Dungeon::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("generate_structure", "structure", "spawn_mobs"), &Dungeon::generate_structure);
 

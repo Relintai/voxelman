@@ -27,12 +27,14 @@ public:
 	void set_clutter_material(Ref<Material> mat);
 
 	virtual Ref<VoxelSurface> get_voxel_surface(int index) const;
+	virtual void add_voxel_surface(Ref<VoxelSurface> value);
 	virtual void set_voxel_surface(int index, Ref<VoxelSurface> value);
 	virtual void remove_surface(int index);
 	virtual int get_num_surfaces();
 	virtual void clear_surfaces();
 
 	virtual Ref<VoxelSurface> get_liquid_voxel_surface(int index) const;
+	virtual void add_liquid_voxel_surface(Ref<VoxelSurface> value);
 	virtual void set_liquid_voxel_surface(int index, Ref<VoxelSurface> value);
 	virtual void remove_liquid_surface(int index);
 	virtual int get_liquid_num_surfaces();

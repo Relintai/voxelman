@@ -32,6 +32,8 @@ void VoxelmanLibrary::set_clutter_material(Ref<Material> mat) {
 Ref<VoxelSurface> VoxelmanLibrary::get_voxel_surface(int index) const {
 	return Ref<VoxelSurface>();
 }
+void VoxelmanLibrary::add_voxel_surface(Ref<VoxelSurface> value) {
+}
 void VoxelmanLibrary::set_voxel_surface(int index, Ref<VoxelSurface> value) {
 }
 void VoxelmanLibrary::remove_surface(int index) {
@@ -45,6 +47,8 @@ void VoxelmanLibrary::clear_surfaces() {
 //Liquids
 Ref<VoxelSurface> VoxelmanLibrary::get_liquid_voxel_surface(int index) const {
 	return Ref<VoxelSurface>();
+}
+void VoxelmanLibrary::add_liquid_voxel_surface(Ref<VoxelSurface> value) {
 }
 void VoxelmanLibrary::set_liquid_voxel_surface(int index, Ref<VoxelSurface> value) {
 }

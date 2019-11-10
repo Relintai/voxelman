@@ -77,14 +77,30 @@ int Planet::get_dungeon_count() const {
 }
 
 void Planet::setup() {
+	if (!_data.is_valid())
+		return;
+
 	if (has_method("_setup")) {
 		call("_setup");
 	}
 }
 
 void Planet::setup_library(Ref<VoxelmanLibrary> library) {
+	if (!_data.is_valid())
+		return;
+
 	if (has_method("_setup_library")) {
 		call("_setup_library", library);
+	}
+}
+
+void Planet::_setup_library(Ref<VoxelmanLibrary> library) {
+	for (int i = 0; i < _data->get_voxel_surface_count(); ++i) {
+		Ref<VoxelSurface> s = _data->get_voxel_surface(i);
+
+		if (s.is_valid()) {
+			library->add_voxel_surface(s);
+		}
 	}
 }
 
@@ -123,6 +139,7 @@ void Planet::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk"), &Planet::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("setup"), &Planet::setup);
 	ClassDB::bind_method(D_METHOD("setup_library", "library"), &Planet::setup_library);
+	ClassDB::bind_method(D_METHOD("_setup_library", "library"), &Planet::_setup_library);
 
 	ClassDB::bind_method(D_METHOD("get_seed"), &Planet::get_seed);
 	ClassDB::bind_method(D_METHOD("set_seed", "value"), &Planet::set_seed);

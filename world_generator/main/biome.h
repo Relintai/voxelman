@@ -57,6 +57,7 @@ public:
 
 	void setup();
 	void setup_library(Ref<VoxelmanLibrary> library);
+	void _setup_library(Ref<VoxelmanLibrary> library);
 
 	Biome();
 	~Biome();

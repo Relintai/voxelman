@@ -32,6 +32,7 @@ public:
 	void set_margin(const int margin);
 
 	Ref<VoxelSurface> get_voxel_surface(int index) const;
+	void add_voxel_surface(Ref<VoxelSurface> value);
 	void set_voxel_surface(int index, Ref<VoxelSurface> value);
 	void remove_surface(int index);
 	int get_num_surfaces();
@@ -41,6 +42,7 @@ public:
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
 
 	Ref<VoxelSurface> get_liquid_voxel_surface(int index) const;
+	void add_liquid_voxel_surface(Ref<VoxelSurface> value);
 	void set_liquid_voxel_surface(int index, Ref<VoxelSurface> value);
 	void remove_liquid_surface(int index);
 	int get_liquid_num_surfaces();

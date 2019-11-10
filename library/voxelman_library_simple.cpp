@@ -25,6 +25,15 @@ Ref<VoxelSurface> VoxelmanLibrarySimple::get_voxel_surface(int index) const {
 	return _voxel_surfaces[index];
 }
 
+void VoxelmanLibrarySimple::add_voxel_surface(Ref<VoxelSurface> value) {
+	ERR_FAIL_COND(!value.is_valid());
+
+	value->set_library(Ref<VoxelmanLibrarySimple>(this));
+	value->set_id(_voxel_surfaces.size());
+
+	_voxel_surfaces.push_back(value);
+}
+
 void VoxelmanLibrarySimple::set_voxel_surface(int index, Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(index < 0);
 
@@ -83,6 +92,15 @@ Ref<VoxelSurface> VoxelmanLibrarySimple::get_liquid_voxel_surface(int index) con
 	ERR_FAIL_INDEX_V(index, _liquid_surfaces.size(), Ref<VoxelSurface>(NULL));
 
 	return _liquid_surfaces[index];
+}
+
+void VoxelmanLibrarySimple::add_liquid_voxel_surface(Ref<VoxelSurface> value) {
+	ERR_FAIL_COND(!value.is_valid());
+
+	value->set_library(Ref<VoxelmanLibrarySimple>(this));
+	value->set_id(_liquid_surfaces.size());
+
+	_liquid_surfaces.push_back(value);
 }
 
 void VoxelmanLibrarySimple::set_liquid_voxel_surface(int index, Ref<VoxelSurface> value) {
@@ -182,7 +200,6 @@ VoxelmanLibrarySimple::~VoxelmanLibrarySimple() {
 
 	_liquid_surfaces.clear();
 }
-
 
 void VoxelmanLibrarySimple::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_atlas_columns"), &VoxelmanLibrarySimple::get_atlas_columns);
