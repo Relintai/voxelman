@@ -1,5 +1,12 @@
 #include "biome.h"
 
+int Biome::get_current_seed() {
+	return _current_seed;
+}
+void Biome::set_current_seed(int value) {
+	_current_seed = value;
+}
+
 Vector2 Biome::get_level_range() {
 	return _level_range;
 }
@@ -151,7 +158,7 @@ void Biome::_setup_library(Ref<VoxelmanLibrary> library) {
 }
 
 Biome::Biome() {
-
+	_current_seed = 0;
 }
 Biome::~Biome() {
 	_environment.unref();
@@ -173,6 +180,10 @@ void Biome::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk", "spawn_mobs"), &Biome::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("generate_stack", "chunk", "x", "z", "spawn_mobs"), &Biome::generate_stack_bind);
+
+	ClassDB::bind_method(D_METHOD("get_current_seed"), &Biome::get_current_seed);
+	ClassDB::bind_method(D_METHOD("set_current_seed", "value"), &Biome::set_current_seed);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_seed"), "set_current_seed", "get_current_seed");
 
 	ClassDB::bind_method(D_METHOD("get_level_range"), &Biome::get_level_range);
 	ClassDB::bind_method(D_METHOD("set_level_range", "value"), &Biome::set_level_range);

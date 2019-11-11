@@ -1,10 +1,10 @@
 #include "dungeon_room.h"
 
-int DungeonRoom::get_seed() {
-	return _seed;
+int DungeonRoom::get_current_seed() {
+	return _current_seed;
 }
-void DungeonRoom::set_seed(int value) {
-	_seed = value;
+void DungeonRoom::set_current_seed(int value) {
+	_current_seed = value;
 }
 
 Vector2 DungeonRoom::get_level_range() {
@@ -182,7 +182,7 @@ void DungeonRoom::generate_room(Ref<VoxelStructure> structure, bool spawn_mobs) 
 }
 
 DungeonRoom::DungeonRoom() {
-	_seed = 0;
+	_current_seed = 0;
 
 	_posx = 0;
 	_posy = 0;
@@ -213,9 +213,9 @@ void DungeonRoom::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk", "spawn_mobs"), &DungeonRoom::generate_chunk_bind);
 	ClassDB::bind_method(D_METHOD("generate_room", "structure", "spawn_mobs"), &DungeonRoom::generate_room);
 
-	ClassDB::bind_method(D_METHOD("get_seed"), &DungeonRoom::get_seed);
-	ClassDB::bind_method(D_METHOD("set_seed", "value"), &DungeonRoom::set_seed);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "seed"), "set_seed", "get_seed");
+	ClassDB::bind_method(D_METHOD("get_current_seed"), &DungeonRoom::get_current_seed);
+	ClassDB::bind_method(D_METHOD("set_current_seed", "value"), &DungeonRoom::set_current_seed);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_seed"), "set_current_seed", "get_current_seed");
 
 	ClassDB::bind_method(D_METHOD("get_level_range"), &DungeonRoom::get_level_range);
 	ClassDB::bind_method(D_METHOD("set_level_range", "value"), &DungeonRoom::set_level_range);

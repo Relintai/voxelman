@@ -7,6 +7,20 @@ void PlanetData::set_id(const int value) {
 	_id = value;
 }
 
+String PlanetData::get_target_class_name() {
+	return _target_class_name;
+}
+void PlanetData::set_target_class_name(String name) {
+	_target_class_name = name;
+}
+
+Ref<Script> PlanetData::get_target_script() {
+	return _target_script;
+}
+void PlanetData::set_target_script(Ref<Script> script) {
+	_target_script = script;
+}
+
 Vector2 PlanetData::get_level_range() {
 	return _level_range;
 }
@@ -202,6 +216,14 @@ void PlanetData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_id"), &PlanetData::get_id);
 	ClassDB::bind_method(D_METHOD("set_id", "value"), &PlanetData::set_id);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "id"), "set_id", "get_id");
+
+	ClassDB::bind_method(D_METHOD("get_target_class_name"), &PlanetData::get_target_class_name);
+	ClassDB::bind_method(D_METHOD("set_target_class_name", "value"), &PlanetData::set_target_class_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "target_class_name"), "set_target_class_name", "get_target_class_name");
+
+	ClassDB::bind_method(D_METHOD("get_target_script"), &PlanetData::get_target_script);
+	ClassDB::bind_method(D_METHOD("set_target_script", "value"), &PlanetData::set_target_script);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "target_script", PROPERTY_HINT_RESOURCE_TYPE, "Script"), "set_target_script", "get_target_script");
 
 	ClassDB::bind_method(D_METHOD("get_level_range"), &PlanetData::get_level_range);
 	ClassDB::bind_method(D_METHOD("set_level_range", "value"), &PlanetData::set_level_range);

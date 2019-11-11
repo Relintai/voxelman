@@ -1,10 +1,10 @@
 #include "planet.h"
 
-int Planet::get_seed() {
-	return _seed;
+int Planet::get_current_seed() {
+	return _current_seed;
 }
-void Planet::set_seed(int value) {
-	_seed = value;
+void Planet::set_current_seed(int value) {
+	_current_seed = value;
 }
 
 Vector2 Planet::get_level_range() {
@@ -131,7 +131,7 @@ Ref<Image> Planet::generate_map() {
 }
 
 Planet::Planet() {
-	_seed = 0;
+	_current_seed = 0;
 }
 Planet::~Planet() {
 	_environment.unref();
@@ -150,9 +150,9 @@ void Planet::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("setup_library", "library"), &Planet::setup_library);
 	ClassDB::bind_method(D_METHOD("_setup_library", "library"), &Planet::_setup_library);
 
-	ClassDB::bind_method(D_METHOD("get_seed"), &Planet::get_seed);
-	ClassDB::bind_method(D_METHOD("set_seed", "value"), &Planet::set_seed);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "seed"), "set_seed", "get_seed");
+	ClassDB::bind_method(D_METHOD("get_current_seed"), &Planet::get_current_seed);
+	ClassDB::bind_method(D_METHOD("set_current_seed", "value"), &Planet::set_current_seed);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_seed"), "set_current_seed", "get_current_seed");
 
 	ClassDB::bind_method(D_METHOD("get_level_range"), &Planet::get_level_range);
 	ClassDB::bind_method(D_METHOD("set_level_range", "value"), &Planet::set_level_range);
