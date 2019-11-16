@@ -41,26 +41,9 @@ env.add_source_files(env.modules_sources,"props/prop_data_entity.cpp")
 
 env.add_source_files(env.modules_sources,"level_generator/voxelman_level_generator.cpp")
 
-
-env.add_source_files(env.modules_sources,"register_types.cpp")
-
-env.add_source_files(env.modules_sources,"world_generator/main/dungeon_room.cpp")
-env.add_source_files(env.modules_sources,"world_generator/main/dungeon_corridor.cpp")
-env.add_source_files(env.modules_sources,"world_generator/main/dungeon.cpp")
-env.add_source_files(env.modules_sources,"world_generator/main/biome.cpp")
-env.add_source_files(env.modules_sources,"world_generator/main/planet.cpp")
-
-env.add_source_files(env.modules_sources,"world_generator/data/dungeon_room_data.cpp")
-env.add_source_files(env.modules_sources,"world_generator/data/dungeon_corridor_data.cpp")
-env.add_source_files(env.modules_sources,"world_generator/data/dungeon_data.cpp")
-env.add_source_files(env.modules_sources,"world_generator/data/biome_data.cpp")
-env.add_source_files(env.modules_sources,"world_generator/data/planet_data.cpp")
-env.add_source_files(env.modules_sources,"world_generator/data/world_generator_prop_data.cpp")
-
-env.add_source_files(env.modules_sources,"world_generator/world_generator.cpp")
-
 env.add_source_files(env.modules_sources,"areas/world_area.cpp")
 
 env.add_source_files(env.modules_sources,"clutter/ground_clutter.cpp")
 env.add_source_files(env.modules_sources,"clutter/ground_clutter_foliage.cpp")
 
+env.add_source_files(env.modules_sources,"register_types.cpp")

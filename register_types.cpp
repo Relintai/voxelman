@@ -34,21 +34,6 @@
 
 #include "level_generator/voxelman_level_generator.h"
 
-#include "world_generator/data/dungeon_room_data.h"
-#include "world_generator/data/dungeon_corridor_data.h"
-#include "world_generator/data/dungeon_data.h"
-#include "world_generator/data/biome_data.h"
-#include "world_generator/data/planet_data.h"
-#include "world_generator/data/world_generator_prop_data.h"
-
-#include "world_generator/main/biome.h"
-#include "world_generator/main/dungeon.h"
-#include "world_generator/main/dungeon_corridor.h"
-#include "world_generator/main/dungeon_room.h"
-#include "world_generator/main/planet.h"
-
-#include "world_generator/world_generator.h"
-
 #include "areas/world_area.h"
 
 #include "clutter/ground_clutter.h"
@@ -90,21 +75,6 @@ void register_voxelman_types() {
 	ClassDB::register_class<PropDataEntity>();
     
     ClassDB::register_class<VoxelmanLevelGenerator>();
-
-	ClassDB::register_class<DungeonRoomData>();
-	ClassDB::register_class<DungeonCorridorData>();
-	ClassDB::register_class<DungeonData>();
-	ClassDB::register_class<BiomeData>();
-	ClassDB::register_class<PlanetData>();
-	ClassDB::register_class<WorldGeneratorPropData>();
-
-	ClassDB::register_class<DungeonRoom>();
-	ClassDB::register_class<DungeonCorridor>();
-	ClassDB::register_class<Dungeon>();
-	ClassDB::register_class<Biome>();
-	ClassDB::register_class<Planet>();
-
-	ClassDB::register_class<WorldGenerator>();
 
 	ClassDB::register_class<WorldArea>();
 
