@@ -81,6 +81,7 @@ public:
 	_FORCE_INLINE_ void clear_channel_f(unsigned int channel_index, float clear_value = 0) { clear_channel(channel_index, iso_to_byte(clear_value)); }
 
 	_FORCE_INLINE_ const Vector3i &get_size() const { return _size; }
+	_FORCE_INLINE_ const Vector3i &get_actual_size() const { return _actual_size; }
 
 	void set_default_values(uint8_t values[MAX_CHANNELS]);
 
@@ -108,19 +109,19 @@ public:
 	void copy_from(const VoxelBuffer &other, Vector3i src_min, Vector3i src_max, Vector3i dst_min, unsigned int channel_index = 0);
 
 	_FORCE_INLINE_ bool validate_pos(unsigned int x, unsigned int y, unsigned int z) const {
-		return x < _size.x && y < _size.y && z < _size.z;
+		return x < _actual_size.x && y < _actual_size.y && z < _actual_size.z;
 	}
 
 	_FORCE_INLINE_ unsigned int index(unsigned int x, unsigned int y, unsigned int z) const {
-		return y + _size.y * (x + _size.x * z);
+		return y + _actual_size.y * (x + _actual_size.x * z);
 	}
 
 	//	_FORCE_INLINE_ unsigned int row_index(unsigned int x, unsigned int y, unsigned int z) const {
-	//		return _size.y * (x + _size.x * z);
+	//		return _actual_size.y * (x + _actual_size.x * z);
 	//	}
 
 	_FORCE_INLINE_ unsigned int get_volume() const {
-		return _size.x * _size.y * _size.z;
+		return _actual_size.x * _actual_size.y * _actual_size.z;
 	}
 
 	uint8_t *get_channel_raw(unsigned int channel_index) const;
@@ -145,6 +146,11 @@ protected:
 	_FORCE_INLINE_ int get_size_y() const { return _size.y; }
 	_FORCE_INLINE_ int get_size_z() const { return _size.z; }
 	_FORCE_INLINE_ Vector3 _get_size_binding() const { return _size.to_vec3(); }
+
+	_FORCE_INLINE_ int get_actual_size_x() const { return _actual_size.x; }
+	_FORCE_INLINE_ int get_actual_size_y() const { return _actual_size.y; }
+	_FORCE_INLINE_ int get_actual_size_z() const { return _actual_size.z; }
+	_FORCE_INLINE_ Vector3 _get_actual_size_binding() const { return _actual_size.to_vec3(); }
 
 	_FORCE_INLINE_ int _get_voxel_binding(int x, int y, int z, unsigned int channel) const { return get_voxel(x, y, z, channel); }
 	_FORCE_INLINE_ void _set_voxel_binding(int value, int x, int y, int z, unsigned int channel) { set_voxel(value, x, y, z, channel); }
@@ -173,6 +179,8 @@ private:
 
 	// How many voxels are there in the three directions. All populated channels have the same size.
 	Vector3i _size;
+	Vector3i _actual_size;
+
 	uint32_t _margin_start;
 	uint32_t _margin_end;
 };

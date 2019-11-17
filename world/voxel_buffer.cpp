@@ -40,7 +40,7 @@ void VoxelBuffer::create(int sx, int sy, int sz, int margin_start, int margin_en
 
 	Vector3i new_size(sx + margin_start + margin_end, sy + margin_start + margin_end, sz + margin_start + margin_end);
 
-	if (new_size != _size) {
+	if (new_size != _actual_size) {
 		for (unsigned int i = 0; i < MAX_CHANNELS; ++i) {
 			Channel &channel = _channels[i];
 			if (channel.data) {
@@ -51,9 +51,10 @@ void VoxelBuffer::create(int sx, int sy, int sz, int margin_start, int margin_en
 			}
 		}
 
-		_size = new_size;
+		_actual_size = new_size;
 	}
 
+	_size = Vector3i(sx, sy, sz);
 	_margin_start = margin_start;
 	_margin_end = margin_end;
 }
@@ -86,9 +87,9 @@ int VoxelBuffer::get_voxel(int x, int y, int z, unsigned int channel_index) cons
 
 	const Channel &channel = _channels[channel_index];
 
-	x += _margin_start + _margin_end;
-	y += _margin_start + _margin_end;
-	z += _margin_start + _margin_end;
+	x += _margin_start;
+	y += _margin_start;
+	z += _margin_start;
 
 	if (validate_pos(x, y, z) && channel.data) {
 		return channel.data[index(x, y, z)];
@@ -100,9 +101,9 @@ int VoxelBuffer::get_voxel(int x, int y, int z, unsigned int channel_index) cons
 void VoxelBuffer::set_voxel(int value, int x, int y, int z, unsigned int channel_index) {
 	ERR_FAIL_INDEX(channel_index, MAX_CHANNELS);
 
-	x += _margin_start + _margin_end;
-	y += _margin_start + _margin_end;
-	z += _margin_start + _margin_end;
+	x += _margin_start;
+	y += _margin_start;
+	z += _margin_start;
 
 	ERR_FAIL_COND(!validate_pos(x, y, z));
 
@@ -111,7 +112,7 @@ void VoxelBuffer::set_voxel(int value, int x, int y, int z, unsigned int channel
 	if (channel.data == NULL) {
 		if (channel.defval != value) {
 			// Allocate channel with same initial values as defval
-			create_channel(channel_index, _size, channel.defval);
+			create_channel(channel_index, _actual_size, channel.defval);
 			channel.data[index(x, y, z)] = value;
 		}
 	} else {
@@ -123,9 +124,9 @@ void VoxelBuffer::set_voxel(int value, int x, int y, int z, unsigned int channel
 void VoxelBuffer::try_set_voxel(int x, int y, int z, int value, unsigned int channel_index) {
 	ERR_FAIL_INDEX(channel_index, MAX_CHANNELS);
 
-	x += _margin_start + _margin_end;
-	y += _margin_start + _margin_end;
-	z += _margin_start + _margin_end;
+	x += _margin_start;
+	y += _margin_start;
+	z += _margin_start;
 
 	if (!validate_pos(x, y, z)) {
 		return;
@@ -135,7 +136,7 @@ void VoxelBuffer::try_set_voxel(int x, int y, int z, int value, unsigned int cha
 
 	if (channel.data == NULL) {
 		if (channel.defval != value) {
-			create_channel(channel_index, _size, channel.defval);
+			create_channel(channel_index, _actual_size, channel.defval);
 			channel.data[index(x, y, z)] = value;
 		}
 	} else {
@@ -162,7 +163,7 @@ void VoxelBuffer::fill(int defval, unsigned int channel_index) {
 			return;
 		}
 	} else {
-		create_channel_noinit(channel_index, _size);
+		create_channel_noinit(channel_index, _actual_size);
 	}
 
 	unsigned int volume = get_volume();
@@ -174,8 +175,8 @@ void VoxelBuffer::fill_area(int defval, Vector3i min, Vector3i max, unsigned int
 
 	Vector3i::sort_min_max(min, max);
 
-	min.clamp_to(Vector3i(0, 0, 0), _size + Vector3i(1, 1, 1));
-	max.clamp_to(Vector3i(0, 0, 0), _size + Vector3i(1, 1, 1));
+	min.clamp_to(Vector3i(0, 0, 0), _actual_size + Vector3i(1, 1, 1));
+	max.clamp_to(Vector3i(0, 0, 0), _actual_size + Vector3i(1, 1, 1));
 	Vector3i area_size = max - min;
 
 	if (area_size.x == 0 || area_size.y == 0 || area_size.z == 0) {
@@ -187,7 +188,7 @@ void VoxelBuffer::fill_area(int defval, Vector3i min, Vector3i max, unsigned int
 		if (channel.defval == defval) {
 			return;
 		} else {
-			create_channel(channel_index, _size, channel.defval);
+			create_channel(channel_index, _actual_size, channel.defval);
 		}
 	}
 
@@ -233,14 +234,14 @@ void VoxelBuffer::compress_uniform_channels() {
 
 void VoxelBuffer::copy_from(const VoxelBuffer &other, unsigned int channel_index) {
 	ERR_FAIL_INDEX(channel_index, MAX_CHANNELS);
-	ERR_FAIL_COND(other._size == _size);
+	ERR_FAIL_COND(other._actual_size == _actual_size);
 
 	Channel &channel = _channels[channel_index];
 	const Channel &other_channel = other._channels[channel_index];
 
 	if (other_channel.data) {
 		if (channel.data == NULL) {
-			create_channel_noinit(channel_index, _size);
+			create_channel_noinit(channel_index, _actual_size);
 		}
 		memcpy(channel.data, other_channel.data, get_volume() * sizeof(uint8_t));
 	} else if (channel.data) {
@@ -259,19 +260,19 @@ void VoxelBuffer::copy_from(const VoxelBuffer &other, Vector3i src_min, Vector3i
 
 	Vector3i::sort_min_max(src_min, src_max);
 
-	src_min.clamp_to(Vector3i(0, 0, 0), other._size);
-	src_max.clamp_to(Vector3i(0, 0, 0), other._size + Vector3i(1, 1, 1));
+	src_min.clamp_to(Vector3i(0, 0, 0), other._actual_size);
+	src_max.clamp_to(Vector3i(0, 0, 0), other._actual_size + Vector3i(1, 1, 1));
 
-	dst_min.clamp_to(Vector3i(0, 0, 0), _size);
+	dst_min.clamp_to(Vector3i(0, 0, 0), _actual_size);
 	Vector3i area_size = src_max - src_min;
 	//Vector3i dst_max = dst_min + area_size;
 
-	if (area_size == _size) {
+	if (area_size == _actual_size) {
 		copy_from(other, channel_index);
 	} else {
 		if (other_channel.data) {
 			if (channel.data == NULL) {
-				create_channel(channel_index, _size, channel.defval);
+				create_channel(channel_index, _actual_size, channel.defval);
 			}
 			// Copy row by row
 			Vector3i pos;
@@ -285,7 +286,7 @@ void VoxelBuffer::copy_from(const VoxelBuffer &other, Vector3i src_min, Vector3i
 			}
 		} else if (channel.defval != other_channel.defval) {
 			if (channel.data == NULL) {
-				create_channel(channel_index, _size, channel.defval);
+				create_channel(channel_index, _actual_size, channel.defval);
 			}
 			// Set row by row
 			Vector3i pos;
@@ -306,9 +307,9 @@ uint8_t *VoxelBuffer::get_channel_raw(unsigned int channel_index) const {
 }
 
 void VoxelBuffer::generate_ao() {
-	unsigned int size_x = _size.x;
-	unsigned int size_y = _size.y;
-	unsigned int size_z = _size.z;
+	unsigned int size_x = _actual_size.x;
+	unsigned int size_y = _actual_size.y;
+	unsigned int size_z = _actual_size.z;
 
 	ERR_FAIL_COND(size_x == 0 || size_y == 0 || size_z == 0);
 
@@ -340,9 +341,9 @@ void VoxelBuffer::generate_ao() {
 void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Color color) {
 	ERR_FAIL_COND(size < 0);
 
-	int size_x = _size.x;
-	int size_y = _size.y;
-	int size_z = _size.z;
+	int size_x = _actual_size.x;
+	int size_y = _actual_size.y;
+	int size_z = _actual_size.z;
 
 	float sizef = static_cast<float>(size);
 	//float rf = (color.r / sizef);
@@ -431,6 +432,11 @@ void VoxelBuffer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_size_x"), &VoxelBuffer::get_size_x);
 	ClassDB::bind_method(D_METHOD("get_size_y"), &VoxelBuffer::get_size_y);
 	ClassDB::bind_method(D_METHOD("get_size_z"), &VoxelBuffer::get_size_z);
+
+	ClassDB::bind_method(D_METHOD("get_actual_size"), &VoxelBuffer::_get_actual_size_binding);
+	ClassDB::bind_method(D_METHOD("get_actual_size_x"), &VoxelBuffer::get_actual_size_x);
+	ClassDB::bind_method(D_METHOD("get_actual_size_y"), &VoxelBuffer::get_actual_size_y);
+	ClassDB::bind_method(D_METHOD("get_actual_size_z"), &VoxelBuffer::get_actual_size_z);
 
 	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "channel"), &VoxelBuffer::_set_voxel_binding, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("set_voxel_f", "value", "x", "y", "z", "channel"), &VoxelBuffer::_set_voxel_f_binding, DEFVAL(0));
