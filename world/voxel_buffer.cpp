@@ -22,20 +22,24 @@
 #include <core/math/math_funcs.h>
 #include <string.h>
 
-const char *VoxelBuffer::CHANNEL_ID_HINT_STRING = "Type,Sdf,Data2,Data3,Data4,Data5,Data6,Data7";
+const char *VoxelBuffer::CHANNEL_ID_HINT_STRING = "Type,Isolevel,Light Color R,Light Color G,Light Color B,AO,Random AO,Liquid Types,Liquid Fill,Liquid Flow";
 
 VoxelBuffer::VoxelBuffer() {
+	_margin_start = 0;
+	_margin_end = 0;
 }
 
 VoxelBuffer::~VoxelBuffer() {
 	clear();
 }
 
-void VoxelBuffer::create(int sx, int sy, int sz) {
+void VoxelBuffer::create(int sx, int sy, int sz, int margin_start, int margin_end) {
 	if (sx <= 0 || sy <= 0 || sz <= 0) {
 		return;
 	}
-	Vector3i new_size(sx, sy, sz);
+
+	Vector3i new_size(sx + margin_start + margin_end, sy + margin_start + margin_end, sz + margin_start + margin_end);
+
 	if (new_size != _size) {
 		for (unsigned int i = 0; i < MAX_CHANNELS; ++i) {
 			Channel &channel = _channels[i];
@@ -46,8 +50,12 @@ void VoxelBuffer::create(int sx, int sy, int sz) {
 				create_channel(i, new_size, channel.defval);
 			}
 		}
+
 		_size = new_size;
 	}
+
+	_margin_start = margin_start;
+	_margin_end = margin_end;
 }
 
 void VoxelBuffer::clear() {
@@ -78,6 +86,10 @@ int VoxelBuffer::get_voxel(int x, int y, int z, unsigned int channel_index) cons
 
 	const Channel &channel = _channels[channel_index];
 
+	x += _margin_start + _margin_end;
+	y += _margin_start + _margin_end;
+	z += _margin_start + _margin_end;
+
 	if (validate_pos(x, y, z) && channel.data) {
 		return channel.data[index(x, y, z)];
 	} else {
@@ -87,6 +99,11 @@ int VoxelBuffer::get_voxel(int x, int y, int z, unsigned int channel_index) cons
 
 void VoxelBuffer::set_voxel(int value, int x, int y, int z, unsigned int channel_index) {
 	ERR_FAIL_INDEX(channel_index, MAX_CHANNELS);
+
+	x += _margin_start + _margin_end;
+	y += _margin_start + _margin_end;
+	z += _margin_start + _margin_end;
+
 	ERR_FAIL_COND(!validate_pos(x, y, z));
 
 	Channel &channel = _channels[channel_index];
@@ -105,6 +122,11 @@ void VoxelBuffer::set_voxel(int value, int x, int y, int z, unsigned int channel
 // This version does not cause errors if out of bounds. Use only if it's okay to be outside.
 void VoxelBuffer::try_set_voxel(int x, int y, int z, int value, unsigned int channel_index) {
 	ERR_FAIL_INDEX(channel_index, MAX_CHANNELS);
+
+	x += _margin_start + _margin_end;
+	y += _margin_start + _margin_end;
+	z += _margin_start + _margin_end;
+
 	if (!validate_pos(x, y, z)) {
 		return;
 	}
@@ -399,8 +421,11 @@ void VoxelBuffer::delete_channel(int i) {
 
 void VoxelBuffer::_bind_methods() {
 
-	ClassDB::bind_method(D_METHOD("create", "sx", "sy", "sz"), &VoxelBuffer::create);
+	ClassDB::bind_method(D_METHOD("create", "sx", "sy", "sz", "margin_start", "margin_end"), &VoxelBuffer::create, DEFVAL(0), DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("clear"), &VoxelBuffer::clear);
+
+	ClassDB::bind_method(D_METHOD("get_margin_start"), &VoxelBuffer::get_margin_start);
+	ClassDB::bind_method(D_METHOD("get_margin_end"), &VoxelBuffer::get_margin_end);
 
 	ClassDB::bind_method(D_METHOD("get_size"), &VoxelBuffer::_get_size_binding);
 	ClassDB::bind_method(D_METHOD("get_size_x"), &VoxelBuffer::get_size_x);

@@ -72,10 +72,10 @@ public:
 		return static_cast<float>(b - 128) / 128.f;
 	}
 
-	VoxelBuffer();
-	~VoxelBuffer();
+	_FORCE_INLINE_ int get_margin_start() const { return _margin_start; }
+	_FORCE_INLINE_ int get_margin_end() const { return _margin_end; }
 
-	void create(int sx, int sy, int sz);
+	void create(int sx, int sy, int sz, int margin_start = 0, int margin_end = 0);
 	void clear();
 	void clear_channel(unsigned int channel_index, int clear_value = 0);
 	_FORCE_INLINE_ void clear_channel_f(unsigned int channel_index, float clear_value = 0) { clear_channel(channel_index, iso_to_byte(clear_value)); }
@@ -130,6 +130,9 @@ public:
     void add_light(int local_x, int local_y, int local_z, int size, Color color);
 	void clear_lights();
 
+	VoxelBuffer();
+	~VoxelBuffer();
+
 private:
 	void create_channel_noinit(int i, Vector3i size);
 	void create_channel(int i, Vector3i size, uint8_t defval);
@@ -170,6 +173,8 @@ private:
 
 	// How many voxels are there in the three directions. All populated channels have the same size.
 	Vector3i _size;
+	uint32_t _margin_start;
+	uint32_t _margin_end;
 };
 
 VARIANT_ENUM_CAST(VoxelBuffer::ChannelId)
