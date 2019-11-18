@@ -23,8 +23,6 @@
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
 
-#include "voxel_buffer.h"
-
 #include "../../entity_spell_system/meshes/mesh_data_resource.h"
 #include "../props/prop_data.h"
 #include "../props/prop_data_entry.h"
@@ -83,39 +81,24 @@ public:
 	int get_state() const;
 	void set_state(int value);
 
-	//Properties
 	int get_chunk_position_x();
-	void set_chunk_position_x(int value);
 	int get_chunk_position_y();
-	void set_chunk_position_y(int value);
 	int get_chunk_position_z();
-	void set_chunk_position_z(int value);
-
-	Vector3 get_chunk_position() const;
-	void set_chunk_position(int x, int y, int z);
 
 	int get_chunk_size_x();
-	void set_chunk_size_x(int value);
 	int get_chunk_size_y();
-	void set_chunk_size_y(int value);
 	int get_chunk_size_z();
-	void set_chunk_size_z(int value);
-
-	Vector3 get_chunk_size() const;
-	void set_chunk_size(int x, int y, int z);
 
 	int get_chunk_data_size_x();
-	void set_chunk_data_size_x(int value);
 	int get_chunk_data_size_y();
-	void set_chunk_data_size_y(int value);
 	int get_chunk_data_size_z();
-	void set_chunk_data_size_z(int value);
 
+	Vector3 get_chunk_position() const;
+	Vector3 get_chunk_size() const;
 	Vector3 get_chunk_data_size() const;
-	void set_chunk_data_size(int x, int y, int z);
 
-	_FORCE_INLINE_ int get_margin_start() const { return _margin_start; }
-	_FORCE_INLINE_ int get_margin_end() const { return _margin_end; }
+	int get_margin_start() const;
+	int get_margin_end() const;
 
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(Ref<VoxelmanLibrary> value);
@@ -142,8 +125,6 @@ public:
 	bool get_bake_lights() const;
 	void set_bake_lights(bool value);
 
-	Ref<VoxelBuffer> get_buffer() const;
-
 	RID get_mesh_rid();
 	RID get_mesh_instance_rid();
 	RID get_shape_rid();
@@ -161,17 +142,22 @@ public:
 	RID get_clutter_mesh_instance_rid();
 
 	//Voxel Data
-
 	void set_size(int size_x, int size_y, int siye_z, int margin_start = 0, int margin_end = 0);
 	void set_channel_count(int value);
-	//validate
-	//get voxel
-	//set voxel
-	//get channel
-	//alloc
-	//fill channel
-	//clear channel
+	void validate_channel_index(int x, int y, int z, int channel_index);
+
+	uint8_t get_voxel(int x, int y, int z, int channel_index);
+	void set_voxel(uint8_t value, int x, int y, int z, int channel_index);
+
+	void set_channel_count(int count);
+	void allocate_channel(int channel_index, uint8_t value = 0);
+	void fill_channel(int channel_index);
+	void dealloc_channel(int channel_index);
+
+	uint8_t *get_channel(int channel_index);
+	uint8_t *get_valid_channel(int channel_index);
 	
+	//Data Management functions
 	void generate_ao();
 
     void add_light(int local_x, int local_y, int local_z, int size, Color color);
@@ -282,7 +268,8 @@ protected:
 	uint32_t _margin_start;
 	uint32_t _margin_end;
 
-	Ref<VoxelBuffer> _buffer;
+	Vector<uint8_t *> _channels;
+
 	Vector<Ref<VoxelLight> > _voxel_lights;
 
 	int _lod_size;
