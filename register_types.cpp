@@ -14,7 +14,6 @@
 #include "meshers/voxel_mesher_transvoxel.h"
 #include "meshers/voxel_mesher_transvoxel_terrarin.h"
 
-#include "world/voxel_buffer.h"
 #include "world/voxel_world.h"
 #include "world/voxel_chunk.h"
 #include "world/voxel_structure.h"
@@ -56,7 +55,6 @@ void register_voxelman_types() {
 
 	ClassDB::register_class<VoxelLight>();
     
-    ClassDB::register_class<VoxelBuffer>();
     ClassDB::register_class<VoxelWorld>();
     ClassDB::register_class<VoxelChunk>();
 	ClassDB::register_class<VoxelStructure>();

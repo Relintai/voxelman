@@ -62,6 +62,20 @@ public:
 		BUILD_PHASE_MAX = 10
 	};
 
+	enum ChannelId {
+		CHANNEL_TYPE = 0,
+		CHANNEL_ISOLEVEL,
+		CHANNEL_LIGHT_COLOR_R,
+		CHANNEL_LIGHT_COLOR_G,
+		CHANNEL_LIGHT_COLOR_B,
+        CHANNEL_AO,
+		CHANNEL_RANDOM_AO,
+		CHANNEL_LIQUID_TYPES,
+		CHANNEL_LIQUID_FILL,
+		CHANNEL_LIQUID_FLOW,
+		MAX_CHANNELS
+	};
+
 public:
 	bool get_dirty() const;
 	void set_dirty(bool value);
@@ -77,7 +91,7 @@ public:
 	int get_chunk_position_z();
 	void set_chunk_position_z(int value);
 
-	Vector3i get_chunk_position() const;
+	Vector3 get_chunk_position() const;
 	void set_chunk_position(int x, int y, int z);
 
 	int get_chunk_size_x();
@@ -87,8 +101,21 @@ public:
 	int get_chunk_size_z();
 	void set_chunk_size_z(int value);
 
-	Vector3i get_chunk_size() const;
+	Vector3 get_chunk_size() const;
 	void set_chunk_size(int x, int y, int z);
+
+	int get_chunk_data_size_x();
+	void set_chunk_data_size_x(int value);
+	int get_chunk_data_size_y();
+	void set_chunk_data_size_y(int value);
+	int get_chunk_data_size_z();
+	void set_chunk_data_size_z(int value);
+
+	Vector3 get_chunk_data_size() const;
+	void set_chunk_data_size(int x, int y, int z);
+
+	_FORCE_INLINE_ int get_margin_start() const { return _margin_start; }
+	_FORCE_INLINE_ int get_margin_end() const { return _margin_end; }
 
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(Ref<VoxelmanLibrary> value);
@@ -132,6 +159,23 @@ public:
 
 	RID get_clutter_mesh_rid();
 	RID get_clutter_mesh_instance_rid();
+
+	//Voxel Data
+
+	void set_size(int size_x, int size_y, int siye_z, int margin_start = 0, int margin_end = 0);
+	void set_channel_count(int value);
+	//validate
+	//get voxel
+	//set voxel
+	//get channel
+	//alloc
+	//fill channel
+	//clear channel
+	
+	void generate_ao();
+
+    void add_light(int local_x, int local_y, int local_z, int size, Color color);
+	void clear_lights();
 
 	//Meshing
 	void create_mesher();
@@ -223,8 +267,20 @@ protected:
 
 	VoxelWorld *_voxel_world;
 
-	Vector3i _chunk_position;
-	Vector3i _chunk_size;
+	int _chunk_position_x;
+	int _chunk_position_y;
+	int _chunk_position_z;
+
+	uint32_t _chunk_size_x;
+	uint32_t _chunk_size_y;
+	uint32_t _chunk_size_z;
+
+	uint32_t _chunk_data_size_x;
+	uint32_t _chunk_data_size_y;
+	uint32_t _chunk_data_size_z;
+
+	uint32_t _margin_start;
+	uint32_t _margin_end;
 
 	Ref<VoxelBuffer> _buffer;
 	Vector<Ref<VoxelLight> > _voxel_lights;
