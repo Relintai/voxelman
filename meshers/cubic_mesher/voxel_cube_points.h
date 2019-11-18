@@ -1,8 +1,6 @@
 #ifndef SUB_VOXEL_POINTS_H
 #define SUB_VOXEL_POINTS_H
 
-#include "../../math/vector3i.h"
-#include "../../world/voxel_buffer.h"
 #include "core/reference.h"
 #include "core/vector.h"
 
@@ -91,8 +89,8 @@ public:
 
 	void refresh_points();
 	void recalculate_point(int point);
-	void refresh_neighbours(const Ref<VoxelBuffer> buffer);
-	void setup(const Ref<VoxelBuffer> buffer, int x, int y, int z, int size = 1);
+	void refresh_neighbours(const VoxelChunk *buffer);
+	void setup(const VoxelChunk *buffer, int x, int y, int z, int size = 1);
 
 	void reset();
 
@@ -101,10 +99,8 @@ public:
 
 	Vector3 get_points_for_face(int face, int index);
 	bool is_face_visible(int face);
-	bool is_sub_voxel_point_vec(Vector3i point);
 	bool is_sub_voxel_point(int x, int y, int z);
 	void set_point(int point, int x, int y, int z);
-	int get_point_id_vec(Vector3i point);
 	int get_point_id(int x, int y, int z);
 
 	Vector3 get_point_for_face(int face, int pointIndex);

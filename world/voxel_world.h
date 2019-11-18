@@ -4,10 +4,8 @@
 #include "scene/3d/navigation.h"
 #include "core/hash_map.h"
 
-#include "../math/vector3i.h"
 #include "../library/voxelman_library.h"
 #include "../level_generator/voxelman_level_generator.h"
-#include "voxel_buffer.h"
 #include "../areas/world_area.h"
 
 class VoxelChunk;

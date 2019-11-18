@@ -168,7 +168,7 @@ void VoxelCubePoints::recalculate_point(int point) {
 	_points[point] = dynamic_offset;
 }
 
-void VoxelCubePoints::refresh_neighbours(const Ref<VoxelBuffer> buffer) {
+void VoxelCubePoints::refresh_neighbours(const VoxelChunk *buffer) {
 	int neighbours = 0;
 
 	int x = _x;
@@ -405,7 +405,7 @@ void VoxelCubePoints::refresh_neighbours(const Ref<VoxelBuffer> buffer) {
 	_point_neighbours[P111] = neighbours;
 }
 
-void VoxelCubePoints::setup(const Ref<VoxelBuffer> buffer, int x, int y, int z, int size) {
+void VoxelCubePoints::setup(const VoxelChunk *buffer, int x, int y, int z, int size) {
 	ERR_FAIL_COND(size <= 0);
 	ERR_FAIL_COND(!buffer->validate_pos(x + size, y + size, z + size) || !buffer->validate_pos(x, y, z));
 
@@ -509,7 +509,7 @@ bool VoxelCubePoints::is_face_visible(int face) {
 }
 
 
-bool VoxelCubePoints::is_sub_voxel_point_vec(Vector3i point) {
+bool VoxelCubePoints::is_sub_voxel_point_vec(Vector3 point) {
 	for (int i = 0; i < POINT_COUNT; i += 1) {
 		if (get_point(i) == (point)) {
 			return true;
@@ -520,7 +520,7 @@ bool VoxelCubePoints::is_sub_voxel_point_vec(Vector3i point) {
 
 bool VoxelCubePoints::is_sub_voxel_point(int x, int y, int z) {
 	for (int i = 0; i < POINT_COUNT; i += 1) {
-		if (get_point(i) == Vector3i(x, y, z)) {
+		if (get_point(i) == Vector3(x, y, z)) {
 			return true;
 		}
 	}
@@ -531,7 +531,7 @@ void VoxelCubePoints::set_point(int point, int x, int y, int z) {
 	_points[point] = Vector3(x, y, z);
 }
 
-int VoxelCubePoints::get_point_id_vec(Vector3i point) {
+int VoxelCubePoints::get_point_id_vec(Vector3 point) {
 	for (int i = 0; i < POINT_COUNT; ++i) {
 		if (get_point(i) == point) {
 			return i;

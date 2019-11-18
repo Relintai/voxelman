@@ -1,7 +1,7 @@
 #include "voxel_mesher_cubic.h"
 
 
-void VoxelMesherCubic::_add_buffer(Ref<VoxelBuffer> buffer) {
+void VoxelMesherCubic::_add_buffer(VoxelChunk *buffer) {
 	buffer->generate_ao();
 
 	Vector3i bfs = buffer->get_size();

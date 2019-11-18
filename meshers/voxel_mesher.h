@@ -17,15 +17,13 @@
 #include "scene/resources/concave_polygon_shape.h"
 
 #include "../library/voxelman_library.h"
-#include "../math/vector3i.h"
-#include "../world/voxel_buffer.h"
 #include "../../entity_spell_system/meshes/mesh_data_resource.h"
 
 const double PI_2 = 3.141592653589793238463 / 2;
 const double PI = 3.141592653589793238463;
 
 class VoxelmanLibrary;
-class Voxel;
+class VoxelChunk;
 
 class VoxelMesher : public Reference {
 	GDCLASS(VoxelMesher, Reference);
@@ -54,16 +52,22 @@ public:
 
 	void reset();
 
-	void add_buffer(Ref<VoxelBuffer> voxels);
-	void add_buffer_liquid(Ref<VoxelBuffer> voxels);
+	void add_chunk_bind(Node *chunk);
+	void add_chunk(VoxelChunk *chunk);
+
+	void add_chunk_liquid_bind(Node *chunk);
+	void add_chunk_liquid(VoxelChunk *chunk);
+
 	void add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position = Vector3(0, 0, 0), const Vector3 rotation = Vector3(0, 0, 0), const Vector3 scale = Vector3(1.0, 1.0, 1.0), const Rect2 uv_rect = Rect2(0, 0, 1, 1));
 	void add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform, const Rect2 uv_rect = Rect2(0, 0, 1, 1));
 
-	void bake_colors(Ref<VoxelBuffer> voxels);
-	void _bake_colors(Ref<VoxelBuffer> buffer);
+	void bake_colors_bind(Node *chunk);
+	void bake_colors(VoxelChunk *chunk);
+	void _bake_colors(VoxelChunk *chunk);
 
-	void bake_liquid_colors(Ref<VoxelBuffer> voxels);
-	void _bake_liquid_colors(Ref<VoxelBuffer> buffer);
+	void bake_liquid_colors_bind(Node *chunk);
+	void bake_liquid_colors(VoxelChunk *chunk);
+	void _bake_liquid_colors(VoxelChunk *chunk);
 
 	void build_collider(RID shape) const;
 
