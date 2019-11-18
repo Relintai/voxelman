@@ -303,7 +303,7 @@ void VoxelMesher::_bake_colors(Node *p_chunk) {
 		unsigned int y = (unsigned int)(vert.y / _voxel_scale);
 		unsigned int z = (unsigned int)(vert.z / _voxel_scale);
 
-		if (chunk->validate_channel_position(x, y, z)) {
+		if (chunk->validate_channel_data_position(x, y, z)) {
 			Color light = Color(
 					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
 					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
@@ -373,7 +373,7 @@ void VoxelMesher::_bake_liquid_colors(Node *p_chunk) {
 		unsigned int y = (unsigned int)(vert.y / _voxel_scale);
 		unsigned int z = (unsigned int)(vert.z / _voxel_scale);
 
-		if (chunk->validate_channel_position(x, y, z)) {
+		if (chunk->validate_channel_data_position(x, y, z)) {
 			Color light = Color(
 					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
 					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,

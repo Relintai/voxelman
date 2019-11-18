@@ -98,7 +98,6 @@ public:
 
 	Vector3 get_position() const;
 	Vector3 get_size() const;
-	Vector3 get_data_size() const;
 	void set_position(int x, int y, int z);
 
 	int get_margin_start() const;
@@ -145,21 +144,27 @@ public:
 	RID get_clutter_mesh_rid();
 	RID get_clutter_mesh_instance_rid();
 
-	//Voxel Data`
-	void set_size(int size_x, int size_y, int siye_z, int margin_start = 0, int margin_end = 0);
+	//Voxel Data
+	void setup_channels();
+	void _setup_channels();
 
-	bool validate_channel_position(int x, int y, int z) const;
+	void set_size(int size_x, int size_y, int size_z, int margin_start = 0, int margin_end = 0);
+
+	bool validate_channel_data_position(uint32_t x, uint32_t y, uint32_t z) const;
 
 	uint8_t get_voxel(int x, int y, int z, int channel_index) const;
 	void set_voxel(uint8_t value, int x, int y, int z, int channel_index);
 
 	void set_channel_count(int count);
-	void allocate_channel(int channel_index, uint8_t value = 0);
+	void allocate_channel(int channel_index, uint8_t default_value = 0);
 	void fill_channel(uint8_t value, int channel_index);
 	void dealloc_channel(int channel_index);
 
 	uint8_t *get_channel(int channel_index);
-	uint8_t *get_valid_channel(int channel_index);
+	uint8_t *get_valid_channel(int channel_index, uint8_t default_value = 0);
+
+	uint32_t get_data_index(uint32_t x, uint32_t y, uint32_t z) const;
+	uint32_t get_data_size() const;
 	
 	//Data Management functions
 	void generate_ao();

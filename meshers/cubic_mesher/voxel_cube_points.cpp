@@ -414,7 +414,7 @@ void VoxelCubePoints::setup_bind(Node *chunk, int x, int y, int z, int size) {
 void VoxelCubePoints::setup(VoxelChunk *chunk, int x, int y, int z, int size) {
 	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 	ERR_FAIL_COND(size <= 0);
-	ERR_FAIL_COND(!chunk->validate_channel_position(x + size, y + size, z + size) || !chunk->validate_channel_position(x, y, z));
+	ERR_FAIL_COND(!chunk->validate_channel_data_position(x + size, y + size, z + size) || !chunk->validate_channel_data_position(x, y, z));
 
 	reset();
 

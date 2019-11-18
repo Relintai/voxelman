@@ -63,10 +63,6 @@ _FORCE_INLINE_ int VoxelChunk::get_data_size_z() {
 	return _data_size_z;
 }
 
-_FORCE_INLINE_ Vector3 VoxelChunk::get_data_size() const {
-	return Vector3(_data_size_x, _data_size_y, _data_size_z);
-}
-
 void VoxelChunk::set_position(int x, int y, int z) {
 	_position_x = x;
 	_position_y = y;
@@ -193,39 +189,152 @@ RID VoxelChunk::get_clutter_mesh_instance_rid() {
 }
 
 //Voxel Data
-void VoxelChunk::set_size(int size_x, int size_y, int siye_z, int margin_start, int margin_end) {
-
+void VoxelChunk::setup_channels() {
+	call("_setup_channels");
+}
+void VoxelChunk::_setup_channels() {
+	set_channel_count(MAX_DEFAULT_CHANNELS);
 }
 
-bool VoxelChunk::validate_channel_position(int x, int y, int z) const {
-	return false;
+void VoxelChunk::set_size(int size_x, int size_y, int size_z, int margin_start, int margin_end) {
+	if (_size_x == size_x && _size_y == size_y && _size_z == size_z && _margin_start == margin_start && _margin_end == margin_end) {
+		return;
+	}
+
+	for (int i = 0; i < _channels.size(); ++i) {
+		uint8_t * ch = _channels[i];
+
+		if (ch != NULL) {
+			memdelete_arr(ch);
+		}
+	}
+
+	_size_x = size_x;
+	_size_y = size_y;
+	_size_z = size_z;
+
+	_data_size_x = size_x + margin_start + margin_end;
+	_data_size_y = size_y + margin_start + margin_end;
+	_data_size_z = size_z + margin_start + margin_end;
+
+	_margin_start = margin_start;
+	_margin_end = margin_end;
+}
+
+bool VoxelChunk::validate_channel_data_position(uint32_t x, uint32_t y, uint32_t z) const {
+	return x < _data_size_x && y < _data_size_y && z < _data_size_z;
 }
 
 uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) const {
-	return 0;
+	ERR_FAIL_INDEX_V(channel_index, _channels.size(), 0);
+	ERR_FAIL_COND_V(!validate_channel_data_position(x, y, z), 0);
+
+	uint8_t * ch = _channels.get(channel_index);
+
+	if (!ch)
+		return 0;
+
+	return ch[get_data_index(x, y, z)];
 }
 void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
+	ERR_FAIL_INDEX(channel_index, _channels.size());
+	ERR_FAIL_COND(!validate_channel_data_position(x, y, z));
 
+	uint8_t *ch = get_valid_channel(channel_index);
+
+	ch[get_data_index(x, y, z)] = value;
 }
 
 void VoxelChunk::set_channel_count(int count) {
+	if (count == _channels.size())
+		return;
 
+	if (_channels.size() >= count) {
+		for (int i = count; i < _channels.size(); ++i) {
+			uint8_t * ch = _channels[i];
+
+			if (ch != NULL) {
+				memdelete_arr(ch);
+			}
+		}
+
+		_channels.resize(count);
+		return;
+	}
+
+	int s = _channels.size();
+	_channels.resize(count);
+
+	for (int i = s; i < count; ++i) {
+		_channels.set(i, NULL);
+	}
 }
-void VoxelChunk::allocate_channel(int channel_index, uint8_t value) {
+void VoxelChunk::allocate_channel(int channel_index, uint8_t default_value) {
+	ERR_FAIL_INDEX(channel_index, _channels.size());
+	
+	if (_channels[channel_index] != NULL)
+		return;
 
+	uint32_t size = _data_size_x * _data_size_y * _data_size_z;
+	
+	uint8_t *ch = memnew_arr(uint8_t, size);
+	memset(ch, default_value, size);
+
+	_channels.set(channel_index, ch);
 }
 void VoxelChunk::fill_channel(uint8_t value, int channel_index) {
+	ERR_FAIL_INDEX(channel_index, _channels.size());
 
+	uint8_t *ch = _channels.get(channel_index);
+
+	if (ch == NULL) {
+		allocate_channel(channel_index, value);
+		return;
+	}
+
+	uint32_t size = get_data_size();
+	
+	for (int i = 0; i < size; ++i) {
+		ch[i] = value;
+	}
 }
 void VoxelChunk::dealloc_channel(int channel_index) {
+	ERR_FAIL_INDEX(channel_index, _channels.size());
 
+	uint8_t *ch = _channels.get(channel_index);
+
+	if (ch != NULL) {
+		memdelete_arr(ch);
+		
+		_channels.set(channel_index, NULL);
+	}
 }
 
 uint8_t *VoxelChunk::get_channel(int channel_index) {
-	return NULL;
+	ERR_FAIL_INDEX_V(channel_index, _channels.size(), NULL);
+
+	return _channels.get(channel_index);
 }
-uint8_t *VoxelChunk::get_valid_channel(int channel_index) {
-	return NULL;
+uint8_t *VoxelChunk::get_valid_channel(int channel_index, uint8_t default_value) {
+	ERR_FAIL_INDEX_V(channel_index, _channels.size(), 0);
+
+	uint8_t *ch = _channels.get(channel_index);
+
+	if (ch == NULL) {
+		allocate_channel(channel_index, default_value);
+
+		return _channels.get(channel_index);
+	}
+
+	return ch;
+}
+
+_FORCE_INLINE_ uint32_t VoxelChunk::get_data_index(uint32_t x, uint32_t y, uint32_t z) const {
+	return y + _data_size_y * (x + _data_size_x * z);
+}
+
+_FORCE_INLINE_ uint32_t VoxelChunk::get_data_size() const {
+	return _data_size_x * _data_size_y * _data_size_z;
 }
 
 //Data Management functions
@@ -264,7 +373,7 @@ void VoxelChunk::generate_ao() {
 void VoxelChunk::add_light(int local_x, int local_y, int local_z, int size, Color color) {
 	ERR_FAIL_COND(size < 0);
 
-	float sizef = static_cast<float>(size);
+	//float sizef = static_cast<float>(size);
 	//float rf = (color.r / sizef);
 	//float gf = (color.g / sizef);
 	//float bf = (color.b / sizef);
@@ -960,6 +1069,14 @@ VoxelChunk::~VoxelChunk() {
 	}
 
 	_props.clear();
+
+	for (int i = 0; i < _channels.size(); ++i) {
+		uint8_t * ch = _channels[i];
+
+		if (ch != NULL) {
+			memdelete_arr(ch);
+		}
+	}
 }
 
 void VoxelChunk::_bind_methods() {
@@ -1055,6 +1172,33 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_clutter_mesh_rid"), &VoxelChunk::get_clutter_mesh_rid);
 	ClassDB::bind_method(D_METHOD("get_clutter_mesh_instance_rid"), &VoxelChunk::get_clutter_mesh_instance_rid);
 
+	//Voxel Data
+	BIND_VMETHOD(MethodInfo("_setup_channels"));
+
+	ClassDB::bind_method(D_METHOD("setup_channels"), &VoxelChunk::setup_channels);
+	ClassDB::bind_method(D_METHOD("_setup_channels"), &VoxelChunk::_setup_channels);
+
+	ClassDB::bind_method(D_METHOD("set_size", "size_x", "size_y", "size_z", "margin_start", "margin_end"), &VoxelChunk::set_size, DEFVAL(0), DEFVAL(0));
+
+	ClassDB::bind_method(D_METHOD("validate_channel_data_position", "x", "y", "z"), &VoxelChunk::validate_channel_data_position);
+
+	ClassDB::bind_method(D_METHOD("get_voxel", "x", "y", "z", "channel_index"), &VoxelChunk::get_voxel);
+	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "channel_index"), &VoxelChunk::set_voxel);
+
+	ClassDB::bind_method(D_METHOD("set_channel_count", "count"), &VoxelChunk::set_channel_count);
+	ClassDB::bind_method(D_METHOD("allocate_channel", "channel_index", "default_value"), &VoxelChunk::allocate_channel);
+	ClassDB::bind_method(D_METHOD("fill_channel", "value", "channel_index"), &VoxelChunk::fill_channel);
+	ClassDB::bind_method(D_METHOD("dealloc_channel", "channel_index"), &VoxelChunk::dealloc_channel);
+
+	ClassDB::bind_method(D_METHOD("get_data_index", "x", "y", "z"), &VoxelChunk::get_data_index);
+	ClassDB::bind_method(D_METHOD("get_data_size"), &VoxelChunk::get_data_size);
+
+	//Data Management functions
+	ClassDB::bind_method(D_METHOD("generate_ao"), &VoxelChunk::generate_ao);
+	ClassDB::bind_method(D_METHOD("add_light", "local_x", "local_y", "local_z", "size", "color"), &VoxelChunk::add_light);
+	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
+
+	//Meshes
 	ClassDB::bind_method(D_METHOD("finalize_mesh"), &VoxelChunk::finalize_mesh);
 
 	BIND_VMETHOD(MethodInfo("_build_phase", PropertyInfo(Variant::INT, "phase")));
