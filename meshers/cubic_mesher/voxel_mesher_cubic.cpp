@@ -1,7 +1,11 @@
 #include "voxel_mesher_cubic.h"
 
 
-void VoxelMesherCubic::_add_buffer(VoxelChunk *chunk) {
+void VoxelMesherCubic::_add_buffer(Node *p_chunk) {
+	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
+
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
 	chunk->generate_ao();
 
 	int x_size = chunk->get_size_x() - 1;

@@ -88,13 +88,10 @@ void PropData::add_prop_lights_into(VoxelChunk *chunk, Transform parent_transfor
 			Transform t = parent_transform * pl->get_transform();
 
 			Vector3 px = t.origin / chunk->get_voxel_scale();
-
-			Vector3i cp = chunk->get_chunk_position();
-			Vector3i cs = chunk->get_chunk_size();
-
+			
 			Ref<VoxelLight> vl;
 			vl.instance();
-			vl->set_world_position(px.x + cp.x * cs.x, px.y + cp.y * cs.y, px.z + cp.z * cs.z);
+			vl->set_world_position(px.x + chunk->get_position_x() * chunk->get_size_x(), px.y + chunk->get_position_y() * chunk->get_size_y(), px.z + chunk->get_position_z() * chunk->get_size_z());
 			vl->set_color(pl->get_light_color());
 			vl->set_size(pl->get_light_size());
 

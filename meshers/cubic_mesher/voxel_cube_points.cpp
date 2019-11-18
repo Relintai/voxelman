@@ -168,7 +168,9 @@ void VoxelCubePoints::recalculate_point(int point) {
 	_points[point] = dynamic_offset;
 }
 
-void VoxelCubePoints::refresh_neighbours(const VoxelChunk *chunk) {
+void VoxelCubePoints::refresh_neighbours(VoxelChunk *chunk) {
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
 	int neighbours = 0;
 
 	int x = _x;
@@ -405,7 +407,12 @@ void VoxelCubePoints::refresh_neighbours(const VoxelChunk *chunk) {
 	_point_neighbours[P111] = neighbours;
 }
 
-void VoxelCubePoints::setup(const VoxelChunk *chunk, int x, int y, int z, int size) {
+void VoxelCubePoints::setup_bind(Node *chunk, int x, int y, int z, int size) {
+	setup(Object::cast_to<VoxelChunk>(chunk), x, y, z, size);
+}
+
+void VoxelCubePoints::setup(VoxelChunk *chunk, int x, int y, int z, int size) {
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 	ERR_FAIL_COND(size <= 0);
 	ERR_FAIL_COND(!chunk->validate_channel_position(x + size, y + size, z + size) || !chunk->validate_channel_position(x, y, z));
 
@@ -757,7 +764,7 @@ void VoxelCubePoints::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "size"), "set_size", "get_size");
 
 	ClassDB::bind_method(D_METHOD("refresh_points"), &VoxelCubePoints::refresh_points);
-	ClassDB::bind_method(D_METHOD("setup", "chunk", "x", "y", "z", "size"), &VoxelCubePoints::setup, DEFVAL(1));
+	ClassDB::bind_method(D_METHOD("setup", "chunk", "x", "y", "z", "size"), &VoxelCubePoints::setup_bind, DEFVAL(1));
 
 	ClassDB::bind_method(D_METHOD("get_point_index", "face", "index"), &VoxelCubePoints::get_point_index);
 	ClassDB::bind_method(D_METHOD("get_point_uv_direction", "face", "index"), &VoxelCubePoints::get_point_uv_direction);
