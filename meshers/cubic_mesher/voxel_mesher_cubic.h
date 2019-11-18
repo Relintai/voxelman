@@ -13,7 +13,7 @@ class VoxelMesherCubic : public VoxelMesher {
 	GDCLASS(VoxelMesherCubic, VoxelMesher);
 
 public:
-	void _add_buffer(VoxelChunk *buffer);
+	void _add_buffer(VoxelChunk *chunk);
 	
 	VoxelMesherCubic();
 	~VoxelMesherCubic();

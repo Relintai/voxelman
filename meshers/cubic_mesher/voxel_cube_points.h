@@ -4,6 +4,8 @@
 #include "core/reference.h"
 #include "core/vector.h"
 
+#include "../../world/voxel_chunk.h"
+
 class SubVoxelFacePointsHelper;
 
 class VoxelCubePoints : public Reference {

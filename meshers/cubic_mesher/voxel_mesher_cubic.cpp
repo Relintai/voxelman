@@ -1,13 +1,12 @@
 #include "voxel_mesher_cubic.h"
 
 
-void VoxelMesherCubic::_add_buffer(VoxelChunk *buffer) {
-	buffer->generate_ao();
+void VoxelMesherCubic::_add_buffer(VoxelChunk *chunk) {
+	chunk->generate_ao();
 
-	Vector3i bfs = buffer->get_size();
-	int x_size = bfs.x - 1;
-	int y_size = bfs.y - 1;
-	int z_size = bfs.z - 1;
+	int x_size = chunk->get_size_x() - 1;
+	int y_size = chunk->get_size_x() - 1;
+	int z_size = chunk->get_size_x() - 1;
 
 	float lod_size = get_lod_size();
 	float voxel_size = get_lod_size();
@@ -23,7 +22,7 @@ void VoxelMesherCubic::_add_buffer(VoxelChunk *buffer) {
 		for (int z = 1; z < z_size - 1; z += lod_size) {
 			for (int x = 1; x < x_size - 1; x += lod_size) {
 
-				cube_points->setup(buffer, x, y, z, lod_size);
+				cube_points->setup(chunk, x, y, z, lod_size);
 
 				if (!cube_points->has_points())
 					continue;

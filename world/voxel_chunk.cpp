@@ -16,46 +16,46 @@ _FORCE_INLINE_ void VoxelChunk::set_state(int value) {
 	_state = value;
 }
 
-_FORCE_INLINE_ int VoxelChunk::get_chunk_position_x() {
-	return _chunk_position_x;
+_FORCE_INLINE_ int VoxelChunk::get_position_x() {
+	return _position_x;
 }
-_FORCE_INLINE_ int VoxelChunk::get_chunk_position_y() {
-	return _chunk_position_y;
+_FORCE_INLINE_ int VoxelChunk::get_position_y() {
+	return _position_y;
 }
-_FORCE_INLINE_ int VoxelChunk::get_chunk_position_z() {
-	return _chunk_position_z;
-}
-
-_FORCE_INLINE_ Vector3 VoxelChunk::get_chunk_position() const {
-	return Vector3(_chunk_position_x, _chunk_position_y, _chunk_position_z);
+_FORCE_INLINE_ int VoxelChunk::get_position_z() {
+	return _position_z;
 }
 
-_FORCE_INLINE_ int VoxelChunk::get_chunk_size_x() {
-	return _chunk_size_x;
-}
-_FORCE_INLINE_ int VoxelChunk::get_chunk_size_y() {
-	return _chunk_size_y;
-}
-_FORCE_INLINE_ int VoxelChunk::get_chunk_size_z() {
-	return _chunk_size_z;
+_FORCE_INLINE_ Vector3 VoxelChunk::get_position() const {
+	return Vector3(_position_x, _position_y, _position_z);
 }
 
-_FORCE_INLINE_ Vector3 VoxelChunk::get_chunk_size() const {
-	return Vector3(_chunk_size_x, _chunk_size_y, _chunk_size_z);
+_FORCE_INLINE_ int VoxelChunk::get_size_x() {
+	return _size_x;
+}
+_FORCE_INLINE_ int VoxelChunk::get_size_y() {
+	return _size_y;
+}
+_FORCE_INLINE_ int VoxelChunk::get_size_z() {
+	return _size_z;
 }
 
-_FORCE_INLINE_ int VoxelChunk::get_chunk_data_size_x() {
-	return _chunk_data_size_x;
-}
-_FORCE_INLINE_ int VoxelChunk::get_chunk_data_size_y() {
-	return _chunk_data_size_y;
-}
-_FORCE_INLINE_ int VoxelChunk::get_chunk_data_size_z() {
-	return _chunk_data_size_z;
+_FORCE_INLINE_ Vector3 VoxelChunk::get_size() const {
+	return Vector3(_size_x, _size_y, _size_z);
 }
 
-_FORCE_INLINE_ Vector3 VoxelChunk::get_chunk_data_size() const {
-	return Vector3(_chunk_data_size_x, _chunk_data_size_y, _chunk_data_size_z);
+_FORCE_INLINE_ int VoxelChunk::get_data_size_x() {
+	return _data_size_x;
+}
+_FORCE_INLINE_ int VoxelChunk::get_data_size_y() {
+	return _data_size_y;
+}
+_FORCE_INLINE_ int VoxelChunk::get_data_size_z() {
+	return _data_size_z;
+}
+
+_FORCE_INLINE_ Vector3 VoxelChunk::get_data_size() const {
+	return Vector3(_data_size_x, _data_size_y, _data_size_z);
 }
 
 _FORCE_INLINE_ int VoxelChunk::get_margin_start() const { 
@@ -178,45 +178,45 @@ RID VoxelChunk::get_clutter_mesh_instance_rid() {
 }
 
 //Voxel Data
-void VoxelBuffer::set_size(int size_x, int size_y, int siye_z, int margin_start = 0, int margin_end = 0) {
+void VoxelChunk::set_size(int size_x, int size_y, int siye_z, int margin_start = 0, int margin_end = 0) {
 
 }
-void VoxelBuffer::set_channel_count(int value) {
+void VoxelChunk::set_channel_count(int value) {
 
 }
-void VoxelBuffer::validate_channel_index(int x, int y, int z, int channel_index) {
-
-}
-
-uint8_t VoxelBuffer::get_voxel(int x, int y, int z, int channel_index) {
-
-}
-void VoxelBuffer::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
+void VoxelChunk::validate_channel_index(int x, int y, int z, int channel_index) {
 
 }
 
-void VoxelBuffer::set_channel_count(int count) {
+uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) {
 
 }
-void VoxelBuffer::allocate_channel(int channel_index, uint8_t value = 0) {
-
-}
-void VoxelBuffer::fill_channel(int channel_index) {
-
-}
-void VoxelBuffer::dealloc_channel(int channel_index) {
+void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
 
 }
 
-uint8_t *VoxelBuffer::get_channel(int channel_index) {
+void VoxelChunk::set_channel_count(int count) {
 
 }
-uint8_t *VoxelBuffer::get_valid_channel(int channel_index) {
+void VoxelChunk::allocate_channel(int channel_index, uint8_t value = 0) {
+
+}
+void VoxelChunk::fill_channel(int channel_index) {
+
+}
+void VoxelChunk::dealloc_channel(int channel_index) {
+
+}
+
+uint8_t *VoxelChunk::get_channel(int channel_index) {
+
+}
+uint8_t *VoxelChunk::get_valid_channel(int channel_index) {
 	
 }
 
 //Data Management functions
-void VoxelBuffer::generate_ao() {
+void VoxelChunk::generate_ao() {
 	unsigned int size_x = _actual_size_x;
 	unsigned int size_y = _actual_size_y;
 	unsigned int size_z = _actual_size_z;
@@ -248,7 +248,7 @@ void VoxelBuffer::generate_ao() {
 	}
 }
 
-void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Color color) {
+void VoxelChunk::add_light(int local_x, int local_y, int local_z, int size, Color color) {
 	ERR_FAIL_COND(size < 0);
 
 	int size_x = _actual_size_actual_size_xx;
@@ -306,7 +306,7 @@ void VoxelBuffer::add_light(int local_x, int local_y, int local_z, int size, Col
 		}
 	}
 }
-void VoxelBuffer::clear_lights() {
+void VoxelChunk::clear_lights() {
 	fill_channel(0, CHANNEL_LIGHT_COLOR_R);
 	fill_channel(0, CHANNEL_LIGHT_COLOR_G);
 	fill_channel(0, CHANNEL_LIGHT_COLOR_B);
@@ -456,7 +456,7 @@ void VoxelChunk::create_colliders() {
 
 	PhysicsServer::get_singleton()->body_add_shape(_body_rid, _shape_rid);
 
-	PhysicsServer::get_singleton()->body_set_state(_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_chunk_position_x * _chunk_size_x * _voxel_scale, _chunk_position_y * _chunk_size_y * _voxel_scale, _chunk_position_z * _chunk_size_z * _voxel_scale)));
+	PhysicsServer::get_singleton()->body_set_state(_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 	PhysicsServer::get_singleton()->body_set_space(_body_rid, get_voxel_world()->get_world()->get_space());
 }
 
@@ -495,8 +495,8 @@ void VoxelChunk::create_voxel_light(const Color color, const int size, const int
 	Ref<VoxelLight> light;
 	light.instance();
 
-	Vector3i pos = get_chunk_position();
-	Vector3i csize = get_chunk_size();
+	Vector3i pos = get_position();
+	Vector3i csize = get_size();
 
 	light->set_world_position(pos.x * csize.x + x, pos.y * csize.y + y, pos.z * csize.z + z);
 	light->set_color(color);
@@ -567,13 +567,13 @@ void VoxelChunk::bake_light(Ref<VoxelLight> light) {
 
 	Vector3i wp = light->get_world_position();
 
-	int wpx = wp.x - (_chunk_position_x * _chunk_size_x);
-	int wpy = wp.y - (_chunk_position_y * _chunk_size_y);
-	int wpz = wp.z - (_chunk_position_z * _chunk_size_z);
+	int wpx = wp.x - (_position_x * _size_x);
+	int wpy = wp.y - (_position_y * _size_y);
+	int wpz = wp.z - (_position_z * _size_z);
 
-	//int wpx = (int)(wp.x / _chunk_size.x) - _chunk_position.x;
-	//int wpy = (int)(wp.y / _chunk_size.y) - _chunk_position.y;
-	//int wpz = (int)(wp.z / _chunk_size.z) - _chunk_position.z;
+	//int wpx = (int)(wp.x / _size.x) - _position.x;
+	//int wpy = (int)(wp.y / _size.y) - _position.y;
+	//int wpz = (int)(wp.z / _size.z) - _position.z;
 
 	_buffer->add_light(wpx, wpy, wpz, light->get_size(), light->get_color());
 }
@@ -648,7 +648,7 @@ void VoxelChunk::allocate_main_mesh() {
 
 	VS::get_singleton()->instance_set_base(_mesh_instance_rid, _mesh_rid);
 
-	VS::get_singleton()->instance_set_transform(_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position_x * _chunk_size_x * _voxel_scale, _chunk_position_y * _chunk_size_y * _voxel_scale, _chunk_position_z * _chunk_size_z * _voxel_scale)));
+	VS::get_singleton()->instance_set_transform(_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 }
 
 void VoxelChunk::free_main_mesh() {
@@ -679,7 +679,7 @@ void VoxelChunk::allocate_prop_mesh() {
 
 	VS::get_singleton()->instance_set_base(_prop_mesh_instance_rid, _prop_mesh_rid);
 
-	VS::get_singleton()->instance_set_transform(_prop_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position_x * _chunk_size_x * _voxel_scale, _chunk_position_y * _chunk_size_y * _voxel_scale, _chunk_position_z * _chunk_size_z * _voxel_scale)));
+	VS::get_singleton()->instance_set_transform(_prop_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 }
 
 
@@ -704,7 +704,7 @@ void VoxelChunk::allocate_prop_colliders() {
 
 	PhysicsServer::get_singleton()->body_add_shape(_prop_body_rid, _prop_shape_rid);
 
-	PhysicsServer::get_singleton()->body_set_state(_prop_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_chunk_position_x * _chunk_size_x * _voxel_scale, _chunk_position_y * _chunk_size_y * _voxel_scale, _chunk_position_z * _chunk_size_z * _voxel_scale)));
+	PhysicsServer::get_singleton()->body_set_state(_prop_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 	PhysicsServer::get_singleton()->body_set_space(_prop_body_rid, get_voxel_world()->get_world()->get_space());
 }
 void VoxelChunk::build_prop_collider() {
@@ -744,7 +744,7 @@ void VoxelChunk::allocate_liquid_mesh() {
 
 	VS::get_singleton()->instance_set_base(_liquid_mesh_instance_rid, _liquid_mesh_rid);
 
-	VS::get_singleton()->instance_set_transform(_liquid_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position_x * _chunk_size_x * _voxel_scale, _chunk_position_y * _chunk_size_y * _voxel_scale, _chunk_position_z * _chunk_size_z * _voxel_scale)));
+	VS::get_singleton()->instance_set_transform(_liquid_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 }
 
 void VoxelChunk::free_liquid_mesh() {
@@ -777,7 +777,7 @@ void VoxelChunk::allocate_clutter_mesh() {
 
 	VS::get_singleton()->instance_set_base(_clutter_mesh_instance_rid, _clutter_mesh_rid);
 
-	VS::get_singleton()->instance_set_transform(_clutter_mesh_instance_rid, Transform(Basis(), Vector3(_chunk_position_x * _chunk_size_x * _voxel_scale, _chunk_position_y * _chunk_size_y * _voxel_scale, _chunk_position_z * _chunk_size_z * _voxel_scale)));
+	VS::get_singleton()->instance_set_transform(_clutter_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 }
 
 void VoxelChunk::free_clutter_mesh() {
@@ -809,8 +809,8 @@ void VoxelChunk::create_debug_immediate_geometry() {
 	if (Engine::get_singleton()->is_editor_hint())
 		_debug_drawer->set_owner(get_tree()->get_edited_scene_root());
 
-	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
-	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_chunk_position.x * _chunk_size.x * _voxel_scale, _chunk_position.y * _chunk_size.y * _voxel_scale, _chunk_position.z * _chunk_size.z * _voxel_scale)));
+	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_position.x * _size.x * _voxel_scale, _position.y * _size.y * _voxel_scale, _position.z * _size.z * _voxel_scale)));
+	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_position.x * _size.x * _voxel_scale, _position.y * _size.y * _voxel_scale, _position.z * _size.z * _voxel_scale)));
 }
 
 void VoxelChunk::free_debug_immediate_geometry() {
@@ -859,19 +859,18 @@ void VoxelChunk::draw_debug_voxels(int max, Color color) {
 	_debug_drawer->set_color(color);
 
 	int a = 0;
-	Vector3i size = _buffer->get_size();
 
-	for (int y = 0; y < size.y; ++y) {
-		for (int z = 0; z < size.z; ++z) {
-			for (int x = 0; x < size.x; ++x) {
+	for (int y = 0; y < _size_y; ++y) {
+		for (int z = 0; z < _size_z; ++z) {
+			for (int x = 0; x < _size_x; ++x) {
 
-				int type = _buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_TYPE);
+				int type = get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
 
 				if (type == 0) {
 					continue;
 				}
 
-				draw_cross_voxels_fill(Vector3(x, y, z), _buffer->get_voxel(x, y, z, VoxelBuffer::CHANNEL_ISOLEVEL) / 255.0);
+				draw_cross_voxels_fill(Vector3(x, y, z), get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL) / 255.0);
 
 				++a;
 
@@ -901,9 +900,9 @@ void VoxelChunk::draw_debug_voxel_lights() {
 
 		Vector3i pos = v->get_world_position();
 
-		int pos_x = pos.x - (_chunk_size_x * _chunk_position_x);
-		int pos_y = pos.y - (_chunk_size_y * _chunk_position_y);
-		int pos_z = pos.z - (_chunk_size_z * _chunk_position_z);
+		int pos_x = pos.x - (_size_x * _position_x);
+		int pos_y = pos.y - (_size_y * _position_y);
+		int pos_z = pos.z - (_size_z * _position_z);
 
 		draw_cross_voxels_fill(Vector3(pos_x, pos_y, pos_z), 1.0);
 	}
@@ -987,33 +986,33 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_state", "value"), &VoxelChunk::set_state);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "state"), "set_state", "get_state");
 
-	ClassDB::bind_method(D_METHOD("get_chunk_position_x"), &VoxelChunk::get_chunk_position_x);
-	ClassDB::bind_method(D_METHOD("set_chunk_position_x", "value"), &VoxelChunk::set_chunk_position_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_x"), "set_chunk_position_x", "get_chunk_position_x");
+	ClassDB::bind_method(D_METHOD("get_position_x"), &VoxelChunk::get_position_x);
+	ClassDB::bind_method(D_METHOD("set_position_x", "value"), &VoxelChunk::set_position_x);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_x"), "set_position_x", "get_position_x");
 
-	ClassDB::bind_method(D_METHOD("get_chunk_position_y"), &VoxelChunk::get_chunk_position_y);
-	ClassDB::bind_method(D_METHOD("set_chunk_position_y", "value"), &VoxelChunk::set_chunk_position_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_y"), "set_chunk_position_y", "get_chunk_position_y");
+	ClassDB::bind_method(D_METHOD("get_position_y"), &VoxelChunk::get_position_y);
+	ClassDB::bind_method(D_METHOD("set_position_y", "value"), &VoxelChunk::set_position_y);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_y"), "set_position_y", "get_position_y");
 
-	ClassDB::bind_method(D_METHOD("get_chunk_position_z"), &VoxelChunk::get_chunk_position_z);
-	ClassDB::bind_method(D_METHOD("set_chunk_position_z", "value"), &VoxelChunk::set_chunk_position_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_z"), "set_chunk_position_x", "get_chunk_position_z");
+	ClassDB::bind_method(D_METHOD("get_position_z"), &VoxelChunk::get_position_z);
+	ClassDB::bind_method(D_METHOD("set_position_z", "value"), &VoxelChunk::set_position_z);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_z"), "set_position_x", "get_position_z");
 
-	ClassDB::bind_method(D_METHOD("set_chunk_position", "x", "y", "z"), &VoxelChunk::set_chunk_position);
+	ClassDB::bind_method(D_METHOD("set_position", "x", "y", "z"), &VoxelChunk::set_position);
 
-	ClassDB::bind_method(D_METHOD("get_chunk_size_x"), &VoxelChunk::get_chunk_size_x);
-	ClassDB::bind_method(D_METHOD("set_chunk_size_x", "value"), &VoxelChunk::set_chunk_size_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_x"), "set_chunk_size_x", "get_chunk_size_x");
+	ClassDB::bind_method(D_METHOD("get_size_x"), &VoxelChunk::get_size_x);
+	ClassDB::bind_method(D_METHOD("set_size_x", "value"), &VoxelChunk::set_size_x);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_x"), "set_size_x", "get_size_x");
 
-	ClassDB::bind_method(D_METHOD("get_chunk_size_y"), &VoxelChunk::get_chunk_size_y);
-	ClassDB::bind_method(D_METHOD("set_chunk_size_y", "value"), &VoxelChunk::set_chunk_size_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_y"), "set_chunk_size_y", "get_chunk_size_y");
+	ClassDB::bind_method(D_METHOD("get_size_y"), &VoxelChunk::get_size_y);
+	ClassDB::bind_method(D_METHOD("set_size_y", "value"), &VoxelChunk::set_size_y);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_y"), "set_size_y", "get_size_y");
 
-	ClassDB::bind_method(D_METHOD("get_chunk_size_z"), &VoxelChunk::get_chunk_size_z);
-	ClassDB::bind_method(D_METHOD("set_chunk_size_z", "value"), &VoxelChunk::set_chunk_size_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_z"), "set_chunk_size_x", "get_chunk_size_z");
+	ClassDB::bind_method(D_METHOD("get_size_z"), &VoxelChunk::get_size_z);
+	ClassDB::bind_method(D_METHOD("set_size_z", "value"), &VoxelChunk::set_size_z);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_z"), "set_size_x", "get_size_z");
 
-	ClassDB::bind_method(D_METHOD("set_chunk_size", "x", "y", "z"), &VoxelChunk::set_chunk_size);
+	ClassDB::bind_method(D_METHOD("set_size", "x", "y", "z"), &VoxelChunk::set_size);
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelChunk::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelChunk::set_library);
@@ -1156,4 +1155,17 @@ void VoxelChunk::_bind_methods() {
 	BIND_CONSTANT(VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED);
 	BIND_CONSTANT(VOXEL_CHUNK_STATE_MESH_GENERATION);
 	BIND_CONSTANT(VOXEL_CHUNK_STATE_MAX);
+
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_TYPE);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_ISOLEVEL);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIGHT_COLOR_R);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIGHT_COLOR_G);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIGHT_COLOR_B);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_AO);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_RANDOM_AO);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIQUID_TYPES);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIQUID_FILL);
+	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIQUID_FLOW);
+	BIND_ENUM_CONSTANT(MAX_DEFAULT_CHANNELS);
+
 }

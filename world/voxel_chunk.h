@@ -60,18 +60,18 @@ public:
 		BUILD_PHASE_MAX = 10
 	};
 
-	enum ChannelId {
-		CHANNEL_TYPE = 0,
-		CHANNEL_ISOLEVEL,
-		CHANNEL_LIGHT_COLOR_R,
-		CHANNEL_LIGHT_COLOR_G,
-		CHANNEL_LIGHT_COLOR_B,
-        CHANNEL_AO,
-		CHANNEL_RANDOM_AO,
-		CHANNEL_LIQUID_TYPES,
-		CHANNEL_LIQUID_FILL,
-		CHANNEL_LIQUID_FLOW,
-		MAX_CHANNELS
+	enum DefaultChannels {
+		DEFAULT_CHANNEL_TYPE = 0,
+		DEFAULT_CHANNEL_ISOLEVEL,
+		DEFAULT_CHANNEL_LIGHT_COLOR_R,
+		DEFAULT_CHANNEL_LIGHT_COLOR_G,
+		DEFAULT_CHANNEL_LIGHT_COLOR_B,
+        DEFAULT_CHANNEL_AO,
+		DEFAULT_CHANNEL_RANDOM_AO,
+		DEFAULT_CHANNEL_LIQUID_TYPES,
+		DEFAULT_CHANNEL_LIQUID_FILL,
+		DEFAULT_CHANNEL_LIQUID_FLOW,
+		MAX_DEFAULT_CHANNELS
 	};
 
 public:
@@ -81,21 +81,21 @@ public:
 	int get_state() const;
 	void set_state(int value);
 
-	int get_chunk_position_x();
-	int get_chunk_position_y();
-	int get_chunk_position_z();
+	int get_position_x();
+	int get_position_y();
+	int get_position_z();
 
-	int get_chunk_size_x();
-	int get_chunk_size_y();
-	int get_chunk_size_z();
+	int get_size_x();
+	int get_size_y();
+	int get_size_z();
 
-	int get_chunk_data_size_x();
-	int get_chunk_data_size_y();
-	int get_chunk_data_size_z();
+	int get_data_size_x();
+	int get_data_size_y();
+	int get_data_size_z();
 
-	Vector3 get_chunk_position() const;
-	Vector3 get_chunk_size() const;
-	Vector3 get_chunk_data_size() const;
+	Vector3 get_position() const;
+	Vector3 get_size() const;
+	Vector3 get_data_size() const;
 
 	int get_margin_start() const;
 	int get_margin_end() const;
@@ -253,17 +253,17 @@ protected:
 
 	VoxelWorld *_voxel_world;
 
-	int _chunk_position_x;
-	int _chunk_position_y;
-	int _chunk_position_z;
+	int _position_x;
+	int _position_y;
+	int _position_z;
 
-	uint32_t _chunk_size_x;
-	uint32_t _chunk_size_y;
-	uint32_t _chunk_size_z;
+	uint32_t _size_x;
+	uint32_t _size_y;
+	uint32_t _size_z;
 
-	uint32_t _chunk_data_size_x;
-	uint32_t _chunk_data_size_y;
-	uint32_t _chunk_data_size_z;
+	uint32_t _data_size_x;
+	uint32_t _data_size_y;
+	uint32_t _data_size_z;
 
 	uint32_t _margin_start;
 	uint32_t _margin_end;
@@ -314,5 +314,7 @@ protected:
 
 	bool _bake_lights;
 };
+
+VARIANT_ENUM_CAST(VoxelChunk::DefaultChannels);
 
 #endif
