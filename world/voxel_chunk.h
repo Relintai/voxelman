@@ -141,17 +141,17 @@ public:
 	RID get_clutter_mesh_rid();
 	RID get_clutter_mesh_instance_rid();
 
-	//Voxel Data
+	//Voxel Data`
 	void set_size(int size_x, int size_y, int siye_z, int margin_start = 0, int margin_end = 0);
-	void set_channel_count(int value);
-	void validate_channel_index(int x, int y, int z, int channel_index);
 
-	uint8_t get_voxel(int x, int y, int z, int channel_index);
+	bool validate_channel_position(int x, int y, int z) const;
+
+	uint8_t get_voxel(int x, int y, int z, int channel_index) const;
 	void set_voxel(uint8_t value, int x, int y, int z, int channel_index);
 
 	void set_channel_count(int count);
 	void allocate_channel(int channel_index, uint8_t value = 0);
-	void fill_channel(int channel_index);
+	void fill_channel(uint8_t value, int channel_index);
 	void dealloc_channel(int channel_index);
 
 	uint8_t *get_channel(int channel_index);
@@ -161,7 +161,7 @@ public:
 	void generate_ao();
 
     void add_light(int local_x, int local_y, int local_z, int size, Color color);
-	void clear_lights();
+	void clear_baked_lights();
 
 	//Meshing
 	void create_mesher();
@@ -194,7 +194,6 @@ public:
 
     void bake_lights();
 	void bake_light(Ref<VoxelLight> light);
-	void clear_baked_lights();
     
     void add_prop_light(Ref<VoxelLight> light);
 

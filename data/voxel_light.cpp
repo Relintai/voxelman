@@ -1,12 +1,12 @@
 #include "voxel_light.h"
 
-int VoxelLight::get_world_position_x() const {
+_FORCE_INLINE_ int VoxelLight::get_world_position_x() const {
     return _world_position_x;
 }
-int VoxelLight::get_world_position_y() const {
+_FORCE_INLINE_ int VoxelLight::get_world_position_y() const {
     return _world_position_y;
 }
-int VoxelLight::get_world_position_z() const {
+_FORCE_INLINE_ int VoxelLight::get_world_position_z() const {
     return _world_position_z;
 }
 Vector3 VoxelLight::get_world_position() { 
@@ -19,7 +19,7 @@ void VoxelLight::set_world_position(const int x, const int y, const int z) {
     _world_position_z = z; 
 }
 
-Color VoxelLight::get_color() const { 
+_FORCE_INLINE_ Color VoxelLight::get_color() const { 
     return _color; 
     
 }
@@ -28,9 +28,8 @@ void VoxelLight::set_color(Color color) {
     
 }
 
-float VoxelLight::get_size() const { 
+_FORCE_INLINE_ float VoxelLight::get_size() const { 
     return _size; 
-    
 }
 void VoxelLight::set_size(const float size) { 
     _size = size; 

@@ -64,14 +64,43 @@ public:
 protected:
 	static void _bind_methods();
 
+	struct IntPos {
+		int x;
+		int y;
+		int z;
+
+		IntPos() {
+			x = 0;
+			y = 0;
+			z = 0;
+		}
+
+		IntPos(int p_x, int p_y, int p_z) {
+			x = p_x;
+			y = p_y;
+			z = p_z;
+		}
+	};
+
+	struct IntPosHasher {
+		static _FORCE_INLINE_ uint32_t hash(const IntPos &v) {
+			uint32_t hash = hash_djb2_one_32(v.x);
+			hash = hash_djb2_one_32(v.y, hash);
+			return hash_djb2_one_32(v.z, hash);
+		}
+	};
+
 private:
-    Vector3i _chunk_size;
+    int _chunk_size_x;
+	int _chunk_size_y;
+	int _chunk_size_z;
+	
     Ref<VoxelmanLibrary> _library;
     Ref<VoxelmanLevelGenerator> _level_generator;
 	float _voxel_scale;
 	int _chunk_spawn_range;
     
-	HashMap<Vector3i, VoxelChunk *, Vector3iHasher> _chunks; 
+	HashMap<IntPos, VoxelChunk *, IntPosHasher> _chunks; 
     Vector<VoxelChunk *> _chunks_vector;
 
 	Vector<Ref<WorldArea> > _world_areas;

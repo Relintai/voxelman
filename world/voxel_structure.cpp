@@ -1,116 +1,114 @@
 #include "voxel_structure.h"
 
 int VoxelStructure::get_chunk_size_x() const {
-	return _chunk_size.x;
+	return _chunk_size_x;
 }
 void VoxelStructure::set_chunk_size_x(const int value) {
-	_chunk_size.x = value;
+	_chunk_size_x = value;
 }
 
 int VoxelStructure::get_chunk_size_y() const {
-	return _chunk_size.y;
+	return _chunk_size_y;
 }
 void VoxelStructure::set_chunk_size_y(const int value) {
-	_chunk_size.y = value;
+	_chunk_size_y = value;
 }
 
 int VoxelStructure::get_chunk_size_z() const {
-	return _chunk_size.z;
+	return _chunk_size_z;
 }
 void VoxelStructure::set_chunk_size_z(const int value) {
-	_chunk_size.z = value;
+	_chunk_size_z = value;
 }
 
 int VoxelStructure::get_world_position_x() const {
-	return _world_position.x;
+	return _world_position_x;
 }
 void VoxelStructure::set_world_position_x(const int value) {
-	_world_position.x = value;
+	_world_position_x = value;
 }
 
 int VoxelStructure::get_world_position_y() const {
-	return _world_position.y;
+	return _world_position_y;
 }
 void VoxelStructure::set_world_position_y(const int value) {
-	_world_position.y = value;
+	_world_position_y = value;
 }
 
 int VoxelStructure::get_world_position_z() const {
-	return _world_position.z;
+	return _world_position_z;
 }
 void VoxelStructure::set_world_position_z(const int value) {
-	_world_position.z = value;
+	_world_position_z = value;
 }
 
-Ref<VoxelBuffer> VoxelStructure::get_chunk_voxel_pos(int x, int y, int z) {
+VoxelChunk *VoxelStructure::get_chunk_voxel_pos(int x, int y, int z) {
 
-	Ref<VoxelBuffer> b = get_chunk(x / _chunk_size.x, y / _chunk_size.y, z / _chunk_size.z);
-
+	VoxelChunk *b = get_chunk(x / _chunk_size_x, y / _chunk_size_y, z / _chunk_size_z);
+/*
 	if (!b.is_valid()) {
 		b.instance();
 
-		add_chunk(b, x / _chunk_size.x, y / _chunk_size.y, z / _chunk_size.z);
+		add_chunk(b, x / _chunk_size_x, y / _chunk_size_y, z / _chunk_size_z);
 	}
-
+*/
 	return b;
 }
 
 int VoxelStructure::get_voxel(int x, int y, int z, unsigned int channel_index) {
-	Ref<VoxelBuffer> b = get_chunk_voxel_pos(x, y, z);
+	VoxelChunk *b = get_chunk_voxel_pos(x, y, z);
 
-	ERR_FAIL_COND_V(!b.is_valid(), 0);
+	//ERR_FAIL_COND_V(!b.is_valid(), 0);
 
 	return b->get_voxel(x, y, z, channel_index);
 }
 void VoxelStructure::set_voxel(int value, int x, int y, int z, unsigned int channel_index) {
-	Ref<VoxelBuffer> b = get_chunk_voxel_pos(x, y, z);
+	VoxelChunk *b = get_chunk_voxel_pos(x, y, z);
 
-	ERR_FAIL_COND(!b.is_valid());
+	//ERR_FAIL_COND(!b.is_valid());
 
 	return b->set_voxel(value, x, y, z, channel_index);
 }
-void VoxelStructure::set_voxel_v(int value, Vector3 pos, unsigned int channel_index) {
-	Ref<VoxelBuffer> b = get_chunk_voxel_pos(pos.x, pos.y, pos.z);
 
-	ERR_FAIL_COND(!b.is_valid());
+void VoxelStructure::add_chunk(VoxelChunk *chunk, const int x, const int y, const int z) {
+	//_chunks.set(Vector3i(x, y, z), chunk);
 
-	return b->set_voxel_v(value, pos, channel_index);
+	//VoxelStructureChunk c;
+	//c.chunk = chunk;
+	//c.position = Vector3i(x, y, z);
+
+	//_chunks_vector.push_back(c);
 }
+VoxelChunk *VoxelStructure::get_chunk(const int x, const int y, const int z) {
+	//const VoxelChunk **chunk = _chunks.getptr(Vector3i(x, y, z));
 
-void VoxelStructure::add_chunk(Ref<VoxelBuffer> chunk, const int x, const int y, const int z) {
-	_chunks.set(Vector3i(x, y, z), chunk);
+	//return Ref<VoxelBuffer>(chunk);
 
-	VoxelStructureChunk c;
-	c.buffer = chunk;
-	c.position = Vector3i(x, y, z);
-
-	_chunks_vector.push_back(c);
+	return NULL;
 }
-Ref<VoxelBuffer> VoxelStructure::get_chunk(const int x, const int y, const int z) {
-	const Ref<VoxelBuffer> *chunk = _chunks.getptr(Vector3i(x, y, z));
+VoxelChunk *VoxelStructure::remove_chunk(const int x, const int y, const int z) {
+	/*
+	VoxelChunk **chunk = _chunks.getptr(Vector3i(x, y, z));
 
-	return Ref<VoxelBuffer>(chunk);
-}
-Ref<VoxelBuffer> VoxelStructure::remove_chunk(const int x, const int y, const int z) {
-	Ref<VoxelBuffer> *chunk = _chunks.getptr(Vector3i(x, y, z));
-
-	Ref<VoxelBuffer> c(chunk);
+	VoxelChunk *c(chunk);
 
 	if (c.is_valid()) {
 
 		for (int i = 0; i < _chunks_vector.size(); ++i) {
-			if (_chunks_vector.get(i).buffer == c) {
+			if (_chunks_vector.get(i).chunk == c) {
 				_chunks_vector.remove(i);
 				break;
 			}
 		}
 	}
 
-	return c;
+	return c;*/
+
+	return NULL;
 }
 
-Ref<VoxelBuffer> VoxelStructure::get_chunk_index(const int index) {
-	return _chunks_vector.get(index).buffer;
+VoxelChunk *VoxelStructure::get_chunk_index(const int index) {
+	//return _chunks_vector.get(index).chunk;
 }
 int VoxelStructure::get_chunk_count() const {
 	return _chunks_vector.size();
@@ -118,22 +116,22 @@ int VoxelStructure::get_chunk_count() const {
 
 void VoxelStructure::clear_chunks() {
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
-		_chunks_vector.get(i).buffer.unref();
+		//_chunks_vector.get(i).chunk.unref();
 	}
 
-	_chunks_vector.clear();
+	//_chunks_vector.clear();
 
-	_chunks.clear();
+	//_chunks.clear();
 }
 
 VoxelStructure::VoxelStructure() {
-	_chunk_size = Vector3i(16, 16, 16);
-	_world_position = Vector3i(0, 0, 0);
+	//_chunk_size = Vector3i(16, 16, 16);
+	//_world_position = Vector3i(0, 0, 0);
 }
 
 VoxelStructure::~VoxelStructure() {
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
-		_chunks_vector.get(i).buffer.unref();
+		//_chunks_vector.get(i).chunk.unref();
 	}
 
 	_chunks.clear();

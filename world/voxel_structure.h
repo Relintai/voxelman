@@ -4,8 +4,7 @@
 #include "core/reference.h"
 
 #include "core/hash_map.h"
-#include "../math/vector3i.h"
-#include "voxel_buffer.h"
+#include "voxel_chunk.h"
 
 class VoxelStructure : public Reference {
 	GDCLASS(VoxelStructure, Reference);
@@ -30,17 +29,17 @@ public:
 	int get_world_position_z() const;
 	void set_world_position_z(const int value);
 
-	Ref<VoxelBuffer> get_chunk_voxel_pos(int x, int y, int z);
+	VoxelChunk *get_chunk_voxel_pos(int x, int y, int z);
 
 	int get_voxel(int x, int y, int z, unsigned int channel_index = 0);
 	void set_voxel(int value, int x, int y, int z, unsigned int channel_index = 0);
 	void set_voxel_v(int value, Vector3 pos, unsigned int channel_index = 0);
 
-	void add_chunk(Ref<VoxelBuffer> chunk, const int x, const int y, const int z);
-	Ref<VoxelBuffer> get_chunk(const int x, const int y, const int z);
-	Ref<VoxelBuffer> remove_chunk(const int x, const int y, const int z);
+	void add_chunk(VoxelChunk *chunk, const int x, const int y, const int z);
+	VoxelChunk *get_chunk(const int x, const int y, const int z);
+	VoxelChunk *remove_chunk(const int x, const int y, const int z);
 
-	Ref<VoxelBuffer> get_chunk_index(const int index);
+	VoxelChunk *get_chunk_index(const int index);
 	int get_chunk_count() const;
 
 	void clear_chunks();
@@ -51,17 +50,31 @@ public:
 protected:
 	static void _bind_methods();
 
-	struct VoxelStructureChunk {
-		Vector3i position;
-		Ref<VoxelBuffer> buffer;
+	struct IntPos {
+		int x;
+		int y;
+		int z;
+	};
+
+	struct IntPosHasher {
+		static _FORCE_INLINE_ uint32_t hash(const IntPos &v) {
+			uint32_t hash = hash_djb2_one_32(v.x);
+			hash = hash_djb2_one_32(v.y, hash);
+			return hash_djb2_one_32(v.z, hash);
+		}
 	};
 
 private:
-	Vector3i _chunk_size;
-	Vector3i _world_position;
+	int _chunk_size_x;
+	int _chunk_size_y;
+	int _chunk_size_z;
 
-	HashMap<Vector3i, Ref<VoxelBuffer>, Vector3iHasher> _chunks;
-	Vector<VoxelStructureChunk> _chunks_vector;
+	int _world_position_x;
+	int _world_position_y;
+	int _world_position_z;
+
+	HashMap<IntPos, VoxelChunk*, IntPosHasher> _chunks;
+	Vector<VoxelChunk*> _chunks_vector;
 };
 
 #endif

@@ -181,17 +181,15 @@ RID VoxelChunk::get_clutter_mesh_instance_rid() {
 void VoxelChunk::set_size(int size_x, int size_y, int siye_z, int margin_start = 0, int margin_end = 0) {
 
 }
-void VoxelChunk::set_channel_count(int value) {
+
+_FORCE_INLINE_ bool VoxelChunk::validate_channel_position(int x, int y, int z) const {
 
 }
-void VoxelChunk::validate_channel_index(int x, int y, int z, int channel_index) {
+
+_FORCE_INLINE_ uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) const {
 
 }
-
-uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) {
-
-}
-void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
+_FORCE_INLINE_ void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
 
 }
 
@@ -201,7 +199,7 @@ void VoxelChunk::set_channel_count(int count) {
 void VoxelChunk::allocate_channel(int channel_index, uint8_t value = 0) {
 
 }
-void VoxelChunk::fill_channel(int channel_index) {
+void VoxelChunk::fill_channel(uint8_t value, int channel_index) {
 
 }
 void VoxelChunk::dealloc_channel(int channel_index) {
@@ -217,23 +215,23 @@ uint8_t *VoxelChunk::get_valid_channel(int channel_index) {
 
 //Data Management functions
 void VoxelChunk::generate_ao() {
-	unsigned int size_x = _actual_size_x;
-	unsigned int size_y = _actual_size_y;
-	unsigned int size_z = _actual_size_z;
+	unsigned int size_x = _data_size_x;
+	unsigned int size_y = _data_size_y;
+	unsigned int size_z = _data_size_z;
 
 	ERR_FAIL_COND(size_x == 0 || size_y == 0 || size_z == 0);
 
 	for (unsigned int y = 1; y < size_y - 1; ++y) {
 		for (unsigned int z = 1; z < size_z - 1; ++z) {
 			for (unsigned int x = 1; x < size_x - 1; ++x) {
-				int current = get_voxel(x, y, z, CHANNEL_ISOLEVEL);
+				int current = get_voxel(x, y, z, DEFAULT_CHANNEL_ISOLEVEL);
 
-				int sum = get_voxel(x + 1, y, z, CHANNEL_ISOLEVEL);
-				sum += get_voxel(x - 1, y, z, CHANNEL_ISOLEVEL);
-				sum += get_voxel(x, y + 1, z, CHANNEL_ISOLEVEL);
-				sum += get_voxel(x, y - 1, z, CHANNEL_ISOLEVEL);
-				sum += get_voxel(x, y, z + 1, CHANNEL_ISOLEVEL);
-				sum += get_voxel(x, y, z - 1, CHANNEL_ISOLEVEL);
+				int sum = get_voxel(x + 1, y, z, DEFAULT_CHANNEL_ISOLEVEL);
+				sum += get_voxel(x - 1, y, z, DEFAULT_CHANNEL_ISOLEVEL);
+				sum += get_voxel(x, y + 1, z, DEFAULT_CHANNEL_ISOLEVEL);
+				sum += get_voxel(x, y - 1, z, DEFAULT_CHANNEL_ISOLEVEL);
+				sum += get_voxel(x, y, z + 1, DEFAULT_CHANNEL_ISOLEVEL);
+				sum += get_voxel(x, y, z - 1, DEFAULT_CHANNEL_ISOLEVEL);
 
 				sum /= 6;
 
@@ -242,7 +240,7 @@ void VoxelChunk::generate_ao() {
 				if (sum < 0)
 					sum = 0;
 
-				set_voxel(sum, x, y, z, CHANNEL_AO);
+				set_voxel(sum, x, y, z, DEFAULT_CHANNEL_AO);
 			}
 		}
 	}
@@ -251,25 +249,21 @@ void VoxelChunk::generate_ao() {
 void VoxelChunk::add_light(int local_x, int local_y, int local_z, int size, Color color) {
 	ERR_FAIL_COND(size < 0);
 
-	int size_x = _actual_size_actual_size_xx;
-	int size_y = _actual_size_actual_size_xy;
-	int size_z = _actual_size_actual_size_xz;
-
 	float sizef = static_cast<float>(size);
 	//float rf = (color.r / sizef);
 	//float gf = (color.g / sizef);
 	//float bf = (color.b / sizef);
 
 	for (int y = local_y - size; y <= local_y + size; ++y) {
-		if (y < 0 || y >= size_y)
+		if (y < 0 || y >= _data_size_y)
 			continue;
 
 		for (int z = local_z - size; z <= local_z + size; ++z) {
-			if (z < 0 || z >= size_z)
+			if (z < 0 || z >= _data_size_z)
 				continue;
 
 			for (int x = local_x - size; x <= local_x + size; ++x) {
-				if (x < 0 || x >= size_x)
+				if (x < 0 || x >= _data_size_x)
 					continue;
 
 				int lx = x - local_x;
@@ -286,9 +280,9 @@ void VoxelChunk::add_light(int local_x, int local_y, int local_z, int size, Colo
 				int g = color.g * str * 255.0;
 				int b = color.b * str * 255.0;
 
-				r += get_voxel(x, y, z, CHANNEL_LIGHT_COLOR_R);
-				g += get_voxel(x, y, z, CHANNEL_LIGHT_COLOR_G);
-				b += get_voxel(x, y, z, CHANNEL_LIGHT_COLOR_B);
+				r += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_R);
+				g += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_G);
+				b += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_B);
 
 				if (r > 255)
 					r = 255;
@@ -299,17 +293,17 @@ void VoxelChunk::add_light(int local_x, int local_y, int local_z, int size, Colo
 				if (b > 255)
 					b = 255;
 
-				set_voxel(r, x, y, z, CHANNEL_LIGHT_COLOR_R);
-				set_voxel(g, x, y, z, CHANNEL_LIGHT_COLOR_G);
-				set_voxel(b, x, y, z, CHANNEL_LIGHT_COLOR_B);
+				set_voxel(r, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_R);
+				set_voxel(g, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_G);
+				set_voxel(b, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_B);
 			}
 		}
 	}
 }
-void VoxelChunk::clear_lights() {
-	fill_channel(0, CHANNEL_LIGHT_COLOR_R);
-	fill_channel(0, CHANNEL_LIGHT_COLOR_G);
-	fill_channel(0, CHANNEL_LIGHT_COLOR_B);
+void VoxelChunk::clear_baked_lights() {
+	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_R);
+	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_G);
+	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_B);
 }
 
 void VoxelChunk::create_mesher() {
@@ -368,7 +362,7 @@ void VoxelChunk::_build_phase(int phase) {
 			if (has_method("_create_mesh")) {
 				call("_create_mesh");
 			} else {
-				_mesher->add_buffer(_buffer);
+				_mesher->add_chunk(this);
 			}
 
 			//finalize_mesh();
@@ -387,7 +381,7 @@ void VoxelChunk::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH: {
-			_mesher->bake_colors(_buffer);
+			_mesher->bake_colors(this);
 
 			finalize_mesh();
 
@@ -495,10 +489,7 @@ void VoxelChunk::create_voxel_light(const Color color, const int size, const int
 	Ref<VoxelLight> light;
 	light.instance();
 
-	Vector3i pos = get_position();
-	Vector3i csize = get_size();
-
-	light->set_world_position(pos.x * csize.x + x, pos.y * csize.y + y, pos.z * csize.z + z);
+	light->set_world_position(_position_x * _size_x + x, _position_y * _size_y + y, _position_z * _size_z + z);
 	light->set_color(color);
 	light->set_size(size);
 
@@ -565,21 +556,15 @@ void VoxelChunk::bake_lights() {
 void VoxelChunk::bake_light(Ref<VoxelLight> light) {
 	ERR_FAIL_COND(!light.is_valid());
 
-	Vector3i wp = light->get_world_position();
-
-	int wpx = wp.x - (_position_x * _size_x);
-	int wpy = wp.y - (_position_y * _size_y);
-	int wpz = wp.z - (_position_z * _size_z);
+	int wpx = light->get_world_position_x() - (_position_x * _size_x);
+	int wpy = light->get_world_position_y() - (_position_y * _size_y);
+	int wpz = light->get_world_position_z() - (_position_z * _size_z);
 
 	//int wpx = (int)(wp.x / _size.x) - _position.x;
 	//int wpy = (int)(wp.y / _size.y) - _position.y;
 	//int wpz = (int)(wp.z / _size.z) - _position.z;
 
-	_buffer->add_light(wpx, wpy, wpz, light->get_size(), light->get_color());
-}
-
-void VoxelChunk::clear_baked_lights() {
-	_buffer->clear_lights();
+	add_light(wpx, wpy, wpz, light->get_size(), light->get_color());
 }
 
 void VoxelChunk::add_prop_light(Ref<VoxelLight> light) {
@@ -614,7 +599,7 @@ void VoxelChunk::process_props() {
 
 	call("_process_props");
 
-	_mesher->bake_colors(_buffer);
+	_mesher->bake_colors(this);
 
 	_mesher->build_mesh(_prop_mesh_rid);
 }
@@ -624,7 +609,7 @@ void VoxelChunk::build_prop_meshes() {
 		allocate_prop_mesh();
 	}
 
-	_mesher->bake_colors(_buffer);
+	_mesher->bake_colors(this);
 
 	_mesher->build_mesh(_prop_mesh_rid);
 }
@@ -898,11 +883,9 @@ void VoxelChunk::draw_debug_voxel_lights() {
 	for (int i = 0; i < _voxel_lights.size(); ++i) {
 		Ref<VoxelLight> v = _voxel_lights[i];
 
-		Vector3i pos = v->get_world_position();
-
-		int pos_x = pos.x - (_size_x * _position_x);
-		int pos_y = pos.y - (_size_y * _position_y);
-		int pos_z = pos.z - (_size_z * _position_z);
+		int pos_x = v->get_world_position_x() - (_size_x * _position_x);
+		int pos_y = v->get_world_position_y() - (_size_y * _position_y);
+		int pos_z = v->get_world_position_z() - (_size_z * _position_z);
 
 		draw_cross_voxels_fill(Vector3(pos_x, pos_y, pos_z), 1.0);
 	}
@@ -935,8 +918,6 @@ VoxelChunk::VoxelChunk() {
 	_voxel_scale = 1;
 	_lod_size = 1;
 
-	_buffer.instance();
-
 	_debug_drawer = NULL;
 	_voxel_world = NULL;
 
@@ -958,8 +939,6 @@ VoxelChunk::~VoxelChunk() {
 	if (_mesher.is_valid()) {
 		_mesher.unref();
 	}
-
-	_buffer.unref();
 
 	if (_library.is_valid()) {
 		_library.unref();
@@ -987,30 +966,22 @@ void VoxelChunk::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "state"), "set_state", "get_state");
 
 	ClassDB::bind_method(D_METHOD("get_position_x"), &VoxelChunk::get_position_x);
-	ClassDB::bind_method(D_METHOD("set_position_x", "value"), &VoxelChunk::set_position_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_x"), "set_position_x", "get_position_x");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_x"), "", "get_position_x");
 
 	ClassDB::bind_method(D_METHOD("get_position_y"), &VoxelChunk::get_position_y);
-	ClassDB::bind_method(D_METHOD("set_position_y", "value"), &VoxelChunk::set_position_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_y"), "set_position_y", "get_position_y");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_y"), "", "get_position_y");
 
 	ClassDB::bind_method(D_METHOD("get_position_z"), &VoxelChunk::get_position_z);
-	ClassDB::bind_method(D_METHOD("set_position_z", "value"), &VoxelChunk::set_position_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_position_z"), "set_position_x", "get_position_z");
-
-	ClassDB::bind_method(D_METHOD("set_position", "x", "y", "z"), &VoxelChunk::set_position);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_z"), "", "get_position_z");
 
 	ClassDB::bind_method(D_METHOD("get_size_x"), &VoxelChunk::get_size_x);
-	ClassDB::bind_method(D_METHOD("set_size_x", "value"), &VoxelChunk::set_size_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_x"), "set_size_x", "get_size_x");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_x"), "", "get_size_x");
 
 	ClassDB::bind_method(D_METHOD("get_size_y"), &VoxelChunk::get_size_y);
-	ClassDB::bind_method(D_METHOD("set_size_y", "value"), &VoxelChunk::set_size_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_y"), "set_size_y", "get_size_y");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_y"), "", "get_size_y");
 
 	ClassDB::bind_method(D_METHOD("get_size_z"), &VoxelChunk::get_size_z);
-	ClassDB::bind_method(D_METHOD("set_size_z", "value"), &VoxelChunk::set_size_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_z"), "set_size_x", "get_size_z");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_z"), "", "get_size_z");
 
 	ClassDB::bind_method(D_METHOD("set_size", "x", "y", "z"), &VoxelChunk::set_size);
 
