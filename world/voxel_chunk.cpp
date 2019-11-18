@@ -209,6 +209,8 @@ void VoxelChunk::set_size(int size_x, int size_y, int size_z, int margin_start, 
 		}
 	}
 
+	setup_channels();
+
 	_size_x = size_x;
 	_size_y = size_y;
 	_size_z = size_z;
@@ -540,8 +542,21 @@ void VoxelChunk::_build_phase(int phase) {
 
 			return;
 		}
-	}
+		case BUILD_PHASE_FINALIZE: {
+			if (_mesh_instance_rid != RID())
+				VS::get_singleton()->instance_set_visible(_mesh_instance_rid, is_visible());
 
+			if (_prop_mesh_instance_rid != RID())
+				VS::get_singleton()->instance_set_visible(_prop_mesh_instance_rid, is_visible());
+
+			if (_liquid_mesh_instance_rid != RID())
+				VS::get_singleton()->instance_set_visible(_liquid_mesh_instance_rid, is_visible());
+
+			if (_clutter_mesh_instance_rid != RID())
+				VS::get_singleton()->instance_set_visible(_clutter_mesh_instance_rid, is_visible());
+		}
+	}
+	
 	next_phase();
 }
 
@@ -1118,7 +1133,24 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_size_z"), &VoxelChunk::get_size_z);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_z"), "", "get_size_z");
 
-	ClassDB::bind_method(D_METHOD("set_size", "x", "y", "z"), &VoxelChunk::set_size);
+
+	ClassDB::bind_method(D_METHOD("get_data_size_x"), &VoxelChunk::get_data_size_x);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_x"), "", "get_data_size_x");
+
+	ClassDB::bind_method(D_METHOD("get_data_size_y"), &VoxelChunk::get_data_size_y);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_y"), "", "get_data_size_y");
+
+	ClassDB::bind_method(D_METHOD("get_data_size_z"), &VoxelChunk::get_data_size_z);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_z"), "", "get_data_size_z");
+
+
+	ClassDB::bind_method(D_METHOD("get_position"), &VoxelChunk::get_position);
+	ClassDB::bind_method(D_METHOD("get_size"), &VoxelChunk::get_size);
+	ClassDB::bind_method(D_METHOD("set_position", "x", "y", "z"), &VoxelChunk::set_position);
+
+	ClassDB::bind_method(D_METHOD("get_margin_start"), &VoxelChunk::get_margin_start);
+	ClassDB::bind_method(D_METHOD("get_margin_end"), &VoxelChunk::get_margin_end);
+
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelChunk::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelChunk::set_library);
@@ -1225,7 +1257,6 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("bake_lights"), &VoxelChunk::bake_lights);
 	ClassDB::bind_method(D_METHOD("bake_light", "light"), &VoxelChunk::bake_light);
-	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
 
 	ClassDB::bind_method(D_METHOD("add_prop_light", "light"), &VoxelChunk::add_prop_light);
 
@@ -1280,6 +1311,7 @@ void VoxelChunk::_bind_methods() {
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH);
 	BIND_CONSTANT(BUILD_PHASE_PROP_MESH);
 	BIND_CONSTANT(BUILD_PHASE_PROP_COLLIDER);
+	BIND_CONSTANT(BUILD_PHASE_FINALIZE);
 	BIND_CONSTANT(BUILD_PHASE_MAX);
 
 	BIND_CONSTANT(VOXEL_CHUNK_STATE_OK);
