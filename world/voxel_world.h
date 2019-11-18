@@ -64,6 +64,7 @@ public:
 protected:
 	static void _bind_methods();
 
+public:
 	struct IntPos {
 		int x;
 		int y;
@@ -108,5 +109,9 @@ private:
 	NodePath _player_path;
 	Spatial *_player;
 };
+
+_FORCE_INLINE_ bool operator==(const VoxelWorld::IntPos &a, const VoxelWorld::IntPos &b) {
+	return a.x == b.x && a.y == b.y && a.z == b.z;
+}
 
 #endif

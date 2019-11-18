@@ -70,6 +70,9 @@ void VoxelStructure::set_voxel(int value, int x, int y, int z, unsigned int chan
 	return b->set_voxel(value, x, y, z, channel_index);
 }
 
+void add_chunk_bind(Node *chunk, const int x, const int y, const int z) {
+
+}
 void VoxelStructure::add_chunk(VoxelChunk *chunk, const int x, const int y, const int z) {
 	//_chunks.set(Vector3i(x, y, z), chunk);
 
@@ -109,6 +112,7 @@ VoxelChunk *VoxelStructure::remove_chunk(const int x, const int y, const int z) 
 
 VoxelChunk *VoxelStructure::get_chunk_index(const int index) {
 	//return _chunks_vector.get(index).chunk;
+	return NULL;
 }
 int VoxelStructure::get_chunk_count() const {
 	return _chunks_vector.size();
@@ -169,7 +173,7 @@ void VoxelStructure::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "channel_index"), &VoxelStructure::set_voxel, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("set_voxel_v", "value", "pos", "channel_index"), &VoxelStructure::set_voxel_v, DEFVAL(0));
 
-	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelStructure::add_chunk);
+	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelStructure::add_chunk_bind);
 	ClassDB::bind_method(D_METHOD("get_chunk", "x", "y", "z"), &VoxelStructure::get_chunk);
 	ClassDB::bind_method(D_METHOD("remove_chunk", "x", "y", "z"), &VoxelStructure::remove_chunk);
 

@@ -63,11 +63,11 @@ public:
 
 	void bake_colors_bind(Node *chunk);
 	void bake_colors(VoxelChunk *chunk);
-	void _bake_colors(VoxelChunk *chunk);
+	void _bake_colors(Node *p_chunk);
 
 	void bake_liquid_colors_bind(Node *chunk);
 	void bake_liquid_colors(VoxelChunk *chunk);
-	void _bake_liquid_colors(VoxelChunk *chunk);
+	void _bake_liquid_colors(Node *p_chunk);
 
 	void build_collider(RID shape) const;
 

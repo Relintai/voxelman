@@ -82,8 +82,11 @@ public:
 	void set_state(int value);
 
 	int get_position_x();
+	void set_position_x(int value);
 	int get_position_y();
+	void set_position_y(int value);
 	int get_position_z();
+	void set_position_z(int value);
 
 	int get_size_x();
 	int get_size_y();
@@ -96,6 +99,7 @@ public:
 	Vector3 get_position() const;
 	Vector3 get_size() const;
 	Vector3 get_data_size() const;
+	void set_position(int x, int y, int z);
 
 	int get_margin_start() const;
 	int get_margin_end() const;

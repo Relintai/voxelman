@@ -118,12 +118,11 @@ void VoxelMesher::reset() {
 void VoxelMesher::add_chunk_bind(Node *chunk) {
 	VoxelChunk *vchunk = Object::cast_to<VoxelChunk>(chunk);
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(vchunk));
-
 	add_chunk(vchunk);
 }
 void VoxelMesher::add_chunk(VoxelChunk *chunk) {
 	ERR_FAIL_COND(!has_method("_add_chunk"));
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 
 	call("_add_chunk", chunk);
 }
@@ -131,12 +130,11 @@ void VoxelMesher::add_chunk(VoxelChunk *chunk) {
 void VoxelMesher::add_chunk_liquid_bind(Node *chunk) {
 	VoxelChunk *vchunk = Object::cast_to<VoxelChunk>(chunk);
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(vchunk));
-
 	add_chunk_liquid(vchunk);
 }
 void VoxelMesher::add_chunk_liquid(VoxelChunk *chunk) {
 	ERR_FAIL_COND(!has_method("_add_chunk_liquid"));
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 
 	call("_add_chunk_liquid", chunk);
 }
@@ -273,15 +271,19 @@ void VoxelMesher::add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, c
 void VoxelMesher::bake_colors_bind(Node *chunk) {
 	VoxelChunk *vchunk = Object::cast_to<VoxelChunk>(chunk);
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(vchunk));
-
 	bake_colors(vchunk);
 }
 void VoxelMesher::bake_colors(VoxelChunk *chunk) {
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
 	if (has_method("_bake_colors"))
 		call("_bake_colors", chunk);
 }
-void VoxelMesher::_bake_colors(VoxelChunk *chunk) {
+void VoxelMesher::_bake_colors(Node *p_chunk) {
+	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
+
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
 	ERR_FAIL_COND(_vertices.size() != _normals.size());
@@ -339,15 +341,19 @@ void VoxelMesher::_bake_colors(VoxelChunk *chunk) {
 void VoxelMesher::bake_liquid_colors_bind(Node *chunk) {
 	VoxelChunk *vchunk = Object::cast_to<VoxelChunk>(chunk);
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(vchunk));
-
 	bake_liquid_colors(vchunk);
 }
 void VoxelMesher::bake_liquid_colors(VoxelChunk *chunk) {
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
 	if (has_method("_bake_liquid_colors"))
 		call("_bake_liquid_colors", chunk);
 }
-void VoxelMesher::_bake_liquid_colors(VoxelChunk *chunk) {
+void VoxelMesher::_bake_liquid_colors(Node *p_chunk) {
+	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
+
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
 	ERR_FAIL_COND(_vertices.size() != _normals.size());

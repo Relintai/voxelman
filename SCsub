@@ -15,7 +15,6 @@ env.add_source_files(env.modules_sources,"data/voxel_light.cpp")
 env.add_source_files(env.modules_sources,"meshers/voxel_mesher.cpp")
 env.add_source_files(env.modules_sources,"meshers/transvoxel_cell_data.cpp")
 env.add_source_files(env.modules_sources,"meshers/voxel_mesher_transvoxel.cpp")
-env.add_source_files(env.modules_sources,"meshers/voxel_mesher_transvoxel_terrarin.cpp")
 env.add_source_files(env.modules_sources,"meshers/transvoxel_tables.cpp")
 
 env.add_source_files(env.modules_sources,"world/voxel_world.cpp")

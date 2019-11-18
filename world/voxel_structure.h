@@ -35,6 +35,7 @@ public:
 	void set_voxel(int value, int x, int y, int z, unsigned int channel_index = 0);
 	void set_voxel_v(int value, Vector3 pos, unsigned int channel_index = 0);
 
+	void add_chunk_bind(Node *chunk, const int x, const int y, const int z);
 	void add_chunk(VoxelChunk *chunk, const int x, const int y, const int z);
 	VoxelChunk *get_chunk(const int x, const int y, const int z);
 	VoxelChunk *remove_chunk(const int x, const int y, const int z);

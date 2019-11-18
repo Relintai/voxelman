@@ -3,24 +3,24 @@
 #include "voxel_chunk.h"
 
 int VoxelWorld::get_chunk_size_x() const {
-	return _chunk_size.x;
+	return _chunk_size_x;
 }
 void VoxelWorld::set_chunk_size_x(const int value) {
-	_chunk_size.x = value;
+	_chunk_size_x = value;
 }
 
 int VoxelWorld::get_chunk_size_y() const {
-	return _chunk_size.y;
+	return _chunk_size_y;
 }
 void VoxelWorld::set_chunk_size_y(const int value) {
-	_chunk_size.y = value;
+	_chunk_size_y = value;
 }
 
 int VoxelWorld::get_chunk_size_z() const {
-	return _chunk_size.z;
+	return _chunk_size_z;
 }
 void VoxelWorld::set_chunk_size_z(const int value) {
-	_chunk_size.z = value;
+	_chunk_size_z = value;
 }
 
 Ref<VoxelmanLibrary> VoxelWorld::get_library() const {
@@ -90,9 +90,9 @@ int VoxelWorld::get_world_area_count() const {
 }
 
 void VoxelWorld::add_chunk(VoxelChunk *chunk, const int x, const int y, const int z) {
-	chunk->set_chunk_position(x, y, z);
+	chunk->set_position(x, y, z);
 
-	_chunks.set(Vector3i(x, y, z), chunk);
+	_chunks.set(IntPos(x, y, z), chunk);
 	_chunks_vector.push_back(chunk);
 }
 void VoxelWorld::add_chunk_bind(Node *chunk, const int x, const int y, const int z) {
@@ -103,15 +103,15 @@ void VoxelWorld::add_chunk_bind(Node *chunk, const int x, const int y, const int
 	add_chunk(v, x, y, z);
 }
 VoxelChunk *VoxelWorld::get_chunk(const int x, const int y, const int z) const {
-	if (_chunks.has(Vector3i(x, y, z)))
-		return _chunks.get(Vector3i(x, y, z));
+	if (_chunks.has(IntPos(x, y, z)))
+		return _chunks.get(IntPos(x, y, z));
 
 	return NULL;
 }
 VoxelChunk *VoxelWorld::remove_chunk(const int x, const int y, const int z) {
-	ERR_FAIL_COND_V(!_chunks.has(Vector3i(x, y, z)), NULL);
+	ERR_FAIL_COND_V(!_chunks.has(IntPos(x, y, z)), NULL);
 
-	VoxelChunk *chunk = _chunks.get(Vector3i(x, y, z));
+	VoxelChunk *chunk = _chunks.get(IntPos(x, y, z));
 
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
 		if (_chunks_vector.get(i) == chunk) {
@@ -143,7 +143,9 @@ void VoxelWorld::clear_chunks() {
 }
 
 VoxelWorld::VoxelWorld() {
-	_chunk_size = Vector3i(16, 16, 16);
+	_chunk_size_x = 16;
+	_chunk_size_y = 16;
+	_chunk_size_z = 16;
 
 	_voxel_scale = 1;
 	_chunk_spawn_range = 4;

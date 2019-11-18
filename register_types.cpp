@@ -12,7 +12,6 @@
 #include "meshers/voxel_mesher.h"
 #include "meshers/transvoxel_cell_data.h"
 #include "meshers/voxel_mesher_transvoxel.h"
-#include "meshers/voxel_mesher_transvoxel_terrarin.h"
 
 #include "world/voxel_world.h"
 #include "world/voxel_chunk.h"
@@ -42,7 +41,6 @@
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherTransvoxel>();
-	ClassDB::register_class<VoxelMesherTransvoxelTerrarin>();
 	ClassDB::register_class<TransvoxelCellData>();
 
 	ClassDB::register_class<VoxelSurface>();

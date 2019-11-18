@@ -19,11 +19,20 @@ _FORCE_INLINE_ void VoxelChunk::set_state(int value) {
 _FORCE_INLINE_ int VoxelChunk::get_position_x() {
 	return _position_x;
 }
+void VoxelChunk::set_position_x(int value) {
+	_position_x = value;
+}
 _FORCE_INLINE_ int VoxelChunk::get_position_y() {
 	return _position_y;
 }
+void VoxelChunk::set_position_y(int value) {
+	_position_y = value;
+}
 _FORCE_INLINE_ int VoxelChunk::get_position_z() {
 	return _position_z;
+}
+void VoxelChunk::set_position_z(int value) {
+	_position_z = value;
 }
 
 _FORCE_INLINE_ Vector3 VoxelChunk::get_position() const {
@@ -56,6 +65,12 @@ _FORCE_INLINE_ int VoxelChunk::get_data_size_z() {
 
 _FORCE_INLINE_ Vector3 VoxelChunk::get_data_size() const {
 	return Vector3(_data_size_x, _data_size_y, _data_size_z);
+}
+
+void VoxelChunk::set_position(int x, int y, int z) {
+	_position_x = x;
+	_position_y = y;
+	_position_z = z;
 }
 
 _FORCE_INLINE_ int VoxelChunk::get_margin_start() const { 
@@ -178,16 +193,16 @@ RID VoxelChunk::get_clutter_mesh_instance_rid() {
 }
 
 //Voxel Data
-void VoxelChunk::set_size(int size_x, int size_y, int siye_z, int margin_start = 0, int margin_end = 0) {
+void VoxelChunk::set_size(int size_x, int size_y, int siye_z, int margin_start, int margin_end) {
 
 }
 
 _FORCE_INLINE_ bool VoxelChunk::validate_channel_position(int x, int y, int z) const {
-
+	return false;
 }
 
 _FORCE_INLINE_ uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) const {
-
+	return 0;
 }
 _FORCE_INLINE_ void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
 
@@ -196,7 +211,7 @@ _FORCE_INLINE_ void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, in
 void VoxelChunk::set_channel_count(int count) {
 
 }
-void VoxelChunk::allocate_channel(int channel_index, uint8_t value = 0) {
+void VoxelChunk::allocate_channel(int channel_index, uint8_t value) {
 
 }
 void VoxelChunk::fill_channel(uint8_t value, int channel_index) {
@@ -207,10 +222,10 @@ void VoxelChunk::dealloc_channel(int channel_index) {
 }
 
 uint8_t *VoxelChunk::get_channel(int channel_index) {
-
+	return NULL;
 }
 uint8_t *VoxelChunk::get_valid_channel(int channel_index) {
-	
+	return NULL;
 }
 
 //Data Management functions
@@ -966,13 +981,16 @@ void VoxelChunk::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "state"), "set_state", "get_state");
 
 	ClassDB::bind_method(D_METHOD("get_position_x"), &VoxelChunk::get_position_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_x"), "", "get_position_x");
+	ClassDB::bind_method(D_METHOD("set_position_x", "value"), &VoxelChunk::set_position_x);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_x"), "set_position_x", "get_position_x");
 
 	ClassDB::bind_method(D_METHOD("get_position_y"), &VoxelChunk::get_position_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_y"), "", "get_position_y");
+	ClassDB::bind_method(D_METHOD("set_position_y", "value"), &VoxelChunk::set_position_y);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_y"), "set_position_y", "get_position_y");
 
 	ClassDB::bind_method(D_METHOD("get_position_z"), &VoxelChunk::get_position_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_z"), "", "get_position_z");
+	ClassDB::bind_method(D_METHOD("set_position_z", "value"), &VoxelChunk::set_position_z);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_z"), "set_position_z", "get_position_z");
 
 	ClassDB::bind_method(D_METHOD("get_size_x"), &VoxelChunk::get_size_x);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_x"), "", "get_size_x");
