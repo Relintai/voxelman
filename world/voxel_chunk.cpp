@@ -197,14 +197,14 @@ void VoxelChunk::set_size(int size_x, int size_y, int siye_z, int margin_start, 
 
 }
 
-_FORCE_INLINE_ bool VoxelChunk::validate_channel_position(int x, int y, int z) const {
+bool VoxelChunk::validate_channel_position(int x, int y, int z) const {
 	return false;
 }
 
-_FORCE_INLINE_ uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) const {
+uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) const {
 	return 0;
 }
-_FORCE_INLINE_ void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
+void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
 
 }
 
