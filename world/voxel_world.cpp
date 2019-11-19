@@ -153,7 +153,52 @@ int VoxelWorld::get_chunk_count() const {
 	return _chunks_vector.size();
 }
 
-void VoxelWorld::clear_chunks() {
+void VoxelWorld::add_to_generation_queue_bind(Node *chunk) {
+	add_to_generation_queue(Object::cast_to<VoxelChunk>(chunk));
+}
+void VoxelWorld::add_to_generation_queue(VoxelChunk *chunk) {
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
+	_generation_queue.push_back(chunk);
+}
+VoxelChunk *VoxelWorld::get_generation_queue_index(int index) {
+	ERR_FAIL_INDEX_V(index, _generation_queue.size(), NULL);
+
+	return _generation_queue.get(index);
+}
+void VoxelWorld::remove_generation_queue_index(int index) {
+	ERR_FAIL_INDEX(index, _generation_queue.size());
+
+	_generation_queue.remove(index);
+}
+int VoxelWorld::get_generation_queue_size() {
+	return _generation_queue.size();
+}
+
+void VoxelWorld::add_to_generation_bind(Node *chunk) {
+	add_to_generation(Object::cast_to<VoxelChunk>(chunk));
+}
+void VoxelWorld::add_to_generation(VoxelChunk *chunk) {
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
+	_generating.push_back(chunk);
+}
+VoxelChunk *VoxelWorld::get_generation_index(int index) {
+	ERR_FAIL_INDEX_V(index, _generating.size(), NULL);
+
+	return _generating.get(index);
+}
+void VoxelWorld::remove_generation_index(int index) {
+	ERR_FAIL_INDEX(index, _generating.size());
+
+	_generating.remove(index);
+}
+int VoxelWorld::get_generation_size() {
+	return _generating.size();
+}
+
+
+void VoxelWorld::clear() {
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
 		_chunks_vector.get(i)->queue_delete();
 	}
@@ -161,14 +206,36 @@ void VoxelWorld::clear_chunks() {
 	_chunks_vector.clear();
 
 	_chunks.clear();
+
+	_generation_queue.clear();
+	_generating.clear();
 }
 
-void VoxelWorld::create_chunk(int x, int y, int z) {
-	call("_create_chunk");
+VoxelChunk *VoxelWorld::create_chunk(int x, int y, int z) {
+	Node *n = call("_create_chunk");
+
+	return(Object::cast_to<VoxelChunk>(n));
 }
+VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z) {
+	VoxelChunk *chunk = memnew(VoxelChunk);
+	chunk->set_name("Chunk[" + String::num(x) + "," + String::num(y) + "," + String::num(z) + "]");
+	add_child(chunk);
 
-void VoxelWorld::_create_chunk(int x, int y, int z) {
+	if (Engine::get_singleton()->is_editor_hint())
+		chunk->set_owner(get_tree()->get_edited_scene_root());
 
+	chunk->set_voxel_world(this);
+	chunk->set_position(x, y, z);
+	chunk->set_library(_library);
+	chunk->set_voxel_scale(_voxel_scale);
+	chunk->set_size(_chunk_size_x, _chunk_size_y, _chunk_size_z);
+	chunk->set_translation(Vector3(x * _chunk_size_x * _voxel_scale, y * _chunk_size_y * _voxel_scale, z * _chunk_size_z * _voxel_scale));
+
+	add_chunk(chunk, x, y, z);
+
+	_generation_queue.push_back(chunk);
+
+	return chunk;
 }
 
 void VoxelWorld::generate_chunk_bind(Node *p_chunk) {
@@ -207,7 +274,6 @@ VoxelWorld::VoxelWorld() {
 	_voxel_scale = 1;
 	_chunk_spawn_range = 4;
 
-	_player_path;
 	_player = NULL;
 }
 
@@ -256,7 +322,7 @@ void VoxelWorld::_notification(int p_what) {
 			if (_generating.size() >= _max_concurrent_generations)
 				return;
 
-			if (_generation_queue.size == 0)
+			if (_generation_queue.size() == 0)
 				return;
 
 			VoxelChunk *chunk = _generation_queue.get(0);
@@ -274,6 +340,7 @@ void VoxelWorld::_notification(int p_what) {
 void VoxelWorld::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("generation_finished"));
 	BIND_VMETHOD(MethodInfo("_generation_finished"));
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), "_generation_finished"));
 
 	BIND_VMETHOD(MethodInfo("_prepare_chunk_for_generation", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
@@ -339,7 +406,18 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_chunk_index", "index"), &VoxelWorld::get_chunk_index);
 	ClassDB::bind_method(D_METHOD("get_chunk_count"), &VoxelWorld::get_chunk_count);
 
-	ClassDB::bind_method(D_METHOD("clear_chunks"), &VoxelWorld::clear_chunks);
+	ClassDB::bind_method(D_METHOD("add_to_generation_queue", "chunk"), &VoxelWorld::add_to_generation_queue_bind);
+	ClassDB::bind_method(D_METHOD("get_generation_queue_index", "index"), &VoxelWorld::get_generation_queue_index);
+	ClassDB::bind_method(D_METHOD("remove_generation_queue_index", "index"), &VoxelWorld::remove_generation_queue_index);
+	ClassDB::bind_method(D_METHOD("get_generation_queue_size"), &VoxelWorld::get_generation_queue_size);
 
-	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk"), &VoxelWorld::generate_chunk_bind);
+	ClassDB::bind_method(D_METHOD("add_to_generation", "chunk"), &VoxelWorld::add_to_generation_bind);
+	ClassDB::bind_method(D_METHOD("get_generation_index", "index"), &VoxelWorld::get_generation_index);
+	ClassDB::bind_method(D_METHOD("remove_generation_index", "index"), &VoxelWorld::remove_generation_index);
+	ClassDB::bind_method(D_METHOD("get_generation_size"), &VoxelWorld::get_generation_size);
+
+	ClassDB::bind_method(D_METHOD("clear"), &VoxelWorld::clear);
+
+	ClassDB::bind_method(D_METHOD("create_chunk", "x", "y", "z"), &VoxelWorld::create_chunk);
+	ClassDB::bind_method(D_METHOD("_create_chunk",  "x", "y", "z"), &VoxelWorld::_create_chunk);
 }

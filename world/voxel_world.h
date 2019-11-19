@@ -3,6 +3,7 @@
 
 #include "scene/3d/navigation.h"
 #include "core/hash_map.h"
+#include "core/engine.h"
 
 #include "../library/voxelman_library.h"
 #include "../level_generator/voxelman_level_generator.h"
@@ -67,10 +68,22 @@ public:
 	VoxelChunk *get_chunk_index(const int index);
 	int get_chunk_count() const;
 
-	void clear_chunks();
+	void add_to_generation_queue_bind(Node *chunk);
+	void add_to_generation_queue(VoxelChunk *chunk);
+	VoxelChunk *get_generation_queue_index(int index);
+	void remove_generation_queue_index(int index);
+	int get_generation_queue_size();
 
-	void create_chunk(int x, int y, int z);
-	void _create_chunk(int x, int y, int z);
+	void add_to_generation_bind(Node *chunk);
+	void add_to_generation(VoxelChunk *chunk);
+	VoxelChunk *get_generation_index(int index);
+	void remove_generation_index(int index);
+	int get_generation_size();
+
+	void clear();
+
+	VoxelChunk *create_chunk(int x, int y, int z);
+	VoxelChunk *_create_chunk(int x, int y, int z);
 
 	void generate_chunk_bind(Node *p_chunk);
 	void generate_chunk(VoxelChunk *p_chunk);

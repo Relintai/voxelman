@@ -1,5 +1,7 @@
 #include "voxelman_level_generator.h"
 
+#include "../world/voxel_chunk.h"
+
 void VoxelmanLevelGenerator::generate_chunk_bind(Node *chunk) {
     generate_chunk(Object::cast_to<VoxelChunk>(chunk));
 }
