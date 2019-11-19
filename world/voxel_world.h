@@ -8,6 +8,8 @@
 #include "../level_generator/voxelman_level_generator.h"
 #include "../areas/world_area.h"
 
+#include "core/os/os.h"
+
 class VoxelChunk;
 
 class VoxelWorld : public Navigation {
@@ -22,6 +24,15 @@ public:
     
     int get_chunk_size_z() const;
     void set_chunk_size_z(const int value);
+
+    int get_current_seed() const;
+    void set_current_seed(const int value);
+
+	bool get_use_threads();
+	void set_use_threads(bool value);
+
+	uint32_t get_max_concurrent_generations();
+	void set_max_concurrent_generations(uint32_t value);
     
     Ref<VoxelmanLibrary> get_library() const;
     void set_library(const Ref<VoxelmanLibrary> library);
@@ -58,10 +69,18 @@ public:
 
 	void clear_chunks();
 
+	void create_chunk(int x, int y, int z);
+	void _create_chunk(int x, int y, int z);
+
+	void generate_chunk_bind(Node *p_chunk);
+	void generate_chunk(VoxelChunk *p_chunk);
+	void _generate_chunk(Node *p_chunk);
+
 	VoxelWorld();
 	~VoxelWorld();
 
 protected:
+	virtual void _notification(int p_what);
 	static void _bind_methods();
 
 public:
@@ -95,6 +114,7 @@ private:
     int _chunk_size_x;
 	int _chunk_size_y;
 	int _chunk_size_z;
+	int _current_seed;
 	
     Ref<VoxelmanLibrary> _library;
     Ref<VoxelmanLevelGenerator> _level_generator;
@@ -108,6 +128,11 @@ private:
 
 	NodePath _player_path;
 	Spatial *_player;
+
+	bool _use_threads;
+	uint32_t _max_concurrent_generations;
+	Vector<VoxelChunk *> _generation_queue;
+	Vector<VoxelChunk *> _generating;
 };
 
 _FORCE_INLINE_ bool operator==(const VoxelWorld::IntPos &a, const VoxelWorld::IntPos &b) {

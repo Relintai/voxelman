@@ -2,6 +2,13 @@
 
 #include "voxel_world.h"
 
+_FORCE_INLINE_ bool VoxelChunk::get_is_generating() const {
+	return _is_generating;
+}
+_FORCE_INLINE_ void VoxelChunk::set_is_generating(bool value) {
+	_is_generating = value;
+}
+
 _FORCE_INLINE_ bool VoxelChunk::get_dirty() const {
 	return _dirty;
 }
@@ -457,6 +464,8 @@ void VoxelChunk::finalize_mesh() {
 
 void VoxelChunk::build() {
 	if (_current_build_phase == BUILD_PHASE_DONE) {
+		_is_generating = true;
+
 		next_phase();
 	}
 }
@@ -565,6 +574,8 @@ void VoxelChunk::next_phase() {
 
 	if (_current_build_phase >= BUILD_PHASE_MAX) {
 		_current_build_phase = BUILD_PHASE_DONE;
+
+		_is_generating = false;
 
 		emit_signal("mesh_generation_finished", this);
 
@@ -1046,6 +1057,7 @@ void VoxelChunk::free_chunk() {
 }
 
 VoxelChunk::VoxelChunk() {
+	_is_generating = false;
 	_dirty = false;
 	_state = VOXEL_CHUNK_STATE_OK;
 
@@ -1103,6 +1115,10 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
 
 	ClassDB::bind_method(D_METHOD("_create_mesher"), &VoxelChunk::_create_mesher);
+
+	ClassDB::bind_method(D_METHOD("get_is_generating"), &VoxelChunk::get_is_generating);
+	ClassDB::bind_method(D_METHOD("set_is_generating", "value"), &VoxelChunk::set_is_generating);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_generating"), "set_is_generating", "get_is_generating");
 
 	ClassDB::bind_method(D_METHOD("get_dirty"), &VoxelChunk::get_dirty);
 	ClassDB::bind_method(D_METHOD("set_dirty", "value"), &VoxelChunk::set_dirty);

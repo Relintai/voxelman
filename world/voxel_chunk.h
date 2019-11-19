@@ -76,6 +76,9 @@ public:
 	};
 
 public:
+	bool get_is_generating() const;
+	void set_is_generating(bool value);
+
 	bool get_dirty() const;
 	void set_dirty(bool value);
 
@@ -254,6 +257,7 @@ public:
 protected:
 	static void _bind_methods();
 
+	bool _is_generating;
 	bool _dirty;
 	int _state;
 

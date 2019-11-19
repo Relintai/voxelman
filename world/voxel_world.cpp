@@ -23,6 +23,27 @@ void VoxelWorld::set_chunk_size_z(const int value) {
 	_chunk_size_z = value;
 }
 
+int VoxelWorld::get_current_seed() const {
+	return _current_seed;
+}
+void VoxelWorld::set_current_seed(const int value) {
+	_current_seed = value;
+}
+
+bool VoxelWorld::get_use_threads() {
+	return _use_threads;
+}
+void VoxelWorld::set_use_threads(bool value) {
+	_use_threads = OS::get_singleton()->can_use_threads() ? value : false;
+}
+
+uint32_t VoxelWorld::get_max_concurrent_generations() {
+	return _max_concurrent_generations;
+}
+void VoxelWorld::set_max_concurrent_generations(uint32_t value) {
+	_max_concurrent_generations = OS::get_singleton()->can_use_threads() ? value : 1;
+}
+
 Ref<VoxelmanLibrary> VoxelWorld::get_library() const {
 	return _library;
 }
@@ -142,10 +163,46 @@ void VoxelWorld::clear_chunks() {
 	_chunks.clear();
 }
 
+void VoxelWorld::create_chunk(int x, int y, int z) {
+	call("_create_chunk");
+}
+
+void VoxelWorld::_create_chunk(int x, int y, int z) {
+
+}
+
+void VoxelWorld::generate_chunk_bind(Node *p_chunk) {
+	generate_chunk(Object::cast_to<VoxelChunk>(p_chunk));
+}
+void VoxelWorld::generate_chunk(VoxelChunk *p_chunk) {
+	ERR_FAIL_COND(!ObjectDB::instance_validate(p_chunk));
+
+	p_chunk->set_is_generating(true);
+
+	if (has_method("_prepare_chunk_for_generation"))
+		call("_prepare_chunk_for_generation", p_chunk);
+
+
+	call("_generate_chunk", p_chunk);
+}
+
+void VoxelWorld::_generate_chunk(Node *p_chunk) {
+	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
+
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+	ERR_FAIL_COND(!_level_generator.is_valid());
+
+	_level_generator->generate_chunk(chunk);
+}
+
 VoxelWorld::VoxelWorld() {
 	_chunk_size_x = 16;
 	_chunk_size_y = 16;
 	_chunk_size_z = 16;
+	_current_seed = 0;
+
+	set_use_threads(true);
+	set_max_concurrent_generations(3);
 
 	_voxel_scale = 1;
 	_chunk_spawn_range = 4;
@@ -160,9 +217,67 @@ VoxelWorld ::~VoxelWorld() {
 	_world_areas.clear();
 
 	_library.unref();
+	_level_generator.unref();
+
+	_player = NULL;
+
+	_generation_queue.clear();
+	_generating.clear();;
+}
+
+void VoxelWorld::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_ENTER_TREE: {
+			set_process_internal(false);
+
+			if (!Engine::get_singleton()->is_editor_hint() && _library.is_valid())
+				_library->refresh_rects();
+		}
+		case NOTIFICATION_INTERNAL_PROCESS: {
+			if (_generation_queue.empty() && _generating.empty()) {
+				call("_generation_finished");
+
+				emit_signal("generation_finished");
+
+				set_process_internal(false);
+				return;
+			}
+
+			for (int i = 0; i < _generating.size(); ++i) {
+				VoxelChunk *chunk = _generating.get(i);
+
+				if (!ObjectDB::instance_validate(chunk) || chunk->get_is_generating()) {
+					_generating.remove(i);
+					--i;
+					continue;
+				}
+			}
+
+			if (_generating.size() >= _max_concurrent_generations)
+				return;
+
+			if (_generation_queue.size == 0)
+				return;
+
+			VoxelChunk *chunk = _generation_queue.get(0);
+			_generation_queue.remove(0);
+
+			ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
+			_generating.push_back(chunk);
+
+			generate_chunk(chunk);
+		}
+	}
 }
 
 void VoxelWorld::_bind_methods() {
+	ADD_SIGNAL(MethodInfo("generation_finished"));
+	BIND_VMETHOD(MethodInfo("_generation_finished"));
+
+	BIND_VMETHOD(MethodInfo("_prepare_chunk_for_generation", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+
 	ClassDB::bind_method(D_METHOD("get_chunk_size_x"), &VoxelWorld::get_chunk_size_x);
 	ClassDB::bind_method(D_METHOD("set_chunk_size_x", "value"), &VoxelWorld::set_chunk_size_x);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_x"), "set_chunk_size_x", "get_chunk_size_x");
@@ -174,6 +289,18 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_chunk_size_z"), &VoxelWorld::get_chunk_size_z);
 	ClassDB::bind_method(D_METHOD("set_chunk_size_z", "value"), &VoxelWorld::set_chunk_size_z);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_z"), "set_chunk_size_z", "get_chunk_size_z");
+
+	ClassDB::bind_method(D_METHOD("get_current_seed"), &VoxelWorld::get_current_seed);
+	ClassDB::bind_method(D_METHOD("set_current_seed", "value"), &VoxelWorld::set_current_seed);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_seed"), "set_current_seed", "get_current_seed");
+
+	ClassDB::bind_method(D_METHOD("get_use_threads"), &VoxelWorld::get_use_threads);
+	ClassDB::bind_method(D_METHOD("set_use_threads", "value"), &VoxelWorld::set_use_threads);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_threads"), "set_use_threads", "get_use_threads");
+
+	ClassDB::bind_method(D_METHOD("get_max_concurrent_generations"), &VoxelWorld::get_max_concurrent_generations);
+	ClassDB::bind_method(D_METHOD("set_max_concurrent_generations", "value"), &VoxelWorld::set_max_concurrent_generations);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_concurrent_generations"), "set_max_concurrent_generations", "get_max_concurrent_generations");
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelWorld::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "library"), &VoxelWorld::set_library);
@@ -213,4 +340,6 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_chunk_count"), &VoxelWorld::get_chunk_count);
 
 	ClassDB::bind_method(D_METHOD("clear_chunks"), &VoxelWorld::clear_chunks);
+
+	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk"), &VoxelWorld::generate_chunk_bind);
 }
