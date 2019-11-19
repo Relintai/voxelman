@@ -159,6 +159,8 @@ void VoxelWorld::add_to_generation_queue_bind(Node *chunk) {
 void VoxelWorld::add_to_generation_queue(VoxelChunk *chunk) {
 	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 
+	set_process_internal(true);
+
 	_generation_queue.push_back(chunk);
 }
 VoxelChunk *VoxelWorld::get_generation_queue_index(int index) {
