@@ -563,6 +563,10 @@ void VoxelChunk::_build_phase(int phase) {
 
 			if (_clutter_mesh_instance_rid != RID())
 				VS::get_singleton()->instance_set_visible(_clutter_mesh_instance_rid, is_visible());
+			
+			next_phase();
+
+			return;
 		}
 	}
 	

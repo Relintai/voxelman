@@ -214,7 +214,7 @@ void VoxelWorld::clear() {
 }
 
 VoxelChunk *VoxelWorld::create_chunk(int x, int y, int z) {
-	Node *n = call("_create_chunk");
+	Node *n = call("_create_chunk", x, y, z);
 
 	return(Object::cast_to<VoxelChunk>(n));
 }
@@ -253,6 +253,8 @@ void VoxelWorld::generate_chunk(VoxelChunk *p_chunk) {
 
 
 	call("_generate_chunk", p_chunk);
+
+	p_chunk->build();
 }
 
 void VoxelWorld::_generate_chunk(Node *p_chunk) {
@@ -314,7 +316,7 @@ void VoxelWorld::_notification(int p_what) {
 			for (int i = 0; i < _generating.size(); ++i) {
 				VoxelChunk *chunk = _generating.get(i);
 
-				if (!ObjectDB::instance_validate(chunk) || chunk->get_is_generating()) {
+				if (!ObjectDB::instance_validate(chunk) || !chunk->get_is_generating()) {
 					_generating.remove(i);
 					--i;
 					continue;
@@ -327,26 +329,21 @@ void VoxelWorld::_notification(int p_what) {
 			if (_generation_queue.size() == 0)
 				return;
 
-			VoxelChunk *chunk = _generation_queue.get(0);
-			_generation_queue.remove(0);
+			while (_generating.size() < _max_concurrent_generations && _generation_queue.size() != 0) {
+				VoxelChunk *chunk = _generation_queue.get(0);
+				_generation_queue.remove(0);
 
-			ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+				ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 
-			_generating.push_back(chunk);
+				_generating.push_back(chunk);
 
-			generate_chunk(chunk);
+				generate_chunk(chunk);
+			}
 		}
 	}
 }
 
 void VoxelWorld::_bind_methods() {
-	ADD_SIGNAL(MethodInfo("generation_finished"));
-	BIND_VMETHOD(MethodInfo("_generation_finished"));
-	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), "_generation_finished"));
-
-	BIND_VMETHOD(MethodInfo("_prepare_chunk_for_generation", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
-	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
-
 	ClassDB::bind_method(D_METHOD("get_chunk_size_x"), &VoxelWorld::get_chunk_size_x);
 	ClassDB::bind_method(D_METHOD("set_chunk_size_x", "value"), &VoxelWorld::set_chunk_size_x);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_x"), "set_chunk_size_x", "get_chunk_size_x");
@@ -420,6 +417,15 @@ void VoxelWorld::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("clear"), &VoxelWorld::clear);
 
+	ADD_SIGNAL(MethodInfo("generation_finished"));
+	BIND_VMETHOD(MethodInfo("_generation_finished"));
+
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), "_create_chunk", PropertyInfo(Variant::INT, "x"), PropertyInfo(Variant::INT, "y"), PropertyInfo(Variant::INT, "z")));
+	BIND_VMETHOD(MethodInfo("_prepare_chunk_for_generation", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+
 	ClassDB::bind_method(D_METHOD("create_chunk", "x", "y", "z"), &VoxelWorld::create_chunk);
 	ClassDB::bind_method(D_METHOD("_create_chunk",  "x", "y", "z"), &VoxelWorld::_create_chunk);
+
+	ClassDB::bind_method(D_METHOD("_generate_chunk",  "chunk"), &VoxelWorld::_generate_chunk);
 }
