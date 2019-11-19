@@ -83,7 +83,7 @@ public:
 	void clear();
 
 	VoxelChunk *create_chunk(int x, int y, int z);
-	VoxelChunk *_create_chunk(int x, int y, int z);
+	VoxelChunk *_create_chunk(int x, int y, int z, Node *p_chunk);
 
 	void generate_chunk_bind(Node *p_chunk);
 	void generate_chunk(VoxelChunk *p_chunk);

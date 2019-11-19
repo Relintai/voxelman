@@ -9,6 +9,13 @@ _FORCE_INLINE_ void VoxelChunk::set_is_generating(bool value) {
 	_is_generating = value;
 }
 
+_FORCE_INLINE_ bool VoxelChunk::get_is_build_threaded() const {
+	return _is_build_threaded;
+}
+_FORCE_INLINE_ void VoxelChunk::set_is_build_threaded(bool value) {
+	_is_build_threaded = value;
+}
+
 _FORCE_INLINE_ bool VoxelChunk::get_dirty() const {
 	return _dirty;
 }
@@ -470,8 +477,13 @@ void VoxelChunk::build() {
 	}
 }
 
-void VoxelChunk::build_phase(int phase) {
-	call("_build_phase", phase);
+void VoxelChunk::_build_phase_threaded(void *_userdata) {
+	VoxelChunk *vc = (VoxelChunk *)_userdata;
+	vc->build_phase();
+}
+
+void VoxelChunk::build_phase() {
+	call("_build_phase", _current_build_phase);
 }
 
 void VoxelChunk::_build_phase(int phase) {
@@ -574,6 +586,18 @@ void VoxelChunk::_build_phase(int phase) {
 }
 
 void VoxelChunk::next_phase() {
+	if (_abort_build) {
+		_current_build_phase = BUILD_PHASE_DONE;
+		_is_generating = false;
+		return;
+	}
+
+	if (_build_thread) {
+		Thread::wait_to_finish(_build_thread);
+		memdelete(_build_thread);
+		_build_thread = NULL;
+	}
+
 	++_current_build_phase;
 
 	if (_current_build_phase >= BUILD_PHASE_MAX) {
@@ -586,7 +610,13 @@ void VoxelChunk::next_phase() {
 		return;
 	}
 
-	build_phase(_current_build_phase);
+	if (_is_build_threaded) {
+		ERR_FAIL_COND(_build_thread != NULL);
+
+		_build_thread = Thread::create(_build_phase_threaded, this);
+	} else {
+		build_phase();
+	}
 }
 
 void VoxelChunk::clear() {
@@ -1062,6 +1092,8 @@ void VoxelChunk::free_chunk() {
 
 VoxelChunk::VoxelChunk() {
 	_is_generating = false;
+	_is_build_threaded = false;
+	_abort_build = false;
 	_dirty = false;
 	_state = VOXEL_CHUNK_STATE_OK;
 
@@ -1078,6 +1110,8 @@ VoxelChunk::VoxelChunk() {
 
 	_margin_start = 0;
 	_margin_end = 0;
+
+	_build_thread = NULL;
 }
 
 VoxelChunk::~VoxelChunk() {
@@ -1110,6 +1144,20 @@ VoxelChunk::~VoxelChunk() {
 	}
 }
 
+void VoxelChunk::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_EXIT_TREE: {
+			if (_build_thread) {
+				_abort_build = true;
+
+				Thread::wait_to_finish(_build_thread);
+				memdelete(_build_thread);
+				_build_thread = NULL;
+			}
+		}
+	}
+}
+
 void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
@@ -1123,6 +1171,10 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_is_generating"), &VoxelChunk::get_is_generating);
 	ClassDB::bind_method(D_METHOD("set_is_generating", "value"), &VoxelChunk::set_is_generating);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_generating"), "set_is_generating", "get_is_generating");
+
+	ClassDB::bind_method(D_METHOD("get_is_build_threaded"), &VoxelChunk::get_is_build_threaded);
+	ClassDB::bind_method(D_METHOD("set_is_build_threaded", "value"), &VoxelChunk::set_is_build_threaded);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_build_threaded"), "set_is_build_threaded", "get_is_build_threaded");
 
 	ClassDB::bind_method(D_METHOD("get_dirty"), &VoxelChunk::get_dirty);
 	ClassDB::bind_method(D_METHOD("set_dirty", "value"), &VoxelChunk::set_dirty);
@@ -1256,7 +1308,7 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_build_phase", PropertyInfo(Variant::INT, "phase")));
 
 	ClassDB::bind_method(D_METHOD("build"), &VoxelChunk::build);
-	ClassDB::bind_method(D_METHOD("build_phase", "phase"), &VoxelChunk::build_phase);
+	ClassDB::bind_method(D_METHOD("build_phase"), &VoxelChunk::build_phase);
 	ClassDB::bind_method(D_METHOD("_build_phase", "phase"), &VoxelChunk::_build_phase);
 	ClassDB::bind_method(D_METHOD("next_phase"), &VoxelChunk::next_phase);
 	ClassDB::bind_method(D_METHOD("clear"), &VoxelChunk::clear);

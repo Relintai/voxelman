@@ -5,6 +5,9 @@
 
 #include "core/engine.h"
 #include "core/ustring.h"
+#include "core/os/thread.h"
+#include "core/os/thread_safe.h"
+
 #include "scene/3d/mesh_instance.h"
 #include "scene/resources/packed_scene.h"
 #include "core/array.h"
@@ -35,6 +38,8 @@ class VoxelWorld;
 
 class VoxelChunk : public Spatial {
 	GDCLASS(VoxelChunk, Spatial);
+
+	_THREAD_SAFE_CLASS_
 
 public:
 	enum {
@@ -78,6 +83,9 @@ public:
 public:
 	bool get_is_generating() const;
 	void set_is_generating(bool value);
+
+	bool get_is_build_threaded() const;
+	void set_is_build_threaded(bool value);
 
 	bool get_dirty() const;
 	void set_dirty(bool value);
@@ -183,7 +191,8 @@ public:
 	void finalize_mesh();
 
 	void build();
-	void build_phase(int phase);
+	static void _build_phase_threaded(void *_userdata);
+	void build_phase();
 	void _build_phase(int phase);
 	void next_phase();
 	
@@ -255,9 +264,12 @@ public:
 	~VoxelChunk();
 
 protected:
+	void _notification(int p_what);
 	static void _bind_methods();
 
 	bool _is_generating;
+	bool _is_build_threaded;
+	bool _abort_build;
 	bool _dirty;
 	int _state;
 
@@ -326,6 +338,8 @@ protected:
 	bool _create_collider;
 
 	bool _bake_lights;
+
+	Thread *_build_thread;
 };
 
 VARIANT_ENUM_CAST(VoxelChunk::DefaultChannels);

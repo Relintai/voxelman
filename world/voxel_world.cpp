@@ -214,12 +214,23 @@ void VoxelWorld::clear() {
 }
 
 VoxelChunk *VoxelWorld::create_chunk(int x, int y, int z) {
-	Node *n = call("_create_chunk", x, y, z);
+	Node *np = NULL;
+
+	Node *n = call("_create_chunk", x, y, z, np);
 
 	return(Object::cast_to<VoxelChunk>(n));
 }
-VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z) {
-	VoxelChunk *chunk = memnew(VoxelChunk);
+VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z, Node *p_chunk) {
+	VoxelChunk *chunk;
+
+	if (p_chunk != NULL) {
+		chunk = Object::cast_to<VoxelChunk>(p_chunk);
+	} else {
+		chunk = memnew(VoxelChunk);
+	}
+
+	ERR_FAIL_COND_V(!ObjectDB::instance_validate(chunk), NULL);
+
 	chunk->set_name("Chunk[" + String::num(x) + "," + String::num(y) + "," + String::num(z) + "]");
 	add_child(chunk);
 
@@ -227,6 +238,7 @@ VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z) {
 		chunk->set_owner(get_tree()->get_edited_scene_root());
 
 	chunk->set_voxel_world(this);
+	chunk->set_is_build_threaded(_use_threads);
 	chunk->set_position(x, y, z);
 	chunk->set_library(_library);
 	chunk->set_voxel_scale(_voxel_scale);
@@ -235,7 +247,7 @@ VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z) {
 
 	add_chunk(chunk, x, y, z);
 
-	_generation_queue.push_back(chunk);
+	add_to_generation_queue(chunk);
 
 	return chunk;
 }
@@ -292,7 +304,7 @@ VoxelWorld ::~VoxelWorld() {
 	_player = NULL;
 
 	_generation_queue.clear();
-	_generating.clear();;
+	_generating.clear();
 }
 
 void VoxelWorld::_notification(int p_what) {
@@ -339,6 +351,8 @@ void VoxelWorld::_notification(int p_what) {
 
 				generate_chunk(chunk);
 			}
+		}
+		case NOTIFICATION_EXIT_TREE: {
 		}
 	}
 }
@@ -420,12 +434,12 @@ void VoxelWorld::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("generation_finished"));
 	BIND_VMETHOD(MethodInfo("_generation_finished"));
 
-	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), "_create_chunk", PropertyInfo(Variant::INT, "x"), PropertyInfo(Variant::INT, "y"), PropertyInfo(Variant::INT, "z")));
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), "_create_chunk", PropertyInfo(Variant::INT, "x"), PropertyInfo(Variant::INT, "y"), PropertyInfo(Variant::INT, "z"), PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_prepare_chunk_for_generation", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
 	ClassDB::bind_method(D_METHOD("create_chunk", "x", "y", "z"), &VoxelWorld::create_chunk);
-	ClassDB::bind_method(D_METHOD("_create_chunk",  "x", "y", "z"), &VoxelWorld::_create_chunk);
+	ClassDB::bind_method(D_METHOD("_create_chunk",  "x", "y", "z", "chunk"), &VoxelWorld::_create_chunk);
 
 	ClassDB::bind_method(D_METHOD("_generate_chunk",  "chunk"), &VoxelWorld::_generate_chunk);
 }
