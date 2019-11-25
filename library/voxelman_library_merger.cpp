@@ -256,11 +256,7 @@ void VoxelmanLibraryMerger::refresh_rects() {
 
 		Ref<Texture> tex = _packer->get_generated_texture(0);
 
-		Ref<SpatialMaterial> mat = get_material();
-
-		if (mat.is_valid()) {
-			mat->set_texture(SpatialMaterial::TEXTURE_ALBEDO, tex);
-		}
+		setup_material_albedo(MATERIAL_INDEX_VOXELS, tex);
 	}
 
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
@@ -277,6 +273,37 @@ void VoxelmanLibraryMerger::refresh_rects() {
 		if (surface.is_valid()) {
 			surface->refresh_rects();
 		}
+	}
+}
+
+void VoxelmanLibraryMerger::_setup_material_albedo(int material_index, Ref<Texture> texture) {
+	Ref<SpatialMaterial> mat;
+
+	switch (material_index) {
+		case MATERIAL_INDEX_VOXELS:
+			mat = get_material();
+			break;
+		case MATERIAL_INDEX_PROP:
+			mat = get_prop_material();
+			break;
+		case MATERIAL_INDEX_LIQUID:
+			mat = get_liquid_material();
+			break;
+		case MATERIAL_INDEX_CLUTTER:
+			mat = get_clutter_material();
+			break;
+	}
+
+	Ref<SpatialMaterial> spmat;
+
+	if (spmat.is_valid()) {
+		spmat->set_texture(SpatialMaterial::TEXTURE_ALBEDO, texture);
+	}
+
+	Ref<ShaderMaterial> shmat = get_material();
+
+	if (shmat.is_valid()) {
+		shmat->set_shader_param("texture_albedo", texture);
 	}
 }
 
@@ -341,4 +368,6 @@ void VoxelmanLibraryMerger::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_liquid_voxel_surfaces"), &VoxelmanLibraryMerger::get_liquid_voxel_surfaces);
 	ClassDB::bind_method(D_METHOD("set_liquid_voxel_surfaces"), &VoxelmanLibraryMerger::set_liquid_voxel_surfaces);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "liquid_voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurfaceMerger", PROPERTY_USAGE_DEFAULT, "VoxelSurfaceMerger"), "set_liquid_voxel_surfaces", "get_liquid_voxel_surfaces");
+
+	ClassDB::bind_method(D_METHOD("_setup_material_albedo", "material_index", "texture"), &VoxelmanLibraryMerger::_setup_material_albedo);
 }

@@ -53,6 +53,8 @@ public:
 
 	void refresh_rects();
 
+	void _setup_material_albedo(int material_index, Ref<Texture> texture);
+
 	VoxelmanLibraryMerger();
 	~VoxelmanLibraryMerger();
 

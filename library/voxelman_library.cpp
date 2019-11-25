@@ -64,6 +64,11 @@ void VoxelmanLibrary::clear_liquid_surfaces() {
 void VoxelmanLibrary::refresh_rects() {
 }
 
+void VoxelmanLibrary::setup_material_albedo(int material_index, Ref<Texture> texture) {
+	if (has_method("_setup_material_albedo"))
+		call("_setup_material_albedo", material_index, texture);
+}
+
 VoxelmanLibrary::VoxelmanLibrary() {
 }
 
@@ -75,6 +80,8 @@ VoxelmanLibrary::~VoxelmanLibrary() {
 }
 
 void VoxelmanLibrary::_bind_methods() {
+	BIND_VMETHOD(MethodInfo("_setup_material_albedo", PropertyInfo(Variant::INT, "material_index"), PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture")));
+
 	ClassDB::bind_method(D_METHOD("get_material"), &VoxelmanLibrary::get_material);
 	ClassDB::bind_method(D_METHOD("set_material", "value"), &VoxelmanLibrary::set_material);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
@@ -104,4 +111,11 @@ void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_liquid_surfaces"), &VoxelmanLibrary::clear_liquid_surfaces);
 
 	ClassDB::bind_method(D_METHOD("refresh_rects"), &VoxelmanLibrary::refresh_rects);
+
+	ClassDB::bind_method(D_METHOD("setup_material_albedo", "material_index", "texture"), &VoxelmanLibrary::setup_material_albedo);
+
+	BIND_CONSTANT(MATERIAL_INDEX_VOXELS);
+	BIND_CONSTANT(MATERIAL_INDEX_PROP);
+	BIND_CONSTANT(MATERIAL_INDEX_LIQUID);
+	BIND_CONSTANT(MATERIAL_INDEX_CLUTTER);
 }

@@ -14,6 +14,14 @@ class VoxelmanLibrary : public Resource {
 	GDCLASS(VoxelmanLibrary, Resource)
 
 public:
+	enum {
+		MATERIAL_INDEX_VOXELS = 0,
+		MATERIAL_INDEX_PROP = 1,
+		MATERIAL_INDEX_LIQUID = 2,
+		MATERIAL_INDEX_CLUTTER = 3,
+	};
+
+public:
 	Ref<Material> get_material() const;
 	void set_material(Ref<Material> mat);
 
@@ -41,6 +49,8 @@ public:
 	virtual void clear_liquid_surfaces();
 
 	virtual void refresh_rects();
+
+	void setup_material_albedo(int material_index, Ref<Texture> texture);
 
 	VoxelmanLibrary();
 	~VoxelmanLibrary();
