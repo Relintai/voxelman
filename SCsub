@@ -2,6 +2,8 @@ Import('env')
 
 env.add_source_files(env.modules_sources,"register_types.cpp")
 
+env.add_source_files(env.modules_sources,"containers/voxelman_queue.cpp")
+
 env.add_source_files(env.modules_sources,"library/voxelman_library.cpp")
 env.add_source_files(env.modules_sources,"library/voxelman_library_simple.cpp")
 env.add_source_files(env.modules_sources,"library/voxelman_library_merger.cpp")
