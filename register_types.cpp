@@ -1,6 +1,7 @@
 #include "register_types.h"
 
 #include "containers/voxelman_queue.h"
+#include "containers/voxelman_unbounded_queue.h"
 
 #include "library/voxel_surface.h"
 #include "library/voxel_surface_simple.h"
@@ -41,7 +42,8 @@
 
 
 void register_voxelman_types() {
-	ClassDB::register_class<VoxelmanQueue>();
+	ClassDB::register_class<VoxelmanQueue>();\
+	ClassDB::register_class<VoxelmanUnboundedQueue>();
 
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherTransvoxel>();

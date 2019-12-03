@@ -1,5 +1,7 @@
 #include "voxelman_queue.h"
 
+/// VMQUeue
+
 template<typename T>
 void VMQueue<T>::enqueue(T obj) {
     _lock->write_lock();
@@ -91,6 +93,12 @@ VMQueue<T>::VMQueue(int initial_size) {
     _count = 0;
     _size = initial_size;
 
+    if (unlikely(initial_size <= 0)) {
+        _size = 10;
+        
+        print_error("initial_size <= 0");
+    }
+
     _lock = RWLock::create();
 
     _items = memnew_arr(T, _size);
@@ -116,6 +124,7 @@ VMQueue<T>::~VMQueue() {
     memdelete(_lock);
 }
 
+///VoxelmanQueue
 
 void VoxelmanQueue::enqueue(Variant obj) {
     _queue.enqueue(obj);
