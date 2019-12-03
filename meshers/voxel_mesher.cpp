@@ -63,10 +63,8 @@ void VoxelMesher::build_mesh(RID mesh) {
 
 	_surface_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
 
-	if (_material.is_valid())
-		_surface_tool->set_material(_material);
-	else
-		_surface_tool->set_material(_library->get_material());
+	//if (_material.is_valid())
+	//	_surface_tool->set_material(_material);
 
 	if (_colors.size() != _vertices.size()) {
 		print_error("Colors.size() != vertices.size() -> " + String::num(_colors.size()) + " " + String::num(_vertices.size()));
@@ -102,6 +100,9 @@ void VoxelMesher::build_mesh(RID mesh) {
 	Array arr = _surface_tool->commit_to_arrays();
 
 	VS::get_singleton()->mesh_add_surface_from_arrays(mesh, VisualServer::PRIMITIVE_TRIANGLES, arr);
+
+	if (_material.is_valid())
+		VS::get_singleton()->mesh_surface_set_material(mesh, 0, _library->get_material()->get_rid());
 }
 
 void VoxelMesher::reset() {

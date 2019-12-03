@@ -466,6 +466,7 @@ void VoxelChunk::finalize_mesh() {
 		allocate_main_mesh();
 	}
 
+	_mesher->set_material(get_library()->get_material());
 	get_mesher()->build_mesh(_mesh_rid);
 }
 
@@ -784,7 +785,7 @@ void VoxelChunk::process_props() {
 	call("_process_props");
 
 	_mesher->bake_colors(this);
-
+	_mesher->set_material(get_library()->get_material());
 	_mesher->build_mesh(_prop_mesh_rid);
 }
 
@@ -794,7 +795,7 @@ void VoxelChunk::build_prop_meshes() {
 	}
 
 	_mesher->bake_colors(this);
-
+	_mesher->set_material(get_library()->get_material());
 	_mesher->build_mesh(_prop_mesh_rid);
 }
 
@@ -802,13 +803,8 @@ void VoxelChunk::allocate_main_mesh() {
 	ERR_FAIL_COND(_voxel_world == NULL);
 
 	ERR_FAIL_COND(!get_library().is_valid());
-	ERR_FAIL_COND(!get_library()->get_material().is_valid());
 
 	_mesh_instance_rid = VS::get_singleton()->instance_create();
-
-	if (get_library()->get_material().is_valid()) {
-		VS::get_singleton()->instance_geometry_set_material_override(_mesh_instance_rid, get_library()->get_material()->get_rid());
-	}
 
 	if (get_voxel_world()->get_world().is_valid())
 		VS::get_singleton()->instance_set_scenario(_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
@@ -833,13 +829,8 @@ void VoxelChunk::free_main_mesh() {
 void VoxelChunk::allocate_prop_mesh() {
 	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(!get_library().is_valid());
-	ERR_FAIL_COND(!get_library()->get_prop_material().is_valid());
 
 	_prop_mesh_instance_rid = VS::get_singleton()->instance_create();
-
-	if (get_library()->get_prop_material().is_valid()) {
-		VS::get_singleton()->instance_geometry_set_material_override(_prop_mesh_instance_rid, get_library()->get_prop_material()->get_rid());
-	}
 
 	if (get_voxel_world()->get_world().is_valid())
 		VS::get_singleton()->instance_set_scenario(_prop_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
@@ -898,13 +889,8 @@ void VoxelChunk::allocate_liquid_mesh() {
 	ERR_FAIL_COND(_voxel_world == NULL);
 
 	ERR_FAIL_COND(!get_library().is_valid());
-	ERR_FAIL_COND(!get_library()->get_liquid_material().is_valid());
 
 	_liquid_mesh_instance_rid = VS::get_singleton()->instance_create();
-
-	if (get_library()->get_liquid_material().is_valid()) {
-		VS::get_singleton()->instance_geometry_set_material_override(_liquid_mesh_instance_rid, get_library()->get_liquid_material()->get_rid());
-	}
 
 	if (get_voxel_world()->get_world().is_valid())
 		VS::get_singleton()->instance_set_scenario(_liquid_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
@@ -931,13 +917,8 @@ void VoxelChunk::allocate_clutter_mesh() {
 	ERR_FAIL_COND(_voxel_world == NULL);
 
 	ERR_FAIL_COND(!get_library().is_valid());
-	ERR_FAIL_COND(!get_library()->get_clutter_material().is_valid());
 
 	_clutter_mesh_instance_rid = VS::get_singleton()->instance_create();
-
-	if (get_library()->get_clutter_material().is_valid()) {
-		VS::get_singleton()->instance_geometry_set_material_override(_clutter_mesh_instance_rid, get_library()->get_clutter_material()->get_rid());
-	}
 
 	if (get_voxel_world()->get_world().is_valid())
 		VS::get_singleton()->instance_set_scenario(_clutter_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
