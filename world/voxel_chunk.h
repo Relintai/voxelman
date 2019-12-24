@@ -26,7 +26,7 @@
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
 
-#include "../../entity_spell_system/meshes/mesh_data_resource.h"
+#include "../../mesh_data_resource/mesh_data_resource.h"
 #include "../props/prop_data.h"
 #include "../props/prop_data_entry.h"
 #include "../props/prop_data_scene.h"

@@ -6,7 +6,7 @@
 
 #include "scene/resources/texture.h"
 
-#include "../../entity_spell_system/meshes/mesh_data_resource.h"
+#include "../../mesh_data_resource/mesh_data_resource.h"
 
 class PropDataMesh : public PropDataEntry {
 	GDCLASS(PropDataMesh, PropDataEntry);

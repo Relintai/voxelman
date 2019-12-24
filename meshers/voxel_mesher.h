@@ -17,7 +17,7 @@
 #include "scene/resources/concave_polygon_shape.h"
 
 #include "../library/voxelman_library.h"
-#include "../../entity_spell_system/meshes/mesh_data_resource.h"
+#include "../../mesh_data_resource/mesh_data_resource.h"
 
 const double PI_2 = 3.141592653589793238463 / 2;
 const double PI = 3.141592653589793238463;

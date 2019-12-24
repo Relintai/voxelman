@@ -8,7 +8,7 @@
 #include "scene/resources/packed_scene.h"
 #include "../props/prop_data.h"
 #include "../props/prop_data_light.h"
-#include "../../entity_spell_system/meshes/mesh_data_resource.h"
+#include "../../mesh_data_resource/mesh_data_resource.h"
 
 class VoxelChunkPropData : public Reference {
 	GDCLASS(VoxelChunkPropData, Reference);
