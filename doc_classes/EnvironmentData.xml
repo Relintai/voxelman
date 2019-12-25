@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="EnvironmentData" inherits="Resource" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_setup" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="world_environment" type="WorldEnvironment">
+			</argument>
+			<argument index="1" name="primary_light" type="DirectionalLight">
+			</argument>
+			<argument index="2" name="secondary_light" type="DirectionalLight">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_color">
+			<return type="Color">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_energy">
+			<return type="float">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_indirect_energy">
+			<return type="float">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_color">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<argument index="1" name="value" type="Color">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_energy">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<argument index="1" name="value" type="float">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_indirect_energy">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<argument index="1" name="value" type="float">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="setup">
+			<return type="void">
+			</return>
+			<argument index="0" name="world_environment" type="Node">
+			</argument>
+			<argument index="1" name="primary_light" type="Node">
+			</argument>
+			<argument index="2" name="secondary_light" type="Node">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="environment" type="Environment" setter="set_environment" getter="get_environment">
+		</member>
+		<member name="primary_light_color" type="Color" setter="set_color" getter="get_color" default="Color( 1, 1, 1, 1 )">
+		</member>
+		<member name="primary_light_energy" type="float" setter="set_energy" getter="get_energy" default="1.0">
+		</member>
+		<member name="primary_light_indirect_energy" type="float" setter="set_indirect_energy" getter="get_indirect_energy" default="1.0">
+		</member>
+		<member name="secondary_light_color" type="Color" setter="set_color" getter="get_color" default="Color( 1, 1, 1, 1 )">
+		</member>
+		<member name="secondary_light_energy" type="float" setter="set_energy" getter="get_energy" default="1.0">
+		</member>
+		<member name="secondary_light_indirect_energy" type="float" setter="set_indirect_energy" getter="get_indirect_energy" default="1.0">
+		</member>
+	</members>
+	<constants>
+		<constant name="LIGHT_COUNT" value="2">
+		</constant>
+	</constants>
+</class>

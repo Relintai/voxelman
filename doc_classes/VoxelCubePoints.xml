@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelCubePoints" inherits="Reference" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_bottom_left_point">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_bottom_right_point">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_face_light_direction">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_face_point_ao">
+			<return type="int">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_face_point_ao_color">
+			<return type="Color">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_face_point_color_mixed">
+			<return type="Color">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_face_point_light_color">
+			<return type="Color">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_opposite_face">
+			<return type="int">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point_ao">
+			<return type="int">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point_fill">
+			<return type="int">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point_for_face">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point_id">
+			<return type="int">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point_index">
+			<return type="int">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point_neighbours">
+			<return type="int">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point_type">
+			<return type="int">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_point_uv_direction">
+			<return type="Vector2">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_points_for_face">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_top_left_point">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_top_right_point">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_vertex_vector3_for_point">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<argument index="1" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="has_points">
+			<return type="bool">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="is_face_visible">
+			<return type="bool">
+			</return>
+			<argument index="0" name="face" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="is_sub_voxel_point">
+			<return type="bool">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="refresh_points">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="set_point">
+			<return type="void">
+			</return>
+			<argument index="0" name="point" type="int">
+			</argument>
+			<argument index="1" name="x" type="int">
+			</argument>
+			<argument index="2" name="y" type="int">
+			</argument>
+			<argument index="3" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="setup">
+			<return type="void">
+			</return>
+			<argument index="0" name="chunk" type="Node">
+			</argument>
+			<argument index="1" name="x" type="int">
+			</argument>
+			<argument index="2" name="y" type="int">
+			</argument>
+			<argument index="3" name="z" type="int">
+			</argument>
+			<argument index="4" name="size" type="int" default="1">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="size" type="int" setter="set_size" getter="get_size" default="1">
+		</member>
+		<member name="x" type="int" setter="set_x" getter="get_x" default="0">
+		</member>
+		<member name="y" type="int" setter="set_y" getter="get_y" default="0">
+		</member>
+		<member name="z" type="int" setter="set_z" getter="get_z" default="0">
+		</member>
+	</members>
+	<constants>
+		<constant name="P000" value="0" enum="Points">
+		</constant>
+		<constant name="P100" value="1" enum="Points">
+		</constant>
+		<constant name="P010" value="2" enum="Points">
+		</constant>
+		<constant name="P001" value="3" enum="Points">
+		</constant>
+		<constant name="P110" value="4" enum="Points">
+		</constant>
+		<constant name="P011" value="5" enum="Points">
+		</constant>
+		<constant name="P101" value="6" enum="Points">
+		</constant>
+		<constant name="P111" value="7" enum="Points">
+		</constant>
+		<constant name="POINT_COUNT" value="8" enum="Points">
+		</constant>
+		<constant name="VOXEL_FACE_FRONT" value="0" enum="VoxelFaces">
+		</constant>
+		<constant name="VOXEL_FACE_RIGHT" value="1" enum="VoxelFaces">
+		</constant>
+		<constant name="VOXEL_FACE_BACK" value="2" enum="VoxelFaces">
+		</constant>
+		<constant name="VOXEL_FACE_LEFT" value="3" enum="VoxelFaces">
+		</constant>
+		<constant name="VOXEL_FACE_TOP" value="4" enum="VoxelFaces">
+		</constant>
+		<constant name="VOXEL_FACE_BOTTOM" value="5" enum="VoxelFaces">
+		</constant>
+		<constant name="VOXEL_FACE_COUNT" value="6" enum="VoxelFaces">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_NONE" value="0" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_LEFT" value="1" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_RIGHT" value="2" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_FRONT" value="4" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BACK" value="8" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP" value="16" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM" value="32" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_LEFT_FRONT" value="64" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_LEFT_BACK" value="128" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_RIGHT_FRONT" value="256" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_RIGHT_BACK" value="512" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP_LEFT" value="1024" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP_RIGHT" value="2048" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP_FRONT" value="4096" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP_BACK" value="8192" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM_LEFT" value="16384" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM_RIGHT" value="32768" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM_FRONT" value="65536" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM_BACK" value="131072" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM_LEFT_FRONT" value="262144" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM_LEFT_BACK" value="524288" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM_RIGHT_FRONT" value="1048576" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_BOTTOM_RIGHT_BACK" value="2097152" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP_LEFT_FRONT" value="4194304" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP_LEFT_BACK" value="8388608" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP_RIGHT_FRONT" value="16777216" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_NEIGHBOUR_TOP_RIGHT_BACK" value="33554432" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_FULL_NEIGHBOURS_CROSS" value="63" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_FULL_SIDE_NEIGHBOURS" value="15" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_FULL_SIDE_NEIGHBOURS_TOP" value="31" enum="VoxelNeighbours">
+		</constant>
+		<constant name="VOXEL_FULL_SIDE_NEIGHBOURS_DOWN" value="47" enum="VoxelNeighbours">
+		</constant>
+	</constants>
+</class>

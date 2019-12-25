@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelSurface" inherits="Resource" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_rect" qualifiers="const">
+			<return type="Rect2">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="refresh_rects">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="set_rect">
+			<return type="void">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<argument index="1" name="rect" type="Rect2">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="transform_uv" qualifiers="const">
+			<return type="Vector2">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<argument index="1" name="uv" type="Vector2">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="clutter" type="GroundClutter" setter="set_clutter" getter="get_clutter">
+		</member>
+		<member name="id" type="int" setter="set_id" getter="get_id" default="0">
+		</member>
+		<member name="transparent" type="bool" setter="set_transparent" getter="is_transparent" default="false">
+		</member>
+		<member name="voxel_name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
+		</member>
+	</members>
+	<constants>
+		<constant name="VOXEL_SIDE_TOP" value="0" enum="VoxelSurfaceSides">
+		</constant>
+		<constant name="VOXEL_SIDE_BOTTOM" value="1" enum="VoxelSurfaceSides">
+		</constant>
+		<constant name="VOXEL_SIDE_SIDE" value="2" enum="VoxelSurfaceSides">
+		</constant>
+		<constant name="VOXEL_SIDES_COUNT" value="3">
+		</constant>
+	</constants>
+</class>

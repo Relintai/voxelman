@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="WorldArea" inherits="Reference" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="aabb" type="AABB" setter="set_aabb" getter="get_aabb" default="AABB( 0, 0, 0, 0, 0, 0 )">
+		</member>
+		<member name="fov_texture" type="Texture" setter="set_fov_texture" getter="get_fov_texture">
+		</member>
+		<member name="level" type="int" setter="set_level" getter="get_level" default="0">
+		</member>
+		<member name="map_texture" type="Texture" setter="set_map_texture" getter="get_map_texture">
+		</member>
+		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

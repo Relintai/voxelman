@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelChunk" inherits="Spatial" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_build_phase" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="phase" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_create_mesh" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="_create_mesher" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="_draw_debug_voxel_lights" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="debug_drawer" type="ImmediateGeometry">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_process_props" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="_prop_added" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="prop" type="VoxelChunkPropData">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_setup_channels" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="add_light">
+			<return type="void">
+			</return>
+			<argument index="0" name="local_x" type="int">
+			</argument>
+			<argument index="1" name="local_y" type="int">
+			</argument>
+			<argument index="2" name="local_z" type="int">
+			</argument>
+			<argument index="3" name="size" type="int">
+			</argument>
+			<argument index="4" name="color" type="Color">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_lights">
+			<return type="void">
+			</return>
+			<argument index="0" name="lights" type="Array">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_lights_into">
+			<return type="void">
+			</return>
+			<argument index="0" name="lights" type="Array">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_prop">
+			<return type="void">
+			</return>
+			<argument index="0" name="prop" type="VoxelChunkPropData">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_prop_light">
+			<return type="void">
+			</return>
+			<argument index="0" name="light" type="VoxelLight">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_unique_lights_into">
+			<return type="void">
+			</return>
+			<argument index="0" name="lights" type="Array">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_voxel_light">
+			<return type="void">
+			</return>
+			<argument index="0" name="light" type="VoxelLight">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_channel">
+			<return type="void">
+			</return>
+			<argument index="0" name="channel_index" type="int">
+			</argument>
+			<argument index="1" name="default_value" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_clutter_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_liquid_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_main_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_prop_colliders">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_prop_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="bake_light">
+			<return type="void">
+			</return>
+			<argument index="0" name="light" type="VoxelLight">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="bake_lights">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_collider">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_phase">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_prop_collider">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_prop_meshes">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="clear">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="clear_baked_lights">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="clear_props">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="clear_voxel_lights">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="create_colliders">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="create_debug_immediate_geometry">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="create_mesher">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="create_voxel_light">
+			<return type="void">
+			</return>
+			<argument index="0" name="color" type="Color">
+			</argument>
+			<argument index="1" name="size" type="int">
+			</argument>
+			<argument index="2" name="x" type="int">
+			</argument>
+			<argument index="3" name="y" type="int">
+			</argument>
+			<argument index="4" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="dealloc_channel">
+			<return type="void">
+			</return>
+			<argument index="0" name="channel_index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="draw_cross_voxels">
+			<return type="void">
+			</return>
+			<argument index="0" name="pos" type="Vector3">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="draw_cross_voxels_fill">
+			<return type="void">
+			</return>
+			<argument index="0" name="pos" type="Vector3">
+			</argument>
+			<argument index="1" name="fill" type="float">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="draw_debug_voxel_lights">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="draw_debug_voxels">
+			<return type="void">
+			</return>
+			<argument index="0" name="pos" type="int">
+			</argument>
+			<argument index="1" name="color" type="Color" default="Color( 1, 1, 1, 1 )">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="fill_channel">
+			<return type="void">
+			</return>
+			<argument index="0" name="value" type="int">
+			</argument>
+			<argument index="1" name="channel_index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="finalize_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_chunk">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_clutter_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_debug_immediate_geometry">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_liquid_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_main_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_prop_colliders">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_prop_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_spawn_props">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="generate_ao">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_body_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_clutter_mesh_instance_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_clutter_mesh_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_data_index" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_data_size" qualifiers="const">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_lights">
+			<return type="Array">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_liquid_mesh_instance_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_liquid_mesh_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_margin_end" qualifiers="const">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_margin_start" qualifiers="const">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_mesh_instance_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_mesh_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_position" qualifiers="const">
+			<return type="Vector3">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop">
+			<return type="VoxelChunkPropData">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_body_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_count">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_mesh_instance_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_mesh_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_shape_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_shape_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_size" qualifiers="const">
+			<return type="Vector3">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_voxel" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<argument index="3" name="channel_index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="next_phase">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="process_props">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="remove_colliders">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="remove_prop">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="remove_voxel_light">
+			<return type="void">
+			</return>
+			<argument index="0" name="light" type="VoxelLight">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_channel_count">
+			<return type="void">
+			</return>
+			<argument index="0" name="count" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_position">
+			<return type="void">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_size">
+			<return type="void">
+			</return>
+			<argument index="0" name="size_x" type="int">
+			</argument>
+			<argument index="1" name="size_y" type="int">
+			</argument>
+			<argument index="2" name="size_z" type="int">
+			</argument>
+			<argument index="3" name="margin_start" type="int" default="0">
+			</argument>
+			<argument index="4" name="margin_end" type="int" default="0">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_voxel">
+			<return type="void">
+			</return>
+			<argument index="0" name="value" type="int">
+			</argument>
+			<argument index="1" name="x" type="int">
+			</argument>
+			<argument index="2" name="y" type="int">
+			</argument>
+			<argument index="3" name="z" type="int">
+			</argument>
+			<argument index="4" name="channel_index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="setup_channels">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="validate_channel_data_position" qualifiers="const">
+			<return type="bool">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="current_build_phase" type="int" setter="set_current_build_phase" getter="get_current_build_phase" default="0">
+		</member>
+		<member name="data_size_x" type="int" setter="" getter="get_data_size_x" default="0">
+		</member>
+		<member name="data_size_y" type="int" setter="" getter="get_data_size_y" default="0">
+		</member>
+		<member name="data_size_z" type="int" setter="" getter="get_data_size_z" default="0">
+		</member>
+		<member name="dirty" type="bool" setter="set_dirty" getter="get_dirty" default="false">
+		</member>
+		<member name="is_build_threaded" type="bool" setter="set_is_build_threaded" getter="get_is_build_threaded" default="false">
+		</member>
+		<member name="is_generating" type="bool" setter="set_is_generating" getter="get_is_generating" default="false">
+		</member>
+		<member name="library" type="VoxelmanLibrary" setter="set_library" getter="get_library">
+		</member>
+		<member name="lod_size" type="int" setter="set_lod_size" getter="get_lod_size" default="1">
+		</member>
+		<member name="mesher" type="VoxelMesher" setter="set_mesher" getter="get_mesher">
+		</member>
+		<member name="meshing_bake_lights" type="bool" setter="meshing_set_bake_lights" getter="meshing_get_bake_lights" default="true">
+		</member>
+		<member name="meshing_create_collider" type="bool" setter="meshing_set_create_collider" getter="meshing_get_create_collider" default="true">
+		</member>
+		<member name="position_x" type="int" setter="set_position_x" getter="get_position_x" default="0">
+		</member>
+		<member name="position_y" type="int" setter="set_position_y" getter="get_position_y" default="0">
+		</member>
+		<member name="position_z" type="int" setter="set_position_z" getter="get_position_z" default="0">
+		</member>
+		<member name="size_x" type="int" setter="" getter="get_size_x" default="0">
+		</member>
+		<member name="size_y" type="int" setter="" getter="get_size_y" default="0">
+		</member>
+		<member name="size_z" type="int" setter="" getter="get_size_z" default="0">
+		</member>
+		<member name="state" type="int" setter="set_state" getter="get_state" default="0">
+		</member>
+		<member name="voxel_scale" type="float" setter="set_voxel_scale" getter="get_voxel_scale" default="1.0">
+		</member>
+		<member name="voxel_world" type="VoxelWorld" setter="set_voxel_world" getter="get_voxel_world">
+		</member>
+	</members>
+	<signals>
+		<signal name="mesh_generation_finished">
+			<argument index="0" name="chunk" type="VoxelChunk">
+			</argument>
+			<description>
+			</description>
+		</signal>
+	</signals>
+	<constants>
+		<constant name="BUILD_PHASE_DONE" value="0">
+		</constant>
+		<constant name="BUILD_PHASE_SETUP" value="1">
+		</constant>
+		<constant name="BUILD_PHASE_TERRARIN_MESH_SETUP" value="2">
+		</constant>
+		<constant name="BUILD_PHASE_TERRARIN_MESH_COLLIDER" value="3">
+		</constant>
+		<constant name="BUILD_PHASE_LIGHTS" value="4">
+		</constant>
+		<constant name="BUILD_PHASE_TERRARIN_MESH" value="5">
+		</constant>
+		<constant name="BUILD_PHASE_PROP_MESH" value="6">
+		</constant>
+		<constant name="BUILD_PHASE_PROP_COLLIDER" value="7">
+		</constant>
+		<constant name="BUILD_PHASE_FINALIZE" value="10">
+		</constant>
+		<constant name="BUILD_PHASE_MAX" value="11">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_OK" value="0">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_GENERATION_QUEUED" value="1">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_GENERATION" value="2">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED" value="3">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_MESH_GENERATION" value="4">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_MAX" value="5">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_TYPE" value="0" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_ISOLEVEL" value="1" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_R" value="2" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_G" value="3" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_B" value="4" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_AO" value="5" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_RANDOM_AO" value="6" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIQUID_TYPES" value="7" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIQUID_FILL" value="8" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIQUID_FLOW" value="9" enum="DefaultChannels">
+		</constant>
+		<constant name="MAX_DEFAULT_CHANNELS" value="10" enum="DefaultChannels">
+		</constant>
+	</constants>
+</class>

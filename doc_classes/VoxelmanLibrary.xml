@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelmanLibrary" inherits="Resource" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_setup_material_albedo" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="material_index" type="int">
+			</argument>
+			<argument index="1" name="texture" type="Texture">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="clear_liquid_surfaces">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="clear_surfaces">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_liquid_num_surfaces">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_liquid_voxel_surface" qualifiers="const">
+			<return type="VoxelSurface">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_num_surfaces">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_voxel_surface" qualifiers="const">
+			<return type="VoxelSurface">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="refresh_rects">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="remove_liquid_surface">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="remove_surface">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_liquid_voxel_surface">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<argument index="1" name="surface" type="VoxelSurface">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_voxel_surface">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<argument index="1" name="surface" type="VoxelSurface">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="setup_material_albedo">
+			<return type="void">
+			</return>
+			<argument index="0" name="material_index" type="int">
+			</argument>
+			<argument index="1" name="texture" type="Texture">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="clutter_material" type="Material" setter="set_clutter_material" getter="get_clutter_material">
+		</member>
+		<member name="liquid_material" type="Material" setter="set_liquid_material" getter="get_liquid_material">
+		</member>
+		<member name="material" type="Material" setter="set_material" getter="get_material">
+		</member>
+		<member name="prop_material" type="Material" setter="set_prop_material" getter="get_prop_material">
+		</member>
+	</members>
+	<constants>
+		<constant name="MATERIAL_INDEX_VOXELS" value="0">
+		</constant>
+		<constant name="MATERIAL_INDEX_PROP" value="1">
+		</constant>
+		<constant name="MATERIAL_INDEX_LIQUID" value="2">
+		</constant>
+		<constant name="MATERIAL_INDEX_CLUTTER" value="3">
+		</constant>
+	</constants>
+</class>

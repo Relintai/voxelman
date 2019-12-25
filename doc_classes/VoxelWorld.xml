@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelWorld" inherits="Navigation" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_create_chunk" qualifiers="virtual">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<argument index="3" name="chunk" type="VoxelChunk">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_generate_chunk" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="chunk" type="VoxelChunk">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_generation_finished" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="_prepare_chunk_for_generation" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="chunk" type="VoxelChunk">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_chunk">
+			<return type="void">
+			</return>
+			<argument index="0" name="chunk" type="Node">
+			</argument>
+			<argument index="1" name="x" type="int">
+			</argument>
+			<argument index="2" name="y" type="int">
+			</argument>
+			<argument index="3" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_to_generation">
+			<return type="void">
+			</return>
+			<argument index="0" name="chunk" type="Node">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_to_generation_queue">
+			<return type="void">
+			</return>
+			<argument index="0" name="chunk" type="Node">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_world_area">
+			<return type="void">
+			</return>
+			<argument index="0" name="area" type="WorldArea">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="clear">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="clear_world_areas">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="create_chunk">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_chunk" qualifiers="const">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_chunk_count" qualifiers="const">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_chunk_index">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_generation_index">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_generation_queue_index">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_generation_queue_size">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_generation_size">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_world_area" qualifiers="const">
+			<return type="WorldArea">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_world_area_count" qualifiers="const">
+			<return type="int">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="remove_chunk">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="remove_generation_index">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="remove_generation_queue_index">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="remove_world_area">
+			<return type="void">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="chunk_size_x" type="int" setter="set_chunk_size_x" getter="get_chunk_size_x" default="16">
+		</member>
+		<member name="chunk_size_y" type="int" setter="set_chunk_size_y" getter="get_chunk_size_y" default="16">
+		</member>
+		<member name="chunk_size_z" type="int" setter="set_chunk_size_z" getter="get_chunk_size_z" default="16">
+		</member>
+		<member name="chunk_spawn_range" type="int" setter="set_chunk_spawn_range" getter="get_chunk_spawn_range" default="4">
+		</member>
+		<member name="current_seed" type="int" setter="set_current_seed" getter="get_current_seed" default="0">
+		</member>
+		<member name="level_generator" type="VoxelmanLevelGenerator" setter="set_level_generator" getter="get_level_generator">
+		</member>
+		<member name="library" type="VoxelmanLibrary" setter="set_library" getter="get_library">
+		</member>
+		<member name="max_concurrent_generations" type="int" setter="set_max_concurrent_generations" getter="get_max_concurrent_generations" default="3">
+		</member>
+		<member name="player" type="Spatial" setter="set_player" getter="get_player">
+		</member>
+		<member name="player_path" type="NodePath" setter="set_player_path" getter="get_player_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="use_threads" type="bool" setter="set_use_threads" getter="get_use_threads" default="true">
+		</member>
+		<member name="voxel_scale" type="float" setter="set_voxel_scale" getter="get_voxel_scale" default="1.0">
+		</member>
+	</members>
+	<signals>
+		<signal name="generation_finished">
+			<description>
+			</description>
+		</signal>
+	</signals>
+	<constants>
+	</constants>
+</class>

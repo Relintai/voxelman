@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelSurfaceMerger" inherits="VoxelSurface" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_region">
+			<return type="AtlasTexture">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_texture">
+			<return type="Texture">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_region">
+			<return type="void">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<argument index="1" name="texture" type="AtlasTexture">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_texture">
+			<return type="void">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<argument index="1" name="texture" type="Texture">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="region_bottom" type="AtlasTexture" setter="set_region" getter="get_region">
+		</member>
+		<member name="region_side" type="AtlasTexture" setter="set_region" getter="get_region">
+		</member>
+		<member name="region_top" type="AtlasTexture" setter="set_region" getter="get_region">
+		</member>
+		<member name="texture_bottom" type="Texture" setter="set_texture" getter="get_texture">
+		</member>
+		<member name="texture_side" type="Texture" setter="set_texture" getter="get_texture">
+		</member>
+		<member name="texture_top" type="Texture" setter="set_texture" getter="get_texture">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

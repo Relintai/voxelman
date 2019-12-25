@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelSurfaceSimple" inherits="VoxelSurface" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_atlas_x" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_atlas_y" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_atlas_x">
+			<return type="void">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<argument index="1" name="value" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_atlas_y">
+			<return type="void">
+			</return>
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
+			</argument>
+			<argument index="1" name="value" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="bottom_atlas_x" type="int" setter="set_atlas_x" getter="get_atlas_x" default="0">
+		</member>
+		<member name="bottom_atlas_y" type="int" setter="set_atlas_y" getter="get_atlas_y" default="0">
+		</member>
+		<member name="side_atlas_x" type="int" setter="set_atlas_x" getter="get_atlas_x" default="0">
+		</member>
+		<member name="side_atlas_y" type="int" setter="set_atlas_y" getter="get_atlas_y" default="0">
+		</member>
+		<member name="top_atlas_x" type="int" setter="set_atlas_x" getter="get_atlas_x" default="0">
+		</member>
+		<member name="top_atlas_y" type="int" setter="set_atlas_y" getter="get_atlas_y" default="0">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

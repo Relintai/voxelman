@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelmanLibrarySimple" inherits="VoxelmanLibrary" category="Core" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="atlas_columns" type="int" setter="set_atlas_columns" getter="get_atlas_columns" default="8">
+		</member>
+		<member name="atlas_rows" type="int" setter="set_atlas_rows" getter="get_atlas_rows" default="8">
+		</member>
+		<member name="liquid_voxel_surfaces" type="Array" setter="set_liquid_voxel_surfaces" getter="get_liquid_voxel_surfaces" default="[  ]">
+		</member>
+		<member name="voxel_surfaces" type="Array" setter="set_voxel_surfaces" getter="get_voxel_surfaces" default="[  ]">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>
