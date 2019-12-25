@@ -2,11 +2,9 @@
 
 A voxel engine module for godot, focusing on editor integration, rapid prototyping, gameplay-related features, speed, and extendability (even from gdscript).
 
-Be warned! API breakages still happen a lot, only use thes module, if that's okay with you!
-
 This module have dependencies to some of my other engine modules, these will be made optional later, for now you will need to install them as well.
 
-For now, my main game project has the implementation of the transvoxel mesher. The cubic mesher should be usable out of the box.
+For now, my main game project (https://github.com/Relintai/broken_seals -> voxelman folder) has the implementation of the transvoxel mesher. The cubic mesher should be usable out of the box.
 
 The cubic mesher is just an algorithm that I made up, to have voxel cubes, that can use the actual 3d fill values from the chunk.
 
