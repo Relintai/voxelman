@@ -1,47 +1,70 @@
+import os
+
 Import('env')
 
-env.add_source_files(env.modules_sources,"register_types.cpp")
+module_env = env.Clone()
 
-env.add_source_files(env.modules_sources,"containers/voxelman_queue.cpp")
-env.add_source_files(env.modules_sources,"containers/voxelman_unbounded_queue.cpp")
+if os.path.isdir('../mesh_data_resource'):
+    module_env.Append(CPPDEFINES=['MESH_DATA_RESOURCE_PRESENT'])
 
-env.add_source_files(env.modules_sources,"library/voxelman_library.cpp")
-env.add_source_files(env.modules_sources,"library/voxelman_library_simple.cpp")
-env.add_source_files(env.modules_sources,"library/voxelman_library_merger.cpp")
 
-env.add_source_files(env.modules_sources,"library/voxel_surface.cpp")
-env.add_source_files(env.modules_sources,"library/voxel_surface_simple.cpp")
-env.add_source_files(env.modules_sources,"library/voxel_surface_merger.cpp")
+sources = [
 
-env.add_source_files(env.modules_sources,"data/voxel_light.cpp")
+    "register_types.cpp",
 
-env.add_source_files(env.modules_sources,"meshers/voxel_mesher.cpp")
-env.add_source_files(env.modules_sources,"meshers/transvoxel_cell_data.cpp")
-env.add_source_files(env.modules_sources,"meshers/voxel_mesher_transvoxel.cpp")
-env.add_source_files(env.modules_sources,"meshers/transvoxel_tables.cpp")
+    "containers/voxelman_queue.cpp",
+    "containers/voxelman_unbounded_queue.cpp",
 
-env.add_source_files(env.modules_sources,"world/voxel_world.cpp")
-env.add_source_files(env.modules_sources,"world/voxel_chunk.cpp")
-env.add_source_files(env.modules_sources,"world/voxel_structure.cpp")
-env.add_source_files(env.modules_sources,"world/environment_data.cpp")
-env.add_source_files(env.modules_sources,"world/voxel_chunk_prop_data.cpp")
+    "library/voxelman_library.cpp",
+    "library/voxelman_library_simple.cpp",
+    "library/voxelman_library_merger.cpp",
 
-env.add_source_files(env.modules_sources,"meshers/cubic_mesher/voxel_mesher_cubic.cpp")
-env.add_source_files(env.modules_sources,"meshers/cubic_mesher/voxel_cube_points.cpp")
+    "library/voxel_surface.cpp",
+    "library/voxel_surface_simple.cpp",
+    "library/voxel_surface_merger.cpp",
 
-env.add_source_files(env.modules_sources,"props/prop_data.cpp")
-env.add_source_files(env.modules_sources,"props/prop_data_entry.cpp")
-env.add_source_files(env.modules_sources,"props/prop_data_scene.cpp")
-env.add_source_files(env.modules_sources,"props/prop_data_mesh.cpp")
-env.add_source_files(env.modules_sources,"props/prop_data_light.cpp")
-env.add_source_files(env.modules_sources,"props/prop_data_prop.cpp")
-env.add_source_files(env.modules_sources,"props/prop_data_entity.cpp")
+    "data/voxel_light.cpp",
 
-env.add_source_files(env.modules_sources,"level_generator/voxelman_level_generator.cpp")
+    "meshers/voxel_mesher.cpp",
+    "meshers/transvoxel_cell_data.cpp",
+    "meshers/voxel_mesher_transvoxel.cpp",
+    "meshers/transvoxel_tables.cpp",
 
-env.add_source_files(env.modules_sources,"areas/world_area.cpp")
+    "world/voxel_world.cpp",
+    "world/voxel_chunk.cpp",
+    "world/voxel_structure.cpp",
+    "world/environment_data.cpp",
+    "world/voxel_chunk_prop_data.cpp",
 
-env.add_source_files(env.modules_sources,"clutter/ground_clutter.cpp")
-env.add_source_files(env.modules_sources,"clutter/ground_clutter_foliage.cpp")
+    "meshers/cubic_mesher/voxel_mesher_cubic.cpp",
+    "meshers/cubic_mesher/voxel_cube_points.cpp",
 
-env.add_source_files(env.modules_sources,"register_types.cpp")
+    "props/prop_data.cpp",
+    "props/prop_data_entry.cpp",
+    "props/prop_data_scene.cpp",
+    "props/prop_data_mesh.cpp",
+    "props/prop_data_light.cpp",
+    "props/prop_data_prop.cpp",
+    "props/prop_data_entity.cpp",
+
+    "level_generator/voxelman_level_generator.cpp",
+
+    "areas/world_area.cpp",
+
+    "clutter/ground_clutter.cpp",
+    "clutter/ground_clutter_foliage.cpp",
+]
+
+
+if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
+    # Shared lib compilation
+    module_env.Append(CCFLAGS=['-fPIC'])
+    module_env['LIBS'] = []
+    shared_lib = module_env.SharedLibrary(target='#bin/voxelman', source=sources)
+    shared_lib_shim = shared_lib[0].name.rsplit('.', 1)[0]
+    env.Append(LIBS=[shared_lib_shim])
+    env.Append(LIBPATH=['#bin'])
+else:
+    # Static compilation
+    module_env.add_source_files(env.modules_sources, sources)
+
