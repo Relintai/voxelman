@@ -8,10 +8,8 @@ void PropDataEntry::set_transform(const Transform value) {
 }
 
 PropDataEntry::PropDataEntry() {
-
 }
 PropDataEntry::~PropDataEntry() {
-
 }
 
 void PropDataEntry::_bind_methods() {

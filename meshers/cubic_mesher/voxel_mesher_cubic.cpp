@@ -1,6 +1,5 @@
 #include "voxel_mesher_cubic.h"
 
-
 void VoxelMesherCubic::_add_buffer(Node *p_chunk) {
 	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
 
@@ -85,7 +84,6 @@ void VoxelMesherCubic::_add_buffer(Node *p_chunk) {
 }
 
 VoxelMesherCubic::VoxelMesherCubic() {
-	
 }
 
 VoxelMesherCubic::~VoxelMesherCubic() {

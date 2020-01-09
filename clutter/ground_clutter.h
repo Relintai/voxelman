@@ -3,8 +3,8 @@
 
 #include "core/resource.h"
 
-#include "../meshers/voxel_mesher.h"
 #include "../../texture_packer/texture_packer.h"
+#include "../meshers/voxel_mesher.h"
 
 class VoxelChunk;
 class VoxelMesher;

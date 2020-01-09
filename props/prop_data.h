@@ -1,12 +1,12 @@
 #ifndef PROP_DATA_H
 #define PROP_DATA_H
 
-#include "core/reference.h"
-#include "core/vector.h"
+#include "core/math/rect2.h"
 #include "core/math/transform.h"
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
-#include "core/math/rect2.h"
+#include "core/reference.h"
+#include "core/vector.h"
 
 #include "servers/physics_server.h"
 
@@ -39,8 +39,8 @@ public:
 
 	Vector<Variant> get_props();
 	void set_props(const Vector<Variant> &props);
-    
-    void add_textures_into(Ref<TexturePacker> texture_packer);
+
+	void add_textures_into(Ref<TexturePacker> texture_packer);
 	void add_prop_lights_into(VoxelChunk *chunk, Transform parent_transform, bool allow_snap);
 	void add_prop_lights_into_bind(Node *chunk, Transform parent_transform, bool allow_snap);
 	void add_meshes_into(Ref<VoxelMesher> mesher, Ref<TexturePacker> texture_packer, Transform parent_transform, Spatial *snap_spatial = NULL);

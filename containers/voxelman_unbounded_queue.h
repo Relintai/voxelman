@@ -8,56 +8,56 @@
 #include "core/os/rw_lock.h"
 #include "core/variant.h"
 
-template<class T>
+template <class T>
 struct UBQueueNode {
-    T data;
-    UBQueueNode *next;
+	T data;
+	UBQueueNode *next;
 
-    UBQueueNode() {
-        next = NULL;
-    }
+	UBQueueNode() {
+		next = NULL;
+	}
 
-    UBQueueNode(T value) {
-        data = value;
-        next = NULL;
-    }
+	UBQueueNode(T value) {
+		data = value;
+		next = NULL;
+	}
 };
 
-template<class T>
+template <class T>
 class VMUBQueue {
 
 public:
-    void enqueue(T obj);
-    T dequeue();
-    T peek();
+	void enqueue(T obj);
+	T dequeue();
+	T peek();
 
-    VMUBQueue();
-    ~VMUBQueue();
+	VMUBQueue();
+	~VMUBQueue();
 
 private:
-    RWLock *_enqueue_lock;
-    RWLock *_dequeue_lock;
+	RWLock *_enqueue_lock;
+	RWLock *_dequeue_lock;
 
-    UBQueueNode<T> *_head;
-    UBQueueNode<T> *_tail;
+	UBQueueNode<T> *_head;
+	UBQueueNode<T> *_tail;
 };
 
 class VoxelmanUnboundedQueue : public Reference {
-    GDCLASS(VoxelmanUnboundedQueue, Reference);
+	GDCLASS(VoxelmanUnboundedQueue, Reference);
 
 public:
-    void enqueue(Variant obj);
-    Variant dequeue();
-    Variant peek();
+	void enqueue(Variant obj);
+	Variant dequeue();
+	Variant peek();
 
-    VoxelmanUnboundedQueue();
-    ~VoxelmanUnboundedQueue();
+	VoxelmanUnboundedQueue();
+	~VoxelmanUnboundedQueue();
 
 protected:
-    static void _bind_methods();
+	static void _bind_methods();
 
 private:
-    VMUBQueue<Variant> _queue;
+	VMUBQueue<Variant> _queue;
 };
 
 #endif

@@ -3,9 +3,9 @@
 
 #include "core/reference.h"
 #include "core/vector.h"
+#include "scene/resources/material.h"
 #include "scene/resources/mesh.h"
 #include "scene/resources/surface_tool.h"
-#include "scene/resources/material.h"
 
 class VoxelMeshData : public Reference {
 	GDCLASS(VoxelMeshData, Reference)

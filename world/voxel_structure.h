@@ -19,7 +19,6 @@ public:
 	int get_chunk_size_z() const;
 	void set_chunk_size_z(const int value);
 
-
 	int get_world_position_x() const;
 	void set_world_position_x(const int value);
 
@@ -47,7 +46,7 @@ public:
 
 	VoxelStructure();
 	~VoxelStructure();
-    
+
 protected:
 	static void _bind_methods();
 
@@ -74,8 +73,8 @@ private:
 	int _world_position_y;
 	int _world_position_z;
 
-	HashMap<IntPos, VoxelChunk*, IntPosHasher> _chunks;
-	Vector<VoxelChunk*> _chunks_vector;
+	HashMap<IntPos, VoxelChunk *, IntPosHasher> _chunks;
+	Vector<VoxelChunk *> _chunks_vector;
 };
 
 #endif

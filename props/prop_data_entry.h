@@ -1,14 +1,13 @@
 #ifndef PROP_DATA_DATA_H
 #define PROP_DATA_DATA_H
 
-#include "core/resource.h"
 #include "core/math/transform.h"
+#include "core/resource.h"
 
 class PropDataEntry : public Resource {
 	GDCLASS(PropDataEntry, Resource);
-	
-public:
 
+public:
 	Transform get_transform() const;
 	void set_transform(const Transform value);
 
@@ -19,7 +18,6 @@ protected:
 	static void _bind_methods();
 
 private:
-
 	Transform _transform;
 };
 

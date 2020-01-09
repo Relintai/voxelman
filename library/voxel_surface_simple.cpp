@@ -57,7 +57,7 @@ VoxelSurfaceSimple::~VoxelSurfaceSimple() {
 void VoxelSurfaceSimple::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_atlas_x", "side"), &VoxelSurfaceSimple::get_atlas_x);
 	ClassDB::bind_method(D_METHOD("set_atlas_x", "side", "value"), &VoxelSurfaceSimple::set_atlas_x);
-	
+
 	ClassDB::bind_method(D_METHOD("get_atlas_y", "side"), &VoxelSurfaceSimple::get_atlas_y);
 	ClassDB::bind_method(D_METHOD("set_atlas_y", "side", "value"), &VoxelSurfaceSimple::set_atlas_y);
 

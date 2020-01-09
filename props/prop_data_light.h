@@ -7,7 +7,7 @@
 
 class PropDataLight : public PropDataEntry {
 	GDCLASS(PropDataLight, PropDataEntry);
-	
+
 public:
 	Color get_light_color() const;
 	void set_light_color(const Color value);

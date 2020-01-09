@@ -88,7 +88,7 @@ void PropData::add_prop_lights_into(VoxelChunk *chunk, Transform parent_transfor
 			Transform t = parent_transform * pl->get_transform();
 
 			Vector3 px = t.origin / chunk->get_voxel_scale();
-			
+
 			Ref<VoxelLight> vl;
 			vl.instance();
 			vl->set_world_position(px.x + chunk->get_position_x() * chunk->get_size_x(), px.y + chunk->get_position_y() * chunk->get_size_y(), px.z + chunk->get_position_z() * chunk->get_size_z());
@@ -166,7 +166,6 @@ void PropData::add_meshes_into(Ref<VoxelMesher> mesher, Ref<TexturePacker> textu
 			else
 				pdataprop->get_prop()->add_meshes_into(mesher, texture_packer, parent_transform * pmesh->get_transform(), snap_spatial);
 		}
-
 	}
 }
 void PropData::add_meshes_into_bind(Ref<VoxelMesher> mesher, Ref<TexturePacker> texture_packer, Transform parent_transform, Node *snap_spatial) {

@@ -1,18 +1,18 @@
 #ifndef VOXEL_CHUNK_PROP_DATA_H
 #define VOXEL_CHUNK_PROP_DATA_H
 
-#include "core/reference.h"
 #include "core/math/vector3.h"
+#include "core/reference.h"
 
-#include "scene/resources/texture.h"
-#include "scene/resources/packed_scene.h"
+#include "../../mesh_data_resource/mesh_data_resource.h"
 #include "../props/prop_data.h"
 #include "../props/prop_data_light.h"
-#include "../../mesh_data_resource/mesh_data_resource.h"
+#include "scene/resources/packed_scene.h"
+#include "scene/resources/texture.h"
 
 class VoxelChunkPropData : public Reference {
 	GDCLASS(VoxelChunkPropData, Reference);
-	
+
 public:
 	int get_x();
 	void set_x(int value);

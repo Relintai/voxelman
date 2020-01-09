@@ -317,7 +317,6 @@ void VoxelCubePoints::refresh_neighbours(VoxelChunk *chunk) {
 
 	_point_neighbours[P001] = neighbours;
 
-
 	neighbours = 0;
 	x = _x + 1;
 	y = _y;
@@ -375,7 +374,6 @@ void VoxelCubePoints::refresh_neighbours(VoxelChunk *chunk) {
 		neighbours = neighbours | VOXEL_NEIGHBOUR_TOP_LEFT_BACK;*/
 
 	_point_neighbours[P011] = neighbours;
-
 
 	neighbours = 0;
 	x = _x + 1;
@@ -444,7 +442,7 @@ void VoxelCubePoints::setup(VoxelChunk *chunk, int x, int y, int z, int size) {
 	_point_fills[P101] = chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL);
 	_point_fills[P111] = chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL);
 
-    _point_aos[P000] = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_AO);
+	_point_aos[P000] = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_AO);
 	_point_aos[P100] = chunk->get_voxel(x + size, y, z, VoxelChunk::DEFAULT_CHANNEL_AO);
 	_point_aos[P010] = chunk->get_voxel(x, y + size, z, VoxelChunk::DEFAULT_CHANNEL_AO);
 	_point_aos[P001] = chunk->get_voxel(x, y, z + size, VoxelChunk::DEFAULT_CHANNEL_AO);
@@ -461,12 +459,11 @@ void VoxelCubePoints::setup(VoxelChunk *chunk, int x, int y, int z, int size) {
 	_point_colors[P011] = Color(chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0, chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0, chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 	_point_colors[P101] = Color(chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0, chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0, chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 	_point_colors[P111] = Color(chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0, chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0, chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
-    
+
 	refresh_neighbours(chunk);
 
 	refresh_points();
 }
-
 
 void VoxelCubePoints::reset() {
 	for (int i = 0; i < POINT_COUNT; ++i) {
@@ -557,7 +554,6 @@ Vector3 VoxelCubePoints::get_vertex_vector3_for_point(int face, int index) {
 	vector.z -= num2;
 	vector /= num;
 
-
 	return vector;
 }
 
@@ -580,19 +576,19 @@ int VoxelCubePoints::get_point_neighbours(int index) {
 }
 
 int VoxelCubePoints::get_point_ao(int index) {
-    ERR_FAIL_INDEX_V(index, POINT_COUNT, 0);
-    
-    return _point_aos[index];
+	ERR_FAIL_INDEX_V(index, POINT_COUNT, 0);
+
+	return _point_aos[index];
 }
 
 int VoxelCubePoints::get_face_point_ao(int face, int index) {
-    int indx = get_point_index(face, index);
+	int indx = get_point_index(face, index);
 
 	return _point_aos[indx];
 }
 
 Color VoxelCubePoints::get_face_point_ao_color(int face, int index) {
-    int indx = get_point_index(face, index);
+	int indx = get_point_index(face, index);
 
 	float ao_value = (_point_aos[indx] / 255.0) * 0.75;
 
@@ -744,7 +740,6 @@ VoxelCubePoints::VoxelCubePoints() {
 VoxelCubePoints::~VoxelCubePoints() {
 }
 
-
 void VoxelCubePoints::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_x"), &VoxelCubePoints::get_x);
@@ -783,9 +778,9 @@ void VoxelCubePoints::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_point_type", "index"), &VoxelCubePoints::get_point_type);
 	ClassDB::bind_method(D_METHOD("get_point_fill", "index"), &VoxelCubePoints::get_point_fill);
 	ClassDB::bind_method(D_METHOD("get_point_neighbours", "index"), &VoxelCubePoints::get_point_neighbours);
-    
-    ClassDB::bind_method(D_METHOD("get_point_ao", "index"), &VoxelCubePoints::get_point_ao);
-    ClassDB::bind_method(D_METHOD("get_face_point_ao", "face", "index"), &VoxelCubePoints::get_face_point_ao);
+
+	ClassDB::bind_method(D_METHOD("get_point_ao", "index"), &VoxelCubePoints::get_point_ao);
+	ClassDB::bind_method(D_METHOD("get_face_point_ao", "face", "index"), &VoxelCubePoints::get_face_point_ao);
 	ClassDB::bind_method(D_METHOD("get_face_point_ao_color", "face", "index"), &VoxelCubePoints::get_face_point_ao_color);
 	ClassDB::bind_method(D_METHOD("get_face_point_light_color", "face", "index"), &VoxelCubePoints::get_face_point_light_color);
 	ClassDB::bind_method(D_METHOD("get_face_point_color_mixed", "face", "index"), &VoxelCubePoints::get_face_point_color_mixed);

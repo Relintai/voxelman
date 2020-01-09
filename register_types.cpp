@@ -4,34 +4,34 @@
 #include "containers/voxelman_unbounded_queue.h"
 
 #include "library/voxel_surface.h"
-#include "library/voxel_surface_simple.h"
 #include "library/voxel_surface_merger.h"
+#include "library/voxel_surface_simple.h"
 
 #include "library/voxelman_library.h"
-#include "library/voxelman_library_simple.h"
 #include "library/voxelman_library_merger.h"
+#include "library/voxelman_library_simple.h"
 
 #include "data/voxel_light.h"
-#include "meshers/voxel_mesher.h"
 #include "meshers/transvoxel_cell_data.h"
+#include "meshers/voxel_mesher.h"
 #include "meshers/voxel_mesher_transvoxel.h"
 
-#include "world/voxel_world.h"
-#include "world/voxel_chunk.h"
-#include "world/voxel_structure.h"
 #include "world/environment_data.h"
+#include "world/voxel_chunk.h"
 #include "world/voxel_chunk_prop_data.h"
+#include "world/voxel_structure.h"
+#include "world/voxel_world.h"
 
-#include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 #include "meshers/cubic_mesher/voxel_cube_points.h"
+#include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 
 #include "props/prop_data.h"
-#include "props/prop_data_entry.h"
-#include "props/prop_data_scene.h"
-#include "props/prop_data_mesh.h"
-#include "props/prop_data_light.h"
-#include "props/prop_data_prop.h"
 #include "props/prop_data_entity.h"
+#include "props/prop_data_entry.h"
+#include "props/prop_data_light.h"
+#include "props/prop_data_mesh.h"
+#include "props/prop_data_prop.h"
+#include "props/prop_data_scene.h"
 
 #include "level_generator/voxelman_level_generator.h"
 
@@ -40,9 +40,8 @@
 #include "clutter/ground_clutter.h"
 #include "clutter/ground_clutter_foliage.h"
 
-
 void register_voxelman_types() {
-	ClassDB::register_class<VoxelmanQueue>();\
+	ClassDB::register_class<VoxelmanQueue>();
 	ClassDB::register_class<VoxelmanUnboundedQueue>();
 
 	ClassDB::register_class<VoxelMesher>();
@@ -58,15 +57,15 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelmanLibraryMerger>();
 
 	ClassDB::register_class<VoxelLight>();
-    
-    ClassDB::register_class<VoxelWorld>();
-    ClassDB::register_class<VoxelChunk>();
+
+	ClassDB::register_class<VoxelWorld>();
+	ClassDB::register_class<VoxelChunk>();
 	ClassDB::register_class<VoxelStructure>();
 	ClassDB::register_class<EnvironmentData>();
 	ClassDB::register_class<VoxelChunkPropData>();
 
-    ClassDB::register_class<VoxelMesherCubic>();
-    ClassDB::register_class<VoxelCubePoints>();
+	ClassDB::register_class<VoxelMesherCubic>();
+	ClassDB::register_class<VoxelCubePoints>();
 
 	ClassDB::register_class<PropData>();
 	ClassDB::register_class<PropDataEntry>();
@@ -75,15 +74,13 @@ void register_voxelman_types() {
 	ClassDB::register_class<PropDataLight>();
 	ClassDB::register_class<PropDataProp>();
 	ClassDB::register_class<PropDataEntity>();
-    
-    ClassDB::register_class<VoxelmanLevelGenerator>();
+
+	ClassDB::register_class<VoxelmanLevelGenerator>();
 
 	ClassDB::register_class<WorldArea>();
 
 	ClassDB::register_class<GroundClutterFoliage>();
-}	
-
-void unregister_voxelman_types() {
-
 }
 
+void unregister_voxelman_types() {
+}

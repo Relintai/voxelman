@@ -5,7 +5,7 @@
 
 class PropDataEntity : public PropDataEntry {
 	GDCLASS(PropDataEntity, PropDataEntry);
-	
+
 public:
 	int get_entity_data_id() const;
 	void set_entity_data_id(const int value);

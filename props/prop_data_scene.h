@@ -1,14 +1,14 @@
 #ifndef PROP_DATA_SCENE_H
 #define PROP_DATA_SCENE_H
 
-#include "prop_data_entry.h"
 #include "core/math/vector3.h"
+#include "prop_data_entry.h"
 
 #include "scene/resources/packed_scene.h"
 
 class PropDataScene : public PropDataEntry {
 	GDCLASS(PropDataScene, PropDataEntry);
-	
+
 public:
 	Ref<PackedScene> get_scene() const;
 	void set_scene(const Ref<PackedScene> value);

@@ -12,15 +12,15 @@ class TransvoxelCellData : public Reference {
 
 public:
 	int get_vertex_index(int index) const;
-    void set_vertex_index(int index, int value);
+	void set_vertex_index(int index, int value);
 	int get_vertex_count() const;
-    void set_vertex_count(int value);
+	void set_vertex_count(int value);
 	int get_triangle_count() const;
-    void set_triangle_count(int value);
+	void set_triangle_count(int value);
 
 	TransvoxelCellData();
 	TransvoxelCellData(const RegularCellData &cell_data);
-    TransvoxelCellData(const TransitionCellData &cell_data);
+	TransvoxelCellData(const TransitionCellData &cell_data);
 	~TransvoxelCellData();
 
 protected:

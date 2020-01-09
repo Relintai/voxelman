@@ -1,14 +1,14 @@
 #ifndef PROP_DATA_PROP_H
 #define PROP_DATA_PROP_H
 
-#include "prop_data_entry.h"
 #include "core/math/vector3.h"
+#include "prop_data_entry.h"
 
 #include "prop_data.h"
 
 class PropDataProp : public PropDataEntry {
 	GDCLASS(PropDataProp, PropDataEntry);
-	
+
 public:
 	Ref<PropData> get_prop() const;
 	void set_prop(const Ref<PropData> value);

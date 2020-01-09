@@ -3,8 +3,8 @@
 
 #include "core/reference.h"
 
-#include "core/ustring.h"
 #include "core/math/aabb.h"
+#include "core/ustring.h"
 #include "scene/resources/texture.h"
 
 class WorldArea : public Reference {

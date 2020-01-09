@@ -4,17 +4,17 @@
 #include "scene/3d/spatial.h"
 
 #include "core/engine.h"
-#include "core/ustring.h"
 #include "core/os/thread.h"
 #include "core/os/thread_safe.h"
+#include "core/ustring.h"
 
-#include "scene/3d/mesh_instance.h"
-#include "scene/resources/packed_scene.h"
 #include "core/array.h"
 #include "scene/3d/collision_shape.h"
+#include "scene/3d/mesh_instance.h"
 #include "scene/3d/physics_body.h"
-#include "scene/resources/concave_polygon_shape.h"
 #include "scene/3d/spatial.h"
+#include "scene/resources/concave_polygon_shape.h"
+#include "scene/resources/packed_scene.h"
 
 #include "voxel_world.h"
 
@@ -29,9 +29,9 @@
 #include "../../mesh_data_resource/mesh_data_resource.h"
 #include "../props/prop_data.h"
 #include "../props/prop_data_entry.h"
-#include "../props/prop_data_scene.h"
-#include "../props/prop_data_mesh.h"
 #include "../props/prop_data_light.h"
+#include "../props/prop_data_mesh.h"
+#include "../props/prop_data_scene.h"
 #include "voxel_chunk_prop_data.h"
 
 class VoxelWorld;
@@ -72,7 +72,7 @@ public:
 		DEFAULT_CHANNEL_LIGHT_COLOR_R,
 		DEFAULT_CHANNEL_LIGHT_COLOR_G,
 		DEFAULT_CHANNEL_LIGHT_COLOR_B,
-        DEFAULT_CHANNEL_AO,
+		DEFAULT_CHANNEL_AO,
 		DEFAULT_CHANNEL_RANDOM_AO,
 		DEFAULT_CHANNEL_LIQUID_TYPES,
 		DEFAULT_CHANNEL_LIQUID_FILL,
@@ -177,11 +177,11 @@ public:
 
 	uint32_t get_data_index(uint32_t x, uint32_t y, uint32_t z) const;
 	uint32_t get_data_size() const;
-	
+
 	//Data Management functions
 	void generate_ao();
 
-    void add_light(int local_x, int local_y, int local_z, int size, Color color);
+	void add_light(int local_x, int local_y, int local_z, int size, Color color);
 	void clear_baked_lights();
 
 	//Meshing
@@ -195,7 +195,7 @@ public:
 	void build_phase();
 	void _build_phase(int phase);
 	void next_phase();
-	
+
 	void clear();
 
 	//Colliders
@@ -211,13 +211,13 @@ public:
 	void clear_voxel_lights();
 
 	void add_lights_into(Array target);
-    void add_unique_lights_into(Array target);
-    Array get_lights();
+	void add_unique_lights_into(Array target);
+	Array get_lights();
 
-    void bake_lights();
+	void bake_lights();
 	void bake_light(Ref<VoxelLight> light);
-    
-    void add_prop_light(Ref<VoxelLight> light);
+
+	void add_prop_light(Ref<VoxelLight> light);
 
 	//props
 	void add_prop(Ref<VoxelChunkPropData> prop);
@@ -226,20 +226,20 @@ public:
 	void remove_prop(int index);
 	void clear_props();
 
-    void process_props();
-    
+	void process_props();
+
 	void build_prop_meshes();
 	void build_prop_collider();
-    void free_spawn_props();
+	void free_spawn_props();
 
 	//Meshes
-    void allocate_main_mesh();
+	void allocate_main_mesh();
 	void free_main_mesh();
-    
+
 	void allocate_prop_mesh();
 	void free_prop_mesh();
-    
-    void allocate_prop_colliders();
+
+	void allocate_prop_colliders();
 	void free_prop_colliders();
 
 	void allocate_liquid_mesh();

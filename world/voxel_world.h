@@ -1,13 +1,13 @@
 #ifndef VOXEL_WORLD_H
 #define VOXEL_WORLD_H
 
-#include "scene/3d/navigation.h"
-#include "core/hash_map.h"
 #include "core/engine.h"
+#include "core/hash_map.h"
+#include "scene/3d/navigation.h"
 
-#include "../library/voxelman_library.h"
-#include "../level_generator/voxelman_level_generator.h"
 #include "../areas/world_area.h"
+#include "../level_generator/voxelman_level_generator.h"
+#include "../library/voxelman_library.h"
 
 #include "core/os/os.h"
 
@@ -17,29 +17,29 @@ class VoxelWorld : public Navigation {
 	GDCLASS(VoxelWorld, Navigation);
 
 public:
-    int get_chunk_size_x() const;
-    void set_chunk_size_x(const int value);
-    
-    int get_chunk_size_y() const;
-    void set_chunk_size_y(const int value);
-    
-    int get_chunk_size_z() const;
-    void set_chunk_size_z(const int value);
+	int get_chunk_size_x() const;
+	void set_chunk_size_x(const int value);
 
-    int get_current_seed() const;
-    void set_current_seed(const int value);
+	int get_chunk_size_y() const;
+	void set_chunk_size_y(const int value);
+
+	int get_chunk_size_z() const;
+	void set_chunk_size_z(const int value);
+
+	int get_current_seed() const;
+	void set_current_seed(const int value);
 
 	bool get_use_threads();
 	void set_use_threads(bool value);
 
 	uint32_t get_max_concurrent_generations();
 	void set_max_concurrent_generations(uint32_t value);
-    
-    Ref<VoxelmanLibrary> get_library() const;
-    void set_library(const Ref<VoxelmanLibrary> library);
-    
-    Ref<VoxelmanLevelGenerator> get_level_generator() const;
-    void set_level_generator(const Ref<VoxelmanLevelGenerator> level_generator);
+
+	Ref<VoxelmanLibrary> get_library() const;
+	void set_library(const Ref<VoxelmanLibrary> library);
+
+	Ref<VoxelmanLevelGenerator> get_level_generator() const;
+	void set_level_generator(const Ref<VoxelmanLevelGenerator> level_generator);
 
 	float get_voxel_scale() const;
 	void set_voxel_scale(const float value);
@@ -49,8 +49,8 @@ public:
 
 	NodePath get_player_path();
 	void set_player_path(NodePath player_path);
-    
-    Spatial *get_player() const;
+
+	Spatial *get_player() const;
 	void set_player(Spatial *player);
 	void set_player_bind(Node *player);
 
@@ -124,18 +124,18 @@ public:
 	};
 
 private:
-    int _chunk_size_x;
+	int _chunk_size_x;
 	int _chunk_size_y;
 	int _chunk_size_z;
 	int _current_seed;
-	
-    Ref<VoxelmanLibrary> _library;
-    Ref<VoxelmanLevelGenerator> _level_generator;
+
+	Ref<VoxelmanLibrary> _library;
+	Ref<VoxelmanLevelGenerator> _level_generator;
 	float _voxel_scale;
 	int _chunk_spawn_range;
-    
-	HashMap<IntPos, VoxelChunk *, IntPosHasher> _chunks; 
-    Vector<VoxelChunk *> _chunks_vector;
+
+	HashMap<IntPos, VoxelChunk *, IntPosHasher> _chunks;
+	Vector<VoxelChunk *> _chunks_vector;
 
 	Vector<Ref<WorldArea> > _world_areas;
 

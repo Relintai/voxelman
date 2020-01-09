@@ -83,11 +83,11 @@ void VoxelChunk::set_position(int x, int y, int z) {
 	_position_z = z;
 }
 
-_FORCE_INLINE_ int VoxelChunk::get_margin_start() const { 
-	return _margin_start; 
+_FORCE_INLINE_ int VoxelChunk::get_margin_start() const {
+	return _margin_start;
 }
 _FORCE_INLINE_ int VoxelChunk::get_margin_end() const {
-	 return _margin_end; 
+	return _margin_end;
 }
 
 Ref<VoxelmanLibrary> VoxelChunk::get_library() {
@@ -216,7 +216,7 @@ void VoxelChunk::set_size(int size_x, int size_y, int size_z, int margin_start, 
 	}
 
 	for (int i = 0; i < _channels.size(); ++i) {
-		uint8_t * ch = _channels[i];
+		uint8_t *ch = _channels[i];
 
 		if (ch != NULL) {
 			memdelete_arr(ch);
@@ -245,7 +245,7 @@ uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) const {
 	ERR_FAIL_INDEX_V(channel_index, _channels.size(), 0);
 	ERR_FAIL_COND_V(!validate_channel_data_position(x, y, z), 0);
 
-	uint8_t * ch = _channels.get(channel_index);
+	uint8_t *ch = _channels.get(channel_index);
 
 	if (!ch)
 		return 0;
@@ -267,7 +267,7 @@ void VoxelChunk::set_channel_count(int count) {
 
 	if (_channels.size() >= count) {
 		for (int i = count; i < _channels.size(); ++i) {
-			uint8_t * ch = _channels[i];
+			uint8_t *ch = _channels[i];
 
 			if (ch != NULL) {
 				memdelete_arr(ch);
@@ -287,12 +287,12 @@ void VoxelChunk::set_channel_count(int count) {
 }
 void VoxelChunk::allocate_channel(int channel_index, uint8_t default_value) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
-	
+
 	if (_channels[channel_index] != NULL)
 		return;
 
 	uint32_t size = _data_size_x * _data_size_y * _data_size_z;
-	
+
 	uint8_t *ch = memnew_arr(uint8_t, size);
 	memset(ch, default_value, size);
 
@@ -309,7 +309,7 @@ void VoxelChunk::fill_channel(uint8_t value, int channel_index) {
 	}
 
 	uint32_t size = get_data_size();
-	
+
 	for (int i = 0; i < size; ++i) {
 		ch[i] = value;
 	}
@@ -321,7 +321,7 @@ void VoxelChunk::dealloc_channel(int channel_index) {
 
 	if (ch != NULL) {
 		memdelete_arr(ch);
-		
+
 		_channels.set(channel_index, NULL);
 	}
 }
@@ -576,13 +576,13 @@ void VoxelChunk::_build_phase(int phase) {
 
 			if (_clutter_mesh_instance_rid != RID())
 				VS::get_singleton()->instance_set_visible(_clutter_mesh_instance_rid, is_visible());
-			
+
 			next_phase();
 
 			return;
 		}
 	}
-	
+
 	next_phase();
 }
 
@@ -841,7 +841,6 @@ void VoxelChunk::allocate_prop_mesh() {
 
 	VS::get_singleton()->instance_set_transform(_prop_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 }
-
 
 void VoxelChunk::free_prop_mesh() {
 	if (_prop_mesh_instance_rid != RID()) {
@@ -1117,7 +1116,7 @@ VoxelChunk::~VoxelChunk() {
 	_props.clear();
 
 	for (int i = 0; i < _channels.size(); ++i) {
-		uint8_t * ch = _channels[i];
+		uint8_t *ch = _channels[i];
 
 		if (ch != NULL) {
 			memdelete_arr(ch);
@@ -1186,7 +1185,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_size_z"), &VoxelChunk::get_size_z);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_z"), "", "get_size_z");
 
-
 	ClassDB::bind_method(D_METHOD("get_data_size_x"), &VoxelChunk::get_data_size_x);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_x"), "", "get_data_size_x");
 
@@ -1196,14 +1194,12 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_data_size_z"), &VoxelChunk::get_data_size_z);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_z"), "", "get_data_size_z");
 
-
 	ClassDB::bind_method(D_METHOD("get_position"), &VoxelChunk::get_position);
 	ClassDB::bind_method(D_METHOD("get_size"), &VoxelChunk::get_size);
 	ClassDB::bind_method(D_METHOD("set_position", "x", "y", "z"), &VoxelChunk::set_position);
 
 	ClassDB::bind_method(D_METHOD("get_margin_start"), &VoxelChunk::get_margin_start);
 	ClassDB::bind_method(D_METHOD("get_margin_end"), &VoxelChunk::get_margin_end);
-
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelChunk::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelChunk::set_library);
@@ -1385,5 +1381,4 @@ void VoxelChunk::_bind_methods() {
 	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIQUID_FILL);
 	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIQUID_FLOW);
 	BIND_ENUM_CONSTANT(MAX_DEFAULT_CHANNELS);
-
 }

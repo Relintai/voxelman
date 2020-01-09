@@ -45,7 +45,7 @@ void VoxelStructure::set_world_position_z(const int value) {
 VoxelChunk *VoxelStructure::get_chunk_voxel_pos(int x, int y, int z) {
 
 	VoxelChunk *b = get_chunk(x / _chunk_size_x, y / _chunk_size_y, z / _chunk_size_z);
-/*
+	/*
 	if (!b.is_valid()) {
 		b.instance();
 
@@ -71,7 +71,6 @@ void VoxelStructure::set_voxel(int value, int x, int y, int z, unsigned int chan
 }
 
 void add_chunk_bind(Node *chunk, const int x, const int y, const int z) {
-
 }
 void VoxelStructure::add_chunk(VoxelChunk *chunk, const int x, const int y, const int z) {
 	//_chunks.set(Vector3i(x, y, z), chunk);

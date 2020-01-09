@@ -1,11 +1,11 @@
 #ifndef ENVIRONMENT_DATA_H
 #define ENVIRONMENT_DATA_H
 
-#include "core/resource.h"
 #include "core/color.h"
-#include "scene/main/node.h"
-#include "scene/3d/world_environment.h"
+#include "core/resource.h"
 #include "scene/3d/light.h"
+#include "scene/3d/world_environment.h"
+#include "scene/main/node.h"
 
 class EnvironmentData : public Resource {
 	GDCLASS(EnvironmentData, Resource);

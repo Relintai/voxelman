@@ -2,8 +2,8 @@
 #define VOXEL_MESHER_CUBIC_H
 
 #include "core/color.h"
-#include "core/math/vector3.h"
 #include "core/math/vector2.h"
+#include "core/math/vector3.h"
 
 #include "../voxel_mesher.h"
 
@@ -14,13 +14,12 @@ class VoxelMesherCubic : public VoxelMesher {
 
 public:
 	void _add_buffer(Node *p_chunk);
-	
+
 	VoxelMesherCubic();
 	~VoxelMesherCubic();
 
 protected:
 	static void _bind_methods();
-
 };
 
 #endif

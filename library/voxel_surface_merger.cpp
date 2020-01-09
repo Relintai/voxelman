@@ -36,7 +36,7 @@ void VoxelSurfaceMerger::refresh_rects() {
 		}
 
 		Rect2 region = at->get_region();
-		float w = tex->get_width(); 
+		float w = tex->get_width();
 		float h = tex->get_height();
 
 		Rect2 r;
@@ -72,5 +72,4 @@ void VoxelSurfaceMerger::_bind_methods() {
 	ADD_PROPERTYI(PropertyInfo(Variant::OBJECT, "texture_top", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture", VOXEL_SIDE_TOP);
 	ADD_PROPERTYI(PropertyInfo(Variant::OBJECT, "texture_bottom", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture", VOXEL_SIDE_BOTTOM);
 	ADD_PROPERTYI(PropertyInfo(Variant::OBJECT, "texture_side", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture", VOXEL_SIDE_SIDE);
-
 }

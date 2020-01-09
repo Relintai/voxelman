@@ -1,8 +1,8 @@
 #ifndef PROP_DATA_MESH_H
 #define PROP_DATA_MESH_H
 
-#include "prop_data_entry.h"
 #include "core/math/vector3.h"
+#include "prop_data_entry.h"
 
 #include "scene/resources/texture.h"
 
@@ -10,7 +10,7 @@
 
 class PropDataMesh : public PropDataEntry {
 	GDCLASS(PropDataMesh, PropDataEntry);
-	
+
 public:
 	Ref<MeshDataResource> get_mesh() const;
 	void set_mesh(const Ref<MeshDataResource> mesh);

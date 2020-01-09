@@ -1,6 +1,5 @@
 #include "prop_data_light.h"
 
-
 Color PropDataLight::get_light_color() const {
 	return _light_color;
 }

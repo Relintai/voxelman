@@ -1,6 +1,5 @@
 #include "prop_data_entity.h"
 
-
 int PropDataEntity::get_entity_data_id() const {
 	return _entity_data_id;
 }

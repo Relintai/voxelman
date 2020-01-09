@@ -28,10 +28,10 @@ void WorldArea::set_name(const String value) {
 	_name = value;
 }
 
-int WorldArea::get_level() const { 
-    return _level;
+int WorldArea::get_level() const {
+	return _level;
 }
-void WorldArea::set_level(const int level) { 
+void WorldArea::set_level(const int level) {
 	_level = level;
 }
 
@@ -45,7 +45,7 @@ WorldArea::~WorldArea() {
 void WorldArea::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_aabb"), &WorldArea::get_aabb);
 	ClassDB::bind_method(D_METHOD("set_aabb"), &WorldArea::set_aabb);
-    ADD_PROPERTY(PropertyInfo(Variant::AABB, "aabb"), "set_aabb", "get_aabb");
+	ADD_PROPERTY(PropertyInfo(Variant::AABB, "aabb"), "set_aabb", "get_aabb");
 
 	ClassDB::bind_method(D_METHOD("get_map_texture"), &WorldArea::get_map_texture);
 	ClassDB::bind_method(D_METHOD("set_map_texture"), &WorldArea::set_map_texture);
