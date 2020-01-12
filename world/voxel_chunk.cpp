@@ -103,8 +103,12 @@ int VoxelChunk::get_lod_size() const {
 void VoxelChunk::set_lod_size(const int lod_size) {
 	_lod_size = lod_size;
 
-	if (_mesher.is_valid()) {
-		_mesher->set_lod_size(_lod_size);
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->set_lod_size(_lod_size);
 	}
 }
 
@@ -114,8 +118,12 @@ float VoxelChunk::get_voxel_scale() const {
 void VoxelChunk::set_voxel_scale(float value) {
 	_voxel_scale = value;
 
-	if (_mesher.is_valid()) {
-		_mesher->set_voxel_scale(_voxel_scale);
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->set_voxel_scale(_voxel_scale);
 	}
 }
 
@@ -126,11 +134,33 @@ void VoxelChunk::set_current_build_phase(int value) {
 	_current_build_phase = value;
 }
 
-Ref<VoxelMesher> VoxelChunk::get_mesher() const {
-	return _mesher;
+int VoxelChunk::get_max_build_phase() {
+	return _max_build_phases;
 }
-void VoxelChunk::set_mesher(Ref<VoxelMesher> mesher) {
-	_mesher = mesher;
+void VoxelChunk::set_max_build_phase(int value) {
+	_max_build_phases = value;
+}
+
+Ref<VoxelMesher> VoxelChunk::get_mesher(int index) const {
+	ERR_FAIL_INDEX_V(index, _meshers.size(), Ref<VoxelMesher>());
+
+	return _meshers.get(index);
+}
+void VoxelChunk::set_mesher(int index, Ref<VoxelMesher> mesher) {
+	ERR_FAIL_INDEX(index, _meshers.size());
+
+	_meshers.set(index, mesher);
+}
+void VoxelChunk::remove_mesher(int index) {
+	ERR_FAIL_INDEX(index, _meshers.size());
+
+	_meshers.remove(index);
+}
+void VoxelChunk::add_mesher(Ref<VoxelMesher> mesher) {
+	_meshers.push_back(mesher);
+}
+int VoxelChunk::get_mesher_count() {
+	return _meshers.size();
 }
 
 VoxelWorld *VoxelChunk::get_voxel_world() const {
@@ -446,28 +476,44 @@ void VoxelChunk::clear_baked_lights() {
 	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_B);
 }
 
-void VoxelChunk::create_mesher() {
-	call("_create_mesher");
+void VoxelChunk::create_meshers() {
+	call("_create_meshers");
 
-	ERR_FAIL_COND(!_mesher.is_valid());
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
 
-	_mesher->set_lod_size(get_lod_size());
-	_mesher->set_voxel_scale(get_voxel_scale());
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->set_lod_size(get_lod_size());
+		mesher->set_voxel_scale(get_voxel_scale());
+	}
 }
 
-void VoxelChunk::_create_mesher() {
-	_mesher = Ref<VoxelMesher>(memnew(VoxelMesherCubic()));
+void VoxelChunk::_create_meshers() {
+	add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic())));
 }
 
 void VoxelChunk::finalize_mesh() {
-	_mesher->set_library(_library);
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->set_library(_library);
+	}
 
 	if (_mesh_rid == RID()) {
 		allocate_main_mesh();
 	}
 
-	_mesher->set_material(get_library()->get_material());
-	get_mesher()->build_mesh(_mesh_rid);
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->set_material(get_library()->get_material());
+		mesher->build_mesh(_mesh_rid);
+	}
 }
 
 void VoxelChunk::build() {
@@ -494,13 +540,18 @@ void VoxelChunk::_build_phase(int phase) {
 		case BUILD_PHASE_DONE:
 			return;
 		case BUILD_PHASE_SETUP: {
-			if (!_mesher.is_valid()) {
-				create_mesher();
+			if (_meshers.size() == 0) {
+				create_meshers();
 			}
 
-			_mesher->set_library(_library);
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _meshers.get(i);
 
-			_mesher->reset();
+				ERR_CONTINUE(!mesher.is_valid());
+
+				mesher->set_library(_library);
+				mesher->reset();
+			}
 
 			next_phase();
 
@@ -510,7 +561,13 @@ void VoxelChunk::_build_phase(int phase) {
 			if (has_method("_create_mesh")) {
 				call("_create_mesh");
 			} else {
-				_mesher->add_chunk(this);
+				for (int i = 0; i < _meshers.size(); ++i) {
+					Ref<VoxelMesher> mesher = _meshers.get(i);
+
+					ERR_CONTINUE(!mesher.is_valid());
+
+					mesher->add_chunk(this);
+				}
 			}
 
 			//finalize_mesh();
@@ -529,7 +586,13 @@ void VoxelChunk::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH: {
-			_mesher->bake_colors(this);
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _meshers.get(i);
+
+				ERR_CONTINUE(!mesher.is_valid());
+
+				mesher->bake_colors(this);
+			}
 
 			finalize_mesh();
 
@@ -538,8 +601,13 @@ void VoxelChunk::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_PROP_MESH: {
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _meshers.get(i);
 
-			_mesher->reset();
+				ERR_CONTINUE(!mesher.is_valid());
+
+				mesher->reset();
+			}
 
 			if (_props.size() > 0) {
 				process_props();
@@ -558,7 +626,13 @@ void VoxelChunk::_build_phase(int phase) {
 				}
 			}
 
-			_mesher->reset();
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _meshers.get(i);
+
+				ERR_CONTINUE(!mesher.is_valid());
+
+				mesher->reset();
+			}
 
 			next_phase();
 
@@ -601,7 +675,7 @@ void VoxelChunk::next_phase() {
 
 	++_current_build_phase;
 
-	if (_current_build_phase >= BUILD_PHASE_MAX) {
+	if (_current_build_phase >= _max_build_phases) {
 		_current_build_phase = BUILD_PHASE_DONE;
 
 		_is_generating = false;
@@ -644,7 +718,13 @@ void VoxelChunk::build_collider() {
 		create_colliders();
 	}
 
-	_mesher->build_collider(_shape_rid);
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->build_collider(_shape_rid);
+	}
 }
 
 void VoxelChunk::remove_colliders() {
@@ -784,9 +864,15 @@ void VoxelChunk::process_props() {
 
 	call("_process_props");
 
-	_mesher->bake_colors(this);
-	_mesher->set_material(get_library()->get_material());
-	_mesher->build_mesh(_prop_mesh_rid);
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->bake_colors(this);
+		mesher->set_material(get_library()->get_material());
+		mesher->build_mesh(_prop_mesh_rid);
+	}
 }
 
 void VoxelChunk::build_prop_meshes() {
@@ -794,9 +880,15 @@ void VoxelChunk::build_prop_meshes() {
 		allocate_prop_mesh();
 	}
 
-	_mesher->bake_colors(this);
-	_mesher->set_material(get_library()->get_material());
-	_mesher->build_mesh(_prop_mesh_rid);
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->bake_colors(this);
+		mesher->set_material(get_library()->get_material());
+		mesher->build_mesh(_prop_mesh_rid);
+	}
 }
 
 void VoxelChunk::allocate_main_mesh() {
@@ -871,7 +963,13 @@ void VoxelChunk::build_prop_collider() {
 		allocate_prop_colliders();
 	}
 
-	_mesher->build_collider(_prop_shape_rid);
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->build_collider(_prop_shape_rid);
+	}
 }
 void VoxelChunk::free_prop_colliders() {
 	if (_prop_body_rid != RID()) {
@@ -1081,6 +1179,7 @@ VoxelChunk::VoxelChunk() {
 	_create_collider = true;
 	_bake_lights = true;
 	_current_build_phase = BUILD_PHASE_DONE;
+	_max_build_phases = BUILD_PHASE_MAX;
 
 	_voxel_scale = 1;
 	_lod_size = 1;
@@ -1105,9 +1204,7 @@ VoxelChunk::~VoxelChunk() {
 
 	_voxel_lights.clear();
 
-	if (_mesher.is_valid()) {
-		_mesher.unref();
-	}
+	_meshers.clear();
 
 	if (_library.is_valid()) {
 		_library.unref();
@@ -1142,11 +1239,11 @@ void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
 	BIND_VMETHOD(MethodInfo("_create_mesh"));
-	BIND_VMETHOD(MethodInfo("_create_mesher"));
+	BIND_VMETHOD(MethodInfo("_create_meshers"));
 
 	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
 
-	ClassDB::bind_method(D_METHOD("_create_mesher"), &VoxelChunk::_create_mesher);
+	ClassDB::bind_method(D_METHOD("_create_meshers"), &VoxelChunk::_create_meshers);
 
 	ClassDB::bind_method(D_METHOD("get_is_generating"), &VoxelChunk::get_is_generating);
 	ClassDB::bind_method(D_METHOD("set_is_generating", "value"), &VoxelChunk::set_is_generating);
@@ -1217,6 +1314,10 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_current_build_phase", "value"), &VoxelChunk::set_current_build_phase);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_build_phase"), "set_current_build_phase", "get_current_build_phase");
 
+	ClassDB::bind_method(D_METHOD("get_max_build_phase"), &VoxelChunk::get_max_build_phase);
+	ClassDB::bind_method(D_METHOD("set_max_build_phase", "value"), &VoxelChunk::set_max_build_phase);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_build_phase"), "set_max_build_phase", "get_max_build_phase");
+
 	ADD_GROUP("Meshing", "meshing");
 
 	ClassDB::bind_method(D_METHOD("meshing_get_create_collider"), &VoxelChunk::get_create_collider);
@@ -1229,9 +1330,11 @@ void VoxelChunk::_bind_methods() {
 
 	ADD_GROUP("Settings", "setting");
 
-	ClassDB::bind_method(D_METHOD("get_mesher"), &VoxelChunk::get_mesher);
-	ClassDB::bind_method(D_METHOD("set_mesher", "Mesher"), &VoxelChunk::set_mesher);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher"), "set_mesher", "get_mesher");
+	ClassDB::bind_method(D_METHOD("get_mesher", "index"), &VoxelChunk::get_mesher);
+	ClassDB::bind_method(D_METHOD("set_mesher", "index", "mesher"), &VoxelChunk::set_mesher);
+	ClassDB::bind_method(D_METHOD("remove_mesher", "index"), &VoxelChunk::remove_mesher);
+	ClassDB::bind_method(D_METHOD("add_mesher", "mesher"), &VoxelChunk::add_mesher);
+	ClassDB::bind_method(D_METHOD("get_mesher_count"), &VoxelChunk::get_mesher_count);
 
 	ClassDB::bind_method(D_METHOD("get_voxel_world"), &VoxelChunk::get_voxel_world);
 	ClassDB::bind_method(D_METHOD("set_voxel_world", "world"), &VoxelChunk::set_voxel_world_bind);
@@ -1337,7 +1440,7 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("allocate_clutter_mesh"), &VoxelChunk::allocate_clutter_mesh);
 	ClassDB::bind_method(D_METHOD("free_clutter_mesh"), &VoxelChunk::free_clutter_mesh);
 
-	ClassDB::bind_method(D_METHOD("create_mesher"), &VoxelChunk::create_mesher);
+	ClassDB::bind_method(D_METHOD("create_meshers"), &VoxelChunk::create_meshers);
 
 	ClassDB::bind_method(D_METHOD("create_debug_immediate_geometry"), &VoxelChunk::create_debug_immediate_geometry);
 	ClassDB::bind_method(D_METHOD("free_debug_immediate_geometry"), &VoxelChunk::free_debug_immediate_geometry);
