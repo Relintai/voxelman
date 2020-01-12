@@ -127,8 +127,14 @@ public:
 	int get_current_build_phase();
 	void set_current_build_phase(int value);
 
-	Ref<VoxelMesher> get_mesher() const;
-	void set_mesher(Ref<VoxelMesher> mesher);
+	int get_max_build_phase();
+	void set_max_build_phase(int value);
+
+	Ref<VoxelMesher> get_mesher(int index) const;
+	void set_mesher(int index, Ref<VoxelMesher> mesher);
+	void remove_mesher(int index);
+	void add_mesher(Ref<VoxelMesher> mesher);
+	int get_mesher_count();
 
 	VoxelWorld *get_voxel_world() const;
 	void set_voxel_world(VoxelWorld *world);
@@ -185,8 +191,8 @@ public:
 	void clear_baked_lights();
 
 	//Meshing
-	void create_mesher();
-	void _create_mesher();
+	void create_meshers();
+	void _create_meshers();
 
 	void finalize_mesh();
 
@@ -274,6 +280,7 @@ protected:
 	int _state;
 
 	int _current_build_phase;
+	int _max_build_phases;
 	bool _enabled;
 
 	VoxelWorld *_voxel_world;
@@ -302,7 +309,7 @@ protected:
 
 	NodePath _library_path;
 	Ref<VoxelmanLibrary> _library;
-	Ref<VoxelMesher> _mesher;
+	Vector<Ref<VoxelMesher> > _meshers;
 
 	//voxel mesh
 	RID _mesh_rid;
