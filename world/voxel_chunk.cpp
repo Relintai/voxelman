@@ -1019,7 +1019,7 @@ void VoxelChunk::draw_debug_voxels(int max, Color color) {
 					continue;
 				}
 
-				draw_cross_voxels_fill(Vector3(x, y, z), get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL) / 255.0);
+				draw_cross_voxels_fill(Vector3(x, y, z), get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL) / 255.0 * get_voxel_scale() * 2.0);
 
 				++a;
 
@@ -1346,9 +1346,9 @@ void VoxelChunk::_bind_methods() {
 
 	BIND_VMETHOD(MethodInfo("_draw_debug_voxel_lights", PropertyInfo(Variant::OBJECT, "debug_drawer", PROPERTY_HINT_RESOURCE_TYPE, "ImmediateGeometry")));
 
-	ClassDB::bind_method(D_METHOD("draw_cross_voxels", "pos"), &VoxelChunk::draw_cross_voxels);
-	ClassDB::bind_method(D_METHOD("draw_cross_voxels_fill", "pos", "fill"), &VoxelChunk::draw_cross_voxels_fill);
-	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "pos", "color"), &VoxelChunk::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
+	ClassDB::bind_method(D_METHOD("draw_cross_voxels", "max"), &VoxelChunk::draw_cross_voxels);
+	ClassDB::bind_method(D_METHOD("draw_cross_voxels_fill", "max", "fill"), &VoxelChunk::draw_cross_voxels_fill);
+	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "max", "color"), &VoxelChunk::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunk::draw_debug_voxel_lights);
 
