@@ -1,6 +1,6 @@
 #include "voxel_mesher_cubic.h"
 
-void VoxelMesherCubic::_add_buffer(Node *p_chunk) {
+void VoxelMesherCubic::_add_chunk(Node *p_chunk) {
 	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
 
 	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
@@ -8,8 +8,8 @@ void VoxelMesherCubic::_add_buffer(Node *p_chunk) {
 	chunk->generate_ao();
 
 	int x_size = chunk->get_size_x() - 1;
-	int y_size = chunk->get_size_x() - 1;
-	int z_size = chunk->get_size_x() - 1;
+	int y_size = chunk->get_size_y() - 1;
+	int z_size = chunk->get_size_z() - 1;
 
 	float lod_size = get_lod_size();
 	float voxel_size = get_lod_size();
@@ -58,6 +58,8 @@ void VoxelMesherCubic::_add_buffer(Node *p_chunk) {
 					Vector3 face_light_direction = cube_points->get_face_light_direction(face);
 
 					for (int i = 0; i < 4; ++i) {
+						add_normal(normals[i]);
+
 						Color light = cube_points->get_face_point_light_color(face, i);
 						light += base_light;
 
@@ -90,5 +92,5 @@ VoxelMesherCubic::~VoxelMesherCubic() {
 }
 
 void VoxelMesherCubic::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("_add_buffer", "buffer"), &VoxelMesherCubic::_add_buffer);
+	ClassDB::bind_method(D_METHOD("_add_chunk", "buffer"), &VoxelMesherCubic::_add_chunk);
 }
