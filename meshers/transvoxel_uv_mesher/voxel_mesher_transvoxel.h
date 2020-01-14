@@ -1,8 +1,8 @@
 #ifndef VOXEL_MESHER_TRANSVOXEL_H
 #define VOXEL_MESHER_TRANSVOXEL_H
 
+#include "../voxel_mesher.h"
 #include "core/reference.h"
-#include "voxel_mesher.h"
 
 #include "transvoxel_cell_data.h"
 

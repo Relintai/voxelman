@@ -26,9 +26,10 @@ sources = [
     "data/voxel_light.cpp",
 
     "meshers/voxel_mesher.cpp",
-    "meshers/transvoxel_cell_data.cpp",
-    "meshers/voxel_mesher_transvoxel.cpp",
-    "meshers/transvoxel_tables.cpp",
+    
+    "meshers/transvoxel_uv_mesher/transvoxel_cell_data.cpp",
+    "meshers/transvoxel_uv_mesher/voxel_mesher_transvoxel.cpp",
+    "meshers/transvoxel_uv_mesher/transvoxel_tables.cpp",
 
     "world/voxel_world.cpp",
     "world/voxel_chunk.cpp",

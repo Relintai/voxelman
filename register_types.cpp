@@ -12,9 +12,9 @@
 #include "library/voxelman_library_simple.h"
 
 #include "data/voxel_light.h"
-#include "meshers/transvoxel_cell_data.h"
+#include "meshers/transvoxel_uv_mesher/transvoxel_cell_data.h"
+#include "meshers/transvoxel_uv_mesher/voxel_mesher_transvoxel.h"
 #include "meshers/voxel_mesher.h"
-#include "meshers/voxel_mesher_transvoxel.h"
 
 #include "world/environment_data.h"
 #include "world/voxel_chunk.h"
