@@ -49,6 +49,23 @@ Vector2 VoxelSurface::transform_uv(const VoxelSurfaceSides p_side, const Vector2
 	return uv;
 }
 
+Vector2 VoxelSurface::transform_uv_scaled(const VoxelSurfaceSides p_side, const Vector2 p_uv, int p_current_x, int p_current_y, int p_max) const {
+	Vector2 uv = p_uv;
+
+	Rect2 r = _rects[p_side];
+
+	float sizex = r.size.x / static_cast<float>(p_max);
+	float sizey = r.size.x / static_cast<float>(p_max);
+
+	uv.x *= sizex;
+	uv.y *= sizey;
+
+	uv.x += r.position.x + sizex * p_current_x;
+	uv.y += r.position.y + sizey * p_current_y;
+
+	return uv;
+}
+
 void VoxelSurface::refresh_rects() {
 }
 
@@ -81,6 +98,7 @@ void VoxelSurface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_rect", "side", "rect"), &VoxelSurface::set_rect);
 
 	ClassDB::bind_method(D_METHOD("transform_uv", "side", "uv"), &VoxelSurface::transform_uv);
+	ClassDB::bind_method(D_METHOD("transform_uv_scaled", "side", "uv", "p_current_x", "p_current_y", "max"), &VoxelSurface::transform_uv_scaled);
 
 	ClassDB::bind_method(D_METHOD("refresh_rects"), &VoxelSurface::refresh_rects);
 
