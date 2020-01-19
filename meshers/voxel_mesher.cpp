@@ -68,7 +68,8 @@ void VoxelMesher::build_mesh(RID mesh) {
 
 	if (_colors.size() != _vertices.size()) {
 		print_error("Colors.size() != vertices.size() -> " + String::num(_colors.size()) + " " + String::num(_vertices.size()));
-		_colors.clear();
+
+		_colors.resize(0);
 	}
 
 	int len = _vertices.size();
@@ -106,12 +107,13 @@ void VoxelMesher::build_mesh(RID mesh) {
 }
 
 void VoxelMesher::reset() {
-	_vertices.clear();
-	_normals.clear();
-	_colors.clear();
-	_uvs.clear();
-	_indices.clear();
-	_bones.clear();
+	_vertices.resize(0);
+	_normals.resize(0);
+	_colors.resize(0);
+	_uvs.resize(0);
+	_uv2s.resize(0);
+	_indices.resize(0);
+	_bones.resize(0);
 
 	_surface_tool->clear();
 }
@@ -531,8 +533,12 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &ligh
 	//	}
 }
 
-Vector<Vector3> *VoxelMesher::get_vertices() {
-	return &_vertices;
+PoolVector<Vector3> VoxelMesher::get_vertices() {
+	return _vertices;
+}
+
+void VoxelMesher::set_vertices(PoolVector<Vector3> values) {
+	_vertices = values;
 }
 
 int VoxelMesher::get_vertex_count() {
@@ -551,8 +557,12 @@ void VoxelMesher::remove_vertex(int idx) {
 	_vertices.remove(idx);
 }
 
-Vector<Vector3> *VoxelMesher::get_normals() {
-	return &_normals;
+PoolVector<Vector3> VoxelMesher::get_normals() {
+	return _normals;
+}
+
+void VoxelMesher::set_normals(PoolVector<Vector3> values) {
+	_normals = values;
 }
 
 int VoxelMesher::get_normal_count() {
@@ -571,8 +581,12 @@ void VoxelMesher::remove_normal(int idx) {
 	_normals.remove(idx);
 }
 
-Vector<Color> *VoxelMesher::get_colors() {
-	return &_colors;
+PoolVector<Color> VoxelMesher::get_colors() {
+	return _colors;
+}
+
+void VoxelMesher::set_colors(PoolVector<Color> values) {
+	_colors = values;
 }
 
 int VoxelMesher::get_color_count() {
@@ -591,8 +605,12 @@ void VoxelMesher::remove_color(int idx) {
 	_colors.remove(idx);
 }
 
-Vector<Vector2> *VoxelMesher::get_uvs() {
-	return &_uvs;
+PoolVector<Vector2> VoxelMesher::get_uvs() {
+	return _uvs;
+}
+
+void VoxelMesher::set_uvs(PoolVector<Vector2> values) {
+	_uvs = values;
 }
 
 int VoxelMesher::get_uv_count() {
@@ -611,8 +629,36 @@ void VoxelMesher::remove_uv(int idx) {
 	_uvs.remove(idx);
 }
 
-Vector<int> *VoxelMesher::get_indices() {
-	return &_indices;
+PoolVector<Vector2> VoxelMesher::get_uv2s() {
+	return _uv2s;
+}
+
+void VoxelMesher::set_uv2s(PoolVector<Vector2> values) {
+	_uv2s = values;
+}
+
+int VoxelMesher::get_uv2_count() {
+	return _uv2s.size();
+}
+
+void VoxelMesher::add_uv2(Vector2 uv) {
+	_uv2s.push_back(uv);
+}
+
+Vector2 VoxelMesher::get_uv2(int idx) {
+	return _uv2s.get(idx);
+}
+
+void VoxelMesher::remove_uv2(int idx) {
+	_uv2s.remove(idx);
+}
+
+PoolVector<int> VoxelMesher::get_indices() {
+	return _indices;
+}
+
+void VoxelMesher::set_indices(PoolVector<int> values) {
+	_indices = values;
 }
 
 int VoxelMesher::get_indices_count() {
@@ -652,13 +698,6 @@ VoxelMesher::VoxelMesher() {
 }
 
 VoxelMesher::~VoxelMesher() {
-	_vertices.clear();
-	_normals.clear();
-	_colors.clear();
-	_uvs.clear();
-	_indices.clear();
-	_bones.clear();
-
 	_surface_tool.unref();
 
 	if (_library.is_valid()) {
@@ -712,26 +751,43 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("bake_liquid_colors", "chunk"), &VoxelMesher::bake_liquid_colors_bind);
 	ClassDB::bind_method(D_METHOD("_bake_liquid_colors", "chunk"), &VoxelMesher::_bake_liquid_colors);
 
+	ClassDB::bind_method(D_METHOD("get_vertices"), &VoxelMesher::get_vertices);
+	ClassDB::bind_method(D_METHOD("set_vertices", "values"), &VoxelMesher::set_vertices);
 	ClassDB::bind_method(D_METHOD("get_vertex_count"), &VoxelMesher::get_vertex_count);
 	ClassDB::bind_method(D_METHOD("get_vertex", "idx"), &VoxelMesher::get_vertex);
 	ClassDB::bind_method(D_METHOD("remove_vertex", "idx"), &VoxelMesher::remove_vertex);
 	ClassDB::bind_method(D_METHOD("add_vertex", "vertex"), &VoxelMesher::add_vertex);
 
+	ClassDB::bind_method(D_METHOD("get_normals"), &VoxelMesher::get_normals);
+	ClassDB::bind_method(D_METHOD("set_normals", "values"), &VoxelMesher::set_normals);
 	ClassDB::bind_method(D_METHOD("get_normal_count"), &VoxelMesher::get_normal_count);
 	ClassDB::bind_method(D_METHOD("get_normal", "idx"), &VoxelMesher::get_normal);
 	ClassDB::bind_method(D_METHOD("remove_normal", "idx"), &VoxelMesher::remove_normal);
 	ClassDB::bind_method(D_METHOD("add_normal", "normal"), &VoxelMesher::add_normal);
 
+	ClassDB::bind_method(D_METHOD("get_colors"), &VoxelMesher::get_colors);
+	ClassDB::bind_method(D_METHOD("set_colors", "values"), &VoxelMesher::set_colors);
 	ClassDB::bind_method(D_METHOD("get_color_count"), &VoxelMesher::get_color_count);
 	ClassDB::bind_method(D_METHOD("get_color", "idx"), &VoxelMesher::get_color);
 	ClassDB::bind_method(D_METHOD("remove_color", "idx"), &VoxelMesher::remove_color);
 	ClassDB::bind_method(D_METHOD("add_color", "color"), &VoxelMesher::add_color);
 
+	ClassDB::bind_method(D_METHOD("get_uvs"), &VoxelMesher::get_uvs);
+	ClassDB::bind_method(D_METHOD("set_uvs", "values"), &VoxelMesher::set_uvs);
 	ClassDB::bind_method(D_METHOD("get_uv_count"), &VoxelMesher::get_uv_count);
 	ClassDB::bind_method(D_METHOD("get_uv", "idx"), &VoxelMesher::get_uv);
 	ClassDB::bind_method(D_METHOD("remove_uv", "idx"), &VoxelMesher::remove_uv);
-	ClassDB::bind_method(D_METHOD("add_uv", "vertex"), &VoxelMesher::add_uv);
+	ClassDB::bind_method(D_METHOD("add_uv", "uv"), &VoxelMesher::add_uv);
 
+	ClassDB::bind_method(D_METHOD("get_uv2s"), &VoxelMesher::get_uv2s);
+	ClassDB::bind_method(D_METHOD("set_uv2s", "values"), &VoxelMesher::set_uv2s);
+	ClassDB::bind_method(D_METHOD("get_uv2_count"), &VoxelMesher::get_uv2_count);
+	ClassDB::bind_method(D_METHOD("get_uv2", "idx"), &VoxelMesher::get_uv2);
+	ClassDB::bind_method(D_METHOD("remove_uv2", "idx"), &VoxelMesher::remove_uv2);
+	ClassDB::bind_method(D_METHOD("add_uv2", "uv"), &VoxelMesher::add_uv2);
+
+	ClassDB::bind_method(D_METHOD("get_indices"), &VoxelMesher::get_indices);
+	ClassDB::bind_method(D_METHOD("set_indices", "values"), &VoxelMesher::set_indices);
 	ClassDB::bind_method(D_METHOD("get_indices_count"), &VoxelMesher::get_indices_count);
 	ClassDB::bind_method(D_METHOD("get_indice", "idx"), &VoxelMesher::get_indice);
 	ClassDB::bind_method(D_METHOD("remove_indices", "idx"), &VoxelMesher::remove_indices);

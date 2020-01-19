@@ -5,6 +5,7 @@
 #include "core/math/rect2.h"
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
+#include "core/pool_vector.h"
 #include "core/reference.h"
 #include "core/vector.h"
 #include "scene/3d/immediate_geometry.h"
@@ -75,31 +76,43 @@ public:
 
 	void build_mesh(RID mesh);
 
-	Vector<Vector3> *get_vertices();
+	PoolVector<Vector3> get_vertices();
+	void set_vertices(PoolVector<Vector3> values);
 	int get_vertex_count();
 	Vector3 get_vertex(int idx);
 	void remove_vertex(int idx);
 	void add_vertex(Vector3 vertex);
 
-	Vector<Vector3> *get_normals();
+	PoolVector<Vector3> get_normals();
+	void set_normals(PoolVector<Vector3> values);
 	int get_normal_count();
 	Vector3 get_normal(int idx);
 	void remove_normal(int idx);
 	void add_normal(Vector3 normal);
 
-	Vector<Color> *get_colors();
+	PoolVector<Color> get_colors();
+	void set_colors(PoolVector<Color> values);
 	int get_color_count();
 	Color get_color(int idx);
 	void remove_color(int idx);
 	void add_color(Color color);
 
-	Vector<Vector2> *get_uvs();
+	PoolVector<Vector2> get_uvs();
+	void set_uvs(PoolVector<Vector2> values);
 	int get_uv_count();
 	Vector2 get_uv(int idx);
 	void remove_uv(int idx);
 	void add_uv(Vector2 vector);
 
-	Vector<int> *get_indices();
+	PoolVector<Vector2> get_uv2s();
+	void set_uv2s(PoolVector<Vector2> values);
+	int get_uv2_count();
+	Vector2 get_uv2(int idx);
+	void remove_uv2(int idx);
+	void add_uv2(Vector2 vector);
+
+	PoolVector<int> get_indices();
+	void set_indices(PoolVector<int> values);
 	int get_indices_count();
 	int get_indice(int idx);
 	void remove_indices(int idx);
@@ -112,12 +125,13 @@ public:
 protected:
 	static void _bind_methods();
 
-	Vector<Vector3> _vertices;
-	Vector<Vector3> _normals;
-	Vector<Color> _colors;
-	Vector<Vector2> _uvs;
-	Vector<int> _indices;
-	Vector<int> _bones;
+	PoolVector<Vector3> _vertices;
+	PoolVector<Vector3> _normals;
+	PoolVector<Color> _colors;
+	PoolVector<Vector2> _uvs;
+	PoolVector<Vector2> _uv2s;
+	PoolVector<int> _indices;
+	PoolVector<int> _bones;
 
 	Ref<VoxelmanLibrary> _library;
 	Ref<Material> _material;
