@@ -17,6 +17,8 @@
 #include "scene/resources/mesh.h"
 #include "scene/resources/surface_tool.h"
 
+#include "mesh_utils.h"
+
 #include "../../mesh_data_resource/mesh_data_resource.h"
 #include "../library/voxelman_library.h"
 
@@ -76,6 +78,22 @@ public:
 
 	void build_mesh(RID mesh);
 
+	void initialize_mesh_simplify();
+	void SimplifyMesh(float quality);
+	void SimplifyMeshLossless();
+	void UpdateMesh(int iteration);
+	void UpdateReferences();
+	int RemoveVertexPass(int startTrisCount, int targetTrisCount, double threshold, PoolVector<bool> deleted0, PoolVector<bool> deleted1, int deletedTris);
+	void CompactMesh();
+	bool AreUVsTheSame(int channel, int indexA, int indexB);
+	double VertexError(SymmetricMatrix q, double x, double y, double z);
+	double CalculateError(MUVertex vert0, MUVertex vert1, Vector3 *result);
+	void UpdateTriangles(int i0, int ia0, MUVertex *v, PoolVector<bool> deleted, int *deletedTriangles);
+
+	static double Min3(double val1, double val2, double val3) {
+		return (val1 < val2 ? (val1 < val3 ? val1 : val3) : (val2 < val3 ? val2 : val3));
+	}
+
 	PoolVector<Vector3> get_vertices();
 	void set_vertices(PoolVector<Vector3> values);
 	int get_vertex_count();
@@ -133,6 +151,10 @@ protected:
 	PoolVector<int> _indices;
 	PoolVector<int> _bones;
 
+	PoolVector<MUTriangle> _mu_triangles;
+	PoolVector<MUVertex> _mu_vertices;
+	PoolVector<MURef> _mu_refs;
+
 	Ref<VoxelmanLibrary> _library;
 	Ref<Material> _material;
 
@@ -144,6 +166,15 @@ protected:
 	float _ao_strength;
 	float _base_light_value;
 	Rect2 _uv_margin;
+
+private:
+	double vertexLinkDistanceSqr = std::numeric_limits<double>::epsilon();
+	int maxIterationCount;
+	double agressiveness;
+	bool enableSmartLink;
+	bool preserveBorderEdges;
+	bool preserveUVSeamEdges;
+	bool preserveUVFoldoverEdges;
 };
 
 #endif
