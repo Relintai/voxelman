@@ -12,6 +12,7 @@ class MeshSimplifier {
 
 public:
 	void initialize(Ref<VoxelMesher> mesher);
+	void refresh_vertices();
 	void SimplifyMesh(float quality);
 	void SimplifyMeshLossless();
 	void UpdateMesh(int iteration);

@@ -30,8 +30,18 @@ void MeshSimplifier::initialize(Ref<VoxelMesher> mesher) {
 		_mu_triangles[i] = MUTriangle(v0, v1, v2, 0);
 	}
 
+	_mu_vertices.resize(_vertices.size());
 	for (int i = 0; i < _vertices.size(); ++i) {
-		_mu_vertices.append(MUVertex(_vertices[i]));
+		_mu_vertices[i] = MUVertex(_vertices[i]);
+	}
+}
+
+void MeshSimplifier::refresh_vertices() {
+	_vertices.resize(_mu_vertices.size());
+	for (int i = 0; i < _mu_vertices.size(); ++i) {
+		MUVertex vert = _mu_vertices[i];
+
+		_vertices[i] = Vector3(vert.p);
 	}
 }
 
