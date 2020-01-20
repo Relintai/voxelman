@@ -17,8 +17,6 @@
 #include "scene/resources/mesh.h"
 #include "scene/resources/surface_tool.h"
 
-#include "mesh_utils.h"
-
 #include "../../mesh_data_resource/mesh_data_resource.h"
 #include "../library/voxelman_library.h"
 
@@ -79,42 +77,42 @@ public:
 	void build_mesh(RID mesh);
 
 	PoolVector<Vector3> get_vertices();
-	void set_vertices(PoolVector<Vector3> values);
+	void set_vertices(const PoolVector<Vector3> &values);
 	int get_vertex_count();
 	Vector3 get_vertex(int idx);
 	void remove_vertex(int idx);
 	void add_vertex(Vector3 vertex);
 
 	PoolVector<Vector3> get_normals();
-	void set_normals(PoolVector<Vector3> values);
+	void set_normals(const PoolVector<Vector3> &values);
 	int get_normal_count();
 	Vector3 get_normal(int idx);
 	void remove_normal(int idx);
 	void add_normal(Vector3 normal);
 
 	PoolVector<Color> get_colors();
-	void set_colors(PoolVector<Color> values);
+	void set_colors(const PoolVector<Color> &values);
 	int get_color_count();
 	Color get_color(int idx);
 	void remove_color(int idx);
 	void add_color(Color color);
 
 	PoolVector<Vector2> get_uvs();
-	void set_uvs(PoolVector<Vector2> values);
+	void set_uvs(const PoolVector<Vector2> &values);
 	int get_uv_count();
 	Vector2 get_uv(int idx);
 	void remove_uv(int idx);
 	void add_uv(Vector2 vector);
 
 	PoolVector<Vector2> get_uv2s();
-	void set_uv2s(PoolVector<Vector2> values);
+	void set_uv2s(const PoolVector<Vector2> &values);
 	int get_uv2_count();
 	Vector2 get_uv2(int idx);
 	void remove_uv2(int idx);
 	void add_uv2(Vector2 vector);
 
 	PoolVector<int> get_indices();
-	void set_indices(PoolVector<int> values);
+	void set_indices(const PoolVector<int> values);
 	int get_indices_count();
 	int get_indice(int idx);
 	void remove_indices(int idx);

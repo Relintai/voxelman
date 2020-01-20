@@ -537,7 +537,7 @@ PoolVector<Vector3> VoxelMesher::get_vertices() {
 	return _vertices;
 }
 
-void VoxelMesher::set_vertices(PoolVector<Vector3> values) {
+void VoxelMesher::set_vertices(const PoolVector<Vector3> &values) {
 	_vertices = values;
 }
 
@@ -561,7 +561,7 @@ PoolVector<Vector3> VoxelMesher::get_normals() {
 	return _normals;
 }
 
-void VoxelMesher::set_normals(PoolVector<Vector3> values) {
+void VoxelMesher::set_normals(const PoolVector<Vector3> &values) {
 	_normals = values;
 }
 
@@ -585,7 +585,7 @@ PoolVector<Color> VoxelMesher::get_colors() {
 	return _colors;
 }
 
-void VoxelMesher::set_colors(PoolVector<Color> values) {
+void VoxelMesher::set_colors(const PoolVector<Color> &values) {
 	_colors = values;
 }
 
@@ -609,7 +609,7 @@ PoolVector<Vector2> VoxelMesher::get_uvs() {
 	return _uvs;
 }
 
-void VoxelMesher::set_uvs(PoolVector<Vector2> values) {
+void VoxelMesher::set_uvs(const PoolVector<Vector2> &values) {
 	_uvs = values;
 }
 
@@ -633,7 +633,7 @@ PoolVector<Vector2> VoxelMesher::get_uv2s() {
 	return _uv2s;
 }
 
-void VoxelMesher::set_uv2s(PoolVector<Vector2> values) {
+void VoxelMesher::set_uv2s(const PoolVector<Vector2> &values) {
 	_uv2s = values;
 }
 
@@ -657,7 +657,7 @@ PoolVector<int> VoxelMesher::get_indices() {
 	return _indices;
 }
 
-void VoxelMesher::set_indices(PoolVector<int> values) {
+void VoxelMesher::set_indices(const PoolVector<int> values) {
 	_indices = values;
 }
 
@@ -695,13 +695,6 @@ VoxelMesher::VoxelMesher() {
 	_uv_margin = Rect2(0, 0, 1, 1);
 
 	_surface_tool.instance();
-
-	maxIterationCount = 100;
-	agressiveness = 7.0;
-	enableSmartLink = true;
-	preserveBorderEdges = false;
-	preserveUVSeamEdges = false;
-	preserveUVFoldoverEdges = false;
 }
 
 VoxelMesher::~VoxelMesher() {

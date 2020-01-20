@@ -1,10 +1,21 @@
 #include "mesh_simplifier.h"
 
+#include "../voxel_mesher.h"
+
 //Mesh Simplification
 //Mesh Simplification
 //Ported from https://github.com/Whinarn/UnityMeshSimplifier
 //Original license: MIT License Copyright (c) 2017 Mattias Edlund
-void MeshSimplifier::initialize_mesh_simplify() {
+void MeshSimplifier::initialize(Ref<VoxelMesher> mesher) {
+	_mesher = mesher;
+
+	_vertices = mesher->get_vertices();
+	_normals = mesher->get_normals();
+	_colors = mesher->get_colors();
+	_uvs = mesher->get_uvs();
+	_uv2s = mesher->get_uv2s();
+	_indices = mesher->get_indices();
+
 	if ((_indices.size() % 3) != 0)
 		ERR_FAIL_MSG("The index array length must be a multiple of 3 in order to represent triangles.");
 
@@ -17,6 +28,10 @@ void MeshSimplifier::initialize_mesh_simplify() {
 		int v1 = _indices[offset + 1];
 		int v2 = _indices[offset + 2];
 		_mu_triangles[i] = MUTriangle(v0, v1, v2, 0);
+	}
+
+	for (int i = 0; i < _vertices.size(); ++i) {
+		_mu_vertices.append(MUVertex(_vertices[i]));
 	}
 }
 
@@ -359,9 +374,6 @@ void MeshSimplifier::CompactMesh() {
 		_mu_vertices[i].tcount = 0;
 	}
 
-	//int lastSubMeshIndex = -1;
-	//subMeshOffsets = new int[subMeshCount];
-
 	for (int i = 0; i < _mu_triangles.size(); i++) {
 		MUTriangle triangle = _mu_triangles[i];
 
@@ -370,9 +382,7 @@ void MeshSimplifier::CompactMesh() {
 				int iDest = triangle.va0;
 				int iSrc = triangle.v0;
 				_mu_vertices[iDest].p = _mu_vertices[iSrc].p;
-				if (vertBoneWeights != null) {
-					vertBoneWeights[iDest] = vertBoneWeights[iSrc];
-				}
+
 				triangle.v0 = triangle.va0;
 			}
 
@@ -380,9 +390,7 @@ void MeshSimplifier::CompactMesh() {
 				int iDest = triangle.va1;
 				int iSrc = triangle.v1;
 				_mu_vertices[iDest].p = _mu_vertices[iSrc].p;
-				if (vertBoneWeights != null) {
-					vertBoneWeights[iDest] = vertBoneWeights[iSrc];
-				}
+
 				triangle.v1 = triangle.va1;
 			}
 
@@ -390,80 +398,40 @@ void MeshSimplifier::CompactMesh() {
 				int iDest = triangle.va2;
 				int iSrc = triangle.v2;
 				_mu_vertices[iDest].p = _mu_vertices[iSrc].p;
-				if (vertBoneWeights != null) {
-					vertBoneWeights[iDest] = vertBoneWeights[iSrc];
-				}
+
 				triangle.v2 = triangle.va2;
 			}
 
-			int newTriangleIndex = dst++;
+			int newTriangleIndex = ++dst;
 			_mu_triangles[newTriangleIndex] = triangle;
 
 			_mu_vertices[triangle.v0].tcount = 1;
 			_mu_vertices[triangle.v1].tcount = 1;
 			_mu_vertices[triangle.v2].tcount = 1;
-
-			//if (triangle.subMeshIndex > lastSubMeshIndex) {
-			//	for (int j = lastSubMeshIndex + 1; j < triangle.subMeshIndex; j++) {
-			//		subMeshOffsets[j] = newTriangleIndex;
-			//	}
-			//	subMeshOffsets[triangle.subMeshIndex] = newTriangleIndex;
-			//	lastSubMeshIndex = triangle.subMeshIndex;
-			//}
 		}
 	}
-
-	//triangleCount = dst;
-	//for (int i = lastSubMeshIndex + 1; i < subMeshCount; i++) {
-	//	subMeshOffsets[i] = triangleCount;
-	//}
 
 	_mu_triangles.resize(dst);
 
 	dst = 0;
-	for (int i = 0; i < vertexCount; i++) {
-		var vert = vertices[i];
+	for (int i = 0; i < _mu_vertices.size(); i++) {
+		MUVertex vert = _mu_vertices[i];
+
 		if (vert.tcount > 0) {
 			vert.tstart = dst;
-			vertices[i] = vert;
+			_mu_vertices[i] = vert;
 
 			if (dst != i) {
-				vertices[dst].p = vert.p;
-				if (vertNormals != null) vertNormals[dst] = vertNormals[i];
-				if (vertTangents != null) vertTangents[dst] = vertTangents[i];
-				if (vertUV2D != null) {
-					for (int j = 0; j < UVChannelCount; j++) {
-						var vertUV = vertUV2D[j];
-						if (vertUV != null) {
-							vertUV[dst] = vertUV[i];
-						}
-					}
-				}
-				if (vertUV3D != null) {
-					for (int j = 0; j < UVChannelCount; j++) {
-						var vertUV = vertUV3D[j];
-						if (vertUV != null) {
-							vertUV[dst] = vertUV[i];
-						}
-					}
-				}
-				if (vertUV4D != null) {
-					for (int j = 0; j < UVChannelCount; j++) {
-						var vertUV = vertUV4D[j];
-						if (vertUV != null) {
-							vertUV[dst] = vertUV[i];
-						}
-					}
-				}
-				if (vertColors != null) vertColors[dst] = vertColors[i];
-				if (vertBoneWeights != null) vertBoneWeights[dst] = vertBoneWeights[i];
+				_mu_vertices[dst].p = vert.p;
 
-				if (blendShapes != null) {
-					for (int shapeIndex = 0; shapeIndex < this.blendShapes.Length; shapeIndex++) {
-						blendShapes[shapeIndex].MoveVertexElement(dst, i);
-					}
-				}
+				if (_normals.size() > 0) _normals[dst] = _normals[i];
+
+				if (_colors.size() > 0) _colors.set(dst, _colors[i]);
+				if (_uvs.size() > 0) _uvs.set(dst, _uvs[i]);
+				if (_uv2s.size() > 0) _uv2s.set(dst, _uv2s[i]);
+				if (_indices.size() > 0) _indices.set(dst, _indices[i]);
 			}
+
 			++dst;
 		}
 	}
@@ -477,20 +445,12 @@ void MeshSimplifier::CompactMesh() {
 	}
 
 	//vertexCount = dst;
-	this.vertices.Resize(dst);
-	if (vertNormals != null) this.vertNormals.Resize(vertexCount, true);
-	if (vertTangents != null) this.vertTangents.Resize(vertexCount, true);
-	if (vertUV2D != null) this.vertUV2D.Resize(vertexCount, true);
-	if (vertUV3D != null) this.vertUV3D.Resize(vertexCount, true);
-	if (vertUV4D != null) this.vertUV4D.Resize(vertexCount, true);
-	if (vertColors != null) this.vertColors.Resize(vertexCount, true);
-	if (vertBoneWeights != null) this.vertBoneWeights.Resize(vertexCount, true);
-
-	if (blendShapes != null) {
-		for (int i = 0; i < this.blendShapes.Length; i++) {
-			blendShapes[i].Resize(vertexCount, false);
-		}
-	}
+	_vertices.resize(dst);
+	if (_normals.size() > 0) _normals.resize(dst);
+	if (_colors.size() > 0) _colors.resize(dst);
+	if (_uvs.size() > 0) _uvs.resize(dst);
+	if (_uv2s.size() > 0) _uv2s.resize(dst);
+	if (_indices.size() > 0) _indices.resize(dst);
 }
 
 bool MeshSimplifier::AreUVsTheSame(int channel, int indexA, int indexB) {
@@ -581,8 +541,10 @@ int MeshSimplifier::RemoveVertexPass(int startTrisCount, int targetTrisCount, do
 			if (tcount <= _mu_vertices[i0].tcount) {
 				// save ram
 				if (tcount > 0) {
-					var refsArr = refs.Data;
-					Array.Copy(refsArr, tstart, refsArr, _mu_vertices[i0].tstart, tcount);
+					int dests = _mu_vertices[i0].tstart;
+					for (int v = 0; v < tcount; ++v) {
+						_mu_refs[v + tstart] = _mu_refs[v + dests];
+					}
 				}
 			} else {
 				// append
@@ -736,32 +698,28 @@ Vector3 MeshSimplifier::CalculateBarycentricCoords(Vector3 const &point, Vector3
 }
 
 void MeshSimplifier::InterpolateVertexAttributes(int dst, int i0, int i1, int i2, Vector3 &barycentricCoord) {
-	if (vertNormals != null) {
-		vertNormals[dst] = Vector3.Normalize((vertNormals[i0] * barycentricCoord.x) + (vertNormals[i1] * barycentricCoord.y) + (vertNormals[i2] * barycentricCoord.z));
+	if (_normals.size() > 0) {
+		_normals[dst] = (_normals[i0] * barycentricCoord.x) + (_normals[i1] * barycentricCoord.y) + (_normals[i2] * barycentricCoord.z).normalized();
 	}
 
-	if (vertTangents != null) {
-		vertTangents[dst] = NormalizeTangent((vertTangents[i0] * barycentricCoord.x) + (vertTangents[i1] * barycentricCoord.y) + (vertTangents[i2] * barycentricCoord.z));
+	if (_uvs.size() > 0) {
+		_uvs[dst] = (_uvs[i0] * barycentricCoord.x) + (_uvs[i1] * barycentricCoord.y) + (_uvs[i2] * barycentricCoord.z);
 	}
 
-	if (vertUV2D != null) {
-		for (int i = 0; i < UVChannelCount; i++) {
-			var vertUV = vertUV2D[i];
-			if (vertUV != null) {
-				vertUV[dst] = (vertUV[i0] * barycentricCoord.x) + (vertUV[i1] * barycentricCoord.y) + (vertUV[i2] * barycentricCoord.z);
-			}
-		}
+	if (_uv2s.size() > 0) {
+		_uv2s[dst] = (_uv2s[i0] * barycentricCoord.x) + (_uv2s[i1] * barycentricCoord.y) + (_uv2s[i2] * barycentricCoord.z);
 	}
 
-	if (vertColors != null) {
-		vertColors[dst] = (vertColors[i0] * barycentricCoord.x) + (vertColors[i1] * barycentricCoord.y) + (vertColors[i2] * barycentricCoord.z);
+	if (_colors.size() > 0) {
+		_colors[dst] = (_colors[i0] * barycentricCoord.x) + (_colors[i1] * barycentricCoord.y) + (_colors[i2] * barycentricCoord.z);
 	}
+}
 
-	if (blendShapes != null) {
-		for (int i = 0; i < blendShapes.Length; i++) {
-			blendShapes[i].InterpolateVertexAttributes(dst, i0, i1, i2, barycentricCoord);
-		}
-	}
-
-	// TODO: How do we interpolate the bone weights? Do we have to?
+MeshSimplifier::MeshSimplifier() {
+	maxIterationCount = 100;
+	agressiveness = 7.0;
+	enableSmartLink = true;
+	preserveBorderEdges = false;
+	preserveUVSeamEdges = false;
+	preserveUVFoldoverEdges = false;
 }

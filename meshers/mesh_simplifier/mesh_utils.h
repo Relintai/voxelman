@@ -353,6 +353,15 @@ struct MUVertex {
 	bool uvSeamEdge;
 	bool uvFoldoverEdge;
 
+	MUVertex(float x, float y, float z) {
+		p = Vector3(x, y, z);
+		tstart = 0;
+		tcount = 0;
+		borderEdge = true;
+		uvSeamEdge = false;
+		uvFoldoverEdge = false;
+	}
+
 	MUVertex(Vector3 point) {
 		p = point;
 		tstart = 0;
