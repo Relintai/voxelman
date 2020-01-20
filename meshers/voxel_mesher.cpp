@@ -404,9 +404,9 @@ void VoxelMesher::UpdateMesh(int iteration) {
 		for (int i = 0; i < _mu_triangles.size(); ++i) {
 			// Calc Edge Error
 			MUTriangle triangle = _mu_triangles[i];
-			_mu_triangles[i].err0 = CalculateError(_mu_vertices[triangle.v0], _mu_vertices[triangle.v1], out dummy);
-			_mu_triangles[i].err1 = CalculateError(_mu_vertices[triangle.v1], _mu_vertices[triangle.v2], out dummy);
-			_mu_triangles[i].err2 = CalculateError(_mu_vertices[triangle.v2], _mu_vertices[triangle.v0], out dummy);
+			_mu_triangles[i].err0 = CalculateError(_mu_vertices[triangle.v0], _mu_vertices[triangle.v1], &dummy);
+			_mu_triangles[i].err1 = CalculateError(_mu_vertices[triangle.v1], _mu_vertices[triangle.v2], &dummy);
+			_mu_triangles[i].err2 = CalculateError(_mu_vertices[triangle.v2], _mu_vertices[triangle.v0], &dummy);
 			_mu_triangles[i].err3 = VoxelMesher::Min3(_mu_triangles[i].err0, _mu_triangles[i].err1, _mu_triangles[i].err2);
 		}
 	}
@@ -470,6 +470,7 @@ void VoxelMesher::CompactMesh() {
 
 	for (int i = 0; i < _mu_triangles.size(); i++) {
 		MUTriangle triangle = _mu_triangles[i];
+
 		if (!triangle.deleted) {
 			if (triangle.va0 != triangle.v0) {
 				int iDest = triangle.va0;
@@ -508,22 +509,22 @@ void VoxelMesher::CompactMesh() {
 			_mu_vertices[triangle.v1].tcount = 1;
 			_mu_vertices[triangle.v2].tcount = 1;
 
-			if (triangle.subMeshIndex > lastSubMeshIndex) {
-				for (int j = lastSubMeshIndex + 1; j < triangle.subMeshIndex; j++) {
-					subMeshOffsets[j] = newTriangleIndex;
-				}
-				subMeshOffsets[triangle.subMeshIndex] = newTriangleIndex;
-				lastSubMeshIndex = triangle.subMeshIndex;
-			}
+			//if (triangle.subMeshIndex > lastSubMeshIndex) {
+			//	for (int j = lastSubMeshIndex + 1; j < triangle.subMeshIndex; j++) {
+			//		subMeshOffsets[j] = newTriangleIndex;
+			//	}
+			//	subMeshOffsets[triangle.subMeshIndex] = newTriangleIndex;
+			//	lastSubMeshIndex = triangle.subMeshIndex;
+			//}
 		}
 	}
 
-	triangleCount = dst;
-	for (int i = lastSubMeshIndex + 1; i < subMeshCount; i++) {
-		subMeshOffsets[i] = triangleCount;
-	}
+	//triangleCount = dst;
+	//for (int i = lastSubMeshIndex + 1; i < subMeshCount; i++) {
+	//	subMeshOffsets[i] = triangleCount;
+	//}
 
-	this.triangles.Resize(triangleCount);
+	_mu_triangles.resize(dst);
 
 	dst = 0;
 	for (int i = 0; i < vertexCount; i++) {
@@ -573,16 +574,16 @@ void VoxelMesher::CompactMesh() {
 		}
 	}
 
-	for (int i = 0; i < triangleCount; i++) {
-		var triangle = triangles[i];
-		triangle.v0 = vertices[triangle.v0].tstart;
-		triangle.v1 = vertices[triangle.v1].tstart;
-		triangle.v2 = vertices[triangle.v2].tstart;
-		triangles[i] = triangle;
+	for (int i = 0; i < _mu_triangles.size(); i++) {
+		MUTriangle triangle = _mu_triangles[i];
+		triangle.v0 = _mu_vertices[triangle.v0].tstart;
+		triangle.v1 = _mu_vertices[triangle.v1].tstart;
+		triangle.v2 = _mu_vertices[triangle.v2].tstart;
+		_mu_triangles[i] = triangle;
 	}
 
-	vertexCount = dst;
-	this.vertices.Resize(vertexCount);
+	//vertexCount = dst;
+	this.vertices.Resize(dst);
 	if (vertNormals != null) this.vertNormals.Resize(vertexCount, true);
 	if (vertTangents != null) this.vertTangents.Resize(vertexCount, true);
 	if (vertUV2D != null) this.vertUV2D.Resize(vertexCount, true);
@@ -649,20 +650,20 @@ int VoxelMesher::RemoveVertexPass(int startTrisCount, int targetTrisCount, doubl
 				continue;
 
 			// Compute vertex to collapse to
-			CalculateError(_mu_vertices[i0], ref _mu_vertices[i1], out p);
-			deleted0.Resize(_mu_vertices[i0].tcount); // normals temporarily
-			deleted1.Resize(_mu_vertices[i1].tcount); // normals temporarily
+			CalculateError(_mu_vertices[i0], _mu_vertices[i1], &p);
+			deleted0.resize(_mu_vertices[i0].tcount); // normals temporarily
+			deleted1.resize(_mu_vertices[i1].tcount); // normals temporarily
 
 			// Don't remove if flipped
-			if (Flipped(ref p, i0, i1, ref _mu_vertices[i0], deleted0.Data))
+			if (Flipped(&p, i0, i1, &(_mu_vertices[i0]), deleted0))
 				continue;
-			if (Flipped(ref p, i1, i0, ref _mu_vertices[i1], deleted1.Data))
+			if (Flipped(&p, i1, i0, &(_mu_vertices[i1]), deleted1))
 				continue;
 
 			// Calculate the barycentric coordinates within the triangle
 			int nextNextEdgeIndex = ((edgeIndex + 2) % 3);
 			int i2 = _mu_triangles[tid].get(nextNextEdgeIndex);
-			CalculateBarycentricCoords(ref p, ref _mu_vertices[i0].p, ref _mu_vertices[i1].p, ref _mu_vertices[i2].p, out barycentricCoord);
+			barycentricCoord = CalculateBarycentricCoords(p, _mu_vertices[i0].p, _mu_vertices[i1].p, _mu_vertices[i2].p);
 
 			// Not flipped, so remove edge
 			_mu_vertices[i0].p = p;
@@ -672,17 +673,17 @@ int VoxelMesher::RemoveVertexPass(int startTrisCount, int targetTrisCount, doubl
 			int ia0 = attrib_indices[edgeIndex];
 			int ia1 = attrib_indices[nextEdgeIndex];
 			int ia2 = attrib_indices[nextNextEdgeIndex];
-			InterpolateVertexAttributes(ia0, ia0, ia1, ia2, ref barycentricCoord);
+			InterpolateVertexAttributes(ia0, ia0, ia1, ia2, barycentricCoord);
 
 			if (_mu_vertices[i0].uvSeamEdge) {
 				ia0 = -1;
 			}
 
-			int tstart = refs.Length;
-			deletedTris = UpdateTriangles(i0, ia0, _mu_vertices[i0], deleted0, deletedTris);
-			deletedTris = UpdateTriangles(i0, ia0, _mu_vertices[i1], deleted1, deletedTris);
+			int tstart = _mu_refs.size();
+			deletedTris = UpdateTriangles(i0, ia0, &(_mu_vertices[i0]), deleted0, deletedTris);
+			deletedTris = UpdateTriangles(i0, ia0, &(_mu_vertices[i1]), deleted1, deletedTris);
 
-			int tcount = refs.Length - tstart;
+			int tcount = _mu_refs.size() - tstart;
 			if (tcount <= _mu_vertices[i0].tcount) {
 				// save ram
 				if (tcount > 0) {
@@ -734,20 +735,29 @@ double VoxelMesher::CalculateError(MUVertex vert0, MUVertex vert1, Vector3 *resu
 
 		error = VoxelMesher::Min3(error1, error2, error3);
 		if (error == error3) {
-			result = p3;
+			result->x = p3.x;
+			result->y = p3.y;
+			result->z = p3.z;
 		} else if (error == error2) {
-			result = p2;
+			result->x = p2.x;
+			result->y = p2.y;
+			result->z = p2.z;
 		} else if (error == error1) {
-			result = p1;
+			result->x = p1.x;
+			result->y = p1.y;
+			result->z = p1.z;
 		} else {
-			result = p3;
+			result->x = p3.x;
+			result->y = p3.y;
+			result->z = p3.z;
 		}
 	}
 	return error;
 }
 
-void VoxelMesher::UpdateTriangles(int i0, int ia0, MUVertex *v, PoolVector<bool> deleted, int *deletedTriangles) {
+int VoxelMesher::UpdateTriangles(int i0, int ia0, MUVertex *v, PoolVector<bool> deleted, int p_deletedTriangles) {
 	Vector3 p;
+	int deletedTriangles = p_deletedTriangles;
 	int tcount = v->tcount;
 
 	for (int k = 0; k < tcount; k++) {
@@ -769,14 +779,97 @@ void VoxelMesher::UpdateTriangles(int i0, int ia0, MUVertex *v, PoolVector<bool>
 		}
 
 		t.dirty = true;
-		t.err0 = CalculateError(_mu_vertices[t.v0], _mu_vertices[t.v1], p);
-		t.err1 = CalculateError(_mu_vertices[t.v1], _mu_vertices[t.v2], p);
-		t.err2 = CalculateError(_mu_vertices[t.v2], _mu_vertices[t.v0], p);
+		t.err0 = CalculateError(_mu_vertices[t.v0], _mu_vertices[t.v1], &p);
+		t.err1 = CalculateError(_mu_vertices[t.v1], _mu_vertices[t.v2], &p);
+		t.err2 = CalculateError(_mu_vertices[t.v2], _mu_vertices[t.v0], &p);
 		t.err3 = VoxelMesher::Min3(t.err0, t.err1, t.err2);
 
 		_mu_triangles[tid] = t;
 		_mu_refs.push_back(r);
 	}
+
+	return deletedTriangles;
+}
+
+bool VoxelMesher::Flipped(Vector3 *p, int i0, int i1, MUVertex *v0, PoolVector<bool> &deleted) {
+	int tcount = v0->tcount;
+
+	for (int k = 0; k < tcount; k++) {
+		MURef r = _mu_refs[v0->tstart + k];
+		if (_mu_triangles[r.tid].deleted)
+			continue;
+
+		int s = r.tvertex;
+		int id1 = _mu_triangles[r.tid].get((s + 1) % 3);
+		int id2 = _mu_triangles[r.tid].get((s + 2) % 3);
+		if (id1 == i1 || id2 == i1) {
+			deleted.set(k, true);
+			continue;
+		}
+
+		Vector3 d1 = _mu_vertices[id1].p - (*p);
+		d1.normalize();
+		Vector3 d2 = _mu_vertices[id2].p - (*p);
+		d2.normalize();
+		double dot = d1.dot(d2);
+		if (Math::abs(dot) > 0.999)
+			return true;
+
+		Vector3 n = d1.cross(d2);
+		n.normalize();
+		deleted.set(k, false);
+		dot = n.dot(_mu_triangles[r.tid].n);
+		if (dot < 0.2)
+			return true;
+	}
+
+	return false;
+}
+
+Vector3 VoxelMesher::CalculateBarycentricCoords(Vector3 const &point, Vector3 const &a, Vector3 const &b, Vector3 const &c) {
+	Vector3 v0 = (Vector3)(b - a), v1 = (Vector3)(c - a), v2 = (Vector3)(point - a);
+	float d00 = v0.dot(v0);
+	float d01 = v0.dot(v1);
+	float d11 = v1.dot(v1);
+	float d20 = v2.dot(v0);
+	float d21 = v2.dot(v1);
+	float denom = d00 * d11 - d01 * d01;
+	float v = (d11 * d20 - d01 * d21) / denom;
+	float w = (d00 * d21 - d01 * d20) / denom;
+	float u = 1.0 - v - w;
+
+	return Vector3(u, v, w);
+}
+
+void VoxelMesher::InterpolateVertexAttributes(int dst, int i0, int i1, int i2, Vector3 &barycentricCoord) {
+	if (vertNormals != null) {
+		vertNormals[dst] = Vector3.Normalize((vertNormals[i0] * barycentricCoord.x) + (vertNormals[i1] * barycentricCoord.y) + (vertNormals[i2] * barycentricCoord.z));
+	}
+
+	if (vertTangents != null) {
+		vertTangents[dst] = NormalizeTangent((vertTangents[i0] * barycentricCoord.x) + (vertTangents[i1] * barycentricCoord.y) + (vertTangents[i2] * barycentricCoord.z));
+	}
+
+	if (vertUV2D != null) {
+		for (int i = 0; i < UVChannelCount; i++) {
+			var vertUV = vertUV2D[i];
+			if (vertUV != null) {
+				vertUV[dst] = (vertUV[i0] * barycentricCoord.x) + (vertUV[i1] * barycentricCoord.y) + (vertUV[i2] * barycentricCoord.z);
+			}
+		}
+	}
+
+	if (vertColors != null) {
+		vertColors[dst] = (vertColors[i0] * barycentricCoord.x) + (vertColors[i1] * barycentricCoord.y) + (vertColors[i2] * barycentricCoord.z);
+	}
+
+	if (blendShapes != null) {
+		for (int i = 0; i < blendShapes.Length; i++) {
+			blendShapes[i].InterpolateVertexAttributes(dst, i0, i1, i2, barycentricCoord);
+		}
+	}
+
+	// TODO: How do we interpolate the bone weights? Do we have to?
 }
 
 void VoxelMesher::reset() {
