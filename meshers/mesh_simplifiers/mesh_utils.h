@@ -54,7 +54,7 @@ struct SymmetricMatrix {
 	/// The m44 component.
 	double m9;
 
-	_FORCE_INLINE_ const double &operator[](int p_index) const {
+	_FORCE_INLINE_ const double get(int p_index) const {
 		CRASH_BAD_INDEX(p_index, 10);
 
 		switch (p_index) {
@@ -213,12 +213,12 @@ struct SymmetricMatrix {
 			int a21, int a22, int a23,
 			int a31, int a32, int a33) {
 		double det =
-				this[a11] * this[a22] * this[a33] +
-				this[a13] * this[a21] * this[a32] +
-				this[a12] * this[a23] * this[a31] -
-				this[a13] * this[a22] * this[a31] -
-				this[a11] * this[a23] * this[a32] -
-				this[a12] * this[a21] * this[a33];
+				get(a11) * get(a22) * get(a33) +
+				get(a13) * get(a21) * get(a32) +
+				get(a12) * get(a23) * get(a31) -
+				get(a13) * get(a22) * get(a31) -
+				get(a11) * get(a23) * get(a32) -
+				get(a12) * get(a21) * get(a33);
 		return det;
 	}
 
@@ -275,7 +275,7 @@ struct MUTriangle {
 		return (p_index == 0 ? v0 : (p_index == 1 ? v1 : v2));
 	}
 
-	_FORCE_INLINE_ int set(int p_index, int value) {
+	_FORCE_INLINE_ void set(int p_index, int value) {
 		CRASH_BAD_INDEX(p_index, 3);
 
 		switch (p_index) {
@@ -289,8 +289,44 @@ struct MUTriangle {
 				v2 = value;
 				break;
 		}
+	}
 
-		return 0;
+	_FORCE_INLINE_ void set_dirty(bool p_value) {
+		dirty = p_value;
+	}
+
+	_FORCE_INLINE_ void set_err0(double p_value) {
+		err0 = p_value;
+	}
+
+	_FORCE_INLINE_ void set_err1(double p_value) {
+		err1 = p_value;
+	}
+
+	_FORCE_INLINE_ void set_err2(double p_value) {
+		err2 = p_value;
+	}
+
+	_FORCE_INLINE_ void set_err3(double p_value) {
+		err3 = p_value;
+	}
+
+	_FORCE_INLINE_ void set_deleted(double p_value) {
+		deleted = p_value;
+	}
+
+	MUTriangle() {
+		v0 = 0;
+		v1 = 0;
+		v2 = 0;
+		subMeshIndex = 0;
+
+		va0 = 0;
+		va1 = 0;
+		va2 = 0;
+
+		err0 = err1 = err2 = err3 = 0;
+		deleted = dirty = false;
 	}
 
 	MUTriangle(int p_v0, int p_v1, int p_v2, int p_subMeshIndex) {
@@ -353,6 +389,34 @@ struct MUVertex {
 	bool uvSeamEdge;
 	bool uvFoldoverEdge;
 
+	_FORCE_INLINE_ void set_tstart(int p_value) {
+		tstart = p_value;
+	}
+
+	_FORCE_INLINE_ void set_tcount(int p_value) {
+		tcount = p_value;
+	}
+
+	_FORCE_INLINE_ void set_border_edge(bool p_value) {
+		borderEdge = p_value;
+	}
+
+	_FORCE_INLINE_ void set_uv_seam_edge(bool p_value) {
+		uvSeamEdge = p_value;
+	}
+
+	_FORCE_INLINE_ void set_uv_foldover_edge(bool p_value) {
+		uvFoldoverEdge = p_value;
+	}
+
+	MUVertex() {
+		tstart = 0;
+		tcount = 0;
+		borderEdge = true;
+		uvSeamEdge = false;
+		uvFoldoverEdge = false;
+	}
+
 	MUVertex(float x, float y, float z) {
 		p = Vector3(x, y, z);
 		tstart = 0;
@@ -391,6 +455,10 @@ struct BorderVertex {
 	int index;
 	int hash;
 
+	_FORCE_INLINE_ void set_index(int p_value) {
+		index = p_value;
+	}
+
 	BorderVertex() {
 		index = 0;
 		hash = 0;
@@ -403,7 +471,7 @@ struct BorderVertex {
 };
 
 struct BorderVertexComparer {
-	_FORCE_INLINE_ bool operator()(const BorderVertex &a, const BorderVertex &b) const { return x.hash < y.hash; }
+	_FORCE_INLINE_ bool operator()(const BorderVertex &a, const BorderVertex &b) const { return a.hash < b.hash; }
 };
 
 #endif

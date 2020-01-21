@@ -7,6 +7,7 @@ module_env = env.Clone()
 if os.path.isdir('../mesh_data_resource'):
     module_env.Append(CPPDEFINES=['MESH_DATA_RESOURCE_PRESENT'])
 
+module_env.Append(CPPFLAGS=["-std=c++11"])
 
 sources = [
 
@@ -30,6 +31,9 @@ sources = [
     "meshers/transvoxel_uv_mesher/transvoxel_cell_data.cpp",
     "meshers/transvoxel_uv_mesher/voxel_mesher_transvoxel.cpp",
     "meshers/transvoxel_uv_mesher/transvoxel_tables.cpp",
+
+    "meshers/mesh_simplifiers/mesh_simplifier.cpp",
+    "meshers/mesh_simplifiers/fast_quadratic_mesh_simplifier.cpp",
 
     "world/voxel_world.cpp",
     "world/voxel_chunk.cpp",
@@ -55,7 +59,6 @@ sources = [
     "clutter/ground_clutter.cpp",
     "clutter/ground_clutter_foliage.cpp",
 ]
-
 
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
     # Shared lib compilation

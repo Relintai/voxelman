@@ -16,6 +16,9 @@
 #include "meshers/transvoxel_uv_mesher/voxel_mesher_transvoxel.h"
 #include "meshers/voxel_mesher.h"
 
+#include "meshers/mesh_simplifiers/fast_quadratic_mesh_simplifier.h"
+#include "meshers/mesh_simplifiers/mesh_simplifier.h"
+
 #include "world/environment_data.h"
 #include "world/voxel_chunk.h"
 #include "world/voxel_chunk_prop_data.h"
@@ -51,6 +54,9 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelSurface>();
 	ClassDB::register_class<VoxelSurfaceSimple>();
 	ClassDB::register_class<VoxelSurfaceMerger>();
+
+	ClassDB::register_class<MeshSimplifier>();
+	ClassDB::register_class<FastQuadraticMeshSimplifier>();
 
 	ClassDB::register_class<VoxelmanLibrary>();
 	ClassDB::register_class<VoxelmanLibrarySimple>();

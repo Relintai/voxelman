@@ -1,5 +1,9 @@
-#ifndef MESH_SIMPLIFIER_H
-#define MESH_SIMPLIFIER_H
+#ifndef FAST_QUADRATIC_MESH_SIMPLIFIER_H
+#define FAST_QUADRATIC_MESH_SIMPLIFIER_H
+
+#include "mesh_simplifier.h"
+
+#include <limits>
 
 #include "mesh_utils.h"
 
@@ -8,7 +12,8 @@
 
 class VoxelMesher;
 
-class MeshSimplifier {
+class FastQuadraticMeshSimplifier : public MeshSimplifier {
+	GDCLASS(FastQuadraticMeshSimplifier, MeshSimplifier);
 
 public:
 	void initialize(Ref<VoxelMesher> mesher);
@@ -17,13 +22,13 @@ public:
 	void SimplifyMeshLossless();
 	void UpdateMesh(int iteration);
 	void UpdateReferences();
-	int RemoveVertexPass(int startTrisCount, int targetTrisCount, double threshold, PoolVector<bool> deleted0, PoolVector<bool> deleted1, int deletedTris);
+	int RemoveVertexPass(int startTrisCount, int targetTrisCount, double threshold, PoolVector<bool> &deleted0, PoolVector<bool> &deleted1, int deletedTris);
 	void CompactMesh();
 	bool AreUVsTheSame(int channel, int indexA, int indexB);
 	double VertexError(SymmetricMatrix q, double x, double y, double z);
 	double CalculateError(MUVertex vert0, MUVertex vert1, Vector3 *result);
-	int UpdateTriangles(int i0, int ia0, MUVertex *v, PoolVector<bool> deleted, int deletedTriangles);
-	bool Flipped(Vector3 *p, int i0, int i1, MUVertex *v0, PoolVector<bool> &deleted);
+	int UpdateTriangles(int i0, int ia0, const MUVertex &v, PoolVector<bool> &deleted, int deletedTriangles);
+	bool Flipped(const Vector3 &p, int i0, int i1, const MUVertex &v0, PoolVector<bool> &deleted);
 	static Vector3 CalculateBarycentricCoords(Vector3 const &point, Vector3 const &a, Vector3 const &b, Vector3 const &c);
 	void InterpolateVertexAttributes(int dst, int i0, int i1, int i2, Vector3 &barycentricCoord);
 
@@ -31,7 +36,7 @@ public:
 		return (val1 < val2 ? (val1 < val3 ? val1 : val3) : (val2 < val3 ? val2 : val3));
 	}
 
-	MeshSimplifier();
+	FastQuadraticMeshSimplifier();
 
 private:
 	PoolVector<Vector3> _vertices;
