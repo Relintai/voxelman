@@ -43,6 +43,8 @@
 #include "clutter/ground_clutter.h"
 #include "clutter/ground_clutter_foliage.h"
 
+//#include "prop_tool/prop_tool_editor_plugin.h"
+
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelmanQueue>();
 	ClassDB::register_class<VoxelmanUnboundedQueue>();
@@ -86,6 +88,10 @@ void register_voxelman_types() {
 	ClassDB::register_class<WorldArea>();
 
 	ClassDB::register_class<GroundClutterFoliage>();
+
+//#ifdef TOOLS_ENABLED
+//	EditorPlugins::add_by_type<PropToolEditorPlugin>();
+//#endif
 }
 
 void unregister_voxelman_types() {

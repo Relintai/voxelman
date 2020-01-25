@@ -58,6 +58,8 @@ sources = [
 
     "clutter/ground_clutter.cpp",
     "clutter/ground_clutter_foliage.cpp",
+
+    #"prop_tool/prop_tool_editor_plugin.cpp",
 ]
 
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
