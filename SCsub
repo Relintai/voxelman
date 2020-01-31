@@ -32,9 +32,6 @@ sources = [
     "meshers/transvoxel_uv_mesher/voxel_mesher_transvoxel.cpp",
     "meshers/transvoxel_uv_mesher/transvoxel_tables.cpp",
 
-    "meshers/mesh_simplifiers/mesh_simplifier.cpp",
-    "meshers/mesh_simplifiers/fast_quadratic_mesh_simplifier.cpp",
-
     "world/voxel_world.cpp",
     "world/voxel_chunk.cpp",
     "world/voxel_structure.cpp",
