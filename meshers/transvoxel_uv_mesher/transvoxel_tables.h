@@ -1,3 +1,5 @@
+//Please note, that these tables were modified to get support for uv-mapping!
+
 //================================================================================
 //
 // The Transvoxel Algorithm look-up tables
