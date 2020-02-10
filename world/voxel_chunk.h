@@ -66,26 +66,26 @@ class VoxelChunk : public Spatial {
 public:
 	enum {
 		VOXEL_CHUNK_STATE_OK = 0,
-		VOXEL_CHUNK_STATE_GENERATION_QUEUED = 1,
-		VOXEL_CHUNK_STATE_GENERATION = 2,
-		VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED = 3,
-		VOXEL_CHUNK_STATE_MESH_GENERATION = 4,
-		VOXEL_CHUNK_STATE_MAX = 5,
+		VOXEL_CHUNK_STATE_GENERATION_QUEUED,
+		VOXEL_CHUNK_STATE_GENERATION,
+		VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED,
+		VOXEL_CHUNK_STATE_MESH_GENERATION,
+		VOXEL_CHUNK_STATE_MAX,
 	};
 
 	enum {
 		BUILD_PHASE_DONE = 0,
-		BUILD_PHASE_SETUP = 1,
-		BUILD_PHASE_TERRARIN_MESH_SETUP = 2,
-		BUILD_PHASE_TERRARIN_MESH_COLLIDER = 3,
-		BUILD_PHASE_LIGHTS = 4,
-		BUILD_PHASE_TERRARIN_MESH = 5,
-		BUILD_PHASE_PROP_MESH = 6,
-		BUILD_PHASE_PROP_COLLIDER = 7,
-		BUILD_PHASE_LIQUID = 8,
-		BUILD_PHASE_CLUTTER = 9,
-		BUILD_PHASE_FINALIZE = 10,
-		BUILD_PHASE_MAX = 11
+		BUILD_PHASE_SETUP,
+		BUILD_PHASE_TERRARIN_MESH_SETUP,
+		BUILD_PHASE_TERRARIN_MESH_COLLIDER,
+		BUILD_PHASE_LIGHTS,
+		BUILD_PHASE_TERRARIN_MESH,
+		BUILD_PHASE_PROP_MESH,
+		BUILD_PHASE_PROP_COLLIDER,
+		//BUILD_PHASE_LIQUID,
+		//BUILD_PHASE_CLUTTER,
+		BUILD_PHASE_FINALIZE,
+		BUILD_PHASE_MAX
 	};
 
 	enum DefaultChannels {
@@ -218,10 +218,14 @@ public:
 
 	void finalize_mesh();
 
-	void build();
-	static void _build_phase_threaded(void *_userdata);
+	void build_deferred();
+	void build_prioritized();
+	static void _build_threaded(void *_userdata);
+
 	void build_phase();
+	void _build_step();
 	void _build_phase(int phase);
+	bool has_next_phase();
 	void next_phase();
 
 	void clear();
@@ -368,6 +372,8 @@ protected:
 
 	bool _bake_lights;
 
+	bool _build_prioritized;
+	bool _build_phase_done;
 	Thread *_build_thread;
 };
 

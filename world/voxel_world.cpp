@@ -286,7 +286,7 @@ void VoxelWorld::generate_chunk(VoxelChunk *p_chunk) {
 
 	call("_generate_chunk", p_chunk);
 
-	p_chunk->build();
+	p_chunk->build_deferred();
 }
 
 void VoxelWorld::_generate_chunk(Node *p_chunk) {

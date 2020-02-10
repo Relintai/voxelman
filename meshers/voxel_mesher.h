@@ -56,7 +56,7 @@ public:
 	void set_library(Ref<VoxelmanLibrary> library);
 
 	Ref<Material> get_material();
-	void set_material(Ref<Material> material);
+	void set_material(const Ref<Material> &material);
 
 	float get_ao_strength() const;
 	void set_ao_strength(float value);

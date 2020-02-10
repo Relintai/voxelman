@@ -34,7 +34,7 @@ void VoxelMesher::set_library(Ref<VoxelmanLibrary> library) {
 Ref<Material> VoxelMesher::get_material() {
 	return _material;
 }
-void VoxelMesher::set_material(Ref<Material> material) {
+void VoxelMesher::set_material(const Ref<Material> &material) {
 	_material = material;
 }
 
