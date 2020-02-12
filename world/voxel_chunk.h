@@ -26,6 +26,7 @@ SOFTWARE.
 #include "scene/3d/spatial.h"
 
 #include "core/engine.h"
+#include "core/os/mutex.h"
 #include "core/os/thread.h"
 #include "core/os/thread_safe.h"
 #include "core/ustring.h"
@@ -108,6 +109,9 @@ public:
 
 	bool get_is_build_threaded() const;
 	void set_is_build_threaded(bool value);
+
+	bool get_build_phase_done() const;
+	void set_build_phase_done(bool value);
 
 	bool get_dirty() const;
 	void set_dirty(bool value);
@@ -222,13 +226,11 @@ public:
 	void build_prioritized();
 	static void _build_threaded(void *_userdata);
 
-	void build_phase();
+	bool build_phase();
 	void _build_step();
-	void _build_phase(int phase);
+	bool _build_phase(int phase);
 	bool has_next_phase();
 	void next_phase();
-	bool is_phase_threaded(int phase);
-	bool _is_phase_threaded(int phase);
 
 	void clear();
 
@@ -377,6 +379,7 @@ protected:
 	bool _bake_lights;
 
 	bool _build_prioritized;
+	Mutex *_build_phase_done_mutex;
 	bool _build_phase_done;
 	Thread *_build_thread;
 };

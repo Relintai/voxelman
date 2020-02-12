@@ -38,6 +38,19 @@ _FORCE_INLINE_ void VoxelChunk::set_is_build_threaded(bool value) {
 	_is_build_threaded = value;
 }
 
+bool VoxelChunk::get_build_phase_done() const {
+	_build_phase_done_mutex->lock();
+	bool v = _build_phase_done_mutex;
+	_build_phase_done_mutex->unlock();
+
+	return v;
+}
+void VoxelChunk::set_build_phase_done(bool value) {
+	_build_phase_done_mutex->lock();
+	_build_phase_done = value;
+	_build_phase_done_mutex->unlock();
+}
+
 _FORCE_INLINE_ bool VoxelChunk::get_dirty() const {
 	return _dirty;
 }
@@ -570,46 +583,33 @@ void VoxelChunk::build_prioritized() {
 void VoxelChunk::_build_step() {
 	ERR_FAIL_COND(!has_next_phase());
 
-	if (_is_build_threaded) {
-		if (is_phase_threaded(get_current_build_phase())) {
-			ERR_FAIL_COND(_build_thread != NULL);
+	while (has_next_phase() && build_phase())
+		;
 
-			_build_thread = Thread::create(_build_threaded, this);
-		} else {
-			if (has_next_phase())
-				build_phase();
-		}
-	} else {
-		while (is_phase_threaded(get_current_build_phase()) && has_next_phase()) {
-			build_phase();
-		}
-
-		//call the next non-threaded phase aswell
-		if (has_next_phase())
-			build_phase();
-	}
+	//call the next non-threaded phase aswell
+	if (has_next_phase())
+		build_phase();
 }
 
 void VoxelChunk::_build_threaded(void *_userdata) {
 	VoxelChunk *vc = (VoxelChunk *)_userdata;
 
-	while (vc->is_phase_threaded(vc->get_current_build_phase()) && vc->has_next_phase()) {
-		vc->build_phase();
-	}
+	while (vc->has_next_phase() && vc->build_phase())
+		;
 }
 
-void VoxelChunk::build_phase() {
-	_build_phase_done = false;
+bool VoxelChunk::build_phase() {
+	set_build_phase_done(false);
 
-	call("_build_phase", _current_build_phase);
+	return call("_build_phase", _current_build_phase);
 }
 
-void VoxelChunk::_build_phase(int phase) {
-	ERR_FAIL_COND(!_library.is_valid());
+bool VoxelChunk::_build_phase(int phase) {
+	ERR_FAIL_COND_V(!_library.is_valid(), true);
 
 	switch (phase) {
 		case BUILD_PHASE_DONE:
-			return;
+			return true;
 		case BUILD_PHASE_SETUP: {
 			if (_meshers.size() == 0) {
 				create_meshers();
@@ -626,7 +626,7 @@ void VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return;
+			return true;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_SETUP: {
 			for (int i = 0; i < _meshers.size(); ++i) {
@@ -639,7 +639,7 @@ void VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return;
+			return true;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_COLLIDER: {
 			if (get_create_collider()) {
@@ -648,7 +648,7 @@ void VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return;
+			return true;
 		}
 		case BUILD_PHASE_TERRARIN_MESH: {
 			for (int i = 0; i < _meshers.size(); ++i) {
@@ -663,7 +663,7 @@ void VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return;
+			return true;
 		}
 		case BUILD_PHASE_PROP_MESH: {
 			for (int i = 0; i < _meshers.size(); ++i) {
@@ -681,7 +681,7 @@ void VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return;
+			return false;
 		}
 		case BUILD_PHASE_PROP_COLLIDER: {
 
@@ -701,7 +701,7 @@ void VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return;
+			return true;
 		}
 		/*
 		case BUILD_PHASE_LIQUID: {
@@ -728,10 +728,11 @@ void VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return;
+			return true;
 		}
 	}
 
+	return true;
 	//next_phase();
 }
 
@@ -743,7 +744,7 @@ bool VoxelChunk::has_next_phase() {
 }
 
 void VoxelChunk::next_phase() {
-	_build_phase_done = true;
+	set_build_phase_done(true);
 
 	if (_abort_build) {
 		_current_build_phase = BUILD_PHASE_DONE;
@@ -762,25 +763,6 @@ void VoxelChunk::next_phase() {
 
 		emit_signal("mesh_generation_finished", this);
 	}
-}
-
-bool VoxelChunk::is_phase_threaded(int phase) {
-	return call("_is_phase_threaded", phase);
-}
-bool VoxelChunk::_is_phase_threaded(int phase) {
-	switch (phase) {
-		case BUILD_PHASE_SETUP:
-		case BUILD_PHASE_TERRARIN_MESH_SETUP:
-		case BUILD_PHASE_TERRARIN_MESH_COLLIDER:
-		//case BUILD_PHASE_LIGHTS:
-		case BUILD_PHASE_TERRARIN_MESH:
-		//case BUILD_PHASE_PROP_MESH:
-		case BUILD_PHASE_PROP_COLLIDER:
-		case BUILD_PHASE_FINALIZE:
-			return true;
-	}
-
-	return false;
 }
 
 void VoxelChunk::clear() {
@@ -1280,6 +1262,7 @@ VoxelChunk::VoxelChunk() {
 	_margin_end = 0;
 
 	_build_prioritized = false;
+	_build_phase_done_mutex = Mutex::create();
 	_build_phase_done = false;
 	_build_thread = NULL;
 }
@@ -1310,6 +1293,8 @@ VoxelChunk::~VoxelChunk() {
 			memdelete_arr(ch);
 		}
 	}
+
+	memdelete(_build_phase_done_mutex);
 }
 
 void VoxelChunk::_notification(int p_what) {
@@ -1322,16 +1307,7 @@ void VoxelChunk::_notification(int p_what) {
 			}
 		}
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			//if (_build_prioritized) {
-			//while (has_next_phase() && _build_phase_done) {
-			//	_build_step();
-			//	wait_and_finish_thread();
-			//}
-
-			//	return;
-			//}
-
-			if (has_next_phase() && _build_phase_done) {
+			if (has_next_phase() && get_build_phase_done()) {
 				wait_and_finish_thread();
 
 				_build_step();
@@ -1350,10 +1326,6 @@ void VoxelChunk::wait_and_finish_thread() {
 
 void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
-
-	BIND_VMETHOD(MethodInfo("_is_phase_threaded", PropertyInfo(Variant::INT, "phase")));
-	ClassDB::bind_method(D_METHOD("is_phase_threaded", "phase"), &VoxelChunk::is_phase_threaded);
-	ClassDB::bind_method(D_METHOD("_is_phase_threaded", "phase"), &VoxelChunk::_is_phase_threaded);
 
 	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
 
@@ -1500,7 +1472,7 @@ void VoxelChunk::_bind_methods() {
 	//Meshes
 	ClassDB::bind_method(D_METHOD("finalize_mesh"), &VoxelChunk::finalize_mesh);
 
-	BIND_VMETHOD(MethodInfo("_build_phase", PropertyInfo(Variant::INT, "phase")));
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::BOOL, "is_done"), "_build_phase", PropertyInfo(Variant::INT, "phase")));
 
 	ClassDB::bind_method(D_METHOD("build_deferred"), &VoxelChunk::build_deferred);
 	ClassDB::bind_method(D_METHOD("build_prioritized"), &VoxelChunk::build_prioritized);
