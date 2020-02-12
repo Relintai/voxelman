@@ -544,11 +544,7 @@ void VoxelChunk::build_deferred() {
 
 		set_process_internal(true);
 
-		if (_build_thread) {
-			Thread::wait_to_finish(_build_thread);
-			memdelete(_build_thread);
-			_build_thread = NULL;
-		}
+		wait_and_finish_thread();
 
 		_is_generating = true;
 
@@ -562,35 +558,44 @@ void VoxelChunk::build_prioritized() {
 
 		set_process_internal(true);
 
-		if (_build_thread) {
-			Thread::wait_to_finish(_build_thread);
-			memdelete(_build_thread);
-			_build_thread = NULL;
-		}
+		wait_and_finish_thread();
 
 		_is_generating = true;
 
 		next_phase();
+		_build_step();
 	}
 }
 
 void VoxelChunk::_build_step() {
-	if (_build_prioritized)
-		build_phase();
+	ERR_FAIL_COND(!has_next_phase());
 
 	if (_is_build_threaded) {
-		ERR_FAIL_COND(_build_thread != NULL);
+		if (is_phase_threaded(get_current_build_phase())) {
+			ERR_FAIL_COND(_build_thread != NULL);
 
-		_build_thread = Thread::create(_build_threaded, this);
+			_build_thread = Thread::create(_build_threaded, this);
+		} else {
+			if (has_next_phase())
+				build_phase();
+		}
 	} else {
-		build_phase();
+		while (is_phase_threaded(get_current_build_phase()) && has_next_phase()) {
+			build_phase();
+		}
+
+		//call the next non-threaded phase aswell
+		if (has_next_phase())
+			build_phase();
 	}
 }
 
 void VoxelChunk::_build_threaded(void *_userdata) {
 	VoxelChunk *vc = (VoxelChunk *)_userdata;
 
-	vc->build_phase();
+	while (vc->is_phase_threaded(vc->get_current_build_phase()) && vc->has_next_phase()) {
+		vc->build_phase();
+	}
 }
 
 void VoxelChunk::build_phase() {
@@ -624,19 +629,13 @@ void VoxelChunk::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_SETUP: {
-			if (has_method("_create_mesh")) {
-				call("_create_mesh");
-			} else {
-				for (int i = 0; i < _meshers.size(); ++i) {
-					Ref<VoxelMesher> mesher = _meshers.get(i);
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _meshers.get(i);
 
-					ERR_CONTINUE(!mesher.is_valid());
+				ERR_CONTINUE(!mesher.is_valid());
 
-					mesher->add_chunk(this);
-				}
+				mesher->add_chunk(this);
 			}
-
-			//finalize_mesh();
 
 			next_phase();
 
@@ -733,7 +732,7 @@ void VoxelChunk::_build_phase(int phase) {
 		}
 	}
 
-	next_phase();
+	//next_phase();
 }
 
 bool VoxelChunk::has_next_phase() {
@@ -763,6 +762,25 @@ void VoxelChunk::next_phase() {
 
 		emit_signal("mesh_generation_finished", this);
 	}
+}
+
+bool VoxelChunk::is_phase_threaded(int phase) {
+	return call("_is_phase_threaded", phase);
+}
+bool VoxelChunk::_is_phase_threaded(int phase) {
+	switch (phase) {
+		case BUILD_PHASE_SETUP:
+		case BUILD_PHASE_TERRARIN_MESH_SETUP:
+		case BUILD_PHASE_TERRARIN_MESH_COLLIDER:
+		//case BUILD_PHASE_LIGHTS:
+		case BUILD_PHASE_TERRARIN_MESH:
+		//case BUILD_PHASE_PROP_MESH:
+		case BUILD_PHASE_PROP_COLLIDER:
+		case BUILD_PHASE_FINALIZE:
+			return true;
+	}
+
+	return false;
 }
 
 void VoxelChunk::clear() {
@@ -1300,41 +1318,46 @@ void VoxelChunk::_notification(int p_what) {
 			if (_build_thread) {
 				_abort_build = true;
 
-				Thread::wait_to_finish(_build_thread);
-				memdelete(_build_thread);
-				_build_thread = NULL;
+				wait_and_finish_thread();
 			}
 		}
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (_build_prioritized) {
-				while (has_next_phase() && _build_phase_done) {
-					build_phase();
-				}
+			//if (_build_prioritized) {
+			//while (has_next_phase() && _build_phase_done) {
+			//	_build_step();
+			//	wait_and_finish_thread();
+			//}
 
-				return;
-			}
+			//	return;
+			//}
 
 			if (has_next_phase() && _build_phase_done) {
-				if (_build_thread) {
-					Thread::wait_to_finish(_build_thread);
-					memdelete(_build_thread);
-					_build_thread = NULL;
-				}
+				wait_and_finish_thread();
 
-				build_phase();
+				_build_step();
 			}
 		}
+	}
+}
+
+void VoxelChunk::wait_and_finish_thread() {
+	if (_build_thread) {
+		Thread::wait_to_finish(_build_thread);
+		memdelete(_build_thread);
+		_build_thread = NULL;
 	}
 }
 
 void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
-	BIND_VMETHOD(MethodInfo("_create_mesh"));
-	BIND_VMETHOD(MethodInfo("_create_meshers"));
+	BIND_VMETHOD(MethodInfo("_is_phase_threaded", PropertyInfo(Variant::INT, "phase")));
+	ClassDB::bind_method(D_METHOD("is_phase_threaded", "phase"), &VoxelChunk::is_phase_threaded);
+	ClassDB::bind_method(D_METHOD("_is_phase_threaded", "phase"), &VoxelChunk::_is_phase_threaded);
 
 	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
 
+	BIND_VMETHOD(MethodInfo("_create_meshers"));
 	ClassDB::bind_method(D_METHOD("_create_meshers"), &VoxelChunk::_create_meshers);
 
 	ClassDB::bind_method(D_METHOD("get_is_generating"), &VoxelChunk::get_is_generating);

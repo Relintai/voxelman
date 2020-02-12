@@ -227,6 +227,8 @@ public:
 	void _build_phase(int phase);
 	bool has_next_phase();
 	void next_phase();
+	bool is_phase_threaded(int phase);
+	bool _is_phase_threaded(int phase);
 
 	void clear();
 
@@ -296,6 +298,8 @@ public:
 	~VoxelChunk();
 
 protected:
+	void wait_and_finish_thread();
+
 	void _notification(int p_what);
 	static void _bind_methods();
 

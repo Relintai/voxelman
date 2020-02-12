@@ -336,6 +336,7 @@ void VoxelMesher::_bake_colors(Node *p_chunk) {
 
 			float ao = (chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_AO) / 255.0) * _ao_strength;
 			float rao = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+
 			ao += rao;
 
 			light.r += _base_light_value;
