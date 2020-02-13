@@ -22,6 +22,379 @@ SOFTWARE.
 
 #include "voxel_mesher_transvoxel.h"
 
+#include "../../world/voxel_chunk.h"
+#include "core/array.h"
+#include "core/dictionary.h"
+
+int VoxelMesherTransvoxel::get_texture_scale() const {
+	return _texture_scale;
+}
+void VoxelMesherTransvoxel::set_texture_scale(const int value) {
+	_texture_scale = value;
+}
+
+int *VoxelMesherTransvoxel::get_voxel_type_array(VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
+	int *arr = memnew_arr(int, 8);
+
+	arr[0] = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	arr[1] = chunk->get_voxel(x, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	arr[2] = chunk->get_voxel(x, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	arr[3] = chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	arr[4] = chunk->get_voxel(x + size, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	arr[5] = chunk->get_voxel(x + size, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	arr[6] = chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	arr[7] = chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	return arr;
+}
+int VoxelMesherTransvoxel::get_case_code_from_arr(const int *data) {
+	int case_code = 0;
+
+	if (data[0] != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_000;
+
+	if (data[1] != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_010;
+
+	if (data[2] != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_001;
+
+	if (data[3] != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_011;
+
+	if (data[4] != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_100;
+
+	if (data[5] != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_110;
+
+	if (data[6] != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_101;
+
+	if (data[7] != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_111;
+
+	return case_code;
+}
+int VoxelMesherTransvoxel::get_case_code(VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
+	int case_code = 0;
+
+	if (chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_000;
+
+	if (chunk->get_voxel(x, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_010;
+
+	if (chunk->get_voxel(x, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_001;
+
+	if (chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_011;
+
+	if (chunk->get_voxel(x + size, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_100;
+
+	if (chunk->get_voxel(x + size, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_110;
+
+	if (chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_101;
+
+	if (chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+		case_code = case_code | VOXEL_ENTRY_MASK_111;
+
+	return case_code;
+}
+
+int VoxelMesherTransvoxel::get_voxel_type(VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
+	int type = 0;
+
+	type = chunk->get_voxel(x, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	if (type != 0)
+		return type;
+
+	type = chunk->get_voxel(x, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	if (type != 0)
+		return type;
+
+	type = chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	if (type != 0)
+		return type;
+
+	type = chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	if (type != 0)
+		return type;
+
+	type = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	if (type != 0)
+		return type;
+
+	type = chunk->get_voxel(x + size, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	if (type != 0)
+		return type;
+
+	type = chunk->get_voxel(x + size, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	if (type != 0)
+		return type;
+
+	type = chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+	return type;
+}
+
+void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
+	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
+
+	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+
+	chunk->generate_ao();
+
+	int x_size = chunk->get_size_x();
+	int y_size = chunk->get_size_y();
+	int z_size = chunk->get_size_z();
+
+	int lod_size = get_lod_size();
+
+	for (int y = 0; y < y_size; y += lod_size) {
+		for (int z = 0; z < z_size; z += lod_size) {
+			for (int x = 0; x < x_size; x += lod_size) {
+
+				int *type_arr = get_voxel_type_array(chunk, x, y, z, lod_size);
+				int case_code = get_case_code_from_arr(type_arr);
+
+				if (case_code == 0 or case_code == 255) {
+					memdelete_arr(type_arr);
+					continue;
+				}
+
+				int regular_cell_class = get_regular_cell_class(case_code);
+
+				Ref<TransvoxelCellData> cell_data = get_regular_cell_data(regular_cell_class);
+
+				int index_count = cell_data->get_triangle_count() * 3;
+				int vertex_count = cell_data->get_vertex_count();
+
+				for (int i = 0; i < index_count; ++i) {
+					int ind = get_vertex_count() + cell_data->get_vertex_index(i);
+					add_indices(ind);
+				}
+
+				Array temp_verts;
+
+				Dictionary carr;
+
+				for (int i = 0; i < 8; ++i) {
+					int t = type_arr[i];
+
+					if (carr.has(t))
+						carr[t] = static_cast<int>(carr[t]) + 1;
+					else
+						carr[t] = 1;
+				}
+
+				int type_id1 = -1;
+				int type_id1c = -1;
+				int type_id2 = -1;
+				int type_id2c = -1;
+
+				const Variant *K = NULL;
+				while ((K = carr.next(K))) {
+					int k = *K;
+
+					if (k == 0)
+						continue;
+
+					int c = carr[k];
+
+					if (type_id1c == -1) {
+						type_id1 = k;
+						type_id1c = c;
+						continue;
+					}
+
+					if (c > type_id1c) {
+						type_id1 = k;
+						type_id1c = c;
+					}
+				}
+
+				K = NULL;
+				while ((K = carr.next(K))) {
+					int k = *K;
+
+					if (k == 0)
+						continue;
+
+					int c = carr[k];
+
+					if (type_id2c == -1) {
+						type_id2 = k;
+						type_id2c = c;
+						continue;
+					}
+
+					if (c > type_id2c && k != type_id1) {
+						type_id2 = k;
+						type_id2c = c;
+					}
+				}
+
+				float surface_ratio = 1.0;
+
+				if (type_id1 != type_id2)
+					surface_ratio = static_cast<float>(type_id1c) / static_cast<float>(type_id2c) / 8.0;
+
+				Ref<VoxelSurface> surface1 = _library->get_voxel_surface(type_id1);
+				Ref<VoxelSurface> surface2 = _library->get_voxel_surface(type_id2);
+
+				for (int i = 0; i < vertex_count; ++i) {
+					int fv = get_regular_vertex_data_first_vertex(case_code, i);
+					int sv = get_regular_vertex_data_second_vertex(case_code, i);
+
+					Vector3 offs0 = corner_id_to_vertex(fv) * lod_size;
+					Vector3 offs1 = corner_id_to_vertex(sv) * lod_size;
+
+					int type = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), VoxelChunk::DEFAULT_CHANNEL_TYPE);
+
+					int fill = 0;
+
+					Vector3 vert_pos;
+					Vector3 vert_dir;
+
+					if (type == 0) {
+						fill = chunk->get_voxel(int(x + offs1.x), int(y + offs1.y), int(z + offs1.z), VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL);
+
+						vert_pos = get_regular_vertex_second_position(case_code, i);
+						vert_dir = get_regular_vertex_first_position(case_code, i);
+					} else {
+						fill = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL);
+
+						vert_pos = get_regular_vertex_first_position(case_code, i);
+						vert_dir = get_regular_vertex_second_position(case_code, i);
+					}
+
+					vert_dir = vert_dir - vert_pos;
+
+					vert_pos += vert_dir * (fill / 256.0);
+
+					temp_verts.append(vert_pos);
+				}
+
+				Array temp_normals;
+
+				for (int i = 0; i < temp_verts.size(); ++i)
+					temp_normals.append(Vector3());
+
+				for (int i = 0; i < index_count; i += 3) {
+					int indices[] = {
+						cell_data->get_vertex_index(i),
+						cell_data->get_vertex_index(i + 1),
+						cell_data->get_vertex_index(i + 2)
+					};
+
+					Vector3 vertices[] = {
+						temp_verts[indices[0]],
+						temp_verts[indices[1]],
+						temp_verts[indices[2]],
+					};
+
+					Vector3 i0 = temp_normals[indices[0]];
+					Vector3 i1 = temp_normals[indices[1]];
+					Vector3 i2 = temp_normals[indices[2]];
+
+					Vector3 v0 = vertices[0];
+					Vector3 v1 = vertices[1];
+					Vector3 v2 = vertices[2];
+
+					temp_normals[indices[0]] = i0 + (v1 - v0).cross(v0 - v2);
+					temp_normals[indices[1]] = i1 + (v2 - v1).cross(v1 - v0);
+					temp_normals[indices[2]] = i2 + (v2 - v1).cross(v2 - v0);
+				}
+				for (int i = 0; i < temp_verts.size(); ++i)
+					temp_normals[i] = static_cast<Vector3>(temp_normals[i]).normalized();
+
+				for (int cvi = 0; cvi < temp_verts.size(); ++cvi) {
+					Vector3 vertex = temp_verts[cvi];
+					Vector3 normal = temp_normals[cvi];
+
+					Vector3 s;
+					Vector3 t;
+					t.x = vertex.z;
+					t.y = vertex.z;
+					t.z = vertex.y;
+
+					s.x = vertex.y;
+					s.y = vertex.x;
+					s.z = vertex.x;
+
+					real_t bx = ABS(normal.x);
+					real_t by = ABS(normal.y);
+					real_t bz = ABS(normal.z);
+
+					if ((bx + 0.0001 > by) && (bx + 0.0001 > bz)) {
+						Vector2 uv(s.x, t.x);
+						Rect2 umargin = get_uv_margin();
+						uv.x *= umargin.size.x;
+						uv.y *= umargin.size.y;
+
+						uv.x += umargin.position.x;
+						uv.y += umargin.position.y;
+
+						add_uv(surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						add_uv2(surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+					} else if ((bz + 0.0001 > bx) && (bz + 0.0001 > by)) {
+						Vector2 uv(s.z, t.z);
+						Rect2 umargin = get_uv_margin();
+						uv.x *= umargin.size.x;
+						uv.y *= umargin.size.y;
+
+						uv.x += umargin.position.x;
+						uv.y += umargin.position.y;
+
+						add_uv(surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						add_uv2(surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+					} else {
+						Vector2 uv(s.y, t.y);
+						Rect2 umargin = get_uv_margin();
+						uv.x *= umargin.size.x;
+						uv.y *= umargin.size.y;
+
+						uv.x += umargin.position.x;
+						uv.y += umargin.position.y;
+
+						add_uv(surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_TOP, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						add_uv2(surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_TOP, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+					}
+				}
+
+				for (int i = 0; i < temp_verts.size(); ++i) {
+					Vector3 vert_pos = static_cast<Vector3>(temp_verts[i]);
+
+					vert_pos *= float(lod_size);
+					vert_pos += Vector3(x, y, z);
+
+					Vector3 normal = static_cast<Vector3>(temp_normals[i]);
+
+					add_color(Color(1.0, 1.0, 1.0, surface_ratio));
+					vert_pos *= get_voxel_scale();
+
+					add_normal(normal);
+					add_vertex(vert_pos);
+				}
+
+				memdelete_arr(type_arr);
+			}
+		}
+	}
+}
+
 Vector3 VoxelMesherTransvoxel::corner_id_to_vertex(int corner_id) const {
 	ERR_FAIL_COND_V(corner_id < 0 || corner_id > 8, Vector3());
 
@@ -131,6 +504,8 @@ Vector3 VoxelMesherTransvoxel::get_transition_vertex_direction(int index1, int i
 }
 
 VoxelMesherTransvoxel::VoxelMesherTransvoxel() {
+	_texture_scale = 4;
+
 	for (int i = 0; i < 16; ++i) {
 		_regular_cell_datas[i] = Ref<TransvoxelCellData>(memnew(TransvoxelCellData(regularCellData[i])));
 	}
@@ -144,6 +519,12 @@ VoxelMesherTransvoxel::~VoxelMesherTransvoxel() {
 }
 
 void VoxelMesherTransvoxel::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_texture_scale"), &VoxelMesherTransvoxel::get_texture_scale);
+	ClassDB::bind_method(D_METHOD("set_texture_scale", "value"), &VoxelMesherTransvoxel::set_texture_scale);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "texture_scale"), "set_texture_scale", "get_texture_scale");
+
+	ClassDB::bind_method(D_METHOD("_add_chunk", "chunk"), &VoxelMesherTransvoxel::_add_chunk);
+
 	ClassDB::bind_method(D_METHOD("corner_id_to_vertex", "index1"), &VoxelMesherTransvoxel::corner_id_to_vertex);
 
 	ClassDB::bind_method(D_METHOD("get_regular_cell_class", "index"), &VoxelMesherTransvoxel::get_regular_cell_class);

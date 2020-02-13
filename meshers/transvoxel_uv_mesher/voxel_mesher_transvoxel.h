@@ -65,6 +65,15 @@ public:
 		VOXEL_ENTRY_MASK_111 = 1 << 7,
 	};
 
+	int get_texture_scale() const;
+	void set_texture_scale(const int value);
+
+	int *get_voxel_type_array(VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
+	int get_case_code_from_arr(const int *data);
+	int get_case_code(VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
+	int get_voxel_type(VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
+	void _add_chunk(Node *p_chunk);
+
 	Vector3 corner_id_to_vertex(int corner_id) const;
 
 	int get_regular_cell_class(int index) const;
@@ -94,8 +103,11 @@ public:
 
 protected:
 	static void _bind_methods();
+
 	Ref<TransvoxelCellData> _regular_cell_datas[16];
 	Ref<TransvoxelCellData> _transition_cell_data[56];
+
+	int _texture_scale;
 };
 
 VARIANT_ENUM_CAST(VoxelMesherTransvoxel::VoxelEntryIndices);
