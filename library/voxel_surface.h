@@ -69,6 +69,9 @@ public:
 	int get_id() const;
 	void set_id(const int value);
 
+	int get_mesher_index() const;
+	void set_mesher_index(const int value);
+
 	bool is_transparent() const;
 	void set_transparent(const bool transparent);
 
@@ -95,6 +98,7 @@ protected:
 	VoxelmanLibrary *_library;
 
 	int _id;
+	int _mesher_index;
 	bool _is_transparent;
 	Rect2 _rects[VOXEL_SIDES_COUNT];
 	Ref<GroundClutter> _clutter;

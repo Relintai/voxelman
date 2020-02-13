@@ -29,6 +29,13 @@ void VoxelSurface::set_id(const int value) {
 	_id = value;
 }
 
+int VoxelSurface::get_mesher_index() const {
+	return _mesher_index;
+}
+void VoxelSurface::set_mesher_index(const int value) {
+	_mesher_index = value;
+}
+
 bool VoxelSurface::is_transparent() const {
 	return _is_transparent;
 }
@@ -93,6 +100,7 @@ void VoxelSurface::refresh_rects() {
 
 VoxelSurface::VoxelSurface() {
 	_id = 0;
+	_mesher_index = 0;
 	_is_transparent = false;
 	_library = NULL;
 }
@@ -105,6 +113,10 @@ void VoxelSurface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_id"), &VoxelSurface::get_id);
 	ClassDB::bind_method(D_METHOD("set_id", "value"), &VoxelSurface::set_id);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "id"), "set_id", "get_id");
+
+	ClassDB::bind_method(D_METHOD("get_mesher_index"), &VoxelSurface::get_mesher_index);
+	ClassDB::bind_method(D_METHOD("set_mesher_index", "value"), &VoxelSurface::set_mesher_index);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "mesher_index"), "set_mesher_index", "get_mesher_index");
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "voxel_name"), "set_name", "get_name");
 

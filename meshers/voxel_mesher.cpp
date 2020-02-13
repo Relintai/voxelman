@@ -24,10 +24,17 @@ SOFTWARE.
 
 #include "../world/voxel_chunk.h"
 
+int VoxelMesher::get_mesher_index() const {
+	return _mesher_index;
+}
+void VoxelMesher::set_mesher_index(const int value) {
+	_mesher_index = value;
+}
+
 Ref<VoxelmanLibrary> VoxelMesher::get_library() {
 	return _library;
 }
-void VoxelMesher::set_library(Ref<VoxelmanLibrary> library) {
+void VoxelMesher::set_library(const Ref<VoxelmanLibrary> &library) {
 	_library = library;
 }
 
@@ -687,7 +694,7 @@ PoolVector<int> VoxelMesher::get_indices() {
 	return _indices;
 }
 
-void VoxelMesher::set_indices(const PoolVector<int> values) {
+void VoxelMesher::set_indices(const PoolVector<int> &values) {
 	_indices = values;
 }
 
@@ -707,17 +714,21 @@ void VoxelMesher::remove_indices(int idx) {
 	_indices.remove(idx);
 }
 
-VoxelMesher::VoxelMesher(Ref<VoxelmanLibrary> library) {
+VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
 	_library = library;
 
+	_mesher_index = 0;
 	_voxel_scale = 1;
 	_lod_size = 1;
+	_ao_strength = 0.25;
+	_base_light_value = 0.5;
+	_uv_margin = Rect2(0, 0, 1, 1);
 
 	_surface_tool.instance();
 }
 
 VoxelMesher::VoxelMesher() {
-
+	_mesher_index = 0;
 	_voxel_scale = 1;
 	_lod_size = 1;
 	_ao_strength = 0.25;
@@ -740,6 +751,10 @@ void VoxelMesher::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_add_chunk_liquid", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_bake_colors", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_bake_liquid_colors", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+
+	ClassDB::bind_method(D_METHOD("get_mesher_index"), &VoxelMesher::get_mesher_index);
+	ClassDB::bind_method(D_METHOD("set_mesher_index", "value"), &VoxelMesher::set_mesher_index);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "mesher_index"), "set_mesher_index", "get_mesher_index");
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);

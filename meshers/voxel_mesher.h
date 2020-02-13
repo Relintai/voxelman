@@ -52,17 +52,20 @@ class VoxelMesher : public Reference {
 	GDCLASS(VoxelMesher, Reference);
 
 public:
+	int get_mesher_index() const;
+	void set_mesher_index(const int value);
+
 	Ref<VoxelmanLibrary> get_library();
-	void set_library(Ref<VoxelmanLibrary> library);
+	void set_library(const Ref<VoxelmanLibrary> &library);
 
 	Ref<Material> get_material();
 	void set_material(const Ref<Material> &material);
 
 	float get_ao_strength() const;
-	void set_ao_strength(float value);
+	void set_ao_strength(const float value);
 
 	float get_base_light_value() const;
-	void set_base_light_value(float value);
+	void set_base_light_value(const float value);
 
 	float get_voxel_scale() const;
 	void set_voxel_scale(const float voxel_scale);
@@ -134,18 +137,20 @@ public:
 	void add_uv2(Vector2 vector);
 
 	PoolVector<int> get_indices();
-	void set_indices(const PoolVector<int> values);
+	void set_indices(const PoolVector<int> &values);
 	int get_indices_count();
 	int get_indice(int idx);
 	void remove_indices(int idx);
 	void add_indices(int index);
 
-	VoxelMesher(Ref<VoxelmanLibrary> library);
+	VoxelMesher(const Ref<VoxelmanLibrary> &library);
 	VoxelMesher();
 	~VoxelMesher();
 
 protected:
 	static void _bind_methods();
+
+	int _mesher_index;
 
 	PoolVector<Vector3> _vertices;
 	PoolVector<Vector3> _normals;
