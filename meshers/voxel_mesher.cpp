@@ -109,6 +109,10 @@ void VoxelMesher::build_mesh(RID mesh) {
 			_surface_tool->add_uv(_uvs.get(i));
 		}
 
+		if (_uv2s.size() > 0) {
+			_surface_tool->add_uv2(_uv2s.get(i));
+		}
+
 		_surface_tool->add_vertex(_vertices.get(i));
 	}
 
@@ -354,6 +358,9 @@ void VoxelMesher::_bake_colors(Node *p_chunk) {
 			if (_colors.size() < _vertices.size()) {
 				_colors.push_back(light);
 			} else {
+				Color c = _colors[i];
+
+				light.a = c.a;
 				_colors.set(i, light);
 			}
 		} else {
