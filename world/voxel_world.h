@@ -48,6 +48,12 @@ public:
 	int get_chunk_size_z() const;
 	void set_chunk_size_z(const int value);
 
+	int get_data_margin_start() const;
+	void set_data_margin_start(const int value);
+
+	int get_data_margin_end() const;
+	void set_data_margin_end(const int value);
+
 	int get_current_seed() const;
 	void set_current_seed(const int value);
 
@@ -150,6 +156,8 @@ private:
 	int _chunk_size_y;
 	int _chunk_size_z;
 	int _current_seed;
+	int _data_margin_start;
+	int _data_margin_end;
 
 	Ref<VoxelmanLibrary> _library;
 	Ref<VoxelmanLevelGenerator> _level_generator;

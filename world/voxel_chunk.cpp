@@ -306,24 +306,32 @@ bool VoxelChunk::validate_channel_data_position(uint32_t x, uint32_t y, uint32_t
 	return x < _data_size_x && y < _data_size_y && z < _data_size_z;
 }
 
-uint8_t VoxelChunk::get_voxel(int x, int y, int z, int channel_index) const {
-	ERR_FAIL_INDEX_V(channel_index, _channels.size(), 0);
-	ERR_FAIL_COND_V(!validate_channel_data_position(x, y, z), 0);
+uint8_t VoxelChunk::get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const {
+	int x = p_x + _margin_start;
+	int y = p_y + _margin_start;
+	int z = p_z + _margin_start;
 
-	uint8_t *ch = _channels.get(channel_index);
+	ERR_FAIL_INDEX_V(p_channel_index, _channels.size(), 0);
+	ERR_FAIL_COND_V_MSG(!validate_channel_data_position(x, y, z), 0, "Error, index out of range! " + String::num(x) + " " + String::num(y) + " " + String::num(z));
+
+	uint8_t *ch = _channels.get(p_channel_index);
 
 	if (!ch)
 		return 0;
 
 	return ch[get_data_index(x, y, z)];
 }
-void VoxelChunk::set_voxel(uint8_t value, int x, int y, int z, int channel_index) {
-	ERR_FAIL_INDEX(channel_index, _channels.size());
-	ERR_FAIL_COND(!validate_channel_data_position(x, y, z));
+void VoxelChunk::set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index) {
+	int x = p_x + _margin_start;
+	int y = p_y + _margin_start;
+	int z = p_z + _margin_start;
 
-	uint8_t *ch = get_valid_channel(channel_index);
+	ERR_FAIL_INDEX(p_channel_index, _channels.size());
+	ERR_FAIL_COND_MSG(!validate_channel_data_position(x, y, z), "Error, index out of range! " + String::num(x) + " " + String::num(y) + " " + String::num(z));
 
-	ch[get_data_index(x, y, z)] = value;
+	uint8_t *ch = get_valid_channel(p_channel_index);
+
+	ch[get_data_index(x, y, z)] = p_value;
 }
 
 void VoxelChunk::set_channel_count(int count) {
@@ -420,15 +428,15 @@ _FORCE_INLINE_ uint32_t VoxelChunk::get_data_size() const {
 
 //Data Management functions
 void VoxelChunk::generate_ao() {
-	unsigned int size_x = _data_size_x;
-	unsigned int size_y = _data_size_y;
-	unsigned int size_z = _data_size_z;
+	ERR_FAIL_COND(_data_size_x == 0 || _data_size_y == 0 || _data_size_z == 0);
 
-	ERR_FAIL_COND(size_x == 0 || size_y == 0 || size_z == 0);
+	int size_x = get_size_x() + get_margin_end();
+	int size_y = get_size_y() + get_margin_end();
+	int size_z = get_size_z() + get_margin_end();
 
-	for (unsigned int y = 1; y < size_y - 1; ++y) {
-		for (unsigned int z = 1; z < size_z - 1; ++z) {
-			for (unsigned int x = 1; x < size_x - 1; ++x) {
+	for (int y = get_margin_start() - 1; y < size_y - 1; ++y) {
+		for (int z = get_margin_start() - 1; z < size_z - 1; ++z) {
+			for (int x = get_margin_start() - 1; x < size_x - 1; ++x) {
 				int current = get_voxel(x, y, z, DEFAULT_CHANNEL_ISOLEVEL);
 
 				int sum = get_voxel(x + 1, y, z, DEFAULT_CHANNEL_ISOLEVEL);

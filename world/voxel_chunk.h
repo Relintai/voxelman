@@ -196,8 +196,8 @@ public:
 
 	bool validate_channel_data_position(uint32_t x, uint32_t y, uint32_t z) const;
 
-	uint8_t get_voxel(int x, int y, int z, int channel_index) const;
-	void set_voxel(uint8_t value, int x, int y, int z, int channel_index);
+	uint8_t get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const;
+	void set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index);
 
 	void set_channel_count(int count);
 	void allocate_channel(int channel_index, uint8_t default_value = 0);

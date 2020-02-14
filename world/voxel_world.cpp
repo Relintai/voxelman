@@ -45,6 +45,21 @@ void VoxelWorld::set_chunk_size_z(const int value) {
 	_chunk_size_z = value;
 }
 
+int VoxelWorld::get_data_margin_start() const {
+	return _data_margin_start;
+}
+void VoxelWorld::set_data_margin_start(const int value) {
+	_data_margin_start = value;
+}
+
+int VoxelWorld::get_data_margin_end() const {
+	return _data_margin_end;
+}
+void VoxelWorld::set_data_margin_end(const int value) {
+	_data_margin_end = value;
+}
+
+
 int VoxelWorld::get_current_seed() const {
 	return _current_seed;
 }
@@ -263,7 +278,7 @@ VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z, Node *p_chunk) {
 	chunk->set_position(x, y, z);
 	chunk->set_library(_library);
 	chunk->set_voxel_scale(_voxel_scale);
-	chunk->set_size(_chunk_size_x, _chunk_size_y, _chunk_size_z);
+	chunk->set_size(_chunk_size_x, _chunk_size_y, _chunk_size_z, _data_margin_start, _data_margin_end);
 	chunk->set_translation(Vector3(x * _chunk_size_x * _voxel_scale, y * _chunk_size_y * _voxel_scale, z * _chunk_size_z * _voxel_scale));
 
 	add_chunk(chunk, x, y, z);
@@ -303,6 +318,8 @@ VoxelWorld::VoxelWorld() {
 	_chunk_size_y = 16;
 	_chunk_size_z = 16;
 	_current_seed = 0;
+	_data_margin_start = 0;
+	_data_margin_end = 0;
 
 	set_use_threads(true);
 	set_max_concurrent_generations(3);
@@ -389,6 +406,14 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_chunk_size_z"), &VoxelWorld::get_chunk_size_z);
 	ClassDB::bind_method(D_METHOD("set_chunk_size_z", "value"), &VoxelWorld::set_chunk_size_z);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_z"), "set_chunk_size_z", "get_chunk_size_z");
+
+	ClassDB::bind_method(D_METHOD("get_data_margin_start"), &VoxelWorld::get_data_margin_start);
+	ClassDB::bind_method(D_METHOD("set_data_margin_start", "value"), &VoxelWorld::set_data_margin_start);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_margin_start"), "set_data_margin_start", "get_data_margin_start");
+
+	ClassDB::bind_method(D_METHOD("get_data_margin_end"), &VoxelWorld::get_data_margin_end);
+	ClassDB::bind_method(D_METHOD("set_data_margin_end", "value"), &VoxelWorld::set_data_margin_end);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_margin_end"), "set_data_margin_end", "get_data_margin_end");
 
 	ClassDB::bind_method(D_METHOD("get_current_seed"), &VoxelWorld::get_current_seed);
 	ClassDB::bind_method(D_METHOD("set_current_seed", "value"), &VoxelWorld::set_current_seed);

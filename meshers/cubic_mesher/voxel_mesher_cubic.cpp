@@ -29,11 +29,10 @@ void VoxelMesherCubic::_add_chunk(Node *p_chunk) {
 
 	chunk->generate_ao();
 
-	int x_size = chunk->get_size_x() - 1;
-	int y_size = chunk->get_size_y() - 1;
-	int z_size = chunk->get_size_z() - 1;
+	int x_size = chunk->get_size_x();
+	int y_size = chunk->get_size_y();
+	int z_size = chunk->get_size_z();
 
-	float lod_size = get_lod_size();
 	float voxel_size = get_lod_size();
 	float voxel_scale = get_voxel_scale();
 
@@ -43,11 +42,11 @@ void VoxelMesherCubic::_add_chunk(Node *p_chunk) {
 	float tile_uv_size = 1 / 4.0;
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
-	for (int y = 1; y < y_size - 1; y += lod_size) {
-		for (int z = 1; z < z_size - 1; z += lod_size) {
-			for (int x = 1; x < x_size - 1; x += lod_size) {
+	for (int y = 0; y < y_size; ++y) {
+		for (int z = 0; z < z_size; ++z) {
+			for (int x = 0; x < x_size; ++x) {
 
-				cube_points->setup(chunk, x, y, z, lod_size);
+				cube_points->setup(chunk, x, y, z, 1);
 
 				if (!cube_points->has_points())
 					continue;
