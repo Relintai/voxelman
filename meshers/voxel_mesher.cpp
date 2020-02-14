@@ -104,6 +104,7 @@ void VoxelMesher::build_mesh(RID mesh) {
 	int len = _vertices.size();
 
 	for (int i = 0; i < len; ++i) {
+
 		if (_normals.size() > 0) {
 			_surface_tool->add_normal(_normals.get(i));
 		}
@@ -301,6 +302,32 @@ void VoxelMesher::add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, c
 		int index = indices[i];
 
 		add_indices(ic + index);
+	}
+}
+
+void VoxelMesher::add_mesher(const Ref<VoxelMesher> &mesher) {
+	call("_add_mesher", mesher);
+}
+void VoxelMesher::_add_mesher(const Ref<VoxelMesher> &mesher) {
+	int orig_size = _vertices.size();
+
+	_vertices.append_array(mesher->_vertices);
+	_normals.append_array(mesher->_normals);
+	_colors.append_array(mesher->_colors);
+	_uvs.append_array(mesher->_uvs);
+	_uv2s.append_array(mesher->_uv2s);
+	_bones.append_array(mesher->_bones);
+
+	int s = mesher->_indices.size();
+
+	if (s == 0)
+		return;
+
+	int orig_indices_size = _indices.size();
+
+	_indices.resize(_indices.size() + s);
+	for (int i = 0; i < s; ++i) {
+		_indices.set(i + orig_indices_size, mesher->_indices[i] + orig_size);
 	}
 }
 
@@ -789,6 +816,10 @@ void VoxelMesher::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale", "uv_rect"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Rect2(0, 0, 1, 1)), DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform", "mesh", "transform", "uv_rect"), &VoxelMesher::add_mesh_data_resource_transform, DEFVAL(Rect2(0, 0, 1, 1)));
+
+	BIND_VMETHOD(MethodInfo("_add_mesher", PropertyInfo(Variant::OBJECT, "mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher")));
+	ClassDB::bind_method(D_METHOD("add_mesher", "mesher"), &VoxelMesher::add_mesher);
+	ClassDB::bind_method(D_METHOD("_add_mesher", "mesher"), &VoxelMesher::_add_mesher);
 
 	ClassDB::bind_method(D_METHOD("bake_colors", "chunk"), &VoxelMesher::bake_colors_bind);
 	ClassDB::bind_method(D_METHOD("_bake_colors", "chunk"), &VoxelMesher::_bake_colors);

@@ -192,7 +192,7 @@ public:
 	void setup_channels();
 	void _setup_channels();
 
-	void set_size(int size_x, int size_y, int size_z, int margin_start = 0, int margin_end = 0);
+	void set_size(uint32_t size_x, uint32_t size_y, uint32_t size_z, uint32_t margin_start = 0, uint32_t margin_end = 0);
 
 	bool validate_channel_data_position(uint32_t x, uint32_t y, uint32_t z) const;
 

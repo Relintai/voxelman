@@ -275,7 +275,7 @@ void VoxelChunk::_setup_channels() {
 	set_channel_count(MAX_DEFAULT_CHANNELS);
 }
 
-void VoxelChunk::set_size(int size_x, int size_y, int size_z, int margin_start, int margin_end) {
+void VoxelChunk::set_size(uint32_t size_x, uint32_t size_y, uint32_t size_z, uint32_t margin_start, uint32_t margin_end) {
 	if (_size_x == size_x && _size_y == size_y && _size_z == size_z && _margin_start == margin_start && _margin_end == margin_end) {
 		return;
 	}
@@ -383,7 +383,7 @@ void VoxelChunk::fill_channel(uint8_t value, int channel_index) {
 
 	uint32_t size = get_data_size();
 
-	for (int i = 0; i < size; ++i) {
+	for (uint32_t i = 0; i < size; ++i) {
 		ch[i] = value;
 	}
 }
@@ -467,16 +467,20 @@ void VoxelChunk::add_light(int local_x, int local_y, int local_z, int size, Colo
 	//float gf = (color.g / sizef);
 	//float bf = (color.b / sizef);
 
+	int64_t dsx = static_cast<int64_t>(_data_size_x);
+	int64_t dsy = static_cast<int64_t>(_data_size_y);
+	int64_t dsz = static_cast<int64_t>(_data_size_z);
+
 	for (int y = local_y - size; y <= local_y + size; ++y) {
-		if (y < 0 || y >= _data_size_y)
+		if (y < 0 || y >= dsy)
 			continue;
 
 		for (int z = local_z - size; z <= local_z + size; ++z) {
-			if (z < 0 || z >= _data_size_z)
+			if (z < 0 || z >= dsz)
 				continue;
 
 			for (int x = local_x - size; x <= local_x + size; ++x) {
-				if (x < 0 || x >= _data_size_x)
+				if (x < 0 || x >= dsx)
 					continue;
 
 				int lx = x - local_x;
@@ -549,14 +553,25 @@ void VoxelChunk::finalize_mesh() {
 		allocate_main_mesh();
 	}
 
+	Ref<VoxelMesher> mesher;
 	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _meshers.get(i);
+		Ref<VoxelMesher> m = _meshers.get(i);
 
-		ERR_CONTINUE(!mesher.is_valid());
+		ERR_CONTINUE(!m.is_valid());
+
+		if (!mesher.is_valid()) {
+			mesher = m;
+			mesher->set_material(get_library()->get_material());
+			continue;
+		}
 
 		mesher->set_material(get_library()->get_material());
-		mesher->build_mesh(_mesh_rid);
+		mesher->add_mesher(m);
 	}
+
+	ERR_FAIL_COND(!mesher.is_valid());
+
+	mesher->build_mesh(_mesh_rid);
 }
 
 void VoxelChunk::build_deferred() {
@@ -1186,9 +1201,13 @@ void VoxelChunk::draw_debug_voxels(int max, Color color) {
 
 	int a = 0;
 
-	for (int y = 0; y < _size_y; ++y) {
-		for (int z = 0; z < _size_z; ++z) {
-			for (int x = 0; x < _size_x; ++x) {
+	int64_t sx = static_cast<int64_t>(_size_x);
+	int64_t sy = static_cast<int64_t>(_size_y);
+	int64_t sz = static_cast<int64_t>(_size_y);
+
+	for (int y = 0; y < sy; ++y) {
+		for (int z = 0; z < sz; ++z) {
+			for (int x = 0; x < sx; ++x) {
 
 				int type = get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
 

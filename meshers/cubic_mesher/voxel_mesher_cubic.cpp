@@ -97,6 +97,7 @@ void VoxelMesherCubic::_add_chunk(Node *p_chunk) {
 						add_color(light);
 
 						add_uv((cube_points->get_point_uv_direction(face, i) + Vector2(0.5, 0.5)) * Vector2(tile_uv_size, tile_uv_size));
+						add_uv2((cube_points->get_point_uv_direction(face, i) + Vector2(0.5, 0.5)) * Vector2(tile_uv_size, tile_uv_size));
 
 						add_vertex((vertices[i] * voxel_size + Vector3(x, y, z)) * voxel_scale);
 					}
