@@ -27,9 +27,11 @@ class EditorNode;
 class EditorPlugin;
 class PropData;
 
+#include "core/math/vector3.h"
 #include "core/reference.h"
 #include "scene/3d/spatial.h"
-#include "core/math/vector3.h"
+
+class propData;
 
 class PropTool : public Spatial {
 	GDCLASS(PropTool, Spatial);
@@ -37,14 +39,14 @@ class PropTool : public Spatial {
 public:
 	void edit(const Ref<PropData> &prop);
 
-    void save();
-    void save_node(Node *node, Transform parent_transform);
-    void rebuild_hierarchy();
-    void refresh_set(bool value);
-    void set_target_prop(const Ref<PropData> &prop);
-    void get_plugin();
-    void target_prop_set(const Ref<PropData> &prop);
-    void load_scene_for(PropTool* t, const Ref<PropData> &prop);
+	void save();
+	void save_node(Node *node, Transform parent_transform);
+	void rebuild_hierarchy();
+	void refresh_set(bool value);
+	void set_target_prop(const Ref<PropData> &prop);
+	void get_plugin();
+	void target_prop_set(const Ref<PropData> &prop);
+	void load_scene_for(PropTool *t, const Ref<PropData> &prop);
 
 	PropTool();
 	PropTool(EditorNode *p_editor);
@@ -54,11 +56,11 @@ protected:
 	static void _bind_methods();
 
 private:
-    bool _refresh;
-    Ref<PropData> _target_prop;
-    bool _snap_to_mesh;
-    Vector3 _snap_axis;
-    EditorPlugin* _plugin;
+	bool _refresh;
+	Ref<PropData> _target_prop;
+	bool _snap_to_mesh;
+	Vector3 _snap_axis;
+	EditorPlugin *_plugin;
 };
 
 #endif
