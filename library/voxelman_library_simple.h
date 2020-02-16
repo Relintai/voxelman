@@ -44,21 +44,21 @@ public:
 	int get_atlas_rows() const;
 	void set_atlas_rows(int s);
 
-	Ref<VoxelSurface> get_voxel_surface(int index) const;
+	Ref<VoxelSurface> get_voxel_surface(const int index);
 	void add_voxel_surface(Ref<VoxelSurface> value);
-	void set_voxel_surface(int index, Ref<VoxelSurface> value);
-	void remove_surface(int index);
-	int get_num_surfaces();
+	void set_voxel_surface(const int index, Ref<VoxelSurface> value);
+	void remove_surface(const int index);
+	int get_num_surfaces() const;
 	void clear_surfaces();
 
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
 
-	Ref<VoxelSurface> get_liquid_voxel_surface(int index) const;
-	void add_liquid_voxel_surface(Ref<VoxelSurface> value);
-	void set_liquid_voxel_surface(int index, Ref<VoxelSurface> value);
-	void remove_liquid_surface(int index);
-	int get_liquid_num_surfaces();
+	Ref<VoxelSurface> get_liquid_surface(const int index);
+	void add_liquid_surface(Ref<VoxelSurface> value);
+	void set_liquid_surface(const int index, Ref<VoxelSurface> value);
+	void remove_liquid_surface(const int index);
+	int get_num_liquid_surfaces() const;
 	void clear_liquid_surfaces();
 
 	Vector<Variant> get_liquid_voxel_surfaces();

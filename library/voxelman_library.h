@@ -31,6 +31,7 @@ SOFTWARE.
 
 class VoxelSurface;
 class VoxelMesher;
+class PropData;
 
 class VoxelmanLibrary : public Resource {
 	GDCLASS(VoxelmanLibrary, Resource)
@@ -56,19 +57,26 @@ public:
 	Ref<Material> get_clutter_material() const;
 	void set_clutter_material(Ref<Material> mat);
 
-	virtual Ref<VoxelSurface> get_voxel_surface(int index) const;
+	virtual Ref<VoxelSurface> get_voxel_surface(const int index);
 	virtual void add_voxel_surface(Ref<VoxelSurface> value);
-	virtual void set_voxel_surface(int index, Ref<VoxelSurface> value);
-	virtual void remove_surface(int index);
-	virtual int get_num_surfaces();
+	virtual void set_voxel_surface(const int index, Ref<VoxelSurface> value);
+	virtual void remove_surface(const int index);
+	virtual int get_num_surfaces() const;
 	virtual void clear_surfaces();
 
-	virtual Ref<VoxelSurface> get_liquid_voxel_surface(int index) const;
-	virtual void add_liquid_voxel_surface(Ref<VoxelSurface> value);
-	virtual void set_liquid_voxel_surface(int index, Ref<VoxelSurface> value);
-	virtual void remove_liquid_surface(int index);
-	virtual int get_liquid_num_surfaces();
+	virtual Ref<VoxelSurface> get_liquid_surface(const int index);
+	virtual void add_liquid_surface(Ref<VoxelSurface> value);
+	virtual void set_liquid_surface(const int index, Ref<VoxelSurface> value);
+	virtual void remove_liquid_surface(const int index);
+	virtual int get_num_liquid_surfaces() const;
 	virtual void clear_liquid_surfaces();
+
+	virtual Ref<PropData> get_prop(const int id);
+	virtual void add_prop(Ref<PropData> value);
+	virtual void set_prop(const int id, Ref<PropData> value);
+	virtual void remove_prop(const int id);
+	virtual int get_num_props() const;
+	virtual void clear_props();
 
 	virtual void refresh_rects();
 

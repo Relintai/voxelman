@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "voxelman_library.h"
 
+#include "../props/prop_data.h"
+
 Ref<Material> VoxelmanLibrary::get_material() const {
 	return _material;
 }
@@ -51,35 +53,50 @@ void VoxelmanLibrary::set_clutter_material(Ref<Material> mat) {
 }
 
 //Surfaces
-Ref<VoxelSurface> VoxelmanLibrary::get_voxel_surface(int index) const {
+Ref<VoxelSurface> VoxelmanLibrary::get_voxel_surface(const int index) {
 	return Ref<VoxelSurface>();
 }
 void VoxelmanLibrary::add_voxel_surface(Ref<VoxelSurface> value) {
 }
-void VoxelmanLibrary::set_voxel_surface(int index, Ref<VoxelSurface> value) {
+void VoxelmanLibrary::set_voxel_surface(const int index, Ref<VoxelSurface> value) {
 }
-void VoxelmanLibrary::remove_surface(int index) {
+void VoxelmanLibrary::remove_surface(const int index) {
 }
-int VoxelmanLibrary::get_num_surfaces() {
+int VoxelmanLibrary::get_num_surfaces() const {
 	return 0;
 }
 void VoxelmanLibrary::clear_surfaces() {
 }
 
 //Liquids
-Ref<VoxelSurface> VoxelmanLibrary::get_liquid_voxel_surface(int index) const {
+Ref<VoxelSurface> VoxelmanLibrary::get_liquid_surface(const int index) {
 	return Ref<VoxelSurface>();
 }
-void VoxelmanLibrary::add_liquid_voxel_surface(Ref<VoxelSurface> value) {
+void VoxelmanLibrary::add_liquid_surface(Ref<VoxelSurface> value) {
 }
-void VoxelmanLibrary::set_liquid_voxel_surface(int index, Ref<VoxelSurface> value) {
+void VoxelmanLibrary::set_liquid_surface(const int index, Ref<VoxelSurface> value) {
 }
-void VoxelmanLibrary::remove_liquid_surface(int index) {
+void VoxelmanLibrary::remove_liquid_surface(const int index) {
 }
-int VoxelmanLibrary::get_liquid_num_surfaces() {
+int VoxelmanLibrary::get_num_liquid_surfaces() const {
 	return 0;
 }
 void VoxelmanLibrary::clear_liquid_surfaces() {
+}
+
+Ref<PropData> VoxelmanLibrary::get_prop(const int id) {
+	return Ref<PropData>();
+}
+void VoxelmanLibrary::add_prop(Ref<PropData> value) {
+}
+void VoxelmanLibrary::set_prop(const int id, Ref<PropData> value) {
+}
+void VoxelmanLibrary::remove_prop(const int id) {
+}
+int VoxelmanLibrary::get_num_props() const {
+	return 0;
+}
+void VoxelmanLibrary::clear_props() {
 }
 
 //Rects
@@ -121,16 +138,25 @@ void VoxelmanLibrary::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "clutter_material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_clutter_material", "get_clutter_material");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_surface", "index"), &VoxelmanLibrary::get_voxel_surface);
+	ClassDB::bind_method(D_METHOD("add_voxel_surface", "value"), &VoxelmanLibrary::add_voxel_surface);
 	ClassDB::bind_method(D_METHOD("set_voxel_surface", "index", "surface"), &VoxelmanLibrary::set_voxel_surface);
 	ClassDB::bind_method(D_METHOD("remove_surface", "index"), &VoxelmanLibrary::remove_surface);
 	ClassDB::bind_method(D_METHOD("get_num_surfaces"), &VoxelmanLibrary::get_num_surfaces);
 	ClassDB::bind_method(D_METHOD("clear_surfaces"), &VoxelmanLibrary::clear_surfaces);
 
-	ClassDB::bind_method(D_METHOD("get_liquid_voxel_surface", "index"), &VoxelmanLibrary::get_liquid_voxel_surface);
-	ClassDB::bind_method(D_METHOD("set_liquid_voxel_surface", "index", "surface"), &VoxelmanLibrary::set_liquid_voxel_surface);
+	ClassDB::bind_method(D_METHOD("get_liquid_surface", "index"), &VoxelmanLibrary::get_liquid_surface);
+	ClassDB::bind_method(D_METHOD("add_liquid_surface", "value"), &VoxelmanLibrary::add_liquid_surface);
+	ClassDB::bind_method(D_METHOD("set_liquid_surface", "index", "surface"), &VoxelmanLibrary::set_liquid_surface);
 	ClassDB::bind_method(D_METHOD("remove_liquid_surface", "index"), &VoxelmanLibrary::remove_liquid_surface);
-	ClassDB::bind_method(D_METHOD("get_liquid_num_surfaces"), &VoxelmanLibrary::get_liquid_num_surfaces);
+	ClassDB::bind_method(D_METHOD("get_num_liquid_surfaces"), &VoxelmanLibrary::get_num_liquid_surfaces);
 	ClassDB::bind_method(D_METHOD("clear_liquid_surfaces"), &VoxelmanLibrary::clear_liquid_surfaces);
+
+	ClassDB::bind_method(D_METHOD("get_prop", "id"), &VoxelmanLibrary::get_prop);
+	ClassDB::bind_method(D_METHOD("add_prop", "value"), &VoxelmanLibrary::add_prop);
+	ClassDB::bind_method(D_METHOD("set_prop", "id", "surface"), &VoxelmanLibrary::set_prop);
+	ClassDB::bind_method(D_METHOD("remove_prop", "id"), &VoxelmanLibrary::remove_prop);
+	ClassDB::bind_method(D_METHOD("get_num_props"), &VoxelmanLibrary::get_num_props);
+	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelmanLibrary::clear_props);
 
 	ClassDB::bind_method(D_METHOD("refresh_rects"), &VoxelmanLibrary::refresh_rects);
 

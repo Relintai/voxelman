@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include "voxelman_library.h"
 
+#include "core/map.h"
 #include "core/resource.h"
 #include "scene/resources/material.h"
 
@@ -33,6 +34,7 @@ SOFTWARE.
 
 class VoxelSurfaceSimple;
 class VoxelMesher;
+class PropData;
 
 class VoxelmanLibraryMerger : public VoxelmanLibrary {
 	GDCLASS(VoxelmanLibraryMerger, VoxelmanLibrary)
@@ -53,25 +55,35 @@ public:
 	int get_margin() const;
 	void set_margin(const int margin);
 
-	Ref<VoxelSurface> get_voxel_surface(int index) const;
+	Ref<VoxelSurface> get_voxel_surface(const int index);
 	void add_voxel_surface(Ref<VoxelSurface> value);
-	void set_voxel_surface(int index, Ref<VoxelSurface> value);
-	void remove_surface(int index);
-	int get_num_surfaces();
+	void set_voxel_surface(const int index, Ref<VoxelSurface> value);
+	void remove_surface(const int index);
+	int get_num_surfaces() const;
 	void clear_surfaces();
 
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
 
-	Ref<VoxelSurface> get_liquid_voxel_surface(int index) const;
-	void add_liquid_voxel_surface(Ref<VoxelSurface> value);
-	void set_liquid_voxel_surface(int index, Ref<VoxelSurface> value);
-	void remove_liquid_surface(int index);
-	int get_liquid_num_surfaces();
+	Ref<VoxelSurface> get_liquid_voxel_surface(const int index);
+	void add_liquid_surface(Ref<VoxelSurface> value);
+	void set_liquid_voxel_surface(const int index, Ref<VoxelSurface> value);
+	void remove_liquid_surface(const int index);
+	int get_num_liquid_surfaces() const;
 	void clear_liquid_surfaces();
 
 	Vector<Variant> get_liquid_voxel_surfaces();
 	void set_liquid_voxel_surfaces(const Vector<Variant> &surfaces);
+
+	Ref<PropData> get_prop(const int id);
+	void add_prop(Ref<PropData> value);
+	void set_prop(const int id, Ref<PropData> value);
+	void remove_prop(const int id);
+	int get_num_props() const;
+	void clear_props();
+
+	//Vector<Variant> get_props();
+	//void set_props(const Vector<Variant> &props);
 
 	void refresh_rects();
 
@@ -81,13 +93,18 @@ public:
 	~VoxelmanLibraryMerger();
 
 protected:
+	bool process_prop_textures(Ref<PropData> prop);
+
 	static void _bind_methods();
 
 private:
 	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
 	Vector<Ref<VoxelSurfaceMerger> > _liquid_surfaces;
+	//Vector<Ref<PropData> > _prop_vector;
+	Map<int, Ref<PropData> > _props;
 
 	Ref<TexturePacker> _packer;
+	Ref<TexturePacker> _prop_packer;
 };
 
 #endif

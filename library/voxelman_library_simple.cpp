@@ -41,7 +41,7 @@ void VoxelmanLibrarySimple::set_atlas_rows(int s) {
 }
 
 //Surfaces
-Ref<VoxelSurface> VoxelmanLibrarySimple::get_voxel_surface(int index) const {
+Ref<VoxelSurface> VoxelmanLibrarySimple::get_voxel_surface(const int index) {
 	ERR_FAIL_INDEX_V(index, _voxel_surfaces.size(), Ref<VoxelSurface>(NULL));
 
 	return _voxel_surfaces[index];
@@ -56,7 +56,7 @@ void VoxelmanLibrarySimple::add_voxel_surface(Ref<VoxelSurface> value) {
 	_voxel_surfaces.push_back(value);
 }
 
-void VoxelmanLibrarySimple::set_voxel_surface(int index, Ref<VoxelSurface> value) {
+void VoxelmanLibrarySimple::set_voxel_surface(const int index, Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(index < 0);
 
 	if (_voxel_surfaces.size() < index) {
@@ -74,11 +74,11 @@ void VoxelmanLibrarySimple::set_voxel_surface(int index, Ref<VoxelSurface> value
 	}
 }
 
-void VoxelmanLibrarySimple::remove_surface(int index) {
+void VoxelmanLibrarySimple::remove_surface(const int index) {
 	_voxel_surfaces.remove(index);
 }
 
-int VoxelmanLibrarySimple::get_num_surfaces() {
+int VoxelmanLibrarySimple::get_num_surfaces() const {
 	return _voxel_surfaces.size();
 }
 
@@ -110,13 +110,13 @@ void VoxelmanLibrarySimple::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 }
 
 //Liquids
-Ref<VoxelSurface> VoxelmanLibrarySimple::get_liquid_voxel_surface(int index) const {
+Ref<VoxelSurface> VoxelmanLibrarySimple::get_liquid_surface(const int index) {
 	ERR_FAIL_INDEX_V(index, _liquid_surfaces.size(), Ref<VoxelSurface>(NULL));
 
 	return _liquid_surfaces[index];
 }
 
-void VoxelmanLibrarySimple::add_liquid_voxel_surface(Ref<VoxelSurface> value) {
+void VoxelmanLibrarySimple::add_liquid_surface(Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(!value.is_valid());
 
 	value->set_library(Ref<VoxelmanLibrarySimple>(this));
@@ -125,7 +125,7 @@ void VoxelmanLibrarySimple::add_liquid_voxel_surface(Ref<VoxelSurface> value) {
 	_liquid_surfaces.push_back(value);
 }
 
-void VoxelmanLibrarySimple::set_liquid_voxel_surface(int index, Ref<VoxelSurface> value) {
+void VoxelmanLibrarySimple::set_liquid_surface(const int index, Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(index < 0);
 
 	if (_liquid_surfaces.size() < index) {
@@ -143,11 +143,11 @@ void VoxelmanLibrarySimple::set_liquid_voxel_surface(int index, Ref<VoxelSurface
 	}
 }
 
-void VoxelmanLibrarySimple::remove_liquid_surface(int index) {
+void VoxelmanLibrarySimple::remove_liquid_surface(const int index) {
 	_liquid_surfaces.remove(index);
 }
 
-int VoxelmanLibrarySimple::get_liquid_num_surfaces() {
+int VoxelmanLibrarySimple::get_num_liquid_surfaces() const {
 	return _liquid_surfaces.size();
 }
 

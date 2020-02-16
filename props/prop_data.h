@@ -46,6 +46,9 @@ class PropData : public Resource {
 	GDCLASS(PropData, Resource);
 
 public:
+	int get_id();
+	void set_id(int value);
+
 	bool get_snap_to_mesh();
 	void set_snap_to_mesh(bool value);
 
@@ -78,6 +81,7 @@ protected:
 	static void _bind_methods();
 
 private:
+	int _id;
 	bool _snap_to_mesh;
 	Vector3 _snap_axis;
 

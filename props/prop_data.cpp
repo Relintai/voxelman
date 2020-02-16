@@ -25,6 +25,13 @@ SOFTWARE.
 #include "../world/voxel_chunk.h"
 #include "prop_data_prop.h"
 
+int PropData::get_id() {
+	return _id;
+}
+void PropData::set_id(int value) {
+	_id = value;
+}
+
 bool PropData::get_snap_to_mesh() {
 	return _snap_to_mesh;
 }
@@ -227,6 +234,7 @@ Transform PropData::get_next_snapped_prop_transform_bind(Node *spatial, Transfor
 }
 
 PropData::PropData() {
+	_id = 0;
 	_snap_to_mesh = false;
 	_snap_axis = Vector3(0, -1, 0);
 }
