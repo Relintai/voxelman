@@ -622,6 +622,9 @@ void VoxelChunk::_build_threaded(void *_userdata) {
 }
 
 bool VoxelChunk::build_phase() {
+
+	_THREAD_SAFE_METHOD_
+
 	set_build_phase_done(false);
 
 	return call("_build_phase", _current_build_phase);
