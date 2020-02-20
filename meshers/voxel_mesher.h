@@ -102,7 +102,7 @@ public:
 
 	void bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights);
 
-	void build_mesh(RID mesh);
+	Array build_mesh();
 
 	PoolVector<Vector3> get_vertices();
 	void set_vertices(const PoolVector<Vector3> &values);

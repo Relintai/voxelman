@@ -80,20 +80,15 @@ void VoxelMesher::set_uv_margin(const Rect2 margin) {
 	_uv_margin = margin;
 }
 
-void VoxelMesher::build_mesh(RID mesh) {
-	ERR_FAIL_COND(mesh == RID());
-
-	VS::get_singleton()->mesh_clear(mesh);
-
+Array VoxelMesher::build_mesh() {
 	if (_vertices.size() == 0) {
 		//Nothing to do
-		return;
+		Array a;
+		a.resize(VisualServer::ARRAY_MAX);
+		return a;
 	}
 
 	_surface_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
-
-	//if (_material.is_valid())
-	//	_surface_tool->set_material(_material);
 
 	if (_colors.size() != _vertices.size()) {
 		print_error("Colors.size() != vertices.size() -> " + String::num(_colors.size()) + " " + String::num(_vertices.size()));
@@ -132,12 +127,7 @@ void VoxelMesher::build_mesh(RID mesh) {
 		_surface_tool->generate_normals();
 	}
 
-	Array arr = _surface_tool->commit_to_arrays();
-
-	VS::get_singleton()->mesh_add_surface_from_arrays(mesh, VisualServer::PRIMITIVE_TRIANGLES, arr);
-
-	if (_material.is_valid())
-		VS::get_singleton()->mesh_surface_set_material(mesh, 0, _library->get_material()->get_rid());
+	return _surface_tool->commit_to_arrays();
 }
 
 void VoxelMesher::reset() {
@@ -873,5 +863,5 @@ void VoxelMesher::_bind_methods() {
 
 	//ClassDB::bind_method(D_METHOD("calculate_vertex_ambient_occlusion", "meshinstance_path", "radius", "intensity", "sampleCount"), &VoxelMesher::calculate_vertex_ambient_occlusion_path);
 
-	ClassDB::bind_method(D_METHOD("build_mesh", "mesh_rid"), &VoxelMesher::build_mesh);
+	ClassDB::bind_method(D_METHOD("build_mesh"), &VoxelMesher::build_mesh);
 }

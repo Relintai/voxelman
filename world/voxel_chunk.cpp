@@ -570,8 +570,19 @@ void VoxelChunk::finalize_mesh() {
 	}
 
 	ERR_FAIL_COND(!mesher.is_valid());
+	ERR_FAIL_COND(_mesh_rid == RID());
 
-	mesher->build_mesh(_mesh_rid);
+	VS::get_singleton()->mesh_clear(_mesh_rid);
+
+	if (mesher->get_vertex_count() == 0)
+		return;
+
+	Array arr = mesher->build_mesh();
+
+	VS::get_singleton()->mesh_add_surface_from_arrays(_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
+
+	if (_library->get_material().is_valid())
+		VS::get_singleton()->mesh_surface_set_material(_mesh_rid, 0, _library->get_material()->get_rid());
 }
 
 void VoxelChunk::build_deferred() {
@@ -968,7 +979,20 @@ void VoxelChunk::process_props() {
 
 		mesher->bake_colors(this);
 		mesher->set_material(get_library()->get_material());
-		mesher->build_mesh(_prop_mesh_rid);
+
+		ERR_FAIL_COND(_prop_mesh_rid == RID());
+
+		VS::get_singleton()->mesh_clear(_prop_mesh_rid);
+
+		if (mesher->get_vertex_count() == 0)
+			return;
+
+		Array arr = mesher->build_mesh();
+
+		VS::get_singleton()->mesh_add_surface_from_arrays(_prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
+
+		if (_library->get_material().is_valid())
+			VS::get_singleton()->mesh_surface_set_material(_prop_mesh_rid, 0, _library->get_material()->get_rid());
 	}
 }
 
@@ -984,7 +1008,20 @@ void VoxelChunk::build_prop_meshes() {
 
 		mesher->bake_colors(this);
 		mesher->set_material(get_library()->get_material());
-		mesher->build_mesh(_prop_mesh_rid);
+
+		ERR_FAIL_COND(_prop_mesh_rid == RID());
+
+		VS::get_singleton()->mesh_clear(_prop_mesh_rid);
+
+		if (mesher->get_vertex_count() == 0)
+			return;
+
+		Array arr = mesher->build_mesh();
+
+		VS::get_singleton()->mesh_add_surface_from_arrays(_prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
+
+		if (_library->get_material().is_valid())
+			VS::get_singleton()->mesh_surface_set_material(_prop_mesh_rid, 0, _library->get_material()->get_rid());
 	}
 }
 
