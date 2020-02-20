@@ -540,51 +540,6 @@ void VoxelChunk::_create_meshers() {
 	add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic())));
 }
 
-void VoxelChunk::finalize_mesh() {
-	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _meshers.get(i);
-
-		ERR_CONTINUE(!mesher.is_valid());
-
-		mesher->set_library(_library);
-	}
-
-	if (_mesh_rid == RID()) {
-		allocate_main_mesh();
-	}
-
-	Ref<VoxelMesher> mesher;
-	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> m = _meshers.get(i);
-
-		ERR_CONTINUE(!m.is_valid());
-
-		if (!mesher.is_valid()) {
-			mesher = m;
-			mesher->set_material(get_library()->get_material());
-			continue;
-		}
-
-		mesher->set_material(get_library()->get_material());
-		mesher->add_mesher(m);
-	}
-
-	ERR_FAIL_COND(!mesher.is_valid());
-	ERR_FAIL_COND(_mesh_rid == RID());
-
-	VS::get_singleton()->mesh_clear(_mesh_rid);
-
-	if (mesher->get_vertex_count() == 0)
-		return;
-
-	Array arr = mesher->build_mesh();
-
-	VS::get_singleton()->mesh_add_surface_from_arrays(_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
-
-	if (_library->get_material().is_valid())
-		VS::get_singleton()->mesh_surface_set_material(_mesh_rid, 0, _library->get_material()->get_rid());
-}
-
 void VoxelChunk::build_deferred() {
 	if (_current_build_phase == BUILD_PHASE_DONE) {
 		_build_prioritized = false;
@@ -680,7 +635,17 @@ bool VoxelChunk::_build_phase(int phase) {
 		}
 		case BUILD_PHASE_TERRARIN_MESH_COLLIDER: {
 			if (get_create_collider()) {
-				build_collider();
+				if (_body_rid == RID()) {
+					create_colliders();
+				}
+
+				for (int i = 0; i < _meshers.size(); ++i) {
+					Ref<VoxelMesher> mesher = _meshers.get(i);
+
+					ERR_CONTINUE(!mesher.is_valid());
+
+					mesher->build_collider(_shape_rid);
+				}
 			}
 
 			next_phase();
@@ -696,7 +661,50 @@ bool VoxelChunk::_build_phase(int phase) {
 				mesher->bake_colors(this);
 			}
 
-			finalize_mesh();
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _meshers.get(i);
+
+				ERR_CONTINUE(!mesher.is_valid());
+
+				mesher->set_library(_library);
+			}
+
+			if (_mesh_rid == RID()) {
+				allocate_main_mesh();
+			}
+
+			Ref<VoxelMesher> mesher;
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> m = _meshers.get(i);
+
+				ERR_CONTINUE(!m.is_valid());
+
+				if (!mesher.is_valid()) {
+					mesher = m;
+					mesher->set_material(get_library()->get_material());
+					continue;
+				}
+
+				mesher->set_material(get_library()->get_material());
+				mesher->add_mesher(m);
+			}
+
+			ERR_FAIL_COND_V(!mesher.is_valid(), false);
+			ERR_FAIL_COND_V(_mesh_rid == RID(), false);
+
+			VS::get_singleton()->mesh_clear(_mesh_rid);
+
+			if (mesher->get_vertex_count() == 0) {
+				next_phase();
+				return true;
+			}
+
+			Array arr = mesher->build_mesh();
+
+			VS::get_singleton()->mesh_add_surface_from_arrays(_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
+
+			if (_library->get_material().is_valid())
+				VS::get_singleton()->mesh_surface_set_material(_mesh_rid, 0, _library->get_material()->get_rid());
 
 			next_phase();
 
@@ -712,8 +720,34 @@ bool VoxelChunk::_build_phase(int phase) {
 			}
 
 			if (_props.size() > 0) {
-				process_props();
-				build_prop_meshes();
+				if (_prop_mesh_rid == RID()) {
+					allocate_prop_mesh();
+				}
+
+				for (int i = 0; i < _meshers.size(); ++i) {
+					Ref<VoxelMesher> mesher = _meshers.get(i);
+
+					ERR_CONTINUE(!mesher.is_valid());
+
+					mesher->bake_colors(this);
+					mesher->set_material(get_library()->get_material());
+
+					ERR_FAIL_COND_V(_prop_mesh_rid == RID(), false);
+
+					VS::get_singleton()->mesh_clear(_prop_mesh_rid);
+
+					if (mesher->get_vertex_count() == 0) {
+						next_phase();
+						return true;
+					}
+
+					Array arr = mesher->build_mesh();
+
+					VS::get_singleton()->mesh_add_surface_from_arrays(_prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
+
+					if (_library->get_material().is_valid())
+						VS::get_singleton()->mesh_surface_set_material(_prop_mesh_rid, 0, _library->get_material()->get_rid());
+				}
 			}
 
 			next_phase();
@@ -819,20 +853,6 @@ void VoxelChunk::create_colliders() {
 
 	PhysicsServer::get_singleton()->body_set_state(_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 	PhysicsServer::get_singleton()->body_set_space(_body_rid, get_voxel_world()->get_world()->get_space());
-}
-
-void VoxelChunk::build_collider() {
-	if (_body_rid == RID()) {
-		create_colliders();
-	}
-
-	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _meshers.get(i);
-
-		ERR_CONTINUE(!mesher.is_valid());
-
-		mesher->build_collider(_shape_rid);
-	}
 }
 
 void VoxelChunk::remove_colliders() {
@@ -961,68 +981,6 @@ void VoxelChunk::remove_prop(int index) {
 }
 void VoxelChunk::clear_props() {
 	_props.clear();
-}
-
-void VoxelChunk::process_props() {
-	ERR_FAIL_COND(!has_method("_process_props"));
-
-	if (_prop_mesh_rid == RID()) {
-		allocate_prop_mesh();
-	}
-
-	call("_process_props");
-
-	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _meshers.get(i);
-
-		ERR_CONTINUE(!mesher.is_valid());
-
-		mesher->bake_colors(this);
-		mesher->set_material(get_library()->get_material());
-
-		ERR_FAIL_COND(_prop_mesh_rid == RID());
-
-		VS::get_singleton()->mesh_clear(_prop_mesh_rid);
-
-		if (mesher->get_vertex_count() == 0)
-			return;
-
-		Array arr = mesher->build_mesh();
-
-		VS::get_singleton()->mesh_add_surface_from_arrays(_prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
-
-		if (_library->get_material().is_valid())
-			VS::get_singleton()->mesh_surface_set_material(_prop_mesh_rid, 0, _library->get_material()->get_rid());
-	}
-}
-
-void VoxelChunk::build_prop_meshes() {
-	if (_prop_mesh_rid == RID()) {
-		allocate_prop_mesh();
-	}
-
-	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _meshers.get(i);
-
-		ERR_CONTINUE(!mesher.is_valid());
-
-		mesher->bake_colors(this);
-		mesher->set_material(get_library()->get_material());
-
-		ERR_FAIL_COND(_prop_mesh_rid == RID());
-
-		VS::get_singleton()->mesh_clear(_prop_mesh_rid);
-
-		if (mesher->get_vertex_count() == 0)
-			return;
-
-		Array arr = mesher->build_mesh();
-
-		VS::get_singleton()->mesh_add_surface_from_arrays(_prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
-
-		if (_library->get_material().is_valid())
-			VS::get_singleton()->mesh_surface_set_material(_prop_mesh_rid, 0, _library->get_material()->get_rid());
-	}
 }
 
 void VoxelChunk::allocate_main_mesh() {
@@ -1537,8 +1495,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
 
 	//Meshes
-	ClassDB::bind_method(D_METHOD("finalize_mesh"), &VoxelChunk::finalize_mesh);
-
 	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::BOOL, "is_done"), "_build_phase", PropertyInfo(Variant::INT, "phase")));
 
 	ClassDB::bind_method(D_METHOD("build_deferred"), &VoxelChunk::build_deferred);
@@ -1550,7 +1506,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear"), &VoxelChunk::clear);
 
 	ClassDB::bind_method(D_METHOD("create_colliders"), &VoxelChunk::create_colliders);
-	ClassDB::bind_method(D_METHOD("build_collider"), &VoxelChunk::build_collider);
 	ClassDB::bind_method(D_METHOD("remove_colliders"), &VoxelChunk::remove_colliders);
 
 	ClassDB::bind_method(D_METHOD("add_lights", "lights"), &VoxelChunk::add_lights);
@@ -1574,10 +1529,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_prop", "index"), &VoxelChunk::remove_prop);
 	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
 
-	BIND_VMETHOD(MethodInfo("_process_props"));
-	ClassDB::bind_method(D_METHOD("process_props"), &VoxelChunk::process_props);
-
-	ClassDB::bind_method(D_METHOD("build_prop_meshes"), &VoxelChunk::build_prop_meshes);
 	ClassDB::bind_method(D_METHOD("build_prop_collider"), &VoxelChunk::build_prop_collider);
 	ClassDB::bind_method(D_METHOD("free_spawn_props"), &VoxelChunk::free_spawn_props);
 

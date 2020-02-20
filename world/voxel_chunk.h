@@ -220,8 +220,6 @@ public:
 	void create_meshers();
 	void _create_meshers();
 
-	void finalize_mesh();
-
 	void build_deferred();
 	void build_prioritized();
 	static void _build_threaded(void *_userdata);
@@ -236,7 +234,6 @@ public:
 
 	//Colliders
 	void create_colliders();
-	void build_collider();
 	void remove_colliders();
 
 	//lights
@@ -262,9 +259,6 @@ public:
 	void remove_prop(int index);
 	void clear_props();
 
-	void process_props();
-
-	void build_prop_meshes();
 	void build_prop_collider();
 	void free_spawn_props();
 

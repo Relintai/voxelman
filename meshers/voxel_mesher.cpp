@@ -130,6 +130,24 @@ Array VoxelMesher::build_mesh() {
 	return _surface_tool->commit_to_arrays();
 }
 
+void VoxelMesher::build_mesh_into(RID mesh) {
+	ERR_FAIL_COND(mesh == RID());
+
+	VS::get_singleton()->mesh_clear(mesh);
+
+	if (_vertices.size() == 0) {
+		//Nothing to do
+		return;
+	}
+
+	Array arr = build_mesh();
+
+	VS::get_singleton()->mesh_add_surface_from_arrays(mesh, VisualServer::PRIMITIVE_TRIANGLES, arr);
+
+	if (_material.is_valid())
+		VS::get_singleton()->mesh_surface_set_material(mesh, 0, _library->get_material()->get_rid());
+}
+
 void VoxelMesher::reset() {
 	_vertices.resize(0);
 	_normals.resize(0);
@@ -864,4 +882,5 @@ void VoxelMesher::_bind_methods() {
 	//ClassDB::bind_method(D_METHOD("calculate_vertex_ambient_occlusion", "meshinstance_path", "radius", "intensity", "sampleCount"), &VoxelMesher::calculate_vertex_ambient_occlusion_path);
 
 	ClassDB::bind_method(D_METHOD("build_mesh"), &VoxelMesher::build_mesh);
+	ClassDB::bind_method(D_METHOD("build_mesh_into", "mesh_rid"), &VoxelMesher::build_mesh_into);
 }
