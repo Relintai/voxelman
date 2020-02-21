@@ -26,6 +26,7 @@ SOFTWARE.
 #include "core/reference.h"
 
 #include "core/hash_map.h"
+#include "core/pool_vector.h"
 #include "voxel_chunk.h"
 
 class VoxelStructure : public Reference {
@@ -50,21 +51,15 @@ public:
 	int get_world_position_z() const;
 	void set_world_position_z(const int value);
 
-	VoxelChunk *get_chunk_voxel_pos(int x, int y, int z);
-
 	int get_voxel(int x, int y, int z, unsigned int channel_index = 0);
 	void set_voxel(int value, int x, int y, int z, unsigned int channel_index = 0);
 	void set_voxel_v(int value, Vector3 pos, unsigned int channel_index = 0);
 
-	void add_chunk_bind(Node *chunk, const int x, const int y, const int z);
-	void add_chunk(VoxelChunk *chunk, const int x, const int y, const int z);
-	VoxelChunk *get_chunk(const int x, const int y, const int z);
-	VoxelChunk *remove_chunk(const int x, const int y, const int z);
+	void add_from_chunk_bind(Node *chunk);
+	void add_from_chunk(VoxelChunk *chunk);
 
-	VoxelChunk *get_chunk_index(const int index);
-	int get_chunk_count() const;
-
-	void clear_chunks();
+	void write_to_chunk_bind(Node *chunk);
+	void write_to_chunk(VoxelChunk *chunk);
 
 	VoxelStructure();
 	~VoxelStructure();
@@ -95,8 +90,7 @@ private:
 	int _world_position_y;
 	int _world_position_z;
 
-	HashMap<IntPos, VoxelChunk *, IntPosHasher> _chunks;
-	Vector<VoxelChunk *> _chunks_vector;
+	HashMap<IntPos, PoolByteArray, IntPosHasher> _data;
 };
 
 #endif
