@@ -33,14 +33,8 @@ class VoxelStructure : public Reference {
 	GDCLASS(VoxelStructure, Reference);
 
 public:
-	int get_chunk_size_x() const;
-	void set_chunk_size_x(const int value);
-
-	int get_chunk_size_y() const;
-	void set_chunk_size_y(const int value);
-
-	int get_chunk_size_z() const;
-	void set_chunk_size_z(const int value);
+	int get_channel_count() const;
+	void set_channel_count(const int value);
 
 	int get_world_position_x() const;
 	void set_world_position_x(const int value);
@@ -51,15 +45,16 @@ public:
 	int get_world_position_z() const;
 	void set_world_position_z(const int value);
 
-	int get_voxel(int x, int y, int z, unsigned int channel_index = 0);
-	void set_voxel(int value, int x, int y, int z, unsigned int channel_index = 0);
-	void set_voxel_v(int value, Vector3 pos, unsigned int channel_index = 0);
+	uint8_t get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const;
+	void set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index);
 
-	void add_from_chunk_bind(Node *chunk);
-	void add_from_chunk(VoxelChunk *chunk);
+	PoolByteArray get_voxel_data(int p_x, int p_y, int p_z) const;
+	void set_voxel_data(PoolByteArray p_arr, int p_x, int p_y, int p_z);
 
 	void write_to_chunk_bind(Node *chunk);
 	void write_to_chunk(VoxelChunk *chunk);
+
+	void clear();
 
 	VoxelStructure();
 	~VoxelStructure();
@@ -67,14 +62,15 @@ public:
 protected:
 	static void _bind_methods();
 
-	struct IntPos {
+public:
+	struct VSIntPos {
 		int x;
 		int y;
 		int z;
 	};
 
-	struct IntPosHasher {
-		static _FORCE_INLINE_ uint32_t hash(const IntPos &v) {
+	struct VSIntPosHasher {
+		static _FORCE_INLINE_ uint32_t hash(const VSIntPos &v) {
 			uint32_t hash = hash_djb2_one_32(v.x);
 			hash = hash_djb2_one_32(v.y, hash);
 			return hash_djb2_one_32(v.z, hash);
@@ -82,15 +78,17 @@ protected:
 	};
 
 private:
-	int _chunk_size_x;
-	int _chunk_size_y;
-	int _chunk_size_z;
+	int _channel_count;
 
 	int _world_position_x;
 	int _world_position_y;
 	int _world_position_z;
 
-	HashMap<IntPos, PoolByteArray, IntPosHasher> _data;
+	HashMap<VSIntPos, PoolByteArray, VSIntPosHasher> _data;
 };
+
+_FORCE_INLINE_ bool operator==(const VoxelStructure::VSIntPos &a, const VoxelStructure::VSIntPos &b) {
+	return a.x == b.x && a.y == b.y && a.z == b.z;
+}
 
 #endif

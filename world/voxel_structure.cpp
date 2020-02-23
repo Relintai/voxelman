@@ -22,25 +22,11 @@ SOFTWARE.
 
 #include "voxel_structure.h"
 
-int VoxelStructure::get_chunk_size_x() const {
-	return _chunk_size_x;
+int VoxelStructure::get_channel_count() const {
+	return _channel_count;
 }
-void VoxelStructure::set_chunk_size_x(const int value) {
-	_chunk_size_x = value;
-}
-
-int VoxelStructure::get_chunk_size_y() const {
-	return _chunk_size_y;
-}
-void VoxelStructure::set_chunk_size_y(const int value) {
-	_chunk_size_y = value;
-}
-
-int VoxelStructure::get_chunk_size_z() const {
-	return _chunk_size_z;
-}
-void VoxelStructure::set_chunk_size_z(const int value) {
-	_chunk_size_z = value;
+void VoxelStructure::set_channel_count(const int value) {
+	_channel_count = value;
 }
 
 int VoxelStructure::get_world_position_x() const {
@@ -64,20 +50,60 @@ void VoxelStructure::set_world_position_z(const int value) {
 	_world_position_z = value;
 }
 
-int VoxelStructure::get_voxel(int x, int y, int z, unsigned int channel_index) {
-	return 0;
+uint8_t VoxelStructure::get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const {
+	VSIntPos p;
+	p.x = p_x;
+	p.y = p_y;
+	p.z = p_z;
+
+	if (!_data.has(p))
+		return 0;
+
+	PoolByteArray arr = _data[p];
+
+	ERR_FAIL_INDEX_V(arr.size(), p_channel_index, 0);
+
+	return arr[p_channel_index];
 }
-void VoxelStructure::set_voxel(int value, int x, int y, int z, unsigned int channel_index) {
+void VoxelStructure::set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index) {
+	VSIntPos p;
+	p.x = p_x;
+	p.y = p_y;
+	p.z = p_z;
+
+	PoolByteArray arr;
+
+	if (!_data.has(p)) {
+		arr.resize(_channel_count);
+
+		for (int i = 0; i < _channel_count; ++i) {
+			arr.set(i, p_value);
+		}
+	} else {
+		arr = _data[p];
+	}
+
+	_data[p] = arr;
 }
 
-void VoxelStructure::add_from_chunk_bind(Node *chunk) {
-	VoxelChunk *c = Object::cast_to<VoxelChunk>(chunk);
+PoolByteArray VoxelStructure::get_voxel_data(int p_x, int p_y, int p_z) const {
+	VSIntPos p;
+	p.x = p_x;
+	p.y = p_y;
+	p.z = p_z;
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(c));
+	if (!_data.has(p))
+		return PoolByteArray();
 
-	add_from_chunk(c);
+	return _data[p];
 }
-void VoxelStructure::add_from_chunk(VoxelChunk *chunk) {
+void VoxelStructure::set_voxel_data(PoolByteArray p_arr, int p_x, int p_y, int p_z) {
+	VSIntPos p;
+	p.x = p_x;
+	p.y = p_y;
+	p.z = p_z;
+
+	_data[p] = p_arr;
 }
 
 void VoxelStructure::write_to_chunk_bind(Node *chunk) {
@@ -85,12 +111,21 @@ void VoxelStructure::write_to_chunk_bind(Node *chunk) {
 
 	ERR_FAIL_COND(!ObjectDB::instance_validate(c));
 
-	add_from_chunk(c);
+	write_to_chunk(c);
 }
 void VoxelStructure::write_to_chunk(VoxelChunk *chunk) {
 }
 
+void VoxelStructure::clear() {
+	_data.clear();
+}
+
 VoxelStructure::VoxelStructure() {
+	_channel_count = VoxelChunk::MAX_DEFAULT_CHANNELS;
+
+	_world_position_x = 0;
+	_world_position_y = 0;
+	_world_position_z = 0;
 }
 
 VoxelStructure::~VoxelStructure() {
@@ -98,17 +133,9 @@ VoxelStructure::~VoxelStructure() {
 }
 
 void VoxelStructure::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_chunk_size_x"), &VoxelStructure::get_chunk_size_x);
-	ClassDB::bind_method(D_METHOD("set_chunk_size_x", "value"), &VoxelStructure::set_chunk_size_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_x"), "set_chunk_size_x", "get_chunk_size_x");
-
-	ClassDB::bind_method(D_METHOD("get_chunk_size_y"), &VoxelStructure::get_chunk_size_y);
-	ClassDB::bind_method(D_METHOD("set_chunk_size_y", "value"), &VoxelStructure::set_chunk_size_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_y"), "set_chunk_size_y", "get_chunk_size_y");
-
-	ClassDB::bind_method(D_METHOD("get_chunk_size_z"), &VoxelStructure::get_chunk_size_z);
-	ClassDB::bind_method(D_METHOD("set_chunk_size_z", "value"), &VoxelStructure::set_chunk_size_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_z"), "set_chunk_size_z", "get_chunk_size_z");
+	ClassDB::bind_method(D_METHOD("get_channel_count"), &VoxelStructure::get_channel_count);
+	ClassDB::bind_method(D_METHOD("set_channel_count", "value"), &VoxelStructure::set_channel_count);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_count"), "set_channel_count", "get_channel_count");
 
 	ClassDB::bind_method(D_METHOD("get_world_position_x"), &VoxelStructure::get_world_position_x);
 	ClassDB::bind_method(D_METHOD("set_world_position_x", "value"), &VoxelStructure::set_world_position_x);
@@ -125,6 +152,8 @@ void VoxelStructure::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_voxel", "x", "y", "z", "channel_index"), &VoxelStructure::get_voxel, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "channel_index"), &VoxelStructure::set_voxel, DEFVAL(0));
 
-	ClassDB::bind_method(D_METHOD("add_from_chunk", "chunk"), &VoxelStructure::add_from_chunk_bind);
+	ClassDB::bind_method(D_METHOD("get_voxel_data", "x", "y", "z"), &VoxelStructure::get_voxel_data);
+	ClassDB::bind_method(D_METHOD("set_voxel_data", "arr", "x", "y", "z"), &VoxelStructure::set_voxel_data);
+
 	ClassDB::bind_method(D_METHOD("write_to_chunk", "chunk"), &VoxelStructure::write_to_chunk_bind);
 }
