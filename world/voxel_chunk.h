@@ -32,6 +32,7 @@ SOFTWARE.
 #include "core/ustring.h"
 
 #include "core/array.h"
+#include "core/pool_vector.h"
 #include "scene/3d/collision_shape.h"
 #include "scene/3d/mesh_instance.h"
 #include "scene/3d/physics_body.h"
@@ -129,10 +130,16 @@ public:
 	int get_size_x();
 	int get_size_y();
 	int get_size_z();
+	void set_size_x(int value);
+	void set_size_y(int value);
+	void set_size_z(int value);
 
 	int get_data_size_x();
 	int get_data_size_y();
 	int get_data_size_z();
+	void set_data_size_x(int value);
+	void set_data_size_y(int value);
+	void set_data_size_z(int value);
 
 	Vector3 get_position() const;
 	Vector3 get_size() const;
@@ -140,6 +147,8 @@ public:
 
 	int get_margin_start() const;
 	int get_margin_end() const;
+	void set_margin_start(int value);
+	void set_margin_end(int value);
 
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(Ref<VoxelmanLibrary> value);
@@ -199,13 +208,18 @@ public:
 	uint8_t get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const;
 	void set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index);
 
+	int get_channel_count();
 	void set_channel_count(int count);
+
 	void allocate_channel(int channel_index, uint8_t default_value = 0);
 	void fill_channel(uint8_t value, int channel_index);
 	void dealloc_channel(int channel_index);
 
 	uint8_t *get_channel(int channel_index);
 	uint8_t *get_valid_channel(int channel_index, uint8_t default_value = 0);
+
+	PoolByteArray get_channel_array(int channel_index) const;
+	void set_channel_array(int channel_index, const PoolByteArray &array);
 
 	uint32_t get_data_index(uint32_t x, uint32_t y, uint32_t z) const;
 	uint32_t get_data_size() const;
@@ -297,6 +311,9 @@ protected:
 	void wait_and_finish_thread();
 
 	void _notification(int p_what);
+	bool _set(const StringName &p_name, const Variant &p_value);
+	bool _get(const StringName &p_name, Variant &r_ret) const;
+	void _get_property_list(List<PropertyInfo> *p_list) const;
 	static void _bind_methods();
 
 	bool _is_generating;

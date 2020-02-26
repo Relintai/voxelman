@@ -98,6 +98,16 @@ _FORCE_INLINE_ int VoxelChunk::get_size_z() {
 	return _size_z;
 }
 
+_FORCE_INLINE_ void VoxelChunk::set_size_x(int value) {
+	_size_x = value;
+}
+_FORCE_INLINE_ void VoxelChunk::set_size_y(int value) {
+	_size_y = value;
+}
+_FORCE_INLINE_ void VoxelChunk::set_size_z(int value) {
+	_size_z = value;
+}
+
 _FORCE_INLINE_ Vector3 VoxelChunk::get_size() const {
 	return Vector3(_size_x, _size_y, _size_z);
 }
@@ -112,6 +122,16 @@ _FORCE_INLINE_ int VoxelChunk::get_data_size_z() {
 	return _data_size_z;
 }
 
+_FORCE_INLINE_ void VoxelChunk::set_data_size_x(int value) {
+	_data_size_x = value;
+}
+_FORCE_INLINE_ void VoxelChunk::set_data_size_y(int value) {
+	_data_size_y = value;
+}
+_FORCE_INLINE_ void VoxelChunk::set_data_size_z(int value) {
+	_data_size_z = value;
+}
+
 void VoxelChunk::set_position(int x, int y, int z) {
 	_position_x = x;
 	_position_y = y;
@@ -123,6 +143,13 @@ _FORCE_INLINE_ int VoxelChunk::get_margin_start() const {
 }
 _FORCE_INLINE_ int VoxelChunk::get_margin_end() const {
 	return _margin_end;
+}
+
+_FORCE_INLINE_ void VoxelChunk::set_margin_start(int value) {
+	_margin_start = value;
+}
+_FORCE_INLINE_ void VoxelChunk::set_margin_end(int value) {
+	_margin_end = value;
 }
 
 Ref<VoxelmanLibrary> VoxelChunk::get_library() {
@@ -334,6 +361,10 @@ void VoxelChunk::set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_cha
 	ch[get_data_index(x, y, z)] = p_value;
 }
 
+int VoxelChunk::get_channel_count() {
+	return _channels.size();
+}
+
 void VoxelChunk::set_channel_count(int count) {
 	if (count == _channels.size())
 		return;
@@ -416,6 +447,49 @@ uint8_t *VoxelChunk::get_valid_channel(int channel_index, uint8_t default_value)
 	}
 
 	return ch;
+}
+
+PoolByteArray VoxelChunk::get_channel_array(int channel_index) const {
+	PoolByteArray arr;
+
+	uint32_t size = _data_size_x * _data_size_y * _data_size_z;
+
+	if (channel_index >= _channels.size())
+		return arr;
+
+	uint8_t *ch = _channels.get(channel_index);
+
+	if (ch == NULL)
+		return arr;
+
+	arr.resize(size);
+
+	for (uint32_t i = 0; i < size; ++i) {
+		arr.set(i, ch[i]);
+	}
+
+	return arr;
+}
+void VoxelChunk::set_channel_array(int channel_index, const PoolByteArray &array) {
+	if (array.size() == 0)
+		return;
+
+	if (_channels.size() <= channel_index)
+		set_channel_count(channel_index + 1);
+
+	uint8_t *ch = _channels.get(channel_index);
+
+	if (ch == NULL) {
+		if (_channels[channel_index] != NULL)
+			return;
+
+		ch = memnew_arr(uint8_t, array.size());
+		_channels.set(channel_index, ch);
+	}
+
+	for (int i = 0; i < array.size(); ++i) {
+		ch[i] = array[i];
+	}
 }
 
 _FORCE_INLINE_ uint32_t VoxelChunk::get_data_index(uint32_t x, uint32_t y, uint32_t z) const {
@@ -1271,6 +1345,7 @@ VoxelChunk::VoxelChunk() {
 	_dirty = false;
 	_state = VOXEL_CHUNK_STATE_OK;
 
+	_enabled = true;
 	_build_mesh = true;
 	_create_collider = true;
 	_bake_lights = true;
@@ -1282,6 +1357,18 @@ VoxelChunk::VoxelChunk() {
 
 	_debug_drawer = NULL;
 	_voxel_world = NULL;
+
+	_position_x = 0;
+	_position_y = 0;
+	_position_z = 0;
+
+	_size_x = 0;
+	_size_y = 0;
+	_size_z = 0;
+
+	_data_size_x = 0;
+	_data_size_y = 0;
+	_data_size_z = 0;
 
 	_margin_start = 0;
 	_margin_end = 0;
@@ -1349,6 +1436,50 @@ void VoxelChunk::wait_and_finish_thread() {
 	}
 }
 
+bool VoxelChunk::_set(const StringName &p_name, const Variant &p_value) {
+	String name = p_name;
+
+	if (name.begins_with("channels/")) {
+
+		int index = name.get_slicec('/', 1).to_int();
+
+		if (_channels.size() <= index) {
+			set_channel_count(index);
+		}
+
+		PoolByteArray arr = p_value;
+
+		if (arr.size() == 0)
+			return true;
+
+		set_channel_array(index, arr);
+	}
+
+	return true;
+}
+
+bool VoxelChunk::_get(const StringName &p_name, Variant &r_ret) const {
+	String name = p_name;
+
+	if (name.begins_with("channels/")) {
+
+		int index = name.get_slicec('/', 1).to_int();
+
+		r_ret = get_channel_array(index);
+
+		return true;
+	}
+
+	return false;
+}
+
+void VoxelChunk::_get_property_list(List<PropertyInfo> *p_list) const {
+	for (int i = 0; i < _channels.size(); ++i) {
+		p_list->push_back(PropertyInfo(Variant::POOL_BYTE_ARRAY, "channels/" + String::num(i)));
+		//p_list->push_back(PropertyInfo(Variant::POOL_BYTE_ARRAY, "channels/" + String::num(i), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_INTERNAL));
+	}
+}
+
 void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
@@ -1386,29 +1517,39 @@ void VoxelChunk::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_z"), "set_position_z", "get_position_z");
 
 	ClassDB::bind_method(D_METHOD("get_size_x"), &VoxelChunk::get_size_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_x"), "", "get_size_x");
+	ClassDB::bind_method(D_METHOD("set_size_x"), &VoxelChunk::set_size_x);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_x"), "set_size_x", "get_size_x");
 
 	ClassDB::bind_method(D_METHOD("get_size_y"), &VoxelChunk::get_size_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_y"), "", "get_size_y");
+	ClassDB::bind_method(D_METHOD("set_size_y"), &VoxelChunk::set_size_y);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_y"), "set_size_y", "get_size_y");
 
 	ClassDB::bind_method(D_METHOD("get_size_z"), &VoxelChunk::get_size_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_z"), "", "get_size_z");
+	ClassDB::bind_method(D_METHOD("set_size_z"), &VoxelChunk::set_size_z);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_z"), "set_size_z", "get_size_z");
 
 	ClassDB::bind_method(D_METHOD("get_data_size_x"), &VoxelChunk::get_data_size_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_x"), "", "get_data_size_x");
+	ClassDB::bind_method(D_METHOD("set_data_size_x"), &VoxelChunk::set_data_size_x);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_x"), "set_data_size_x", "get_data_size_x");
 
 	ClassDB::bind_method(D_METHOD("get_data_size_y"), &VoxelChunk::get_data_size_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_y"), "", "get_data_size_y");
+	ClassDB::bind_method(D_METHOD("set_data_size_y"), &VoxelChunk::set_data_size_y);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_y"), "set_data_size_y", "get_data_size_y");
 
 	ClassDB::bind_method(D_METHOD("get_data_size_z"), &VoxelChunk::get_data_size_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_z"), "", "get_data_size_z");
+	ClassDB::bind_method(D_METHOD("set_data_size_z"), &VoxelChunk::set_data_size_z);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "data_size_z"), "set_data_size_z", "get_data_size_z");
 
 	ClassDB::bind_method(D_METHOD("get_position"), &VoxelChunk::get_position);
-	ClassDB::bind_method(D_METHOD("get_size"), &VoxelChunk::get_size);
 	ClassDB::bind_method(D_METHOD("set_position", "x", "y", "z"), &VoxelChunk::set_position);
 
 	ClassDB::bind_method(D_METHOD("get_margin_start"), &VoxelChunk::get_margin_start);
+	ClassDB::bind_method(D_METHOD("set_margin_start"), &VoxelChunk::set_margin_start);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "margin_start"), "set_margin_start", "get_margin_start");
+
 	ClassDB::bind_method(D_METHOD("get_margin_end"), &VoxelChunk::get_margin_end);
+	ClassDB::bind_method(D_METHOD("set_margin_end"), &VoxelChunk::set_margin_end);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "margin_end"), "set_margin_end", "get_margin_end");
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelChunk::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelChunk::set_library);
@@ -1481,10 +1622,16 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_voxel", "x", "y", "z", "channel_index"), &VoxelChunk::get_voxel);
 	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "channel_index"), &VoxelChunk::set_voxel);
 
+	ClassDB::bind_method(D_METHOD("get_channel_count"), &VoxelChunk::get_channel_count);
 	ClassDB::bind_method(D_METHOD("set_channel_count", "count"), &VoxelChunk::set_channel_count);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_count"), "set_channel_count", "get_channel_count");
+
 	ClassDB::bind_method(D_METHOD("allocate_channel", "channel_index", "default_value"), &VoxelChunk::allocate_channel);
 	ClassDB::bind_method(D_METHOD("fill_channel", "value", "channel_index"), &VoxelChunk::fill_channel);
 	ClassDB::bind_method(D_METHOD("dealloc_channel", "channel_index"), &VoxelChunk::dealloc_channel);
+
+	ClassDB::bind_method(D_METHOD("get_channel_array", "channel_index"), &VoxelChunk::get_channel_array);
+	ClassDB::bind_method(D_METHOD("set_channel_array", "channel_index", "array"), &VoxelChunk::set_channel_array);
 
 	ClassDB::bind_method(D_METHOD("get_data_index", "x", "y", "z"), &VoxelChunk::get_data_index);
 	ClassDB::bind_method(D_METHOD("get_data_size"), &VoxelChunk::get_data_size);
