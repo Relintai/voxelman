@@ -1475,8 +1475,7 @@ bool VoxelChunk::_get(const StringName &p_name, Variant &r_ret) const {
 
 void VoxelChunk::_get_property_list(List<PropertyInfo> *p_list) const {
 	for (int i = 0; i < _channels.size(); ++i) {
-		p_list->push_back(PropertyInfo(Variant::POOL_BYTE_ARRAY, "channels/" + String::num(i)));
-		//p_list->push_back(PropertyInfo(Variant::POOL_BYTE_ARRAY, "channels/" + String::num(i), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_INTERNAL));
+		p_list->push_back(PropertyInfo(Variant::POOL_BYTE_ARRAY, "channels/" + String::num(i), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_INTERNAL));
 	}
 }
 
