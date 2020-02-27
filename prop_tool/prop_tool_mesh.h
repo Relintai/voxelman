@@ -23,19 +23,18 @@ SOFTWARE.
 #ifndef PROP_TOOL_MESH_H
 #define PROP_TOOL_MESH_H
 
-class EditorNode;
-class EditorPlugin;
-class PropData;
+#include "core/math/vector3.h"
 
 #include "../props/prop_data_mesh.h"
 #include "scene/3d/mesh_instance.h"
-
-class propData;
 
 class PropToolMesh : public MeshInstance {
 	GDCLASS(PropToolMesh, MeshInstance);
 
 public:
+	Ref<MeshDataResource> get_mesh_data();
+	void set_mesh_data(const Ref<MeshDataResource> &data);
+
 	Ref<PropDataMesh> get_data();
 	void set_data(const Ref<PropDataMesh> &data);
 
@@ -57,11 +56,13 @@ public:
 	~PropToolMesh();
 
 protected:
+	bool get_generate() { return false; }
 	void set_generate(bool value);
 
 	static void _bind_methods();
 
 private:
+	Ref<MeshDataResource> _mesh_data;
 	Ref<PropDataMesh> _prop_mesh;
 	Ref<Texture> _texture;
 	Ref<SpatialMaterial> _material;

@@ -57,6 +57,8 @@ sources = [
     "clutter/ground_clutter_foliage.cpp",
 
     "world/voxel_world_editor.cpp",
+
+    "prop_tool/prop_tool_mesh.cpp",
     #"prop_tool/prop_tool_editor_plugin.cpp",
 ]
 
