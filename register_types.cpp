@@ -62,6 +62,8 @@ SOFTWARE.
 #include "clutter/ground_clutter.h"
 #include "clutter/ground_clutter_foliage.h"
 
+#include "world/voxel_world_editor.h"
+
 //#include "prop_tool/prop_tool_editor_plugin.h"
 
 void register_voxelman_types() {
@@ -105,9 +107,13 @@ void register_voxelman_types() {
 
 	ClassDB::register_class<GroundClutterFoliage>();
 
-//#ifdef TOOLS_ENABLED
-//	EditorPlugins::add_by_type<PropToolEditorPlugin>();
-//#endif
+#ifdef TOOLS_ENABLED
+	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
+#endif
+
+	//#ifdef TOOLS_ENABLED
+	//	EditorPlugins::add_by_type<PropToolEditorPlugin>();
+	//#endif
 }
 
 void unregister_voxelman_types() {
