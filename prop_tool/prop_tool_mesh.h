@@ -45,6 +45,9 @@ public:
 	bool get_snap_to_mesh() const;
 	void set_snap_to_mesh(const bool value);
 
+	Vector3 get_snap_axis() const;
+	void set_snap_axis(const Vector3 &value);
+
 	Ref<MeshDataResource> get_prop_mesh();
 	void set_prop_mesh(const Ref<MeshDataResource> &data);
 
@@ -60,8 +63,10 @@ protected:
 
 private:
 	Ref<PropDataMesh> _prop_mesh;
+	Ref<Texture> _texture;
 	Ref<SpatialMaterial> _material;
 	bool _snap_to_mesh;
+	Vector3 _snap_axis;
 };
 
 #endif

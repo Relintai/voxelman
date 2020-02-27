@@ -22,6 +22,58 @@ SOFTWARE.
 
 #include "prop_tool_mesh.h"
 
+Ref<PropDataMesh> PropToolMesh::get_data() {
+	return _prop_mesh;
+}
+void PropToolMesh::set_data(const Ref<PropDataMesh> &data) {
+	_prop_mesh = data;
+}
+
+Ref<Texture> PropToolMesh::get_texture() {
+	return _texture;
+}
+void PropToolMesh::set_texture(const Ref<Texture> &tex) {
+	_texture = tex;
+}
+
+bool PropToolMesh::get_snap_to_mesh() const {
+	return _snap_to_mesh;
+}
+void PropToolMesh::set_snap_to_mesh(const bool value) {
+	_snap_to_mesh = value;
+}
+
+Vector3 PropToolMesh::get_snap_axis() const {
+	return _snap_axis;
+}
+void PropToolMesh::set_snap_axis(const Vector3 &value) {
+	_snap_axis = value;
+}
+
+Ref<MeshDataResource> PropToolMesh::get_prop_mesh() {
+	return _prop_mesh;
+}
+void PropToolMesh::set_prop_mesh(const Ref<MeshDataResource> &data) {
+	_prop_mesh = data;
+}
+
+void PropToolMesh::generate() {
+}
+
+PropToolMesh::PropToolMesh() {
+	bool _snap_to_mesh;
+}
+PropToolMesh::~PropToolMesh() {
+	_prop_mesh.unref();
+	_material.unref();
+}
+
+void PropToolMesh::set_generate(bool value) {
+}
+
+void PropToolMesh::_bind_methods() {
+}
+
 /*
 tool
 extends MeshInstance
