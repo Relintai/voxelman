@@ -32,6 +32,7 @@ class PropData;
 #include "scene/3d/spatial.h"
 
 class propData;
+class PropToolEditorPlugin;
 
 class PropTool : public Spatial {
 	GDCLASS(PropTool, Spatial);
@@ -60,7 +61,7 @@ private:
 	Ref<PropData> _target_prop;
 	bool _snap_to_mesh;
 	Vector3 _snap_axis;
-	EditorPlugin *_plugin;
+	PropToolEditorPlugin *_plugin;
 };
 
 #endif

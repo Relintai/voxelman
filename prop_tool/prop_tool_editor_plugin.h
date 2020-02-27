@@ -36,25 +36,8 @@ SOFTWARE.
 
 #include "editor/plugins/spatial_editor_plugin.h"
 
-class PropDataEditor : public HSplitContainer {
-	GDCLASS(PropDataEditor, HSplitContainer);
-
-public:
-	void edit(const Ref<PropData> &prop);
-
-	PropDataEditor() {}
-	PropDataEditor(EditorNode *p_editor);
-	~PropDataEditor();
-
-protected:
-	static void _bind_methods();
-
-private:
-};
-
-class PropDataEditorPlugin : public EditorPlugin {
-
-	GDCLASS(PropDataEditorPlugin, EditorPlugin);
+class PropToolEditorPlugin : public EditorPlugin {
+	GDCLASS(PropToolEditorPlugin, EditorPlugin);
 
 public:
 	virtual String get_name() const { return "PropData"; }
@@ -63,14 +46,30 @@ public:
 	virtual bool handles(Object *p_object) const;
 	virtual void make_visible(bool p_visible);
 
-	PropDataEditorPlugin(EditorNode *p_node);
-	~PropDataEditorPlugin();
+	String create_or_get_scene_path(const Ref<PropData> &data);
+	PropTool *create_or_get_scene(const Ref<PropData> &data);
+	Ref<PackedScene> create_scene(const Ref<PropData> &data);
+
+	PropToolEditorPlugin(EditorNode *p_node);
+	~PropToolEditorPlugin();
 
 protected:
+	void _notification(int p_what);
+
 private:
-	PropDataEditor *prop_editor;
-	ToolButton *prop_editor_button;
+	String temp_path;
+
+	ToolButton *light_button;
+	ToolButton *mesh_button;
+	ToolButton *prop_button;
+	ToolButton *scene_button;
+	ToolButton *entity_button;
+
+	ToolButton *edited_prop;
+
 	EditorNode *editor;
+
+	Ref<PropData> _edited_prop;
 };
 
 #endif

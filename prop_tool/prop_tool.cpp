@@ -1,7 +1,18 @@
 #include "prop_tool.h"
 
 #include "../props/prop_data.h"
+#include "../props/prop_data_entity.h"
+#include "../props/prop_data_light.h"
+#include "../props/prop_data_mesh.h"
 #include "../props/prop_data_prop.h"
+#include "../props/prop_data_scene.h"
+
+#include "prop_tool_entity.h"
+#include "prop_tool_light.h"
+#include "prop_tool_mesh.h"
+#include "prop_tool_prop.h"
+#include "prop_tool_scene.h"
+
 #include "core/io/resource_saver.h"
 #include "prop_tool_editor_plugin.h"
 
@@ -68,60 +79,65 @@ void PropTool::save_node(Node *node, Transform parent_transform) {
 }
 
 void PropTool::rebuild_hierarchy() {
-	/*
-	for ch in get_children():
-		ch.queue_free()
-	
-	if target_prop == null:
-		return
-		
-	snap_to_mesh = target_prop.snap_to_mesh
-	snap_axis = target_prop.snap_axis
-		
-	for i in range(target_prop.get_prop_count()):
-		print(i)
-		var prop : PropDataEntry = target_prop.get_prop(i)
-		
-		if prop is PropDataLight:
-			var l : PropToolLight = PropToolLight.new()
-			
-			add_child(l)
-			l.owner = self
-			l.transform = prop.transform
-			
-			l.set_data(prop as PropDataLight)
-		elif prop is PropDataMesh:
-			var m : PropToolMesh = PropToolMesh.new()
-			
-			add_child(m)
-			m.owner = self
-			m.transform = prop.transform
-			
-			m.set_data(prop as PropDataMesh)
-		elif prop is PropDataScene:
-			var s : PropToolScene = PropToolScene.new()
-			
-			add_child(s)
-			s.owner = self
-			s.transform = prop.transform
-			
-			s.set_data(prop as PropDataScene)
-		elif prop is PropDataProp:
-			var s : Node = plugin.create_or_get_scene(prop.prop)
-			
-			add_child(s)
-			s.owner = self
-			s.transform = prop.transform
-#s.set_target_prop(prop.prop)
-		elif prop is PropDataEntity:
-			var s : PropToolEntity = PropToolEntity.new()
-			
-			add_child(s)
-			s.owner = self
-			s.transform = prop.transform
-			
-			s.set_data(prop as PropDataEntity)
-*/
+	for (int i = 0; i < get_child_count(); ++i)
+		get_child(i)->queue_delete();
+
+	if (!_target_prop.is_valid())
+		return;
+
+	_snap_to_mesh = _target_prop->get_snap_to_mesh();
+	_snap_axis = _target_prop->get_snap_axis();
+
+	for (int i = 0; i < _target_prop->get_prop_count(); ++i) {
+		Ref<PropDataEntry> prop = _target_prop->get_prop(i);
+
+		Ref<PropDataLight> prop_light = prop;
+		Ref<PropDataMesh> prop_mesh = prop;
+		Ref<PropDataScene> prop_scene = prop;
+		Ref<PropDataProp> prop_prop = prop;
+		Ref<PropDataEntity> prop_entity = prop;
+
+		if (prop_light.is_valid()) {
+			PropToolLight *l = memnew(PropToolLight);
+
+			add_child(l);
+			l->set_owner(this);
+			l->set_transform(prop->get_transform());
+
+			l->set_data(prop_light);
+		} else if (prop_mesh.is_valid()) {
+			PropToolMesh *m = memnew(PropToolMesh);
+
+			add_child(m);
+			m->set_owner(this);
+			m->set_transform(prop->get_transform());
+
+			m->set_data(prop_mesh);
+		} else if (prop_scene.is_valid()) {
+			PropToolScene *s = memnew(PropToolScene);
+
+			add_child(s);
+			s->set_owner(this);
+			s->set_transform(prop->get_transform());
+
+			s->set_data(prop_scene);
+		} else if (prop_prop.is_valid()) {
+			PropTool *s = _plugin->create_or_get_scene(prop_prop->get_prop());
+
+			add_child(s);
+			s->set_owner(this);
+			s->set_transform(prop->get_transform());
+			s->set_target_prop(prop_prop->get_prop());
+		} else if (prop_entity.is_valid()) {
+			PropToolEntity *s = memnew(PropToolEntity);
+
+			add_child(s);
+			s->set_owner(this);
+			s->set_transform(prop->get_transform());
+
+			s->set_data(prop_entity);
+		}
+	}
 }
 
 void PropTool::refresh_set(bool value) {
@@ -167,9 +183,9 @@ void PropTool::load_scene_for(PropTool *t, const Ref<PropData> &prop) {
 
 	t->queue_delete();
 
-	//Node *s = _plugin->create_or_get_scene(prop);
+	Node *s = _plugin->create_or_get_scene(prop);
 
-	//add_child(s);
+	add_child(s);
 	//s->set_owner(this);
 }
 

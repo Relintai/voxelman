@@ -24,65 +24,286 @@ SOFTWARE.
 
 #include "editor/editor_scale.h"
 
-void PropDataEditor::edit(const Ref<PropData> &prop) {
+void PropToolEditorPlugin::edit(Object *p_object) {
+	Ref<PropData> pedited_prop(p_object);
+
+	String p = create_or_get_scene_path(pedited_prop);
+
+	get_editor_interface()->open_scene_from_path(p);
 }
 
-
-void PropDataEditor::_bind_methods() {
-}
-
-PropDataEditor::PropDataEditor(EditorNode *p_editor) {
-	set_h_size_flags(SIZE_EXPAND_FILL);
-    set_custom_minimum_size(Size2(0, 200) * EDSCALE);
-
-    Tree *tree = memnew(Tree);
-    tree->set_custom_minimum_size(Size2(100, 0) * EDSCALE);
-	add_child(tree);
-
-	ViewportContainer *container = memnew(ViewportContainer);
-    container->set_h_size_flags(SIZE_EXPAND_FILL);
-    container->set_h_size_flags(SIZE_EXPAND_FILL);
-    container->set_v_size_flags(SIZE_EXPAND_FILL);
-	add_child(container);
-
-    Viewport *viewport = memnew(Viewport);
-    viewport->set_size(Size2(400, 400));
-    container->add_child(viewport);
-
-    set_split_offset(200 * EDSCALE);
-}
-PropDataEditor::~PropDataEditor() {
-}
-
-void PropDataEditorPlugin::edit(Object *p_object) {
-}
-
-bool PropDataEditorPlugin::handles(Object *p_object) const {
+bool PropToolEditorPlugin::handles(Object *p_object) const {
 
 	bool handles = p_object->is_class("PropData");
 
 	if (handles) {
-		prop_editor_button->show();
+		light_button->show();
+		mesh_button->show();
+		prop_button->show();
+		scene_button->show();
+		entity_button->show();
+
 	} else {
-		prop_editor_button->hide();
+		light_button->hide();
+		mesh_button->hide();
+		prop_button->hide();
+		scene_button->hide();
+		entity_button->hide();
 	}
 
 	return handles;
 }
 
-void PropDataEditorPlugin::make_visible(bool p_visible) {
+void PropToolEditorPlugin::make_visible(bool p_visible) {
 }
 
-PropDataEditorPlugin::PropDataEditorPlugin(EditorNode *p_node) {
+String PropToolEditorPlugin::create_or_get_scene_path(const Ref<PropData> &data) {
+
+	String path = temp_path + data->get_path().get_file().get_basename() + ".tscn";
+
+	//Directory dir : Directory = Directory.new()
+
+	//if not dir.file_exists(path):
+	//	create_scene(data)
+
+	return path
+}
+PropTool *PropToolEditorPlugin::create_or_get_scene(const Ref<PropData> &data) {
+	/*
+	ERR_FAIL_COND_V(!data.is_valid(), NULL);		
+
+	String path = temp_path + data->get_path().get_file().get_basename() + ".tscn";
+	
+	var dir : Directory = Directory.new();
+	
+	Ref<PackedScene> ps;
+	
+	if not dir.file_exists(path):;
+		ps = create_scene(data);
+	else:;
+		ps = ResourceLoader.load(path, "PackedScene");
+	
+	if ps == null:;
+		return null;
+		
+	var pt : PropTool = ps.instance() as PropTool;
+	pt.plugin = self;
+	return pt;
+	*/
+
+	return NULL;
+}
+Ref<PackedScene> PropToolEditorPlugin::create_scene(const Ref<PropData> &data) {
+	/*
+func create_scene(data: PropData) -> PackedScene:
+	var pt : PropTool = PropTool.new()
+	
+	pt.plugin = self
+	pt.set_target_prop(data)
+	
+	var ps : PackedScene = PackedScene.new()
+	ps.pack(pt)
+	
+	var err = ResourceSaver.save(temp_path + data.resource_path.get_file().get_basename() + ".tscn", ps)
+
+	pt.queue_free()
+	return ps
+
+*/
+
+	return Ref<PackedScene>();
+}
+
+PropToolEditorPlugin::PropToolEditorPlugin(EditorNode *p_node) {
+	temp_path = "res://addons/prop_tool/scenes/temp/";
 
 	editor = p_node;
 
-	prop_editor = memnew(PropDataEditor(editor));
+	light_button = memnew(ToolButton);
+	light_button->set_text("Light");
+	light_button->connect("pressed", this, "add_light");
 
-	prop_editor_button = add_control_to_bottom_panel(prop_editor, "Prop");
+	mesh_button = memnew(ToolButton);
+	mesh_button->set_text("Mesh");
+	mesh_button->connect("pressed", this, "add_mesh");
 
-	prop_editor->hide();
+	prop_button = memnew(ToolButton);
+	prop_button->set_text("Prop");
+	prop_button->connect("pressed", this, "add_prop");
+
+	scene_button = memnew(ToolButton);
+	scene_button->set_text("Scene");
+	scene_button->connect("pressed", this, "add_scene");
+
+	entity_button = memnew(ToolButton);
+	entity_button->set_text("Entity");
+	entity_button->connect("pressed", this, "add_entity");
+
+	add_control_to_container(EditorPlugin::CONTAINER_SPATIAL_EDITOR_MENU, light_button);
+	add_control_to_container(EditorPlugin::CONTAINER_SPATIAL_EDITOR_MENU, mesh_button);
+	add_control_to_container(EditorPlugin::CONTAINER_SPATIAL_EDITOR_MENU, prop_button);
+	add_control_to_container(EditorPlugin::CONTAINER_SPATIAL_EDITOR_MENU, scene_button);
+	add_control_to_container(EditorPlugin::CONTAINER_SPATIAL_EDITOR_MENU, entity_button);
+
+	light_button->hide();
+	mesh_button->hide();
+	prop_button->hide();
+	scene_button->hide();
+	entity_button->hide();
+
+	//connect("scene_changed", this, "scene_changed");
 }
 
-PropDataEditorPlugin::~PropDataEditorPlugin() {
+PropToolEditorPlugin::~PropToolEditorPlugin() {
+	_edited_prop.unref();
 }
+
+/*
+
+func scene_changed(scene):
+	if scene.has_method("set_target_prop"):
+		scene.plugin = self
+		
+		if not buttons_added:
+			light_button.show()
+			mesh_button.show()
+			prop_button.show()
+			scene_button.show()
+			entity_button.show()
+#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, light_button)
+#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, mesh_button)
+#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, prop_button)
+#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, scene_button)
+#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, entity_button)
+			
+			buttons_added = true
+	else:
+		if buttons_added:
+			light_button.hide()
+			mesh_button.hide()
+			prop_button.hide()
+			scene_button.hide()
+			entity_button.hide()
+#
+#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, light_button)
+#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, mesh_button)
+#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, prop_button)
+#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, scene_button)
+#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, entity_button)
+			
+			buttons_added = false
+
+func apply_changes() -> void:
+	var scene : Node = get_editor_interface().get_edited_scene_root()
+	
+	if scene is PropTool:
+#	if scene.has_method("set_target_prop") and scene.has_method("save"):
+		scene.save()
+
+
+
+func add_light():
+	var selection : Array = get_editor_interface().get_selection().get_selected_nodes()
+	var selected : Node
+	
+	if selection.size() != 1:
+		selected = get_editor_interface().get_edited_scene_root()
+	else:
+		selected = selection[0]
+	
+	var s : Node = selected
+	var n = PropToolLight.new()
+	
+	var u : UndoRedo = get_undo_redo()
+	u.create_action("Add Light")
+	u.add_do_method(s, "add_child", n)
+	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
+	u.add_undo_method(s, "remove_child", n)
+	u.commit_action()
+	
+	get_editor_interface().get_selection().clear()
+	get_editor_interface().get_selection().add_node(n)
+	
+	
+func add_mesh():
+	var selected : Array = get_editor_interface().get_selection().get_selected_nodes()
+	
+	if selected.size() != 1:
+		return
+
+	var s : Node = selected[0]
+	var n = PropToolMesh.new()
+	
+	var u : UndoRedo = get_undo_redo()
+	u.create_action("Add Mesh")
+	u.add_do_method(s, "add_child", n)
+	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
+	u.add_undo_method(s, "remove_child", n)
+	u.commit_action()
+	
+	get_editor_interface().get_selection().clear()
+	get_editor_interface().get_selection().add_node(n)
+
+	
+func add_prop():
+	var selected : Array = get_editor_interface().get_selection().get_selected_nodes()
+	
+	if selected.size() != 1:
+		return
+	
+	var s : Node = selected[0]
+	var n = PropTool.new()
+	
+	var u : UndoRedo = get_undo_redo()
+	u.create_action("Add Prop")
+	u.add_do_method(s, "add_child", n)
+	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
+	u.add_undo_method(s, "remove_child", n)
+	u.commit_action()
+	
+	get_editor_interface().get_selection().clear()
+	get_editor_interface().get_selection().add_node(n)
+	
+func add_scene():
+	var selected : Array = get_editor_interface().get_selection().get_selected_nodes()
+	
+	if selected.size() != 1:
+		return
+	
+	var s : Node = selected[0]
+	var n = PropToolScene.new()
+	
+	var u : UndoRedo = get_undo_redo()
+	u.create_action("Add Scene")
+	u.add_do_method(s, "add_child", n)
+	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
+	u.add_undo_method(s, "remove_child", n)
+	u.commit_action()
+	
+	get_editor_interface().get_selection().clear()
+	get_editor_interface().get_selection().add_node(n)
+	
+func add_entity():
+	var selected : Array = get_editor_interface().get_selection().get_selected_nodes()
+	
+	if selected.size() != 1:
+		return
+	
+	var s : Node = selected[0]
+	var n = PropToolEntity.new()
+	
+	var u : UndoRedo = get_undo_redo()
+	u.create_action("Add Entity")
+	u.add_do_method(s, "add_child", n)
+	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
+	u.add_undo_method(s, "remove_child", n)
+	u.commit_action()
+	
+	get_editor_interface().get_selection().clear()
+	get_editor_interface().get_selection().add_node(n)
+
+
+
+
+
+*/
