@@ -58,6 +58,7 @@ sources = [
 
     "world/voxel_world_editor.cpp",
 
+    "prop_tool/prop_tool_entity.cpp",
     "prop_tool/prop_tool_prop.cpp",
     "prop_tool/prop_tool_scene.cpp",
     "prop_tool/prop_tool_light.cpp",

@@ -64,6 +64,7 @@ SOFTWARE.
 
 #include "world/voxel_world_editor.h"
 
+#include "prop_tool/prop_tool_entity.h"
 #include "prop_tool/prop_tool_light.h"
 #include "prop_tool/prop_tool_mesh.h"
 #include "prop_tool/prop_tool_prop.h"
@@ -111,6 +112,7 @@ void register_voxelman_types() {
 
 	ClassDB::register_class<GroundClutterFoliage>();
 
+	ClassDB::register_class<PropToolEntity>();
 	ClassDB::register_class<PropToolProp>();
 	ClassDB::register_class<PropToolMesh>();
 	ClassDB::register_class<PropToolLight>();
