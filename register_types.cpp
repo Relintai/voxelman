@@ -66,6 +66,7 @@ SOFTWARE.
 
 #include "prop_tool/prop_tool_light.h"
 #include "prop_tool/prop_tool_mesh.h"
+#include "prop_tool/prop_tool_scene.h"
 //#include "prop_tool/prop_tool_editor_plugin.h"
 
 void register_voxelman_types() {
@@ -111,6 +112,7 @@ void register_voxelman_types() {
 
 	ClassDB::register_class<PropToolMesh>();
 	ClassDB::register_class<PropToolLight>();
+	ClassDB::register_class<PropToolScene>();
 
 #ifdef TOOLS_ENABLED
 	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
