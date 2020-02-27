@@ -42,18 +42,14 @@ public:
 	bool get_snap_to_mesh() const;
 	void set_snap_to_mesh(const bool value);
 
-	void generate();
-
 	PropToolLight();
 	~PropToolLight();
 
 protected:
-	void set_generate(bool value);
-
 	static void _bind_methods();
 
 private:
-	Ref<PropDataLight> _prop_mesh;
+	Ref<PropDataLight> _prop_light;
 	bool _snap_to_mesh;
 };
 

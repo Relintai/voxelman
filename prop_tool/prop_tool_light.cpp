@@ -22,27 +22,49 @@ SOFTWARE.
 
 #include "prop_tool_light.h"
 
-/*
+Ref<PropDataLight> PropToolLight::get_data() {
 
-var _prop_light : PropDataLight
+	if (!is_visible())
+		return Ref<PropDataLight>();
 
-func get_data() -> PropDataLight:
-	if not visible:
-		return null
-	
-	if _prop_light == null:
-		_prop_light = PropDataLight.new()
-	
-	_prop_light.light_color = light_color
-	_prop_light.light_size = omni_range 
-	
-	return _prop_light
+	if (!_prop_light.is_valid())
+		_prop_light.instance();
 
-func set_data(light : PropDataLight) -> void:
-	_prop_light = light
-	
-	light_color = _prop_light.light_color
-	omni_range = _prop_light.light_size
-	light_energy = _prop_light.light_size
+	_prop_light->set_light_color(get_color());
+	_prop_light->set_light_size(get_param(Light::PARAM_RANGE));
 
-*/
+	return _prop_light;
+}
+void PropToolLight::set_data(const Ref<PropDataLight> &data) {
+	_prop_light = data;
+
+	if (!_prop_light.is_valid())
+		return;
+
+	set_color(_prop_light->get_light_color());
+	set_param(Light::PARAM_RANGE, _prop_light->get_light_size());
+	set_param(Light::PARAM_ENERGY, _prop_light->get_light_size());
+}
+
+bool PropToolLight::get_snap_to_mesh() const {
+	return _snap_to_mesh;
+}
+void PropToolLight::set_snap_to_mesh(const bool value) {
+	_snap_to_mesh = value;
+}
+
+PropToolLight::PropToolLight() {
+}
+PropToolLight::~PropToolLight() {
+	_prop_light.unref();
+}
+
+void PropToolLight::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_data"), &PropToolLight::get_data);
+	ClassDB::bind_method(D_METHOD("set_data", "value"), &PropToolLight::set_data);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "data", PROPERTY_HINT_RESOURCE_TYPE, "PropDataLight"), "set_data", "get_data");
+
+	ClassDB::bind_method(D_METHOD("get_snap_to_mesh"), &PropToolLight::get_snap_to_mesh);
+	ClassDB::bind_method(D_METHOD("set_snap_to_mesh", "value"), &PropToolLight::set_snap_to_mesh);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_to_mesh"), "set_snap_to_mesh", "get_snap_to_mesh");
+}
