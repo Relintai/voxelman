@@ -64,12 +64,13 @@ SOFTWARE.
 
 #include "world/voxel_world_editor.h"
 
+#include "prop_tool/prop_tool.h"
+#include "prop_tool/prop_tool_editor_plugin.h"
 #include "prop_tool/prop_tool_entity.h"
 #include "prop_tool/prop_tool_light.h"
 #include "prop_tool/prop_tool_mesh.h"
 #include "prop_tool/prop_tool_prop.h"
 #include "prop_tool/prop_tool_scene.h"
-//#include "prop_tool/prop_tool_editor_plugin.h"
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelmanQueue>();
@@ -112,6 +113,7 @@ void register_voxelman_types() {
 
 	ClassDB::register_class<GroundClutterFoliage>();
 
+	ClassDB::register_class<PropTool>();
 	ClassDB::register_class<PropToolEntity>();
 	ClassDB::register_class<PropToolProp>();
 	ClassDB::register_class<PropToolMesh>();
@@ -122,9 +124,9 @@ void register_voxelman_types() {
 	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
 #endif
 
-	//#ifdef TOOLS_ENABLED
-	//	EditorPlugins::add_by_type<PropToolEditorPlugin>();
-	//#endif
+#ifdef TOOLS_ENABLED
+	EditorPlugins::add_by_type<PropToolEditorPlugin>();
+#endif
 }
 
 void unregister_voxelman_types() {

@@ -36,6 +36,8 @@ SOFTWARE.
 
 #include "editor/plugins/spatial_editor_plugin.h"
 
+class PropTool;
+
 class PropToolEditorPlugin : public EditorPlugin {
 	GDCLASS(PropToolEditorPlugin, EditorPlugin);
 
@@ -54,8 +56,6 @@ public:
 	~PropToolEditorPlugin();
 
 protected:
-	void _notification(int p_what);
-
 private:
 	String temp_path;
 

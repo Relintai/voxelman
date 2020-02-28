@@ -45,9 +45,11 @@ public:
 	void rebuild_hierarchy();
 	void refresh_set(bool value);
 	void set_target_prop(const Ref<PropData> &prop);
-	void get_plugin();
 	void target_prop_set(const Ref<PropData> &prop);
 	void load_scene_for(PropTool *t, const Ref<PropData> &prop);
+
+	PropToolEditorPlugin *get_plugin();
+	void set_plugin(PropToolEditorPlugin *plugin);
 
 	PropTool();
 	PropTool(EditorNode *p_editor);

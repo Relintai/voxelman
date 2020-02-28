@@ -22,7 +22,11 @@ SOFTWARE.
 
 #include "prop_tool_editor_plugin.h"
 
+#include "core/os/dir_access.h"
+#include "core/os/file_access.h"
 #include "editor/editor_scale.h"
+#include "prop_tool.h"
+#include "scene/resources/packed_scene.h"
 
 void PropToolEditorPlugin::edit(Object *p_object) {
 	Ref<PropData> pedited_prop(p_object);
@@ -61,57 +65,44 @@ String PropToolEditorPlugin::create_or_get_scene_path(const Ref<PropData> &data)
 
 	String path = temp_path + data->get_path().get_file().get_basename() + ".tscn";
 
-	//Directory dir : Directory = Directory.new()
+	if (!FileAccess::exists(path))
+		create_scene(data);
 
-	//if not dir.file_exists(path):
-	//	create_scene(data)
-
-	return path
+	return path;
 }
 PropTool *PropToolEditorPlugin::create_or_get_scene(const Ref<PropData> &data) {
-	/*
-	ERR_FAIL_COND_V(!data.is_valid(), NULL);		
+	ERR_FAIL_COND_V(!data.is_valid(), NULL);
 
 	String path = temp_path + data->get_path().get_file().get_basename() + ".tscn";
-	
-	var dir : Directory = Directory.new();
-	
-	Ref<PackedScene> ps;
-	
-	if not dir.file_exists(path):;
-		ps = create_scene(data);
-	else:;
-		ps = ResourceLoader.load(path, "PackedScene");
-	
-	if ps == null:;
-		return null;
-		
-	var pt : PropTool = ps.instance() as PropTool;
-	pt.plugin = self;
-	return pt;
-	*/
 
-	return NULL;
+	Ref<PackedScene> ps;
+
+	if (!FileAccess::exists(path))
+		ps = create_scene(data);
+	else
+		ps = ResourceLoader::load(path, "PackedScene");
+
+	if (!ps.is_valid())
+		return NULL;
+
+	PropTool *pt = Object::cast_to<PropTool>(ps->instance());
+	pt->set_plugin(this);
+	return pt;
 }
 Ref<PackedScene> PropToolEditorPlugin::create_scene(const Ref<PropData> &data) {
-	/*
-func create_scene(data: PropData) -> PackedScene:
-	var pt : PropTool = PropTool.new()
-	
-	pt.plugin = self
-	pt.set_target_prop(data)
-	
-	var ps : PackedScene = PackedScene.new()
-	ps.pack(pt)
-	
-	var err = ResourceSaver.save(temp_path + data.resource_path.get_file().get_basename() + ".tscn", ps)
+	PropTool *pt = memnew(PropTool);
 
-	pt.queue_free()
-	return ps
+	pt->set_plugin(this);
+	pt->set_target_prop(data);
 
-*/
+	Ref<PackedScene> ps;
+	ps.instance();
+	ps->pack(pt);
 
-	return Ref<PackedScene>();
+	Error err = ResourceSaver::save(temp_path + data->get_path().get_file().get_basename() + ".tscn", ps);
+
+	pt->queue_delete();
+	return ps;
 }
 
 PropToolEditorPlugin::PropToolEditorPlugin(EditorNode *p_node) {

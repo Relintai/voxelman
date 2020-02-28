@@ -151,10 +151,6 @@ void PropTool::set_target_prop(const Ref<PropData> &prop) {
 	rebuild_hierarchy();
 }
 
-void PropTool::get_plugin() {
-	//return _plugin;
-}
-
 void PropTool::target_prop_set(const Ref<PropData> &prop) {
 	_target_prop = prop;
 
@@ -189,6 +185,14 @@ void PropTool::load_scene_for(PropTool *t, const Ref<PropData> &prop) {
 	//s->set_owner(this);
 }
 
+PropToolEditorPlugin *PropTool::get_plugin() {
+	return _plugin;
+}
+
+void PropTool::set_plugin(PropToolEditorPlugin *plugin) {
+	_plugin = plugin;
+}
+
 PropTool::PropTool() {
 	_snap_to_mesh = false;
 	_snap_axis = Vector3(0, -1, 0);
@@ -196,4 +200,10 @@ PropTool::PropTool() {
 PropTool::PropTool(EditorNode *p_editor) {
 	_snap_to_mesh = false;
 	_snap_axis = Vector3(0, -1, 0);
+}
+PropTool::~PropTool() {
+	_target_prop.unref();
+}
+
+void PropTool::_bind_methods() {
 }
