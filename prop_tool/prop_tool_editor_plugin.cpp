@@ -25,11 +25,16 @@ SOFTWARE.
 #include "core/os/dir_access.h"
 #include "core/os/file_access.h"
 #include "editor/editor_scale.h"
-#include "prop_tool.h"
 #include "scene/resources/packed_scene.h"
 
+#include "prop_tool.h"
+#include "prop_tool_entity.h"
+#include "prop_tool_light.h"
+#include "prop_tool_mesh.h"
+#include "prop_tool_scene.h"
+
 void PropToolEditorPlugin::edit(Object *p_object) {
-	Ref<PropData> pedited_prop(p_object);
+	Ref<PropData> pedited_prop(Object::cast_to<PropData>(p_object));
 
 	String p = create_or_get_scene_path(pedited_prop);
 
@@ -40,21 +45,6 @@ bool PropToolEditorPlugin::handles(Object *p_object) const {
 
 	bool handles = p_object->is_class("PropData");
 
-	if (handles) {
-		light_button->show();
-		mesh_button->show();
-		prop_button->show();
-		scene_button->show();
-		entity_button->show();
-
-	} else {
-		light_button->hide();
-		mesh_button->hide();
-		prop_button->hide();
-		scene_button->hide();
-		entity_button->hide();
-	}
-
 	return handles;
 }
 
@@ -62,6 +52,9 @@ void PropToolEditorPlugin::make_visible(bool p_visible) {
 }
 
 String PropToolEditorPlugin::create_or_get_scene_path(const Ref<PropData> &data) {
+	ERR_FAIL_COND_V(!data.is_valid(), "");
+
+	String temp_path = EditorSettings::get_singleton()->get("editors/prop_tool/temp_path");
 
 	String path = temp_path + data->get_path().get_file().get_basename() + ".tscn";
 
@@ -72,6 +65,8 @@ String PropToolEditorPlugin::create_or_get_scene_path(const Ref<PropData> &data)
 }
 PropTool *PropToolEditorPlugin::create_or_get_scene(const Ref<PropData> &data) {
 	ERR_FAIL_COND_V(!data.is_valid(), NULL);
+
+	String temp_path = EditorSettings::get_singleton()->get("editors/prop_tool/temp_path");
 
 	String path = temp_path + data->get_path().get_file().get_basename() + ".tscn";
 
@@ -99,14 +94,172 @@ Ref<PackedScene> PropToolEditorPlugin::create_scene(const Ref<PropData> &data) {
 	ps.instance();
 	ps->pack(pt);
 
+	String temp_path = EditorSettings::get_singleton()->get("editors/prop_tool/temp_path");
+
 	Error err = ResourceSaver::save(temp_path + data->get_path().get_file().get_basename() + ".tscn", ps);
+
+	if (err)
+		print_error("PropTool: create_scene failed! Error_code:" + String::num(err));
 
 	pt->queue_delete();
 	return ps;
 }
 
+void PropToolEditorPlugin::on_scene_changed(Node *scene) {
+	PropTool *pt = Object::cast_to<PropTool>(scene);
+
+	if (ObjectDB::instance_validate(pt)) {
+		pt->set_plugin(this);
+
+		light_button->show();
+		mesh_button->show();
+		prop_button->show();
+		scene_button->show();
+		entity_button->show();
+	} else {
+		light_button->hide();
+		mesh_button->hide();
+		prop_button->hide();
+		scene_button->hide();
+		entity_button->hide();
+	}
+}
+
+void PropToolEditorPlugin::apply_changes() {
+	Node *scene = get_editor_interface()->get_edited_scene_root();
+	PropTool *pt = Object::cast_to<PropTool>(scene);
+
+	if (ObjectDB::instance_validate(pt)) {
+		pt->save();
+	}
+}
+
+void PropToolEditorPlugin::add_light() {
+	Array selection = get_editor_interface()->get_selection()->get_selected_nodes();
+
+	Node *selected;
+
+	if (selection.size() != 1)
+		selected = get_editor_interface()->get_edited_scene_root();
+	else
+		selected = selection[0];
+
+	Node *s = selected;
+	PropToolLight *n = memnew(PropToolLight);
+
+	UndoRedo u = get_undo_redo();
+	u.create_action("Add Light");
+	u.add_do_method(s, "add_child", n);
+	u.add_do_property(n, "owner", get_editor_interface()->get_edited_scene_root());
+	u.add_undo_method(s, "remove_child", n);
+	u.commit_action();
+
+	get_editor_interface()->get_selection()->clear();
+	get_editor_interface()->get_selection()->add_node(n);
+}
+
+void PropToolEditorPlugin::add_mesh() {
+	Array selected = get_editor_interface()->get_selection()->get_selected_nodes();
+
+	if (selected.size() != 1)
+		return;
+
+	Node *s = selected[0];
+	PropToolMesh *n = memnew(PropToolMesh);
+
+	UndoRedo u = get_undo_redo();
+	u.create_action("Add Mesh");
+	u.add_do_method(s, "add_child", n);
+	u.add_do_property(n, "owner", get_editor_interface()->get_edited_scene_root());
+	u.add_undo_method(s, "remove_child", n);
+	u.commit_action();
+
+	get_editor_interface()->get_selection()->clear();
+	get_editor_interface()->get_selection()->add_node(n);
+}
+
+void PropToolEditorPlugin::add_prop() {
+
+	Array selected = get_editor_interface()->get_selection()->get_selected_nodes();
+
+	if (selected.size() != 1)
+		return;
+
+	Node *s = selected[0];
+	PropTool *n = memnew(PropTool);
+
+	UndoRedo u = get_undo_redo();
+	u.create_action("Add Prop");
+	u.add_do_method(s, "add_child", n);
+	u.add_do_property(n, "owner", get_editor_interface()->get_edited_scene_root());
+	u.add_undo_method(s, "remove_child", n);
+	u.commit_action();
+
+	get_editor_interface()->get_selection()->clear();
+	get_editor_interface()->get_selection()->add_node(n);
+}
+
+void PropToolEditorPlugin::add_scene() {
+	Array selected = get_editor_interface()->get_selection()->get_selected_nodes();
+
+	if (selected.size() != 1)
+		return;
+
+	Node *s = selected[0];
+	PropToolScene *n = memnew(PropToolScene);
+
+	UndoRedo u = get_undo_redo();
+	u.create_action("Add Scene");
+	u.add_do_method(s, "add_child", n);
+	u.add_do_property(n, "owner", get_editor_interface()->get_edited_scene_root());
+	u.add_undo_method(s, "remove_child", n);
+	u.commit_action();
+
+	get_editor_interface()->get_selection()->clear();
+	get_editor_interface()->get_selection()->add_node(n);
+}
+
+void PropToolEditorPlugin::add_entity() {
+	Array selected = get_editor_interface()->get_selection()->get_selected_nodes();
+
+	if (selected.size() != 1)
+		return;
+
+	Node *s = selected[0];
+	PropToolEntity *n = memnew(PropToolEntity);
+
+	UndoRedo u = get_undo_redo();
+	u.create_action("Add Entity");
+	u.add_do_method(s, "add_child", n);
+	u.add_do_property(n, "owner", get_editor_interface()->get_edited_scene_root());
+	u.add_undo_method(s, "remove_child", n);
+	u.commit_action();
+
+	get_editor_interface()->get_selection()->clear();
+	get_editor_interface()->get_selection()->add_node(n);
+}
+
 PropToolEditorPlugin::PropToolEditorPlugin(EditorNode *p_node) {
-	temp_path = "res://addons/prop_tool/scenes/temp/";
+	EDITOR_DEF("editors/prop_tool/temp_path", "res://prop_tool_temp/");
+	EditorSettings::get_singleton()->add_property_hint(PropertyInfo(Variant::STRING, "editors/prop_tool/temp_path"));
+
+	String tp = EditorSettings::get_singleton()->get("editors/prop_tool/temp_path");
+
+	if (!tp.ends_with("/")) {
+		tp += "/";
+		EditorSettings::get_singleton()->set("editors/prop_tool/temp_path", tp);
+	}
+
+	if (!DirAccess::exists(tp)) {
+		DirAccess *d = DirAccess::create_for_path(tp);
+
+		Error err = d->make_dir_recursive(tp);
+
+		memdelete(d);
+
+		if (err)
+			print_error("PropTool: Temporary directory creation failed: error code: " + String::num(err));
+	}
 
 	editor = p_node;
 
@@ -142,159 +295,41 @@ PropToolEditorPlugin::PropToolEditorPlugin(EditorNode *p_node) {
 	scene_button->hide();
 	entity_button->hide();
 
-	//connect("scene_changed", this, "scene_changed");
+	call_deferred("connect", "scene_changed", this, "on_scene_changed");
 }
 
 PropToolEditorPlugin::~PropToolEditorPlugin() {
 	_edited_prop.unref();
 }
 
-/*
+void PropToolEditorPlugin::_notification(int p_what) {
+	if (p_what == EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED) {
 
-func scene_changed(scene):
-	if scene.has_method("set_target_prop"):
-		scene.plugin = self
-		
-		if not buttons_added:
-			light_button.show()
-			mesh_button.show()
-			prop_button.show()
-			scene_button.show()
-			entity_button.show()
-#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, light_button)
-#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, mesh_button)
-#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, prop_button)
-#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, scene_button)
-#			add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, entity_button)
-			
-			buttons_added = true
-	else:
-		if buttons_added:
-			light_button.hide()
-			mesh_button.hide()
-			prop_button.hide()
-			scene_button.hide()
-			entity_button.hide()
-#
-#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, light_button)
-#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, mesh_button)
-#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, prop_button)
-#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, scene_button)
-#			remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, entity_button)
-			
-			buttons_added = false
+		String tp = EditorSettings::get_singleton()->get("editors/prop_tool/temp_path");
 
-func apply_changes() -> void:
-	var scene : Node = get_editor_interface().get_edited_scene_root()
-	
-	if scene is PropTool:
-#	if scene.has_method("set_target_prop") and scene.has_method("save"):
-		scene.save()
+		if (!tp.ends_with("/")) {
+			tp += "/";
+			EditorSettings::get_singleton()->set("editors/prop_tool/temp_path", tp);
+		}
 
+		if (!DirAccess::exists(tp)) {
+			DirAccess *d = DirAccess::create_for_path(tp);
 
+			Error err = d->make_dir_recursive(tp);
 
-func add_light():
-	var selection : Array = get_editor_interface().get_selection().get_selected_nodes()
-	var selected : Node
-	
-	if selection.size() != 1:
-		selected = get_editor_interface().get_edited_scene_root()
-	else:
-		selected = selection[0]
-	
-	var s : Node = selected
-	var n = PropToolLight.new()
-	
-	var u : UndoRedo = get_undo_redo()
-	u.create_action("Add Light")
-	u.add_do_method(s, "add_child", n)
-	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
-	u.add_undo_method(s, "remove_child", n)
-	u.commit_action()
-	
-	get_editor_interface().get_selection().clear()
-	get_editor_interface().get_selection().add_node(n)
-	
-	
-func add_mesh():
-	var selected : Array = get_editor_interface().get_selection().get_selected_nodes()
-	
-	if selected.size() != 1:
-		return
+			memdelete(d);
 
-	var s : Node = selected[0]
-	var n = PropToolMesh.new()
-	
-	var u : UndoRedo = get_undo_redo()
-	u.create_action("Add Mesh")
-	u.add_do_method(s, "add_child", n)
-	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
-	u.add_undo_method(s, "remove_child", n)
-	u.commit_action()
-	
-	get_editor_interface().get_selection().clear()
-	get_editor_interface().get_selection().add_node(n)
+			ERR_FAIL_COND_MSG(err, "PropTool: Temporary directory creation failed: error code: " + String::num(err));
+		}
+	}
+}
 
-	
-func add_prop():
-	var selected : Array = get_editor_interface().get_selection().get_selected_nodes()
-	
-	if selected.size() != 1:
-		return
-	
-	var s : Node = selected[0]
-	var n = PropTool.new()
-	
-	var u : UndoRedo = get_undo_redo()
-	u.create_action("Add Prop")
-	u.add_do_method(s, "add_child", n)
-	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
-	u.add_undo_method(s, "remove_child", n)
-	u.commit_action()
-	
-	get_editor_interface().get_selection().clear()
-	get_editor_interface().get_selection().add_node(n)
-	
-func add_scene():
-	var selected : Array = get_editor_interface().get_selection().get_selected_nodes()
-	
-	if selected.size() != 1:
-		return
-	
-	var s : Node = selected[0]
-	var n = PropToolScene.new()
-	
-	var u : UndoRedo = get_undo_redo()
-	u.create_action("Add Scene")
-	u.add_do_method(s, "add_child", n)
-	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
-	u.add_undo_method(s, "remove_child", n)
-	u.commit_action()
-	
-	get_editor_interface().get_selection().clear()
-	get_editor_interface().get_selection().add_node(n)
-	
-func add_entity():
-	var selected : Array = get_editor_interface().get_selection().get_selected_nodes()
-	
-	if selected.size() != 1:
-		return
-	
-	var s : Node = selected[0]
-	var n = PropToolEntity.new()
-	
-	var u : UndoRedo = get_undo_redo()
-	u.create_action("Add Entity")
-	u.add_do_method(s, "add_child", n)
-	u.add_do_property(n, "owner", get_editor_interface().get_edited_scene_root())
-	u.add_undo_method(s, "remove_child", n)
-	u.commit_action()
-	
-	get_editor_interface().get_selection().clear()
-	get_editor_interface().get_selection().add_node(n)
-
-
-
-
-
-*/
+void PropToolEditorPlugin::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("on_scene_changed", "scene_root"), &PropToolEditorPlugin::on_scene_changed);
+	ClassDB::bind_method(D_METHOD("apply_changes"), &PropToolEditorPlugin::apply_changes);
+	ClassDB::bind_method(D_METHOD("add_light"), &PropToolEditorPlugin::add_light);
+	ClassDB::bind_method(D_METHOD("add_mesh"), &PropToolEditorPlugin::add_mesh);
+	ClassDB::bind_method(D_METHOD("add_prop"), &PropToolEditorPlugin::add_prop);
+	ClassDB::bind_method(D_METHOD("add_scene"), &PropToolEditorPlugin::add_scene);
+	ClassDB::bind_method(D_METHOD("add_entity"), &PropToolEditorPlugin::add_entity);
+}

@@ -52,13 +52,22 @@ public:
 	PropTool *create_or_get_scene(const Ref<PropData> &data);
 	Ref<PackedScene> create_scene(const Ref<PropData> &data);
 
+	void on_scene_changed(Node *scene);
+	void apply_changes();
+	void add_light();
+	void add_mesh();
+	void add_prop();
+	void add_scene();
+	void add_entity();
+
 	PropToolEditorPlugin(EditorNode *p_node);
 	~PropToolEditorPlugin();
 
 protected:
-private:
-	String temp_path;
+	void _notification(int p_what);
+	static void _bind_methods();
 
+private:
 	ToolButton *light_button;
 	ToolButton *mesh_button;
 	ToolButton *prop_button;
