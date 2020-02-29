@@ -240,7 +240,7 @@ void PropToolEditorPlugin::add_entity() {
 }
 
 PropToolEditorPlugin::PropToolEditorPlugin(EditorNode *p_node) {
-	EDITOR_DEF("editors/prop_tool/temp_path", "res://prop_tool_temp/");
+	EDITOR_DEF("editors/prop_tool/temp_path", "res://.prop_tool_temp/");
 	EditorSettings::get_singleton()->add_property_hint(PropertyInfo(Variant::STRING, "editors/prop_tool/temp_path"));
 
 	String tp = EditorSettings::get_singleton()->get("editors/prop_tool/temp_path");
