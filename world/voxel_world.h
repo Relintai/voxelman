@@ -92,6 +92,7 @@ public:
 	void add_chunk_bind(Node *chunk, const int x, const int y, const int z);
 	VoxelChunk *get_chunk(const int x, const int y, const int z) const;
 	VoxelChunk *remove_chunk(const int x, const int y, const int z);
+	VoxelChunk *remove_chunk_index(const int index);
 
 	VoxelChunk *get_chunk_index(const int index);
 	int get_chunk_count() const;
@@ -140,6 +141,12 @@ public:
 			x = p_x;
 			y = p_y;
 			z = p_z;
+		}
+
+		IntPos(const Vector3 &p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
 		}
 	};
 

@@ -59,7 +59,6 @@ void VoxelWorld::set_data_margin_end(const int value) {
 	_data_margin_end = value;
 }
 
-
 int VoxelWorld::get_current_seed() const {
 	return _current_seed;
 }
@@ -167,9 +166,11 @@ VoxelChunk *VoxelWorld::get_chunk(const int x, const int y, const int z) const {
 	return NULL;
 }
 VoxelChunk *VoxelWorld::remove_chunk(const int x, const int y, const int z) {
-	ERR_FAIL_COND_V(!_chunks.has(IntPos(x, y, z)), NULL);
+	IntPos pos(x, y, z);
 
-	VoxelChunk *chunk = _chunks.get(IntPos(x, y, z));
+	ERR_FAIL_COND_V(!_chunks.has(pos), NULL);
+
+	VoxelChunk *chunk = _chunks.get(pos);
 
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
 		if (_chunks_vector.get(i) == chunk) {
@@ -177,6 +178,17 @@ VoxelChunk *VoxelWorld::remove_chunk(const int x, const int y, const int z) {
 			break;
 		}
 	}
+
+	_chunks.erase(pos);
+
+	return chunk;
+}
+VoxelChunk *VoxelWorld::remove_chunk_index(const int index) {
+	ERR_FAIL_INDEX_V(index, _chunks_vector.size(), NULL);
+
+	VoxelChunk *chunk = _chunks_vector.get(index);
+	_chunks_vector.remove(index);
+	_chunks.erase(IntPos(chunk->get_position()));
 
 	return chunk;
 }
@@ -460,6 +472,7 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelWorld::add_chunk_bind);
 	ClassDB::bind_method(D_METHOD("get_chunk", "x", "y", "z"), &VoxelWorld::get_chunk);
 	ClassDB::bind_method(D_METHOD("remove_chunk", "x", "y", "z"), &VoxelWorld::remove_chunk);
+	ClassDB::bind_method(D_METHOD("remove_chunk_index", "index"), &VoxelWorld::remove_chunk_index);
 
 	ClassDB::bind_method(D_METHOD("get_chunk_index", "index"), &VoxelWorld::get_chunk_index);
 	ClassDB::bind_method(D_METHOD("get_chunk_count"), &VoxelWorld::get_chunk_count);
