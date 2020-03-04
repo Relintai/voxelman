@@ -81,14 +81,13 @@ void VoxelMesher::set_uv_margin(const Rect2 margin) {
 }
 
 Array VoxelMesher::build_mesh() {
+	Array a;
+	a.resize(VisualServer::ARRAY_MAX);
+
 	if (_vertices.size() == 0) {
 		//Nothing to do
-		Array a;
-		a.resize(VisualServer::ARRAY_MAX);
 		return a;
 	}
-
-	_surface_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
 
 	if (_colors.size() != _vertices.size()) {
 		print_error("Colors.size() != vertices.size() -> " + String::num(_colors.size()) + " " + String::num(_vertices.size()));
@@ -96,38 +95,89 @@ Array VoxelMesher::build_mesh() {
 		_colors.resize(0);
 	}
 
-	int len = _vertices.size();
+	{
+		PoolVector<Vector3> array;
+		array.resize(_vertices.size());
+		PoolVector<Vector3>::Write w = array.write();
 
-	for (int i = 0; i < len; ++i) {
-
-		if (_normals.size() > 0) {
-			_surface_tool->add_normal(_normals.get(i));
+		for (int i = 0; i < _vertices.size(); ++i) {
+			array.set(i, _vertices[i]);
 		}
 
-		if (_colors.size() > 0) {
-			_surface_tool->add_color(_colors.get(i));
-		}
-
-		if (_uvs.size() > 0) {
-			_surface_tool->add_uv(_uvs.get(i));
-		}
-
-		if (_uv2s.size() > 0) {
-			_surface_tool->add_uv2(_uv2s.get(i));
-		}
-
-		_surface_tool->add_vertex(_vertices.get(i));
-	}
-
-	for (int i = 0; i < _indices.size(); ++i) {
-		_surface_tool->add_index(_indices.get(i));
+		w.release();
+		a[VisualServer::ARRAY_VERTEX] = array;
 	}
 
 	if (_normals.size() == 0) {
-		_surface_tool->generate_normals();
+		generate_normals();
 	}
 
-	return _surface_tool->commit_to_arrays();
+	{
+		PoolVector<Vector3> array;
+		array.resize(_normals.size());
+		PoolVector<Vector3>::Write w = array.write();
+
+		for (int i = 0; i < _normals.size(); ++i) {
+			array.set(i, _normals[i]);
+		}
+
+		w.release();
+		a[VisualServer::ARRAY_NORMAL] = array;
+	}
+
+	if (_colors.size() > 0) {
+		PoolVector<Color> array;
+		array.resize(_colors.size());
+		PoolVector<Color>::Write w = array.write();
+
+		for (int i = 0; i < _colors.size(); ++i) {
+			array.set(i, _colors[i]);
+		}
+
+		w.release();
+		a[VisualServer::ARRAY_COLOR] = array;
+	}
+
+	if (_uvs.size() > 0) {
+		PoolVector<Vector2> array;
+		array.resize(_uvs.size());
+		PoolVector<Vector2>::Write w = array.write();
+
+		for (int i = 0; i < _uvs.size(); ++i) {
+			array.set(i, _uvs[i]);
+		}
+
+		w.release();
+		a[VisualServer::ARRAY_TEX_UV] = array;
+	}
+
+	if (_uv2s.size() > 0) {
+		PoolVector<Vector2> array;
+		array.resize(_uv2s.size());
+		PoolVector<Vector2>::Write w = array.write();
+
+		for (int i = 0; i < _uv2s.size(); ++i) {
+			array.set(i, _uv2s[i]);
+		}
+
+		w.release();
+		a[VisualServer::ARRAY_TEX_UV2] = array;
+	}
+
+	if (_indices.size() > 0) {
+		PoolVector<int> array;
+		array.resize(_indices.size());
+		PoolVector<int>::Write w = array.write();
+
+		for (int i = 0; i < _indices.size(); ++i) {
+			array.set(i, _indices[i]);
+		}
+
+		w.release();
+		a[VisualServer::ARRAY_INDEX] = array;
+	}
+
+	return a;
 }
 
 void VoxelMesher::build_mesh_into(RID mesh) {
@@ -148,6 +198,35 @@ void VoxelMesher::build_mesh_into(RID mesh) {
 		VS::get_singleton()->mesh_surface_set_material(mesh, 0, _library->get_material()->get_rid());
 }
 
+void VoxelMesher::generate_normals(bool p_flip) {
+
+	_normals.resize(_vertices.size());
+
+	for (int i = 0; i < _indices.size(); i += 3) {
+		int i0 = _indices[i];
+		int i1 = _indices[i + 1];
+		int i2 = _indices[i + 2];
+
+		ERR_FAIL_INDEX(i0, _vertices.size());
+		ERR_FAIL_INDEX(i1, _vertices.size());
+		ERR_FAIL_INDEX(i2, _vertices.size());
+
+		Vector3 v0 = _vertices.get(i0);
+		Vector3 v1 = _vertices.get(i1);
+		Vector3 v2 = _vertices.get(i2);
+
+		Vector3 normal;
+		if (!p_flip)
+			normal = Plane(v0, v1, v2).normal;
+		else
+			normal = Plane(v2, v1, v0).normal;
+
+		_normals.set(i0, normal);
+		_normals.set(i1, normal);
+		_normals.set(i2, normal);
+	}
+}
+
 void VoxelMesher::reset() {
 	_vertices.resize(0);
 	_normals.resize(0);
@@ -156,8 +235,6 @@ void VoxelMesher::reset() {
 	_uv2s.resize(0);
 	_indices.resize(0);
 	_bones.resize(0);
-
-	_surface_tool->clear();
 }
 
 void VoxelMesher::add_chunk_bind(Node *chunk) {
@@ -758,8 +835,6 @@ VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
 	_ao_strength = 0.25;
 	_base_light_value = 0.5;
 	_uv_margin = Rect2(0, 0, 1, 1);
-
-	_surface_tool.instance();
 }
 
 VoxelMesher::VoxelMesher() {
@@ -769,13 +844,9 @@ VoxelMesher::VoxelMesher() {
 	_ao_strength = 0.25;
 	_base_light_value = 0.5;
 	_uv_margin = Rect2(0, 0, 1, 1);
-
-	_surface_tool.instance();
 }
 
 VoxelMesher::~VoxelMesher() {
-	_surface_tool.unref();
-
 	if (_library.is_valid()) {
 		_library.unref();
 	}
@@ -883,4 +954,6 @@ void VoxelMesher::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("build_mesh"), &VoxelMesher::build_mesh);
 	ClassDB::bind_method(D_METHOD("build_mesh_into", "mesh_rid"), &VoxelMesher::build_mesh_into);
+
+	ClassDB::bind_method(D_METHOD("generate_normals", "flip"), &VoxelMesher::generate_normals, DEFVAL(false));
 }

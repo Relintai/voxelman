@@ -37,7 +37,6 @@ SOFTWARE.
 #include "scene/resources/concave_polygon_shape.h"
 #include "scene/resources/material.h"
 #include "scene/resources/mesh.h"
-#include "scene/resources/surface_tool.h"
 
 #include "../../mesh_data_resource/mesh_data_resource.h"
 #include "../library/voxelman_library.h"
@@ -105,6 +104,8 @@ public:
 	Array build_mesh();
 	void build_mesh_into(RID mesh);
 
+	void generate_normals(bool p_flip = false);
+
 	PoolVector<Vector3> get_vertices();
 	void set_vertices(const PoolVector<Vector3> &values);
 	int get_vertex_count();
@@ -169,8 +170,6 @@ protected:
 
 	float _voxel_scale;
 	int _lod_size;
-
-	Ref<SurfaceTool> _surface_tool;
 
 	float _ao_strength;
 	float _base_light_value;
