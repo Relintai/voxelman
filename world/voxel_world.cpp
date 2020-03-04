@@ -347,9 +347,9 @@ bool VoxelWorld::can_chunk_do_build_step() {
 
 bool VoxelWorld::is_position_walkable(const Vector3 &p_pos) {
 
-	int x = static_cast<int>(p_pos.x / (_chunk_size_x * _voxel_scale));
-	int y = static_cast<int>(p_pos.y / (_chunk_size_y * _voxel_scale));
-	int z = static_cast<int>(p_pos.z / (_chunk_size_z * _voxel_scale));
+	int x = static_cast<int>(Math::floor(p_pos.x / (_chunk_size_x * _voxel_scale)));
+	int y = static_cast<int>(Math::floor(p_pos.y / (_chunk_size_y * _voxel_scale)));
+	int z = static_cast<int>(Math::floor(p_pos.z / (_chunk_size_z * _voxel_scale)));
 
 	VoxelChunk *c = get_chunk(x, y, z);
 
