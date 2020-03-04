@@ -907,6 +907,10 @@ void VoxelChunk::next_phase() {
 		set_process_internal(false);
 
 		emit_signal("mesh_generation_finished", this);
+
+		if (_voxel_world != NULL) {
+			_voxel_world->on_chunk_mesh_generation_finished(this);
+		}
 	}
 }
 
@@ -1420,6 +1424,9 @@ void VoxelChunk::_notification(int p_what) {
 		}
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			if (has_next_phase() && get_build_phase_done()) {
+				if (!_voxel_world->can_chunk_do_build_step())
+					return;
+
 				wait_and_finish_thread();
 
 				_build_step();

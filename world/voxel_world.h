@@ -122,6 +122,10 @@ public:
 	void generate_chunk(VoxelChunk *p_chunk);
 
 	bool can_chunk_do_build_step();
+	bool is_position_walkable(const Vector3 &p_pos);
+
+	void on_chunk_mesh_generation_finished(VoxelChunk *p_chunk);
+	void on_chunk_mesh_generation_finished_bind(Node *p_chunk);
 
 	VoxelWorld();
 	~VoxelWorld();

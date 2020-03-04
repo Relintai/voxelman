@@ -345,6 +345,32 @@ bool VoxelWorld::can_chunk_do_build_step() {
 	return _num_frame_chunk_build_steps++ < _max_frame_chunk_build_steps;
 }
 
+bool VoxelWorld::is_position_walkable(const Vector3 &p_pos) {
+
+	int x = static_cast<int>(p_pos.x / (_chunk_size_x * _voxel_scale));
+	int y = static_cast<int>(p_pos.y / (_chunk_size_y * _voxel_scale));
+	int z = static_cast<int>(p_pos.z / (_chunk_size_z * _voxel_scale));
+
+	VoxelChunk *c = get_chunk(x, y, z);
+
+	if (!ObjectDB::instance_validate(c))
+		return false;
+
+	return !c->get_is_generating();
+}
+
+void VoxelWorld::on_chunk_mesh_generation_finished(VoxelChunk *p_chunk) {
+	emit_signal("chunk_mesh_generation_finished", p_chunk);
+}
+
+void VoxelWorld::on_chunk_mesh_generation_finished_bind(Node *p_chunk) {
+	VoxelChunk *c = Object::cast_to<VoxelChunk>(p_chunk);
+
+	ERR_FAIL_COND(!ObjectDB::instance_validate(c));
+
+	on_chunk_mesh_generation_finished(c);
+}
+
 VoxelWorld::VoxelWorld() {
 	_chunk_size_x = 16;
 	_chunk_size_y = 16;
@@ -440,6 +466,8 @@ void VoxelWorld::_notification(int p_what) {
 }
 
 void VoxelWorld::_bind_methods() {
+	ADD_SIGNAL(MethodInfo("chunk_mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+
 	ClassDB::bind_method(D_METHOD("get_chunk_size_x"), &VoxelWorld::get_chunk_size_x);
 	ClassDB::bind_method(D_METHOD("set_chunk_size_x", "value"), &VoxelWorld::set_chunk_size_x);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_size_x"), "set_chunk_size_x", "get_chunk_size_x");
@@ -538,4 +566,8 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_create_chunk", "x", "y", "z", "chunk"), &VoxelWorld::_create_chunk);
 
 	ClassDB::bind_method(D_METHOD("_generate_chunk", "chunk"), &VoxelWorld::_generate_chunk);
+
+	ClassDB::bind_method(D_METHOD("can_chunk_do_build_step"), &VoxelWorld::can_chunk_do_build_step);
+	ClassDB::bind_method(D_METHOD("is_position_walkable", "position"), &VoxelWorld::is_position_walkable);
+	ClassDB::bind_method(D_METHOD("on_chunk_mesh_generation_finished", "chunk"), &VoxelWorld::on_chunk_mesh_generation_finished_bind);
 }
