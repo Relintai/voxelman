@@ -646,24 +646,27 @@ void VoxelChunk::build_prioritized() {
 void VoxelChunk::_build_step() {
 	ERR_FAIL_COND(!has_next_phase());
 
-	while (has_next_phase() && build_phase() && !_abort_build)
+	while (has_next_phase() && build_phase())
 		;
 
 	//call the next non-threaded phase aswell
-	if (has_next_phase() && !_abort_build)
+	if (has_next_phase())
 		build_phase();
 }
 
 void VoxelChunk::_build_threaded(void *_userdata) {
 	VoxelChunk *vc = (VoxelChunk *)_userdata;
 
-	while (vc->has_next_phase() && vc->build_phase() && !vc->_abort_build)
+	while (vc->has_next_phase() && vc->build_phase())
 		;
 }
 
 bool VoxelChunk::build_phase() {
 
 	_THREAD_SAFE_METHOD_
+
+	if (_abort_build)
+		return false;
 
 	set_build_phase_done(false);
 
