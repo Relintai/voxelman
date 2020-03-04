@@ -60,10 +60,13 @@ public:
 	bool get_use_threads();
 	void set_use_threads(bool value);
 
-	uint32_t get_max_concurrent_generations();
-	void set_max_concurrent_generations(uint32_t value);
+	uint32_t get_max_concurrent_generations() const;
+	void set_max_concurrent_generations(const uint32_t value);
 
-	Ref<VoxelmanLibrary> get_library() const;
+	uint32_t get_max_frame_chunk_build_steps() const;
+	void set_max_frame_chunk_build_steps(const uint32_t value);
+
+	Ref<VoxelmanLibrary> get_library();
 	void set_library(const Ref<VoxelmanLibrary> library);
 
 	Ref<VoxelmanLevelGenerator> get_level_generator() const;
@@ -90,7 +93,8 @@ public:
 
 	void add_chunk(VoxelChunk *chunk, const int x, const int y, const int z);
 	void add_chunk_bind(Node *chunk, const int x, const int y, const int z);
-	VoxelChunk *get_chunk(const int x, const int y, const int z) const;
+	bool has_chunk(const int x, const int y, const int z) const;
+	VoxelChunk *get_chunk(const int x, const int y, const int z);
 	VoxelChunk *remove_chunk(const int x, const int y, const int z);
 	VoxelChunk *remove_chunk_index(const int index);
 
@@ -116,12 +120,15 @@ public:
 
 	void generate_chunk_bind(Node *p_chunk);
 	void generate_chunk(VoxelChunk *p_chunk);
-	void _generate_chunk(Node *p_chunk);
+
+	bool can_chunk_do_build_step();
 
 	VoxelWorld();
 	~VoxelWorld();
 
 protected:
+	void _generate_chunk(Node *p_chunk);
+
 	virtual void _notification(int p_what);
 	static void _bind_methods();
 
@@ -183,6 +190,8 @@ private:
 	uint32_t _max_concurrent_generations;
 	Vector<VoxelChunk *> _generation_queue;
 	Vector<VoxelChunk *> _generating;
+	uint32_t _max_frame_chunk_build_steps;
+	uint32_t _num_frame_chunk_build_steps;
 };
 
 _FORCE_INLINE_ bool operator==(const VoxelWorld::IntPos &a, const VoxelWorld::IntPos &b) {
