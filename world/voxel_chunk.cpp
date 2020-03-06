@@ -654,6 +654,7 @@ void VoxelChunk::build_prioritized() {
 
 void VoxelChunk::build_step() {
 	ERR_FAIL_COND(!has_next_phase());
+	ERR_FAIL_COND(!_thread_finished);
 
 	if (get_is_build_threaded()) {
 		if (_build_thread) {
@@ -672,9 +673,15 @@ void VoxelChunk::build_step() {
 void VoxelChunk::_build_step_threaded(void *_userdata) {
 	VoxelChunk *vc = (VoxelChunk *)_userdata;
 
+	ERR_FAIL_COND(!vc->_thread_finished);
+
+	vc->_thread_finished = false;
+
 	while (vc->has_next_phase() && vc->get_build_phase_done()) {
 		vc->build_phase();
 	}
+
+	vc->_thread_finished = true;
 }
 
 void VoxelChunk::build_phase() {
@@ -727,19 +734,36 @@ void VoxelChunk::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_COLLIDER: {
-			if (get_create_collider()) {
-				if (_body_rid == RID()) {
-					create_colliders();
-				}
-
-				for (int i = 0; i < _meshers.size(); ++i) {
-					Ref<VoxelMesher> mesher = _meshers.get(i);
-
-					ERR_CONTINUE(!mesher.is_valid());
-
-					mesher->build_collider(_shape_rid);
-				}
+			if (!get_create_collider()) {
+				next_phase();
+				return;
 			}
+
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _meshers.get(i);
+
+				ERR_CONTINUE(!mesher.is_valid());
+
+				temp_arr_collider.append_array(mesher->build_collider());
+			}
+
+			//if (_is_build_threaded) {
+			//	set_physics_process_internal(true);
+			//	return;
+			//}
+
+			if (temp_arr_collider.size() == 0) {
+				next_phase();
+				return;
+			}
+
+			if (_body_rid == RID()) {
+				create_colliders();
+			}
+
+			PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
+
+			temp_arr_collider.resize(0);
 
 			next_phase();
 
@@ -848,11 +872,17 @@ void VoxelChunk::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_PROP_COLLIDER: {
+			if (!get_create_collider()) {
+				next_phase();
+				return;
+			}
 
-			if (_props.size() > 0) {
-				if (get_create_collider()) {
-					build_prop_collider();
-				}
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _meshers.get(i);
+
+				ERR_CONTINUE(!mesher.is_valid());
+
+				temp_arr_collider.append_array(mesher->build_collider());
 			}
 
 			for (int i = 0; i < _meshers.size(); ++i) {
@@ -862,6 +892,24 @@ void VoxelChunk::_build_phase(int phase) {
 
 				mesher->reset();
 			}
+
+			if (temp_arr_collider.size() == 0) {
+				next_phase();
+				return;
+			}
+
+			//if (_is_build_threaded) {
+			//	set_physics_process_internal(true);
+			//	return;
+			//}
+
+			if (_prop_body_rid == RID()) {
+				allocate_prop_colliders();
+			}
+
+			PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
+
+			temp_arr_collider.resize(0);
 
 			next_phase();
 
@@ -1144,19 +1192,6 @@ void VoxelChunk::allocate_prop_colliders() {
 	PhysicsServer::get_singleton()->body_set_state(_prop_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 	PhysicsServer::get_singleton()->body_set_space(_prop_body_rid, get_voxel_world()->get_world()->get_space());
 }
-void VoxelChunk::build_prop_collider() {
-	if (_prop_shape_rid == RID()) {
-		allocate_prop_colliders();
-	}
-
-	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _meshers.get(i);
-
-		ERR_CONTINUE(!mesher.is_valid());
-
-		mesher->build_collider(_prop_shape_rid);
-	}
-}
 void VoxelChunk::free_prop_colliders() {
 	if (_prop_body_rid != RID()) {
 		PhysicsServer::get_singleton()->free(_prop_body_rid);
@@ -1397,6 +1432,7 @@ VoxelChunk::VoxelChunk() {
 	_build_phase_done_mutex = Mutex::create();
 	_build_phase_done = false;
 	_build_thread = NULL;
+	_thread_finished = true;
 }
 
 VoxelChunk::~VoxelChunk() {
@@ -1439,13 +1475,37 @@ void VoxelChunk::_notification(int p_what) {
 			}
 		}
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (get_is_generating() && has_next_phase() && get_build_phase_done()) {
+			if (_thread_finished && get_is_generating() && has_next_phase() && get_build_phase_done()) {
 				if (!_voxel_world->can_chunk_do_build_step())
 					return;
 
 				wait_and_finish_thread();
 
 				build_step();
+			}
+		}
+		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
+			if (get_is_generating()) {
+				if (_thread_finished && get_current_build_phase() == BUILD_PHASE_TERRARIN_MESH_COLLIDER) {
+
+					if (_body_rid == RID()) {
+						create_colliders();
+					}
+
+					PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
+					temp_arr_collider.resize(0);
+					next_phase();
+
+				} else if (_thread_finished && get_current_build_phase() == BUILD_PHASE_PROP_COLLIDER) {
+
+					if (_prop_body_rid == RID()) {
+						allocate_prop_colliders();
+					}
+
+					PhysicsServer::get_singleton()->shape_set_data(_prop_shape_rid, temp_arr_collider);
+					temp_arr_collider.resize(0);
+					next_phase();
+				}
 			}
 		}
 	}
@@ -1698,7 +1758,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_prop", "index"), &VoxelChunk::remove_prop);
 	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
 
-	ClassDB::bind_method(D_METHOD("build_prop_collider"), &VoxelChunk::build_prop_collider);
 	ClassDB::bind_method(D_METHOD("free_spawn_props"), &VoxelChunk::free_spawn_props);
 
 	ClassDB::bind_method(D_METHOD("allocate_main_mesh"), &VoxelChunk::allocate_main_mesh);

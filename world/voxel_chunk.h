@@ -273,7 +273,6 @@ public:
 	void remove_prop(int index);
 	void clear_props();
 
-	void build_prop_collider();
 	void free_spawn_props();
 
 	//Meshes
@@ -393,6 +392,10 @@ protected:
 	Mutex *_build_phase_done_mutex;
 	bool _build_phase_done;
 	Thread *_build_thread;
+	bool _thread_finished;
+
+	Array temp_array;
+	PoolVector<Vector3> temp_arr_collider;
 };
 
 VARIANT_ENUM_CAST(VoxelChunk::DefaultChannels);
