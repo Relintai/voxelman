@@ -411,7 +411,7 @@ protected:
 	Mutex *_build_phase_done_mutex;
 	bool _build_phase_done;
 	Thread *_build_thread;
-	bool _thread_finished;
+	bool _build_step_in_progress;
 
 	Array temp_array;
 	PoolVector<Vector3> temp_arr_collider;

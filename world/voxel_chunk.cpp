@@ -45,6 +45,12 @@ _FORCE_INLINE_ VoxelChunk::ActiveBuildPhaseType VoxelChunk::get_active_build_pha
 }
 _FORCE_INLINE_ void VoxelChunk::set_active_build_phase_type(const VoxelChunk::ActiveBuildPhaseType value) {
 	_active_build_phase_type = value;
+
+	if (_active_build_phase_type == VoxelChunk::BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
+		set_physics_process_internal(true);
+	} else {
+		set_physics_process_internal(false);
+	}
 }
 
 bool VoxelChunk::get_build_phase_done() const {
@@ -663,7 +669,9 @@ void VoxelChunk::build_prioritized() {
 
 void VoxelChunk::build_step() {
 	ERR_FAIL_COND(!has_next_phase());
-	ERR_FAIL_COND(!_thread_finished);
+	ERR_FAIL_COND(_build_step_in_progress);
+
+	_build_step_in_progress = true;
 
 	if (get_is_build_threaded()) {
 		if (_build_thread) {
@@ -674,23 +682,27 @@ void VoxelChunk::build_step() {
 		return;
 	}
 
-	while (has_next_phase() && get_build_phase_done()) {
+	while (has_next_phase() && _active_build_phase_type == BUILD_PHASE_TYPE_NORMAL) {
 		build_phase();
+
+		if (!get_build_phase_done())
+			break;
 	}
+
+	_build_step_in_progress = false;
 }
 
 void VoxelChunk::_build_step_threaded(void *_userdata) {
 	VoxelChunk *vc = (VoxelChunk *)_userdata;
 
-	ERR_FAIL_COND(!vc->_thread_finished);
-
-	vc->_thread_finished = false;
-
-	while (vc->has_next_phase() && vc->get_build_phase_done()) {
+	while (vc->has_next_phase() && vc->_active_build_phase_type == BUILD_PHASE_TYPE_NORMAL) {
 		vc->build_phase();
+
+		if (!vc->get_build_phase_done())
+			break;
 	}
 
-	vc->_thread_finished = true;
+	vc->_build_step_in_progress = false;
 }
 
 void VoxelChunk::build_phase() {
@@ -756,13 +768,13 @@ void VoxelChunk::_build_phase(int phase) {
 				temp_arr_collider.append_array(mesher->build_collider());
 			}
 
-			if (_is_build_threaded) {
-				set_physics_process_internal(true);
+			if (temp_arr_collider.size() == 0) {
+				next_phase();
 				return;
 			}
 
-			if (temp_arr_collider.size() == 0) {
-				next_phase();
+			if (_is_build_threaded) {
+				set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
 				return;
 			}
 
@@ -772,7 +784,7 @@ void VoxelChunk::_build_phase(int phase) {
 
 			PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
 
-			temp_arr_collider.resize(0);
+			//temp_arr_collider.resize(0);
 
 			next_phase();
 
@@ -908,7 +920,7 @@ void VoxelChunk::_build_phase(int phase) {
 			}
 
 			if (_is_build_threaded) {
-				set_physics_process_internal(true);
+				set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
 				return;
 			}
 
@@ -918,7 +930,7 @@ void VoxelChunk::_build_phase(int phase) {
 
 			PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
 
-			temp_arr_collider.resize(0);
+			//temp_arr_collider.resize(0);
 
 			next_phase();
 
@@ -951,6 +963,52 @@ void VoxelChunk::_build_phase(int phase) {
 
 			return;
 		}
+	}
+}
+
+void VoxelChunk::build_phase_process() {
+	if (_abort_build)
+		return;
+
+	set_build_phase_done(false);
+
+	call("_build_phase_process", _current_build_phase);
+}
+void VoxelChunk::_build_phase_process(int phase) {
+}
+
+void VoxelChunk::build_phase_physics_process() {
+	if (_abort_build)
+		return;
+
+	set_build_phase_done(false);
+
+	call("_build_phase_physics_process", _current_build_phase);
+}
+void VoxelChunk::_build_phase_physics_process(int phase) {
+	if (phase == BUILD_PHASE_TERRARIN_MESH_COLLIDER) {
+
+		if (_body_rid == RID()) {
+			create_colliders();
+		}
+
+		PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
+		//temp_arr_collider.resize(0);
+
+		set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
+		next_phase();
+
+	} else if (phase == BUILD_PHASE_PROP_COLLIDER) {
+
+		if (_prop_body_rid == RID()) {
+			allocate_prop_colliders();
+		}
+
+		PhysicsServer::get_singleton()->shape_set_data(_prop_shape_rid, temp_arr_collider);
+		//temp_arr_collider.resize(0);
+
+		set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
+		next_phase();
 	}
 }
 
@@ -1441,7 +1499,7 @@ VoxelChunk::VoxelChunk() {
 	_build_phase_done_mutex = Mutex::create();
 	_build_phase_done = false;
 	_build_thread = NULL;
-	_thread_finished = true;
+	_build_step_in_progress = false;
 
 	_active_build_phase_type = BUILD_PHASE_TYPE_NORMAL;
 }
@@ -1486,75 +1544,64 @@ void VoxelChunk::_notification(int p_what) {
 			}
 		}
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (!get_is_generating() || !has_next_phase()) {
+			if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
 				return;
 			}
 
-			if (_active_build_phase_type == BUILD_PHASE_TYPE_PROCESS) {
+			switch (_active_build_phase_type) {
+				case BUILD_PHASE_TYPE_PROCESS: {
+					if (!_voxel_world->can_chunk_do_build_step())
+						return;
 
-				if (!_voxel_world->can_chunk_do_build_step())
-					return;
+					_build_step_in_progress = true;
 
-				build_step();
+					while (has_next_phase() && _active_build_phase_type == BUILD_PHASE_TYPE_PROCESS) {
+						build_phase_process();
 
-			} else if (_active_build_phase_type == BUILD_PHASE_TYPE_NORMAL) {
-
-				if (_is_build_threaded) {
-
-					if (_thread_finished && get_build_phase_done()) {
-						if (!_voxel_world->can_chunk_do_build_step())
-							return;
-
-						wait_and_finish_thread();
-
-						build_step();
+						if (!get_build_phase_done())
+							break;
 					}
-				} else {
+
+					_build_step_in_progress = false;
+					return;
+				}
+				case BUILD_PHASE_TYPE_NORMAL: {
+					//normal mode -> build step is not in progress -> need to restart building
 
 					if (!_voxel_world->can_chunk_do_build_step())
 						return;
 
 					build_step();
-				}
-			}
-		}
-		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
-			if (!get_is_generating() || !has_next_phase()) {
-				return;
-			}
 
-			if (_active_build_phase_type == BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
-
-				if (!_voxel_world->can_chunk_do_build_step())
 					return;
-
-				build_step();
-			}
-			/*
-			if (get_is_generating() && _thread_finished && !get_build_phase_done()) {
-				if (get_current_build_phase() == BUILD_PHASE_TERRARIN_MESH_COLLIDER) {
-
-					if (_body_rid == RID()) {
-						create_colliders();
-					}
-
-					PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
-					temp_arr_collider.resize(0);
-					next_phase();
-					set_physics_process_internal(false);
-
-				} else if (get_current_build_phase() == BUILD_PHASE_PROP_COLLIDER) {
-
-					if (_prop_body_rid == RID()) {
-						allocate_prop_colliders();
-					}
-
-					PhysicsServer::get_singleton()->shape_set_data(_prop_shape_rid, temp_arr_collider);
-					temp_arr_collider.resize(0);
-					next_phase();
-					set_physics_process_internal(false);
 				}
-			}*/
+				case BUILD_PHASE_TYPE_PHYSICS_PROCESS:
+					return;
+			}
+			case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
+				if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
+					return;
+				}
+
+				if (_active_build_phase_type == BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
+
+					if (!_voxel_world->can_chunk_do_build_step())
+						return;
+
+					_build_step_in_progress = true;
+
+					while (has_next_phase() && _active_build_phase_type == BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
+						build_phase_physics_process();
+
+						if (!get_build_phase_done())
+							break;
+					}
+
+					_build_step_in_progress = false;
+
+					return;
+				}
+			}
 		}
 	}
 }
@@ -1777,11 +1824,21 @@ void VoxelChunk::_bind_methods() {
 
 	//Meshes
 	BIND_VMETHOD(MethodInfo("_build_phase", PropertyInfo(Variant::INT, "phase")));
+	BIND_VMETHOD(MethodInfo("_build_phase_process", PropertyInfo(Variant::INT, "phase")));
+	BIND_VMETHOD(MethodInfo("_build_phase_physics_process", PropertyInfo(Variant::INT, "phase")));
 
 	ClassDB::bind_method(D_METHOD("build_deferred"), &VoxelChunk::build_deferred);
 	ClassDB::bind_method(D_METHOD("build_prioritized"), &VoxelChunk::build_prioritized);
+
 	ClassDB::bind_method(D_METHOD("build_phase"), &VoxelChunk::build_phase);
 	ClassDB::bind_method(D_METHOD("_build_phase", "phase"), &VoxelChunk::_build_phase);
+
+	ClassDB::bind_method(D_METHOD("build_phase_process"), &VoxelChunk::build_phase_process);
+	ClassDB::bind_method(D_METHOD("_build_phase_process", "phase"), &VoxelChunk::_build_phase_process);
+
+	ClassDB::bind_method(D_METHOD("build_phase_physics_process"), &VoxelChunk::build_phase_physics_process);
+	ClassDB::bind_method(D_METHOD("_build_phase_physics_process", "phase"), &VoxelChunk::_build_phase_physics_process);
+
 	ClassDB::bind_method(D_METHOD("next_phase"), &VoxelChunk::next_phase);
 	ClassDB::bind_method(D_METHOD("has_next_phase"), &VoxelChunk::has_next_phase);
 	ClassDB::bind_method(D_METHOD("clear"), &VoxelChunk::clear);
