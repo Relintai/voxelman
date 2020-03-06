@@ -780,18 +780,15 @@ void VoxelChunk::_build_phase(int phase) {
 
 			ERR_FAIL_COND(!mesher.is_valid());
 
-			temp_mesh_arr = mesher->build_mesh();
+			if (mesher->get_vertex_count() == 0) {
+				next_phase();
+				return;
+			}
 
 			if (_mesh_rid != RID())
 				VS::get_singleton()->mesh_clear(_mesh_rid);
 
-			PoolVector3Array v = temp_mesh_arr[VisualServer::ARRAY_VERTEX];
-
-			if (temp_mesh_arr.size() == 0 || v.size() == 0) {
-				temp_mesh_arr.clear();
-				next_phase();
-				return;
-			}
+			Array temp_mesh_arr = mesher->build_mesh();
 
 			if (_mesh_rid == RID()) {
 				allocate_main_mesh();
@@ -801,8 +798,6 @@ void VoxelChunk::_build_phase(int phase) {
 
 			if (_library->get_material().is_valid())
 				VS::get_singleton()->mesh_surface_set_material(_mesh_rid, 0, _library->get_material()->get_rid());
-
-			temp_mesh_arr.clear();
 
 			next_phase();
 

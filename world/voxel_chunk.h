@@ -393,7 +393,6 @@ protected:
 	Mutex *_build_phase_done_mutex;
 	bool _build_phase_done;
 	Thread *_build_thread;
-	Array temp_mesh_arr;
 };
 
 VARIANT_ENUM_CAST(VoxelChunk::DefaultChannels);
