@@ -66,6 +66,8 @@ class VoxelChunk : public Spatial {
 	_THREAD_SAFE_CLASS_
 
 public:
+	static const String BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE;
+
 	enum {
 		VOXEL_CHUNK_STATE_OK = 0,
 		VOXEL_CHUNK_STATE_GENERATION_QUEUED,
@@ -104,12 +106,21 @@ public:
 		MAX_DEFAULT_CHANNELS
 	};
 
+	enum ActiveBuildPhaseType {
+		BUILD_PHASE_TYPE_NORMAL = 0,
+		BUILD_PHASE_TYPE_PROCESS,
+		BUILD_PHASE_TYPE_PHYSICS_PROCESS,
+	};
+
 public:
 	bool get_is_generating() const;
 	void set_is_generating(bool value);
 
 	bool get_is_build_threaded() const;
 	void set_is_build_threaded(bool value);
+
+	ActiveBuildPhaseType get_active_build_phase_type() const;
+	void set_active_build_phase_type(const ActiveBuildPhaseType value);
 
 	bool get_build_phase_done() const;
 	void set_build_phase_done(bool value);
@@ -238,9 +249,17 @@ public:
 	void build_prioritized();
 	static void _build_step_threaded(void *_userdata);
 
-	void build_phase();
 	void build_step();
+
+	void build_phase();
 	void _build_phase(int phase);
+
+	void build_phase_process();
+	void _build_phase_process(int phase);
+
+	void build_phase_physics_process();
+	void _build_phase_physics_process(int phase);
+
 	bool has_next_phase();
 	void next_phase();
 
@@ -396,8 +415,11 @@ protected:
 
 	Array temp_array;
 	PoolVector<Vector3> temp_arr_collider;
+
+	ActiveBuildPhaseType _active_build_phase_type;
 };
 
 VARIANT_ENUM_CAST(VoxelChunk::DefaultChannels);
+VARIANT_ENUM_CAST(VoxelChunk::ActiveBuildPhaseType);
 
 #endif
