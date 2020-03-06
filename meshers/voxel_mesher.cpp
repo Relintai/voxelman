@@ -560,13 +560,11 @@ void VoxelMesher::_bake_liquid_colors(Node *p_chunk) {
 	}
 }
 
-void VoxelMesher::build_collider(RID shape) const {
-	ERR_FAIL_COND(shape == RID());
+PoolVector<Vector3> VoxelMesher::build_collider() const {
+	PoolVector<Vector3> face_points;
 
 	if (_vertices.size() == 0)
-		return;
-
-	PoolVector<Vector3> face_points;
+		return face_points;
 
 	if (_indices.size() == 0) {
 
@@ -583,9 +581,7 @@ void VoxelMesher::build_collider(RID shape) const {
 			face_points.push_back(_vertices.get((i * 4) + 2));
 		}
 
-		PhysicsServer::get_singleton()->shape_set_data(shape, face_points);
-
-		return;
+		return face_points;
 	}
 
 	face_points.resize(_indices.size());
@@ -593,7 +589,7 @@ void VoxelMesher::build_collider(RID shape) const {
 		face_points.set(i, _vertices.get(_indices.get(i)));
 	}
 
-	PhysicsServer::get_singleton()->shape_set_data(shape, face_points);
+	return face_points;
 }
 
 void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights) {
@@ -954,6 +950,7 @@ void VoxelMesher::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("build_mesh"), &VoxelMesher::build_mesh);
 	ClassDB::bind_method(D_METHOD("build_mesh_into", "mesh_rid"), &VoxelMesher::build_mesh_into);
+	ClassDB::bind_method(D_METHOD("build_collider"), &VoxelMesher::build_collider);
 
 	ClassDB::bind_method(D_METHOD("generate_normals", "flip"), &VoxelMesher::generate_normals, DEFVAL(false));
 }

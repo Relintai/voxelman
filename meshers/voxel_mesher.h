@@ -97,7 +97,7 @@ public:
 	void bake_liquid_colors(VoxelChunk *chunk);
 	void _bake_liquid_colors(Node *p_chunk);
 
-	void build_collider(RID shape) const;
+	PoolVector<Vector3> build_collider() const;
 
 	void bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights);
 
