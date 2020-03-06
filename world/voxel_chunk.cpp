@@ -40,7 +40,7 @@ _FORCE_INLINE_ void VoxelChunk::set_is_build_threaded(bool value) {
 
 bool VoxelChunk::get_build_phase_done() const {
 	_build_phase_done_mutex->lock();
-	bool v = _build_phase_done_mutex;
+	bool v = _build_phase_done;
 	_build_phase_done_mutex->unlock();
 
 	return v;
@@ -616,15 +616,20 @@ void VoxelChunk::_create_meshers() {
 
 void VoxelChunk::build_deferred() {
 	if (_current_build_phase == BUILD_PHASE_DONE) {
-		_build_prioritized = false;
-
-		set_process_internal(true);
+		_build_prioritized = true;
 
 		wait_and_finish_thread();
+
+		set_process_internal(true);
 
 		_is_generating = true;
 
 		next_phase();
+
+		if (!_voxel_world->can_chunk_do_build_step())
+			return;
+
+		build_step();
 	}
 }
 
@@ -632,53 +637,64 @@ void VoxelChunk::build_prioritized() {
 	if (_current_build_phase == BUILD_PHASE_DONE) {
 		_build_prioritized = true;
 
-		set_process_internal(true);
-
 		wait_and_finish_thread();
+
+		set_process_internal(true);
 
 		_is_generating = true;
 
 		next_phase();
-		_build_step();
+
+		if (!_voxel_world->can_chunk_do_build_step())
+			return;
+
+		build_step();
 	}
 }
 
-void VoxelChunk::_build_step() {
+void VoxelChunk::build_step() {
 	ERR_FAIL_COND(!has_next_phase());
 
-	while (has_next_phase() && build_phase())
-		;
+	if (get_is_build_threaded()) {
+		if (_build_thread) {
+			wait_and_finish_thread();
+		}
 
-	//call the next non-threaded phase aswell
-	if (has_next_phase())
+		_build_thread = Thread::create(_build_step_threaded, this);
+		return;
+	}
+
+	while (has_next_phase() && get_build_phase_done()) {
 		build_phase();
+	}
 }
 
-void VoxelChunk::_build_threaded(void *_userdata) {
+void VoxelChunk::_build_step_threaded(void *_userdata) {
 	VoxelChunk *vc = (VoxelChunk *)_userdata;
 
-	while (vc->has_next_phase() && vc->build_phase())
-		;
+	while (vc->has_next_phase() && vc->get_build_phase_done()) {
+		vc->build_phase();
+	}
 }
 
-bool VoxelChunk::build_phase() {
+void VoxelChunk::build_phase() {
 
 	_THREAD_SAFE_METHOD_
 
 	if (_abort_build)
-		return false;
+		return;
 
 	set_build_phase_done(false);
 
-	return call("_build_phase", _current_build_phase);
+	call("_build_phase", _current_build_phase);
 }
 
-bool VoxelChunk::_build_phase(int phase) {
-	ERR_FAIL_COND_V(!_library.is_valid(), true);
+void VoxelChunk::_build_phase(int phase) {
+	ERR_FAIL_COND(!_library.is_valid());
 
 	switch (phase) {
 		case BUILD_PHASE_DONE:
-			return true;
+			return;
 		case BUILD_PHASE_SETUP: {
 			if (_meshers.size() == 0) {
 				create_meshers();
@@ -695,7 +711,7 @@ bool VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return true;
+			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_SETUP: {
 			for (int i = 0; i < _meshers.size(); ++i) {
@@ -708,7 +724,7 @@ bool VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return true;
+			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_COLLIDER: {
 			if (get_create_collider()) {
@@ -727,7 +743,7 @@ bool VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return true;
+			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH: {
 			for (int i = 0; i < _meshers.size(); ++i) {
@@ -746,10 +762,6 @@ bool VoxelChunk::_build_phase(int phase) {
 				mesher->set_library(_library);
 			}
 
-			if (_mesh_rid == RID()) {
-				allocate_main_mesh();
-			}
-
 			Ref<VoxelMesher> mesher;
 			for (int i = 0; i < _meshers.size(); ++i) {
 				Ref<VoxelMesher> m = _meshers.get(i);
@@ -766,26 +778,35 @@ bool VoxelChunk::_build_phase(int phase) {
 				mesher->add_mesher(m);
 			}
 
-			ERR_FAIL_COND_V(!mesher.is_valid(), false);
-			ERR_FAIL_COND_V(_mesh_rid == RID(), false);
+			ERR_FAIL_COND(!mesher.is_valid());
 
-			VS::get_singleton()->mesh_clear(_mesh_rid);
+			temp_mesh_arr = mesher->build_mesh();
 
-			if (mesher->get_vertex_count() == 0) {
+			if (_mesh_rid != RID())
+				VS::get_singleton()->mesh_clear(_mesh_rid);
+
+			PoolVector3Array v = temp_mesh_arr[VisualServer::ARRAY_VERTEX];
+
+			if (temp_mesh_arr.size() == 0 || v.size() == 0) {
+				temp_mesh_arr.clear();
 				next_phase();
-				return true;
+				return;
 			}
 
-			Array arr = mesher->build_mesh();
+			if (_mesh_rid == RID()) {
+				allocate_main_mesh();
+			}
 
-			VS::get_singleton()->mesh_add_surface_from_arrays(_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
+			VS::get_singleton()->mesh_add_surface_from_arrays(_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 			if (_library->get_material().is_valid())
 				VS::get_singleton()->mesh_surface_set_material(_mesh_rid, 0, _library->get_material()->get_rid());
 
+			temp_mesh_arr.clear();
+
 			next_phase();
 
-			return true;
+			return;
 		}
 		case BUILD_PHASE_PROP_MESH: {
 			for (int i = 0; i < _meshers.size(); ++i) {
@@ -809,13 +830,13 @@ bool VoxelChunk::_build_phase(int phase) {
 					mesher->bake_colors(this);
 					mesher->set_material(get_library()->get_material());
 
-					ERR_FAIL_COND_V(_prop_mesh_rid == RID(), false);
+					ERR_FAIL_COND(_prop_mesh_rid == RID());
 
 					VS::get_singleton()->mesh_clear(_prop_mesh_rid);
 
 					if (mesher->get_vertex_count() == 0) {
 						next_phase();
-						return true;
+						return;
 					}
 
 					Array arr = mesher->build_mesh();
@@ -829,7 +850,7 @@ bool VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return false;
+			return;
 		}
 		case BUILD_PHASE_PROP_COLLIDER: {
 
@@ -849,7 +870,7 @@ bool VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return true;
+			return;
 		}
 		/*
 		case BUILD_PHASE_LIQUID: {
@@ -876,12 +897,9 @@ bool VoxelChunk::_build_phase(int phase) {
 
 			next_phase();
 
-			return true;
+			return;
 		}
 	}
-
-	return true;
-	//next_phase();
 }
 
 bool VoxelChunk::has_next_phase() {
@@ -1426,13 +1444,13 @@ void VoxelChunk::_notification(int p_what) {
 			}
 		}
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (has_next_phase() && get_build_phase_done()) {
+			if (get_is_generating() && has_next_phase() && get_build_phase_done()) {
 				if (!_voxel_world->can_chunk_do_build_step())
 					return;
 
 				wait_and_finish_thread();
 
-				_build_step();
+				build_step();
 			}
 		}
 	}
@@ -1651,7 +1669,7 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
 
 	//Meshes
-	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::BOOL, "is_done"), "_build_phase", PropertyInfo(Variant::INT, "phase")));
+	BIND_VMETHOD(MethodInfo("_build_phase", PropertyInfo(Variant::INT, "phase")));
 
 	ClassDB::bind_method(D_METHOD("build_deferred"), &VoxelChunk::build_deferred);
 	ClassDB::bind_method(D_METHOD("build_prioritized"), &VoxelChunk::build_prioritized);
@@ -1722,8 +1740,8 @@ void VoxelChunk::_bind_methods() {
 	BIND_CONSTANT(BUILD_PHASE_SETUP);
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH_SETUP);
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH_COLLIDER);
-	BIND_CONSTANT(BUILD_PHASE_LIGHTS);
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH);
+	BIND_CONSTANT(BUILD_PHASE_LIGHTS);
 	BIND_CONSTANT(BUILD_PHASE_PROP_MESH);
 	BIND_CONSTANT(BUILD_PHASE_PROP_COLLIDER);
 	BIND_CONSTANT(BUILD_PHASE_FINALIZE);

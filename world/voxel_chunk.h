@@ -236,11 +236,11 @@ public:
 
 	void build_deferred();
 	void build_prioritized();
-	static void _build_threaded(void *_userdata);
+	static void _build_step_threaded(void *_userdata);
 
-	bool build_phase();
-	void _build_step();
-	bool _build_phase(int phase);
+	void build_phase();
+	void build_step();
+	void _build_phase(int phase);
 	bool has_next_phase();
 	void next_phase();
 
@@ -393,6 +393,7 @@ protected:
 	Mutex *_build_phase_done_mutex;
 	bool _build_phase_done;
 	Thread *_build_thread;
+	Array temp_mesh_arr;
 };
 
 VARIANT_ENUM_CAST(VoxelChunk::DefaultChannels);
