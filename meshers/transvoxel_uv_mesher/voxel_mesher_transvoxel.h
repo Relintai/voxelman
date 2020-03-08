@@ -68,7 +68,8 @@ public:
 	int get_texture_scale() const;
 	void set_texture_scale(const int value);
 
-	int *get_voxel_type_array(VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
+	//arr should have a size of 8
+	void get_voxel_type_array(int *arr, VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
 	int get_case_code_from_arr(const int *data);
 	int get_case_code(VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
 	int get_voxel_type(VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);

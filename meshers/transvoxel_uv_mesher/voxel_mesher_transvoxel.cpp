@@ -34,9 +34,7 @@ void VoxelMesherTransvoxel::set_texture_scale(const int value) {
 	_texture_scale = value;
 }
 
-int *VoxelMesherTransvoxel::get_voxel_type_array(VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
-	int *arr = memnew_arr(int, 8);
-
+void VoxelMesherTransvoxel::get_voxel_type_array(int *arr, VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
 	arr[0] = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
 	arr[1] = chunk->get_voxel(x, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
 	arr[2] = chunk->get_voxel(x, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
@@ -45,8 +43,6 @@ int *VoxelMesherTransvoxel::get_voxel_type_array(VoxelChunk *chunk, const int x,
 	arr[5] = chunk->get_voxel(x + size, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
 	arr[6] = chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
 	arr[7] = chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
-
-	return arr;
 }
 int VoxelMesherTransvoxel::get_case_code_from_arr(const int *data) {
 	int case_code = 0;
@@ -157,6 +153,8 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 
 	chunk->generate_ao();
 
+	int type_arr[8];
+
 	int x_size = chunk->get_size_x();
 	int y_size = chunk->get_size_y();
 	int z_size = chunk->get_size_z();
@@ -167,11 +165,10 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 		for (int z = 0; z < z_size; z += lod_size) {
 			for (int x = 0; x < x_size; x += lod_size) {
 
-				int *type_arr = get_voxel_type_array(chunk, x, y, z, lod_size);
+				get_voxel_type_array(type_arr, chunk, x, y, z, lod_size);
 				int case_code = get_case_code_from_arr(type_arr);
 
 				if (case_code == 0 or case_code == 255) {
-					memdelete_arr(type_arr);
 					continue;
 				}
 
@@ -395,8 +392,6 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 					add_uv2(temp_uv2s[i]);
 					add_vertex(vert_pos);
 				}
-
-				memdelete_arr(type_arr);
 			}
 		}
 	}
