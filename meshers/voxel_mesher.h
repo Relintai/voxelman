@@ -51,8 +51,41 @@ class VoxelMesher : public Reference {
 	GDCLASS(VoxelMesher, Reference);
 
 public:
+	struct Vertex {
+
+		Vector3 vertex;
+		Color color;
+		Vector3 normal; // normal, binormal, tangent
+		Vector3 binormal;
+		Vector3 tangent;
+		Vector2 uv;
+		Vector2 uv2;
+		Vector<int> bones;
+		Vector<float> weights;
+
+		bool operator==(const Vertex &p_vertex) const;
+
+		Vertex() {}
+	};
+
+	struct VertexHasher {
+		static _FORCE_INLINE_ uint32_t hash(const Vertex &p_vtx);
+	};
+
+	struct WeightSort {
+		int index;
+		float weight;
+		bool operator<(const WeightSort &p_right) const {
+			return weight < p_right.weight;
+		}
+	};
+
+public:
 	int get_mesher_index() const;
 	void set_mesher_index(const int value);
+
+	int get_format() const;
+	void set_format(const int value);
 
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(const Ref<VoxelmanLibrary> &library);
@@ -106,47 +139,39 @@ public:
 
 	void generate_normals(bool p_flip = false);
 
-	PoolVector<Vector3> get_vertices();
+	PoolVector<Vector3> get_vertices() const;
 	void set_vertices(const PoolVector<Vector3> &values);
-	int get_vertex_count();
-	Vector3 get_vertex(int idx);
-	void remove_vertex(int idx);
-	void add_vertex(Vector3 vertex);
+	int get_vertex_count() const;
+	Vector3 get_vertex(const int idx) const ;
+	void remove_vertex(const int idx);
+	void add_vertex(const Vector3 &vertex);
 
-	PoolVector<Vector3> get_normals();
+	PoolVector<Vector3> get_normals() const;
 	void set_normals(const PoolVector<Vector3> &values);
-	int get_normal_count();
-	Vector3 get_normal(int idx);
-	void remove_normal(int idx);
-	void add_normal(Vector3 normal);
+	Vector3 get_normal(const int idx) const;
+	void add_normal(const Vector3 &normal);
 
-	PoolVector<Color> get_colors();
+	PoolVector<Color> get_colors() const;
 	void set_colors(const PoolVector<Color> &values);
-	int get_color_count();
-	Color get_color(int idx);
-	void remove_color(int idx);
-	void add_color(Color color);
+	Color get_color(const int idx) const;
+	void add_color(const Color &color);
 
-	PoolVector<Vector2> get_uvs();
+	PoolVector<Vector2> get_uvs() const;
 	void set_uvs(const PoolVector<Vector2> &values);
-	int get_uv_count();
-	Vector2 get_uv(int idx);
-	void remove_uv(int idx);
-	void add_uv(Vector2 vector);
+	Vector2 get_uv(const int idx) const;
+	void add_uv(const Vector2 &vector);
 
-	PoolVector<Vector2> get_uv2s();
+	PoolVector<Vector2> get_uv2s() const;
 	void set_uv2s(const PoolVector<Vector2> &values);
-	int get_uv2_count();
-	Vector2 get_uv2(int idx);
-	void remove_uv2(int idx);
-	void add_uv2(Vector2 vector);
+	Vector2 get_uv2(const int idx) const;
+	void add_uv2(const Vector2 &vector);
 
-	PoolVector<int> get_indices();
+	PoolVector<int> get_indices() const;
 	void set_indices(const PoolVector<int> &values);
-	int get_indices_count();
-	int get_indice(int idx);
-	void remove_indices(int idx);
-	void add_indices(int index);
+	int get_indices_count() const;
+	int get_index(const int idx) const;
+	void remove_index(const int idx);
+	void add_indices(const int index);
 
 	VoxelMesher(const Ref<VoxelmanLibrary> &library);
 	VoxelMesher();
@@ -157,13 +182,18 @@ protected:
 
 	int _mesher_index;
 
-	PoolVector<Vector3> _vertices;
-	PoolVector<Vector3> _normals;
-	PoolVector<Color> _colors;
-	PoolVector<Vector2> _uvs;
-	PoolVector<Vector2> _uv2s;
+	int _format;
+
+	PoolVector<Vertex> _vertices;
 	PoolVector<int> _indices;
-	PoolVector<int> _bones;
+
+	Color _last_color;
+	Vector3 _last_normal;
+	Vector2 _last_uv;
+	Vector2 _last_uv2;
+	Vector<int> _last_bones;
+	Vector<float> _last_weights;
+	Plane _last_tangent;
 
 	Ref<VoxelmanLibrary> _library;
 	Ref<Material> _material;

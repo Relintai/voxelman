@@ -25,6 +25,7 @@ SOFTWARE.
 #include "../../world/voxel_chunk.h"
 #include "core/array.h"
 #include "core/dictionary.h"
+#include "servers/visual_server.h"
 
 int VoxelMesherTransvoxel::get_texture_scale() const {
 	return _texture_scale;
@@ -186,7 +187,7 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 					add_indices(ind);
 				}
 
-				Array temp_verts;
+				Vector<Vector3> temp_verts;
 
 				Dictionary carr;
 
@@ -284,13 +285,11 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 
 					vert_pos += vert_dir * (fill / 256.0);
 
-					temp_verts.append(vert_pos);
+					temp_verts.push_back(vert_pos);
 				}
 
-				Array temp_normals;
-
-				for (int i = 0; i < temp_verts.size(); ++i)
-					temp_normals.append(Vector3());
+				PoolVector<Vector3> temp_normals;
+				temp_normals.resize(temp_verts.size());
 
 				for (int i = 0; i < index_count; i += 3) {
 					int indices[] = {
@@ -313,12 +312,18 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 					Vector3 v1 = vertices[1];
 					Vector3 v2 = vertices[2];
 
-					temp_normals[indices[0]] = i0 + (v1 - v0).cross(v0 - v2);
-					temp_normals[indices[1]] = i1 + (v2 - v1).cross(v1 - v0);
-					temp_normals[indices[2]] = i2 + (v2 - v1).cross(v2 - v0);
+					temp_normals.set(indices[0], i0 + (v1 - v0).cross(v0 - v2));
+					temp_normals.set(indices[1], i1 + (v2 - v1).cross(v1 - v0));
+					temp_normals.set(indices[2], i2 + (v2 - v1).cross(v2 - v0));
 				}
 				for (int i = 0; i < temp_verts.size(); ++i)
-					temp_normals[i] = static_cast<Vector3>(temp_normals[i]).normalized();
+					temp_normals.set(i, temp_normals[i].normalized());
+
+				PoolVector<Vector2> temp_uvs;
+				temp_uvs.resize(temp_verts.size());
+
+				PoolVector<Vector2> temp_uv2s;
+				temp_uv2s.resize(temp_verts.size());
 
 				for (int cvi = 0; cvi < temp_verts.size(); ++cvi) {
 					Vector3 vertex = temp_verts[cvi];
@@ -347,8 +352,8 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 						uv.x += umargin.position.x;
 						uv.y += umargin.position.y;
 
-						add_uv(surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
-						add_uv2(surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						temp_uvs.set(cvi, surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						temp_uv2s.set(cvi, surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
 					} else if ((bz + 0.0001 > bx) && (bz + 0.0001 > by)) {
 						Vector2 uv(s.z, t.z);
 						Rect2 umargin = get_uv_margin();
@@ -358,8 +363,8 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 						uv.x += umargin.position.x;
 						uv.y += umargin.position.y;
 
-						add_uv(surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
-						add_uv2(surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						temp_uvs.set(cvi, surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						temp_uv2s.set(cvi, surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_SIDE, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
 					} else {
 						Vector2 uv(s.y, t.y);
 						Rect2 umargin = get_uv_margin();
@@ -369,23 +374,25 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 						uv.x += umargin.position.x;
 						uv.y += umargin.position.y;
 
-						add_uv(surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_TOP, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
-						add_uv2(surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_TOP, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						temp_uvs.set(cvi, surface1->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_TOP, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
+						temp_uv2s.set(cvi, surface2->transform_uv_scaled(VoxelSurface::VOXEL_SIDE_TOP, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale()));
 					}
 				}
 
 				for (int i = 0; i < temp_verts.size(); ++i) {
-					Vector3 vert_pos = static_cast<Vector3>(temp_verts[i]);
+					Vector3 vert_pos = temp_verts[i];
 
 					vert_pos *= float(lod_size);
 					vert_pos += Vector3(x, y, z);
 
-					Vector3 normal = static_cast<Vector3>(temp_normals[i]);
+					Vector3 normal = temp_normals[i];
 
 					add_color(Color(1.0, 1.0, 1.0, surface_ratio));
 					vert_pos *= get_voxel_scale();
 
 					add_normal(normal);
+					add_uv(temp_uvs[i]);
+					add_uv2(temp_uv2s[i]);
 					add_vertex(vert_pos);
 				}
 
@@ -504,6 +511,8 @@ Vector3 VoxelMesherTransvoxel::get_transition_vertex_direction(int index1, int i
 }
 
 VoxelMesherTransvoxel::VoxelMesherTransvoxel() {
+	_format = VisualServer::ARRAY_FORMAT_NORMAL | VisualServer::ARRAY_FORMAT_COLOR | VisualServer::ARRAY_FORMAT_TEX_UV | VisualServer::ARRAY_FORMAT_TEX_UV2;
+
 	_texture_scale = 4;
 
 	for (int i = 0; i < 16; ++i) {

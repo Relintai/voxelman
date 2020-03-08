@@ -24,11 +24,68 @@ SOFTWARE.
 
 #include "../world/voxel_chunk.h"
 
+bool VoxelMesher::Vertex::operator==(const Vertex &p_vertex) const {
+
+	if (vertex != p_vertex.vertex)
+		return false;
+
+	if (uv != p_vertex.uv)
+		return false;
+
+	if (uv2 != p_vertex.uv2)
+		return false;
+
+	if (normal != p_vertex.normal)
+		return false;
+
+	if (binormal != p_vertex.binormal)
+		return false;
+
+	if (color != p_vertex.color)
+		return false;
+
+	if (bones.size() != p_vertex.bones.size())
+		return false;
+
+	for (int i = 0; i < bones.size(); i++) {
+		if (bones[i] != p_vertex.bones[i])
+			return false;
+	}
+
+	for (int i = 0; i < weights.size(); i++) {
+		if (weights[i] != p_vertex.weights[i])
+			return false;
+	}
+
+	return true;
+}
+
+uint32_t VoxelMesher::VertexHasher::hash(const Vertex &p_vtx) {
+
+	uint32_t h = hash_djb2_buffer((const uint8_t *)&p_vtx.vertex, sizeof(real_t) * 3);
+	h = hash_djb2_buffer((const uint8_t *)&p_vtx.normal, sizeof(real_t) * 3, h);
+	h = hash_djb2_buffer((const uint8_t *)&p_vtx.binormal, sizeof(real_t) * 3, h);
+	h = hash_djb2_buffer((const uint8_t *)&p_vtx.tangent, sizeof(real_t) * 3, h);
+	h = hash_djb2_buffer((const uint8_t *)&p_vtx.uv, sizeof(real_t) * 2, h);
+	h = hash_djb2_buffer((const uint8_t *)&p_vtx.uv2, sizeof(real_t) * 2, h);
+	h = hash_djb2_buffer((const uint8_t *)&p_vtx.color, sizeof(real_t) * 4, h);
+	h = hash_djb2_buffer((const uint8_t *)p_vtx.bones.ptr(), p_vtx.bones.size() * sizeof(int), h);
+	h = hash_djb2_buffer((const uint8_t *)p_vtx.weights.ptr(), p_vtx.weights.size() * sizeof(float), h);
+	return h;
+}
+
 int VoxelMesher::get_mesher_index() const {
 	return _mesher_index;
 }
 void VoxelMesher::set_mesher_index(const int value) {
 	_mesher_index = value;
+}
+
+int VoxelMesher::get_format() const {
+	return _format;
+}
+void VoxelMesher::set_format(const int value) {
+	_format = value;
 }
 
 Ref<VoxelmanLibrary> VoxelMesher::get_library() {
@@ -89,10 +146,21 @@ Array VoxelMesher::build_mesh() {
 		return a;
 	}
 
-	if (_colors.size() != _vertices.size()) {
-		print_error("Colors.size() != vertices.size() -> " + String::num(_colors.size()) + " " + String::num(_vertices.size()));
+	{
+		PoolVector<Vector3> array;
+		array.resize(_vertices.size());
+		PoolVector<Vector3>::Write w = array.write();
 
-		_colors.resize(0);
+		for (int i = 0; i < _vertices.size(); ++i) {
+			array.set(i, _vertices[i].vertex);
+		}
+
+		w.release();
+		a[VisualServer::ARRAY_VERTEX] = array;
+	}
+
+	if ((_format & VisualServer::ARRAY_FORMAT_NORMAL) == 0) {
+		generate_normals();
 	}
 
 	{
@@ -101,63 +169,46 @@ Array VoxelMesher::build_mesh() {
 		PoolVector<Vector3>::Write w = array.write();
 
 		for (int i = 0; i < _vertices.size(); ++i) {
-			array.set(i, _vertices[i]);
-		}
-
-		w.release();
-		a[VisualServer::ARRAY_VERTEX] = array;
-	}
-
-	if (_normals.size() == 0) {
-		generate_normals();
-	}
-
-	{
-		PoolVector<Vector3> array;
-		array.resize(_normals.size());
-		PoolVector<Vector3>::Write w = array.write();
-
-		for (int i = 0; i < _normals.size(); ++i) {
-			array.set(i, _normals[i]);
+			array.set(i, _vertices[i].normal);
 		}
 
 		w.release();
 		a[VisualServer::ARRAY_NORMAL] = array;
 	}
 
-	if (_colors.size() > 0) {
+	if ((_format & VisualServer::ARRAY_FORMAT_COLOR) != 0) {
 		PoolVector<Color> array;
-		array.resize(_colors.size());
+		array.resize(_vertices.size());
 		PoolVector<Color>::Write w = array.write();
 
-		for (int i = 0; i < _colors.size(); ++i) {
-			array.set(i, _colors[i]);
+		for (int i = 0; i < _vertices.size(); ++i) {
+			array.set(i, _vertices[i].color);
 		}
 
 		w.release();
 		a[VisualServer::ARRAY_COLOR] = array;
 	}
 
-	if (_uvs.size() > 0) {
+	if ((_format & VisualServer::ARRAY_FORMAT_TEX_UV) != 0) {
 		PoolVector<Vector2> array;
-		array.resize(_uvs.size());
+		array.resize(_vertices.size());
 		PoolVector<Vector2>::Write w = array.write();
 
-		for (int i = 0; i < _uvs.size(); ++i) {
-			array.set(i, _uvs[i]);
+		for (int i = 0; i < _vertices.size(); ++i) {
+			array.set(i, _vertices[i].uv);
 		}
 
 		w.release();
 		a[VisualServer::ARRAY_TEX_UV] = array;
 	}
 
-	if (_uv2s.size() > 0) {
+	if ((_format & VisualServer::ARRAY_FORMAT_TEX_UV2) != 0) {
 		PoolVector<Vector2> array;
-		array.resize(_uv2s.size());
+		array.resize(_vertices.size());
 		PoolVector<Vector2>::Write w = array.write();
 
-		for (int i = 0; i < _uv2s.size(); ++i) {
-			array.set(i, _uv2s[i]);
+		for (int i = 0; i < _vertices.size(); ++i) {
+			array.set(i, _vertices[i].uv2);
 		}
 
 		w.release();
@@ -200,7 +251,7 @@ void VoxelMesher::build_mesh_into(RID mesh) {
 
 void VoxelMesher::generate_normals(bool p_flip) {
 
-	_normals.resize(_vertices.size());
+	_format = _format | VisualServer::ARRAY_FORMAT_NORMAL;
 
 	for (int i = 0; i < _indices.size(); i += 3) {
 		int i0 = _indices[i];
@@ -211,30 +262,37 @@ void VoxelMesher::generate_normals(bool p_flip) {
 		ERR_FAIL_INDEX(i1, _vertices.size());
 		ERR_FAIL_INDEX(i2, _vertices.size());
 
-		Vector3 v0 = _vertices.get(i0);
-		Vector3 v1 = _vertices.get(i1);
-		Vector3 v2 = _vertices.get(i2);
+		Vertex v0 = _vertices.get(i0);
+		Vertex v1 = _vertices.get(i1);
+		Vertex v2 = _vertices.get(i2);
 
 		Vector3 normal;
 		if (!p_flip)
-			normal = Plane(v0, v1, v2).normal;
+			normal = Plane(v0.vertex, v1.vertex, v2.vertex).normal;
 		else
-			normal = Plane(v2, v1, v0).normal;
+			normal = Plane(v2.vertex, v1.vertex, v0.vertex).normal;
 
-		_normals.set(i0, normal);
-		_normals.set(i1, normal);
-		_normals.set(i2, normal);
+		v0.normal = normal;
+		v1.normal = normal;
+		v2.normal = normal;
+
+		_vertices.set(i0, v0);
+		_vertices.set(i1, v1);
+		_vertices.set(i2, v2);
 	}
 }
 
 void VoxelMesher::reset() {
 	_vertices.resize(0);
-	_normals.resize(0);
-	_colors.resize(0);
-	_uvs.resize(0);
-	_uv2s.resize(0);
 	_indices.resize(0);
-	_bones.resize(0);
+
+	_last_color = Color();
+	_last_normal = Vector3();
+	_last_uv = Vector2();
+	_last_uv2 = Vector2();
+	_last_bones.clear();
+	_last_weights.clear();
+	_last_tangent = Plane();
 }
 
 void VoxelMesher::add_chunk_bind(Node *chunk) {
@@ -397,11 +455,6 @@ void VoxelMesher::_add_mesher(const Ref<VoxelMesher> &mesher) {
 	int orig_size = _vertices.size();
 
 	_vertices.append_array(mesher->_vertices);
-	_normals.append_array(mesher->_normals);
-	_colors.append_array(mesher->_colors);
-	_uvs.append_array(mesher->_uvs);
-	_uv2s.append_array(mesher->_uv2s);
-	_bones.append_array(mesher->_bones);
 
 	int s = mesher->_indices.size();
 
@@ -432,18 +485,17 @@ void VoxelMesher::_bake_colors(Node *p_chunk) {
 
 	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 
+	if (_vertices.size() == 0)
+		return;
+
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
-	ERR_FAIL_COND(_vertices.size() != _normals.size());
-
 	for (int i = 0; i < _vertices.size(); ++i) {
-		Vector3 vert = _vertices[i];
+		Vertex vertex = _vertices[i];
+		Vector3 vert = vertex.vertex;
 
+		//Is this needed?
 		if (vert.x < 0 || vert.y < 0 || vert.z < 0) {
-			if (_colors.size() < _vertices.size()) {
-				_colors.push_back(base_light);
-			}
-
 			continue;
 		}
 
@@ -474,18 +526,14 @@ void VoxelMesher::_bake_colors(Node *p_chunk) {
 			light.g = CLAMP(light.g, 0, 1.0);
 			light.b = CLAMP(light.b, 0, 1.0);
 
-			if (_colors.size() < _vertices.size()) {
-				_colors.push_back(light);
-			} else {
-				Color c = _colors[i];
+			Color c = vertex.color;
+			light.a = c.a;
+			vertex.color = light;
 
-				light.a = c.a;
-				_colors.set(i, light);
-			}
+			_vertices.set(i, vertex);
 		} else {
-			if (_colors.size() < _vertices.size()) {
-				_colors.push_back(base_light);
-			}
+			vertex.color = base_light;
+			_vertices.set(i, vertex);
 		}
 	}
 }
@@ -506,18 +554,17 @@ void VoxelMesher::_bake_liquid_colors(Node *p_chunk) {
 
 	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 
+	if (_vertices.size() == 0)
+		return;
+
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
-	ERR_FAIL_COND(_vertices.size() != _normals.size());
-
 	for (int i = 0; i < _vertices.size(); ++i) {
-		Vector3 vert = _vertices[i];
+		Vertex vertex = _vertices[i];
+		Vector3 vert = vertex.vertex;
 
+		//Is this needed?
 		if (vert.x < 0 || vert.y < 0 || vert.z < 0) {
-			if (_colors.size() < _vertices.size()) {
-				_colors.push_back(base_light);
-			}
-
 			continue;
 		}
 
@@ -533,6 +580,7 @@ void VoxelMesher::_bake_liquid_colors(Node *p_chunk) {
 
 			float ao = (chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_AO) / 255.0) * _ao_strength;
 			float rao = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+
 			ao += rao;
 
 			light.r += _base_light_value;
@@ -547,15 +595,14 @@ void VoxelMesher::_bake_liquid_colors(Node *p_chunk) {
 			light.g = CLAMP(light.g, 0, 1.0);
 			light.b = CLAMP(light.b, 0, 1.0);
 
-			if (_colors.size() < _vertices.size()) {
-				_colors.push_back(light);
-			} else {
-				_colors.set(i, light);
-			}
+			Color c = vertex.color;
+			light.a = c.a;
+			vertex.color = light;
+
+			_vertices.set(i, vertex);
 		} else {
-			if (_colors.size() < _vertices.size()) {
-				_colors.push_back(base_light);
-			}
+			vertex.color = base_light;
+			_vertices.set(i, vertex);
 		}
 	}
 }
@@ -572,13 +619,13 @@ PoolVector<Vector3> VoxelMesher::build_collider() const {
 
 		for (int i = 0; i < len; ++i) {
 
-			face_points.push_back(_vertices.get(i * 4));
-			face_points.push_back(_vertices.get((i * 4) + 2));
-			face_points.push_back(_vertices.get((i * 4) + 1));
+			face_points.push_back(_vertices.get(i * 4).vertex);
+			face_points.push_back(_vertices.get((i * 4) + 2).vertex);
+			face_points.push_back(_vertices.get((i * 4) + 1).vertex);
 
-			face_points.push_back(_vertices.get(i * 4));
-			face_points.push_back(_vertices.get((i * 4) + 3));
-			face_points.push_back(_vertices.get((i * 4) + 2));
+			face_points.push_back(_vertices.get(i * 4).vertex);
+			face_points.push_back(_vertices.get((i * 4) + 3).vertex);
+			face_points.push_back(_vertices.get((i * 4) + 2).vertex);
 		}
 
 		return face_points;
@@ -586,7 +633,7 @@ PoolVector<Vector3> VoxelMesher::build_collider() const {
 
 	face_points.resize(_indices.size());
 	for (int i = 0; i < face_points.size(); i++) {
-		face_points.set(i, _vertices.get(_indices.get(i)));
+		face_points.set(i, _vertices.get(_indices.get(i)).vertex);
 	}
 
 	return face_points;
@@ -598,12 +645,12 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &ligh
 	Color darkColor(0, 0, 0, 1);
 
 	for (int v = 0; v < _vertices.size(); ++v) {
-
-		Vector3 vet = _vertices.get(v);
+		Vertex vertexv = _vertices.get(v);
+		Vector3 vet = vertexv.vertex;
 		Vector3 vertex = node->to_global(vet);
 
 		//grab normal
-		Vector3 normal = _normals.get(v);
+		Vector3 normal = vertexv.normal;
 
 		Vector3 v_lightDiffuse;
 
@@ -643,7 +690,7 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &ligh
                     v_lightDiffuse += value;*/
 		}
 
-		Color f = _colors.get(v);
+		Color f = vertexv.color;
 		//Color f = darkColor;
 
 		Vector3 cv2(f.r, f.g, f.b);
@@ -670,7 +717,8 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &ligh
 		//f.g = v_lightDiffuse.y;
 		//f.b = v_lightDiffuse.z;
 
-		_colors.set(v, f);
+		vertexv.color = f;
+		_vertices.set(v, vertexv);
 	}
 
 	//	for (int i = 0; i < _colors->size(); ++i) {
@@ -678,127 +726,182 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &ligh
 	//	}
 }
 
-PoolVector<Vector3> VoxelMesher::get_vertices() {
-	return _vertices;
+PoolVector<Vector3> VoxelMesher::get_vertices() const {
+	PoolVector<Vector3> arr;
+
+	arr.resize(_vertices.size());
+	for (int i = 0; i < _vertices.size(); ++i) {
+		arr.set(i, _vertices.get(i).vertex);
+	}
+
+	return arr;
 }
 
 void VoxelMesher::set_vertices(const PoolVector<Vector3> &values) {
-	_vertices = values;
+	ERR_FAIL_COND(values.size() != _vertices.size());
+
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vertex v = _vertices[i];
+
+		v.normal = values[i];
+
+		_vertices.set(i, v);
+	}
 }
 
-int VoxelMesher::get_vertex_count() {
+int VoxelMesher::get_vertex_count() const {
 	return _vertices.size();
 }
 
-void VoxelMesher::add_vertex(Vector3 vertex) {
-	_vertices.push_back(vertex);
+void VoxelMesher::add_vertex(const Vector3 &vertex) {
+	Vertex vtx;
+	vtx.vertex = vertex;
+	vtx.color = _last_color;
+	vtx.normal = _last_normal;
+	vtx.uv = _last_uv;
+	vtx.uv2 = _last_uv2;
+// Todo?
+//	vtx.weights = _last_weights;
+//	vtx.bones = _last_bones;
+//	vtx.tangent = _last_tangent.normal;
+//	vtx.binormal = _last_normal.cross(_last_tangent.normal).normalized() * _last_tangent.d;
+
+	_vertices.push_back(vtx);
 }
 
-Vector3 VoxelMesher::get_vertex(int idx) {
-	return _vertices.get(idx);
+Vector3 VoxelMesher::get_vertex(const int idx) const {
+	return _vertices.get(idx).vertex;
 }
 
-void VoxelMesher::remove_vertex(int idx) {
+void VoxelMesher::remove_vertex(const int idx) {
 	_vertices.remove(idx);
 }
 
-PoolVector<Vector3> VoxelMesher::get_normals() {
-	return _normals;
+PoolVector<Vector3> VoxelMesher::get_normals() const {
+	PoolVector<Vector3> arr;
+
+	arr.resize(_vertices.size());
+	for (int i = 0; i < _vertices.size(); ++i) {
+		arr.set(i, _vertices.get(i).normal);
+	}
+
+	return arr;
 }
 
 void VoxelMesher::set_normals(const PoolVector<Vector3> &values) {
-	_normals = values;
+	ERR_FAIL_COND(values.size() != _vertices.size());
+
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vertex v = _vertices[i];
+
+		v.normal = values[i];
+
+		_vertices.set(i, v);
+	}
 }
 
-int VoxelMesher::get_normal_count() {
-	return _normals.size();
+void VoxelMesher::add_normal(const Vector3 &normal) {
+	_last_normal = normal;
 }
 
-void VoxelMesher::add_normal(Vector3 normal) {
-	_normals.push_back(normal);
+Vector3 VoxelMesher::get_normal(int idx) const {
+	return _vertices.get(idx).normal;
 }
 
-Vector3 VoxelMesher::get_normal(int idx) {
-	return _normals.get(idx);
-}
+PoolVector<Color> VoxelMesher::get_colors() const {
+	PoolVector<Color> arr;
 
-void VoxelMesher::remove_normal(int idx) {
-	_normals.remove(idx);
-}
+	arr.resize(_vertices.size());
+	for (int i = 0; i < _vertices.size(); ++i) {
+		arr.set(i, _vertices.get(i).color);
+	}
 
-PoolVector<Color> VoxelMesher::get_colors() {
-	return _colors;
+	return arr;
 }
 
 void VoxelMesher::set_colors(const PoolVector<Color> &values) {
-	_colors = values;
+	ERR_FAIL_COND(values.size() != _vertices.size());
+
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vertex v = _vertices[i];
+
+		v.color = values[i];
+
+		_vertices.set(i, v);
+	}
 }
 
-int VoxelMesher::get_color_count() {
-	return _colors.size();
+void VoxelMesher::add_color(const Color &color) {
+	_last_color = color;
 }
 
-void VoxelMesher::add_color(Color color) {
-	_colors.push_back(color);
+Color VoxelMesher::get_color(const int idx) const {
+	return _vertices.get(idx).color;
 }
 
-Color VoxelMesher::get_color(int idx) {
-	return _colors.get(idx);
-}
+PoolVector<Vector2> VoxelMesher::get_uvs() const {
+	PoolVector<Vector2> arr;
 
-void VoxelMesher::remove_color(int idx) {
-	_colors.remove(idx);
-}
+	arr.resize(_vertices.size());
+	for (int i = 0; i < _vertices.size(); ++i) {
+		arr.set(i, _vertices.get(i).uv);
+	}
 
-PoolVector<Vector2> VoxelMesher::get_uvs() {
-	return _uvs;
+	return arr;
 }
 
 void VoxelMesher::set_uvs(const PoolVector<Vector2> &values) {
-	_uvs = values;
+	ERR_FAIL_COND(values.size() != _vertices.size());
+
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vertex v = _vertices[i];
+
+		v.uv = values[i];
+
+		_vertices.set(i, v);
+	}
 }
 
-int VoxelMesher::get_uv_count() {
-	return _uvs.size();
+void VoxelMesher::add_uv(const Vector2 &uv) {
+	_last_uv = uv;
 }
 
-void VoxelMesher::add_uv(Vector2 uv) {
-	_uvs.push_back(uv);
+Vector2 VoxelMesher::get_uv(const int idx) const {
+	return _vertices.get(idx).uv;
 }
 
-Vector2 VoxelMesher::get_uv(int idx) {
-	return _uvs.get(idx);
-}
+PoolVector<Vector2> VoxelMesher::get_uv2s() const {
+	PoolVector<Vector2> arr;
 
-void VoxelMesher::remove_uv(int idx) {
-	_uvs.remove(idx);
-}
+	arr.resize(_vertices.size());
+	for (int i = 0; i < _vertices.size(); ++i) {
+		arr.set(i, _vertices.get(i).uv2);
+	}
 
-PoolVector<Vector2> VoxelMesher::get_uv2s() {
-	return _uv2s;
+	return arr;
 }
 
 void VoxelMesher::set_uv2s(const PoolVector<Vector2> &values) {
-	_uv2s = values;
+	ERR_FAIL_COND(values.size() != _vertices.size());
+
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vertex v = _vertices[i];
+
+		v.uv2 = values[i];
+
+		_vertices.set(i, v);
+	}
 }
 
-int VoxelMesher::get_uv2_count() {
-	return _uv2s.size();
+void VoxelMesher::add_uv2(const Vector2 &uv) {
+	_last_uv2 = uv;
 }
 
-void VoxelMesher::add_uv2(Vector2 uv) {
-	_uv2s.push_back(uv);
+Vector2 VoxelMesher::get_uv2(const int idx) const {
+	return _vertices.get(idx).uv2;
 }
 
-Vector2 VoxelMesher::get_uv2(int idx) {
-	return _uv2s.get(idx);
-}
-
-void VoxelMesher::remove_uv2(int idx) {
-	_uv2s.remove(idx);
-}
-
-PoolVector<int> VoxelMesher::get_indices() {
+PoolVector<int> VoxelMesher::get_indices() const {
 	return _indices;
 }
 
@@ -806,19 +909,19 @@ void VoxelMesher::set_indices(const PoolVector<int> &values) {
 	_indices = values;
 }
 
-int VoxelMesher::get_indices_count() {
+int VoxelMesher::get_indices_count() const {
 	return _indices.size();
 }
 
-void VoxelMesher::add_indices(int index) {
+void VoxelMesher::add_indices(const int index) {
 	_indices.push_back(index);
 }
 
-int VoxelMesher::get_indice(int idx) {
+int VoxelMesher::get_index(const int idx) const {
 	return _indices.get(idx);
 }
 
-void VoxelMesher::remove_indices(int idx) {
+void VoxelMesher::remove_index(const int idx) {
 	_indices.remove(idx);
 }
 
@@ -831,6 +934,8 @@ VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
 	_ao_strength = 0.25;
 	_base_light_value = 0.5;
 	_uv_margin = Rect2(0, 0, 1, 1);
+
+	_format = 0;
 }
 
 VoxelMesher::VoxelMesher() {
@@ -840,6 +945,7 @@ VoxelMesher::VoxelMesher() {
 	_ao_strength = 0.25;
 	_base_light_value = 0.5;
 	_uv_margin = Rect2(0, 0, 1, 1);
+	_format = 0;
 }
 
 VoxelMesher::~VoxelMesher() {
@@ -857,6 +963,10 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_mesher_index"), &VoxelMesher::get_mesher_index);
 	ClassDB::bind_method(D_METHOD("set_mesher_index", "value"), &VoxelMesher::set_mesher_index);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "mesher_index"), "set_mesher_index", "get_mesher_index");
+
+	ClassDB::bind_method(D_METHOD("get_format"), &VoxelMesher::get_format);
+	ClassDB::bind_method(D_METHOD("set_format", "value"), &VoxelMesher::set_format);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "format"), "set_format", "get_format");
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);
@@ -911,37 +1021,29 @@ void VoxelMesher::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_normals"), &VoxelMesher::get_normals);
 	ClassDB::bind_method(D_METHOD("set_normals", "values"), &VoxelMesher::set_normals);
-	ClassDB::bind_method(D_METHOD("get_normal_count"), &VoxelMesher::get_normal_count);
 	ClassDB::bind_method(D_METHOD("get_normal", "idx"), &VoxelMesher::get_normal);
-	ClassDB::bind_method(D_METHOD("remove_normal", "idx"), &VoxelMesher::remove_normal);
 	ClassDB::bind_method(D_METHOD("add_normal", "normal"), &VoxelMesher::add_normal);
 
 	ClassDB::bind_method(D_METHOD("get_colors"), &VoxelMesher::get_colors);
 	ClassDB::bind_method(D_METHOD("set_colors", "values"), &VoxelMesher::set_colors);
-	ClassDB::bind_method(D_METHOD("get_color_count"), &VoxelMesher::get_color_count);
 	ClassDB::bind_method(D_METHOD("get_color", "idx"), &VoxelMesher::get_color);
-	ClassDB::bind_method(D_METHOD("remove_color", "idx"), &VoxelMesher::remove_color);
 	ClassDB::bind_method(D_METHOD("add_color", "color"), &VoxelMesher::add_color);
 
 	ClassDB::bind_method(D_METHOD("get_uvs"), &VoxelMesher::get_uvs);
 	ClassDB::bind_method(D_METHOD("set_uvs", "values"), &VoxelMesher::set_uvs);
-	ClassDB::bind_method(D_METHOD("get_uv_count"), &VoxelMesher::get_uv_count);
 	ClassDB::bind_method(D_METHOD("get_uv", "idx"), &VoxelMesher::get_uv);
-	ClassDB::bind_method(D_METHOD("remove_uv", "idx"), &VoxelMesher::remove_uv);
 	ClassDB::bind_method(D_METHOD("add_uv", "uv"), &VoxelMesher::add_uv);
 
 	ClassDB::bind_method(D_METHOD("get_uv2s"), &VoxelMesher::get_uv2s);
 	ClassDB::bind_method(D_METHOD("set_uv2s", "values"), &VoxelMesher::set_uv2s);
-	ClassDB::bind_method(D_METHOD("get_uv2_count"), &VoxelMesher::get_uv2_count);
 	ClassDB::bind_method(D_METHOD("get_uv2", "idx"), &VoxelMesher::get_uv2);
-	ClassDB::bind_method(D_METHOD("remove_uv2", "idx"), &VoxelMesher::remove_uv2);
 	ClassDB::bind_method(D_METHOD("add_uv2", "uv"), &VoxelMesher::add_uv2);
 
 	ClassDB::bind_method(D_METHOD("get_indices"), &VoxelMesher::get_indices);
 	ClassDB::bind_method(D_METHOD("set_indices", "values"), &VoxelMesher::set_indices);
 	ClassDB::bind_method(D_METHOD("get_indices_count"), &VoxelMesher::get_indices_count);
-	ClassDB::bind_method(D_METHOD("get_indice", "idx"), &VoxelMesher::get_indice);
-	ClassDB::bind_method(D_METHOD("remove_indices", "idx"), &VoxelMesher::remove_indices);
+	ClassDB::bind_method(D_METHOD("get_index", "idx"), &VoxelMesher::get_index);
+	ClassDB::bind_method(D_METHOD("remove_index", "idx"), &VoxelMesher::remove_index);
 	ClassDB::bind_method(D_METHOD("add_indices", "indice"), &VoxelMesher::add_indices);
 
 	ClassDB::bind_method(D_METHOD("reset"), &VoxelMesher::reset);

@@ -108,6 +108,7 @@ void VoxelMesherCubic::_add_chunk(Node *p_chunk) {
 }
 
 VoxelMesherCubic::VoxelMesherCubic() {
+	_format = VisualServer::ARRAY_FORMAT_NORMAL | VisualServer::ARRAY_FORMAT_COLOR | VisualServer::ARRAY_FORMAT_TEX_UV;
 }
 
 VoxelMesherCubic::~VoxelMesherCubic() {
