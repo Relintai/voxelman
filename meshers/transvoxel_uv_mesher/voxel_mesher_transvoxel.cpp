@@ -395,6 +395,8 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 			}
 		}
 	}
+
+	remove_doubles_hashed();
 }
 
 Vector3 VoxelMesherTransvoxel::corner_id_to_vertex(int corner_id) const {

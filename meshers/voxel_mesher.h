@@ -138,11 +138,13 @@ public:
 	void build_mesh_into(RID mesh);
 
 	void generate_normals(bool p_flip = false);
+	void remove_doubles();
+	void remove_doubles_hashed();
 
 	PoolVector<Vector3> get_vertices() const;
 	void set_vertices(const PoolVector<Vector3> &values);
 	int get_vertex_count() const;
-	Vector3 get_vertex(const int idx) const ;
+	Vector3 get_vertex(const int idx) const;
 	void remove_vertex(const int idx);
 	void add_vertex(const Vector3 &vertex);
 

@@ -282,6 +282,104 @@ void VoxelMesher::generate_normals(bool p_flip) {
 	}
 }
 
+void VoxelMesher::remove_doubles() {
+	if (_vertices.size() == 0)
+		return;
+
+	//print_error("before " + String::num(_vertices.size()));
+
+	for (int i = 0; i < _vertices.size(); ++i) {
+		Vertex vert = _vertices[i];
+		PoolVector<int> indices;
+
+		for (int j = i + 1; j < _vertices.size(); ++j) {
+			if (_vertices[j] == vert) {
+				indices.push_back(j);
+			}
+		}
+
+		for (int j = 0; j < indices.size(); ++j) {
+			int index = indices[j];
+
+			_vertices.remove(index);
+
+			//make all indices that were bigger than the one we replaced one lower
+			for (int k = 0; k < _indices.size(); ++k) {
+				int indx = _indices[k];
+
+				if (indx == index) {
+					_indices.set(k, i);
+				} else if (indx > index) {
+					_indices.set(k, --indx);
+				}
+			}
+
+			for (int k = j + 1; k < indices.size(); ++k) {
+				int val = indices[k];
+
+				if (val > index) {
+					indices.set(k, --val);
+				}
+			}
+		}
+	}
+
+	//print_error("after " + String::num(_vertices.size())+ " " + String::num(duration.count()));
+}
+
+//lot faster that normal remove_doubles, but false positives can happen curtesy of hash collisions
+void VoxelMesher::remove_doubles_hashed() {
+	if (_vertices.size() == 0)
+		return;
+
+	//print_error("before " + String::num(_vertices.size()));
+
+	PoolVector<uint32_t> hashes;
+	hashes.resize(_vertices.size());
+	for (int i = 0; i < _vertices.size(); ++i) {
+		hashes.set(i, VertexHasher::hash(_vertices[i]));
+	}
+
+	for (int i = 0; i < hashes.size(); ++i) {
+		uint32_t hash = hashes[i];
+		PoolVector<int> indices;
+
+		for (int j = i + 1; j < hashes.size(); ++j) {
+			if (hashes[j] == hash) {
+				indices.push_back(j);
+			}
+		}
+
+		for (int j = 0; j < indices.size(); ++j) {
+			int index = indices[j];
+
+			hashes.remove(index);
+			_vertices.remove(index);
+
+			//make all indices that were bigger than the one we replaced one lower
+			for (int k = 0; k < _indices.size(); ++k) {
+				int indx = _indices[k];
+
+				if (indx == index) {
+					_indices.set(k, i);
+				} else if (indx > index) {
+					_indices.set(k, --indx);
+				}
+			}
+
+			for (int k = j + 1; k < indices.size(); ++k) {
+				int val = indices[k];
+
+				if (val > index) {
+					indices.set(k, --val);
+				}
+			}
+		}
+	}
+
+	//print_error("after " + String::num(_vertices.size()) + " " + String::num(duration.count()));
+}
+
 void VoxelMesher::reset() {
 	_vertices.resize(0);
 	_indices.resize(0);
@@ -1055,4 +1153,7 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("build_collider"), &VoxelMesher::build_collider);
 
 	ClassDB::bind_method(D_METHOD("generate_normals", "flip"), &VoxelMesher::generate_normals, DEFVAL(false));
+
+	ClassDB::bind_method(D_METHOD("remove_doubles"), &VoxelMesher::remove_doubles);
+	ClassDB::bind_method(D_METHOD("remove_doubles_hashed"), &VoxelMesher::remove_doubles_hashed);
 }
