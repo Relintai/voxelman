@@ -23,6 +23,7 @@ SOFTWARE.
 #include "voxel_mesher.h"
 
 #include "../world/voxel_chunk.h"
+#include "../world/voxel_chunk_default.h"
 
 bool VoxelMesher::Vertex::operator==(const Vertex &p_vertex) const {
 
@@ -603,12 +604,12 @@ void VoxelMesher::_bake_colors(Node *p_chunk) {
 
 		if (chunk->validate_channel_data_position(x, y, z)) {
 			Color light = Color(
-					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
-					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
-					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+					chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+					chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+					chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-			float ao = (chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_AO) / 255.0) * _ao_strength;
-			float rao = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+			float ao = (chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0) * _ao_strength;
+			float rao = chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
 
 			ao += rao;
 
@@ -672,12 +673,12 @@ void VoxelMesher::_bake_liquid_colors(Node *p_chunk) {
 
 		if (chunk->validate_channel_data_position(x, y, z)) {
 			Color light = Color(
-					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
-					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
-					chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+					chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+					chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+					chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-			float ao = (chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_AO) / 255.0) * _ao_strength;
-			float rao = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+			float ao = (chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0) * _ao_strength;
+			float rao = chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
 
 			ao += rao;
 
@@ -858,11 +859,11 @@ void VoxelMesher::add_vertex(const Vector3 &vertex) {
 	vtx.normal = _last_normal;
 	vtx.uv = _last_uv;
 	vtx.uv2 = _last_uv2;
-// Todo?
-//	vtx.weights = _last_weights;
-//	vtx.bones = _last_bones;
-//	vtx.tangent = _last_tangent.normal;
-//	vtx.binormal = _last_normal.cross(_last_tangent.normal).normalized() * _last_tangent.d;
+	// Todo?
+	//	vtx.weights = _last_weights;
+	//	vtx.bones = _last_bones;
+	//	vtx.tangent = _last_tangent.normal;
+	//	vtx.binormal = _last_normal.cross(_last_tangent.normal).normalized() * _last_tangent.d;
 
 	_vertices.push_back(vtx);
 }

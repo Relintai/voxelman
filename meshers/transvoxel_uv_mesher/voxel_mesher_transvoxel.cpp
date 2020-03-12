@@ -23,6 +23,7 @@ SOFTWARE.
 #include "voxel_mesher_transvoxel.h"
 
 #include "../../world/voxel_chunk.h"
+#include "../../world/voxel_chunk_default.h"
 #include "core/array.h"
 #include "core/dictionary.h"
 #include "servers/visual_server.h"
@@ -35,14 +36,14 @@ void VoxelMesherTransvoxel::set_texture_scale(const int value) {
 }
 
 void VoxelMesherTransvoxel::get_voxel_type_array(int *arr, VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
-	arr[0] = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
-	arr[1] = chunk->get_voxel(x, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
-	arr[2] = chunk->get_voxel(x, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
-	arr[3] = chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
-	arr[4] = chunk->get_voxel(x + size, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
-	arr[5] = chunk->get_voxel(x + size, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
-	arr[6] = chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
-	arr[7] = chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	arr[0] = chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	arr[1] = chunk->get_voxel(x, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	arr[2] = chunk->get_voxel(x, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	arr[3] = chunk->get_voxel(x, y + size, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	arr[4] = chunk->get_voxel(x + size, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	arr[5] = chunk->get_voxel(x + size, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	arr[6] = chunk->get_voxel(x + size, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	arr[7] = chunk->get_voxel(x + size, y + size, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 }
 int VoxelMesherTransvoxel::get_case_code_from_arr(const int *data) {
 	int case_code = 0;
@@ -76,28 +77,28 @@ int VoxelMesherTransvoxel::get_case_code_from_arr(const int *data) {
 int VoxelMesherTransvoxel::get_case_code(VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
 	int case_code = 0;
 
-	if (chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+	if (chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
 		case_code = case_code | VOXEL_ENTRY_MASK_000;
 
-	if (chunk->get_voxel(x, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+	if (chunk->get_voxel(x, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
 		case_code = case_code | VOXEL_ENTRY_MASK_010;
 
-	if (chunk->get_voxel(x, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+	if (chunk->get_voxel(x, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
 		case_code = case_code | VOXEL_ENTRY_MASK_001;
 
-	if (chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+	if (chunk->get_voxel(x, y + size, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
 		case_code = case_code | VOXEL_ENTRY_MASK_011;
 
-	if (chunk->get_voxel(x + size, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+	if (chunk->get_voxel(x + size, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
 		case_code = case_code | VOXEL_ENTRY_MASK_100;
 
-	if (chunk->get_voxel(x + size, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+	if (chunk->get_voxel(x + size, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
 		case_code = case_code | VOXEL_ENTRY_MASK_110;
 
-	if (chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+	if (chunk->get_voxel(x + size, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
 		case_code = case_code | VOXEL_ENTRY_MASK_101;
 
-	if (chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE) != 0)
+	if (chunk->get_voxel(x + size, y + size, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
 		case_code = case_code | VOXEL_ENTRY_MASK_111;
 
 	return case_code;
@@ -106,48 +107,48 @@ int VoxelMesherTransvoxel::get_case_code(VoxelChunk *chunk, const int x, const i
 int VoxelMesherTransvoxel::get_voxel_type(VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
 	int type = 0;
 
-	type = chunk->get_voxel(x, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	type = chunk->get_voxel(x, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 	if (type != 0)
 		return type;
 
-	type = chunk->get_voxel(x, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	type = chunk->get_voxel(x, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 	if (type != 0)
 		return type;
 
-	type = chunk->get_voxel(x, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	type = chunk->get_voxel(x, y + size, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 	if (type != 0)
 		return type;
 
-	type = chunk->get_voxel(x + size, y + size, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	type = chunk->get_voxel(x + size, y + size, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 	if (type != 0)
 		return type;
 
-	type = chunk->get_voxel(x, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	type = chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 	if (type != 0)
 		return type;
 
-	type = chunk->get_voxel(x + size, y + size, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	type = chunk->get_voxel(x + size, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 	if (type != 0)
 		return type;
 
-	type = chunk->get_voxel(x + size, y, z, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	type = chunk->get_voxel(x + size, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 	if (type != 0)
 		return type;
 
-	type = chunk->get_voxel(x + size, y, z + size, VoxelChunk::DEFAULT_CHANNEL_TYPE);
+	type = chunk->get_voxel(x + size, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 	return type;
 }
 
 void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
-	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
+	VoxelChunkDefault *chunk = Object::cast_to<VoxelChunkDefault>(p_chunk);
 
 	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 
@@ -259,7 +260,7 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 					Vector3 offs0 = corner_id_to_vertex(fv) * lod_size;
 					Vector3 offs1 = corner_id_to_vertex(sv) * lod_size;
 
-					int type = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), VoxelChunk::DEFAULT_CHANNEL_TYPE);
+					int type = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 
 					int fill = 0;
 
@@ -267,12 +268,12 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 					Vector3 vert_dir;
 
 					if (type == 0) {
-						fill = chunk->get_voxel(int(x + offs1.x), int(y + offs1.y), int(z + offs1.z), VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL);
+						fill = chunk->get_voxel(int(x + offs1.x), int(y + offs1.y), int(z + offs1.z), VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL);
 
 						vert_pos = get_regular_vertex_second_position(case_code, i);
 						vert_dir = get_regular_vertex_first_position(case_code, i);
 					} else {
-						fill = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), VoxelChunk::DEFAULT_CHANNEL_ISOLEVEL);
+						fill = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL);
 
 						vert_pos = get_regular_vertex_first_position(case_code, i);
 						vert_dir = get_regular_vertex_second_position(case_code, i);

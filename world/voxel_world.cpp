@@ -307,7 +307,11 @@ VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z, Node *p_chunk) {
 		chunk->set_owner(get_tree()->get_edited_scene_root());
 
 	chunk->set_voxel_world(this);
-	chunk->set_is_build_threaded(_use_threads);
+
+	//TODO this will need to be changed
+	if (chunk->has_method("set_is_build_threaded"))
+		chunk->call("set_is_build_threaded", _use_threads);
+
 	chunk->set_position(x, y, z);
 	chunk->set_library(_library);
 	chunk->set_voxel_scale(_voxel_scale);
@@ -334,7 +338,7 @@ void VoxelWorld::generate_chunk(VoxelChunk *p_chunk) {
 
 	call("_generate_chunk", p_chunk);
 
-	p_chunk->build_deferred();
+	p_chunk->build();
 }
 
 bool VoxelWorld::can_chunk_do_build_step() {

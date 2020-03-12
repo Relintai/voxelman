@@ -121,7 +121,7 @@ void VoxelStructure::clear() {
 }
 
 VoxelStructure::VoxelStructure() {
-	_channel_count = VoxelChunk::MAX_DEFAULT_CHANNELS;
+	_channel_count = 0;
 
 	_world_position_x = 0;
 	_world_position_y = 0;

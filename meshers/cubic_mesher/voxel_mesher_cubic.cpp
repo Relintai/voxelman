@@ -22,8 +22,10 @@ SOFTWARE.
 
 #include "voxel_mesher_cubic.h"
 
+#include "../../world/voxel_chunk_default.h"
+
 void VoxelMesherCubic::_add_chunk(Node *p_chunk) {
-	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
+	VoxelChunkDefault *chunk = Object::cast_to<VoxelChunkDefault>(p_chunk);
 
 	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
 

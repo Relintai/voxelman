@@ -34,6 +34,7 @@ sources = [
 
     "world/voxel_world.cpp",
     "world/voxel_chunk.cpp",
+    "world/voxel_chunk_default.cpp",
     "world/voxel_structure.cpp",
     "world/environment_data.cpp",
     "world/voxel_chunk_prop_data.cpp",
