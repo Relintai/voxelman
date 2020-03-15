@@ -193,6 +193,8 @@ public:
 	void allocate_clutter_mesh();
 	void free_clutter_mesh();
 
+	void update_transforms();
+
 	//Debug
 	void create_debug_immediate_geometry();
 	void free_debug_immediate_geometry();
@@ -201,6 +203,8 @@ public:
 	void draw_cross_voxels_fill(Vector3 pos, float fill);
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
+
+	void set_visibility(bool visible);
 
 	//free
 	void free_chunk();

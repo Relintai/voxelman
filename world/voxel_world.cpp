@@ -424,7 +424,7 @@ void VoxelWorld::_notification(int p_what) {
 
 			if (!Engine::get_singleton()->is_editor_hint() && _library.is_valid())
 				_library->refresh_rects();
-		}
+		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			_num_frame_chunk_build_steps = 0;
 
@@ -463,9 +463,9 @@ void VoxelWorld::_notification(int p_what) {
 
 				generate_chunk(chunk);
 			}
-		}
+		} break;
 		case NOTIFICATION_EXIT_TREE: {
-		}
+		} break;
 	}
 }
 

@@ -475,6 +475,20 @@ void VoxelChunkDefault::free_clutter_mesh() {
 	}
 }
 
+void VoxelChunkDefault::update_transforms() {
+	if (get_mesh_instance_rid() != RID())
+		VS::get_singleton()->instance_set_transform(get_mesh_instance_rid(), get_transform());
+
+	if (get_prop_mesh_instance_rid() != RID())
+		VS::get_singleton()->instance_set_transform(get_prop_mesh_instance_rid(), get_transform());
+
+	if (get_body_rid() != RID())
+		PhysicsServer::get_singleton()->body_set_state(get_body_rid(), PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
+
+	if (get_prop_body_rid() != RID())
+		PhysicsServer::get_singleton()->body_set_state(get_prop_body_rid(), PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
+}
+
 void VoxelChunkDefault::create_debug_immediate_geometry() {
 	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(_debug_drawer != NULL);
@@ -592,6 +606,14 @@ void VoxelChunkDefault::draw_debug_voxel_lights() {
 	_debug_drawer->end();
 }
 
+void VoxelChunkDefault::set_visibility(bool visible) {
+	if (get_mesh_instance_rid() != RID())
+		VS::get_singleton()->instance_set_visible(get_mesh_instance_rid(), is_visible_in_tree());
+
+	if (get_prop_mesh_instance_rid() != RID())
+		VS::get_singleton()->instance_set_visible(get_prop_mesh_instance_rid(), is_visible_in_tree());
+}
+
 void VoxelChunkDefault::free_chunk() {
 	free_main_mesh();
 	remove_colliders();
@@ -651,13 +673,6 @@ VoxelChunkDefault::~VoxelChunkDefault() {
 		_abort_build = true;
 		wait_and_finish_thread();
 	}
-
-	free_main_mesh();
-	remove_colliders();
-	free_prop_mesh();
-	free_prop_colliders();
-	free_liquid_mesh();
-	free_clutter_mesh();
 
 	memdelete(_build_phase_done_mutex);
 }
@@ -908,6 +923,8 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			if (_clutter_mesh_instance_rid != RID())
 				VS::get_singleton()->instance_set_visible(_clutter_mesh_instance_rid, is_visible());
 
+			update_transforms();
+
 			next_phase();
 
 			return;
@@ -1028,13 +1045,29 @@ void VoxelChunkDefault::_build(bool immediate) {
 
 void VoxelChunkDefault::_notification(int p_what) {
 	switch (p_what) {
+		case NOTIFICATION_VISIBILITY_CHANGED: {
+			if (is_inside_tree()) {
+				set_visibility(is_visible_in_tree());
+			}
+		}
+		case NOTIFICATION_ENTER_TREE: {
+			set_notify_transform(true);
+		} break;
 		case NOTIFICATION_EXIT_TREE: {
 			if (_build_thread) {
 				_abort_build = true;
 
 				wait_and_finish_thread();
 			}
-		}
+
+			free_main_mesh();
+			remove_colliders();
+			free_prop_mesh();
+			free_prop_colliders();
+			free_liquid_mesh();
+			free_clutter_mesh();
+
+		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
 				return;
@@ -1070,6 +1103,7 @@ void VoxelChunkDefault::_notification(int p_what) {
 				case BUILD_PHASE_TYPE_PHYSICS_PROCESS:
 					return;
 			}
+			break;
 			case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
 				if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
 					return;
@@ -1093,7 +1127,10 @@ void VoxelChunkDefault::_notification(int p_what) {
 
 					return;
 				}
-			}
+			} break;
+			case NOTIFICATION_TRANSFORM_CHANGED: {
+				update_transforms();
+			} break;
 		}
 	}
 }
@@ -1215,6 +1252,8 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_clear_baked_lights"), &VoxelChunkDefault::_clear_baked_lights);
 	ClassDB::bind_method(D_METHOD("_create_meshers"), &VoxelChunkDefault::_create_meshers);
 	ClassDB::bind_method(D_METHOD("_build", "immediate"), &VoxelChunkDefault::_build);
+
+	//ClassDB::bind_method(D_METHOD("set_visibility", "visible"), &VoxelChunkDefault::set_visibility);
 
 	BIND_CONSTANT(BUILD_PHASE_DONE);
 	BIND_CONSTANT(BUILD_PHASE_SETUP);
