@@ -38,6 +38,7 @@ SOFTWARE.
 #include "meshers/transvoxel_uv_mesher/voxel_mesher_transvoxel.h"
 #include "meshers/voxel_mesher.h"
 
+#include "world/block_voxel_structure.h"
 #include "world/environment_data.h"
 #include "world/voxel_chunk.h"
 #include "world/voxel_chunk_default.h"
@@ -95,6 +96,7 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelChunk>();
 	ClassDB::register_class<VoxelChunkDefault>();
 	ClassDB::register_class<VoxelStructure>();
+	ClassDB::register_class<BlockVoxelStructure>();
 	ClassDB::register_class<EnvironmentData>();
 	ClassDB::register_class<VoxelChunkPropData>();
 

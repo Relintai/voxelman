@@ -20,50 +20,61 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXEL_STRUCTURE_H
-#define VOXEL_STRUCTURE_H
+#ifndef BLOCK_VOXEL_STRUCTURE_H
+#define BLOCK_VOXEL_STRUCTURE_H
 
-#include "core/reference.h"
+#include "voxel_structure.h"
 
 #include "core/hash_map.h"
-#include "core/math/aabb.h"
 #include "core/pool_vector.h"
 #include "voxel_chunk.h"
 
-class VoxelStructure : public Reference {
-	GDCLASS(VoxelStructure, Reference);
+class BlockVoxelStructure : public VoxelStructure {
+	GDCLASS(BlockVoxelStructure, VoxelStructure);
 
 public:
-	bool get_use_aabb() const;
-	void set_use_aabb(const bool value);
+	int get_channel_count() const;
+	void set_channel_count(const int value);
 
-	AABB get_aabb() const;
-	void set_aabb(const AABB &value);
+	uint8_t get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const;
+	void set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index);
 
-	int get_world_position_x() const;
-	void set_world_position_x(const int value);
+	PoolByteArray get_voxel_data(int p_x, int p_y, int p_z) const;
+	void set_voxel_data(PoolByteArray p_arr, int p_x, int p_y, int p_z);
 
-	int get_world_position_y() const;
-	void set_world_position_y(const int value);
+	//void _write_to_chunk(Node *chunk);
 
-	int get_world_position_z() const;
-	void set_world_position_z(const int value);
+	void clear();
 
-	void write_to_chunk(Node *chunk);
-
-	VoxelStructure();
-	~VoxelStructure();
+	BlockVoxelStructure();
+	~BlockVoxelStructure();
 
 protected:
 	static void _bind_methods();
 
-private:
-	bool _use_aabb;
-	AABB _aabb;
+public:
+	struct VSIntPos {
+		int x;
+		int y;
+		int z;
+	};
 
-	int _world_position_x;
-	int _world_position_y;
-	int _world_position_z;
+	struct VSIntPosHasher {
+		static _FORCE_INLINE_ uint32_t hash(const VSIntPos &v) {
+			uint32_t hash = hash_djb2_one_32(v.x);
+			hash = hash_djb2_one_32(v.y, hash);
+			return hash_djb2_one_32(v.z, hash);
+		}
+	};
+
+private:
+	int _channel_count;
+
+	HashMap<VSIntPos, PoolByteArray, VSIntPosHasher> _data;
 };
+
+_FORCE_INLINE_ bool operator==(const BlockVoxelStructure::VSIntPos &a, const BlockVoxelStructure::VSIntPos &b) {
+	return a.x == b.x && a.y == b.y && a.z == b.z;
+}
 
 #endif
