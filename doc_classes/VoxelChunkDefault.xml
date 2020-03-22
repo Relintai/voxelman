@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelChunkDefault" inherits="VoxelChunk" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_build_phase" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="phase" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_build_phase_physics_process" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="phase" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_build_phase_process" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="phase" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_draw_debug_voxel_lights" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="debug_drawer" type="ImmediateGeometry">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_clutter_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_liquid_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_main_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_prop_colliders">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="allocate_prop_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_deferred">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_phase">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_phase_physics_process">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_phase_process">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_prioritized">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="create_colliders">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="create_debug_immediate_geometry">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="draw_cross_voxels">
+			<return type="void">
+			</return>
+			<argument index="0" name="max" type="Vector3">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="draw_cross_voxels_fill">
+			<return type="void">
+			</return>
+			<argument index="0" name="max" type="Vector3">
+			</argument>
+			<argument index="1" name="fill" type="float">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="draw_debug_voxel_lights">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="draw_debug_voxels">
+			<return type="void">
+			</return>
+			<argument index="0" name="max" type="int">
+			</argument>
+			<argument index="1" name="color" type="Color" default="Color( 1, 1, 1, 1 )">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="free_chunk">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_clutter_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_debug_immediate_geometry">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_liquid_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_main_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_prop_colliders">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="free_prop_mesh">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="generate_ao">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_body_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_clutter_mesh_instance_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_clutter_mesh_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_liquid_mesh_instance_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_liquid_mesh_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_mesh_instance_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_mesh_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_body_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_mesh_instance_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_mesh_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_shape_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_shape_rid">
+			<return type="RID">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="has_next_phase">
+			<return type="bool">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="next_phase">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="remove_colliders">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="active_build_phase_type" type="int" setter="set_active_build_phase_type" getter="get_active_build_phase_type" enum="VoxelChunkDefault.ActiveBuildPhaseType" default="0">
+		</member>
+		<member name="current_build_phase" type="int" setter="set_current_build_phase" getter="get_current_build_phase" default="0">
+		</member>
+		<member name="is_build_threaded" type="bool" setter="set_is_build_threaded" getter="get_is_build_threaded" default="false">
+		</member>
+		<member name="lod_size" type="int" setter="set_lod_size" getter="get_lod_size" default="1">
+		</member>
+		<member name="max_build_phase" type="int" setter="set_max_build_phase" getter="get_max_build_phase" default="9">
+		</member>
+		<member name="meshing_bake_lights" type="bool" setter="meshing_set_bake_lights" getter="meshing_get_bake_lights" default="true">
+		</member>
+		<member name="meshing_create_collider" type="bool" setter="meshing_set_create_collider" getter="meshing_get_create_collider" default="true">
+		</member>
+	</members>
+	<constants>
+		<constant name="BUILD_PHASE_DONE" value="0">
+		</constant>
+		<constant name="BUILD_PHASE_SETUP" value="1">
+		</constant>
+		<constant name="BUILD_PHASE_TERRARIN_MESH_SETUP" value="2">
+		</constant>
+		<constant name="BUILD_PHASE_TERRARIN_MESH_COLLIDER" value="3">
+		</constant>
+		<constant name="BUILD_PHASE_TERRARIN_MESH" value="5">
+		</constant>
+		<constant name="BUILD_PHASE_LIGHTS" value="4">
+		</constant>
+		<constant name="BUILD_PHASE_PROP_MESH" value="6">
+		</constant>
+		<constant name="BUILD_PHASE_PROP_COLLIDER" value="7">
+		</constant>
+		<constant name="BUILD_PHASE_FINALIZE" value="8">
+		</constant>
+		<constant name="BUILD_PHASE_MAX" value="9">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_GENERATION_QUEUED" value="1">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_GENERATION" value="2">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED" value="3">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_MESH_GENERATION" value="4">
+		</constant>
+		<constant name="VOXEL_CHUNK_STATE_MAX" value="5">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_TYPE" value="0" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_ISOLEVEL" value="1" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_R" value="2" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_G" value="3" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_B" value="4" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_AO" value="5" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_RANDOM_AO" value="6" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIQUID_TYPES" value="7" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIQUID_FILL" value="8" enum="DefaultChannels">
+		</constant>
+		<constant name="DEFAULT_CHANNEL_LIQUID_FLOW" value="9" enum="DefaultChannels">
+		</constant>
+		<constant name="MAX_DEFAULT_CHANNELS" value="10" enum="DefaultChannels">
+		</constant>
+		<constant name="BUILD_PHASE_TYPE_NORMAL" value="0" enum="ActiveBuildPhaseType">
+		</constant>
+		<constant name="BUILD_PHASE_TYPE_PROCESS" value="1" enum="ActiveBuildPhaseType">
+		</constant>
+		<constant name="BUILD_PHASE_TYPE_PHYSICS_PROCESS" value="2" enum="ActiveBuildPhaseType">
+		</constant>
+	</constants>
+</class>

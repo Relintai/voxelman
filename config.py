@@ -46,8 +46,17 @@ def get_doc_classes():
         "EnvironmentData",
         "VoxelChunkPropData",
         "VoxelChunk",
+        "VoxelChunkDefault",
         "VoxelStructure",
+        "BlockVoxelStructure",
         "VoxelWorld",
+
+        "PropTool",
+        "PropToolEntity",
+        "PropToolLight",
+        "PropToolMesh",
+        "PropToolProp",
+        "PropToolScene",
     ]
 
 def get_doc_path():

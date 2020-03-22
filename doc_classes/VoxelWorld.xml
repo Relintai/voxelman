@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelWorld" inherits="Navigation" category="Core" version="3.2">
+<class name="VoxelWorld" inherits="Navigation" version="3.2">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -81,6 +81,12 @@
 			<description>
 			</description>
 		</method>
+		<method name="can_chunk_do_build_step">
+			<return type="bool">
+			</return>
+			<description>
+			</description>
+		</method>
 		<method name="clear">
 			<return type="void">
 			</return>
@@ -105,7 +111,7 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_chunk" qualifiers="const">
+		<method name="get_chunk">
 			<return type="VoxelChunk">
 			</return>
 			<argument index="0" name="x" type="int">
@@ -173,6 +179,34 @@
 			<description>
 			</description>
 		</method>
+		<method name="has_chunk" qualifiers="const">
+			<return type="bool">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="is_position_walkable">
+			<return type="bool">
+			</return>
+			<argument index="0" name="position" type="Vector3">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="on_chunk_mesh_generation_finished">
+			<return type="void">
+			</return>
+			<argument index="0" name="chunk" type="Node">
+			</argument>
+			<description>
+			</description>
+		</method>
 		<method name="remove_chunk">
 			<return type="VoxelChunk">
 			</return>
@@ -181,6 +215,14 @@
 			<argument index="1" name="y" type="int">
 			</argument>
 			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="remove_chunk_index">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="index" type="int">
 			</argument>
 			<description>
 			</description>
@@ -221,11 +263,17 @@
 		</member>
 		<member name="current_seed" type="int" setter="set_current_seed" getter="get_current_seed" default="0">
 		</member>
+		<member name="data_margin_end" type="int" setter="set_data_margin_end" getter="get_data_margin_end" default="0">
+		</member>
+		<member name="data_margin_start" type="int" setter="set_data_margin_start" getter="get_data_margin_start" default="0">
+		</member>
 		<member name="level_generator" type="VoxelmanLevelGenerator" setter="set_level_generator" getter="get_level_generator">
 		</member>
 		<member name="library" type="VoxelmanLibrary" setter="set_library" getter="get_library">
 		</member>
 		<member name="max_concurrent_generations" type="int" setter="set_max_concurrent_generations" getter="get_max_concurrent_generations" default="3">
+		</member>
+		<member name="max_frame_chunk_build_steps" type="int" setter="set_max_frame_chunk_build_steps" getter="get_max_frame_chunk_build_steps" default="0">
 		</member>
 		<member name="player" type="Spatial" setter="set_player" getter="get_player">
 		</member>
@@ -237,6 +285,12 @@
 		</member>
 	</members>
 	<signals>
+		<signal name="chunk_mesh_generation_finished">
+			<argument index="0" name="chunk" type="VoxelChunk">
+			</argument>
+			<description>
+			</description>
+		</signal>
 		<signal name="generation_finished">
 			<description>
 			</description>

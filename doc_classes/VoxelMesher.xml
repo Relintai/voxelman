@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelMesher" inherits="Reference" category="Core" version="3.2">
+<class name="VoxelMesher" inherits="Reference" version="3.2">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -19,6 +19,14 @@
 			<return type="void">
 			</return>
 			<argument index="0" name="chunk" type="VoxelChunk">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_add_mesher" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="mesher" type="VoxelMesher">
 			</argument>
 			<description>
 			</description>
@@ -99,6 +107,14 @@
 			<description>
 			</description>
 		</method>
+		<method name="add_mesher">
+			<return type="void">
+			</return>
+			<argument index="0" name="mesher" type="VoxelMesher">
+			</argument>
+			<description>
+			</description>
+		</method>
 		<method name="add_normal">
 			<return type="void">
 			</return>
@@ -110,7 +126,15 @@
 		<method name="add_uv">
 			<return type="void">
 			</return>
-			<argument index="0" name="vertex" type="Vector2">
+			<argument index="0" name="uv" type="Vector2">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="add_uv2">
+			<return type="void">
+			</return>
+			<argument index="0" name="uv" type="Vector2">
 			</argument>
 			<description>
 			</description>
@@ -139,7 +163,19 @@
 			<description>
 			</description>
 		</method>
+		<method name="build_collider" qualifiers="const">
+			<return type="PoolVector3Array">
+			</return>
+			<description>
+			</description>
+		</method>
 		<method name="build_mesh">
+			<return type="Array">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="build_mesh_into">
 			<return type="void">
 			</return>
 			<argument index="0" name="mesh_rid" type="RID">
@@ -147,7 +183,15 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_color">
+		<method name="generate_normals">
+			<return type="void">
+			</return>
+			<argument index="0" name="flip" type="bool" default="false">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_color" qualifiers="const">
 			<return type="Color">
 			</return>
 			<argument index="0" name="idx" type="int">
@@ -155,13 +199,13 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_color_count">
-			<return type="int">
+		<method name="get_colors" qualifiers="const">
+			<return type="PoolColorArray">
 			</return>
 			<description>
 			</description>
 		</method>
-		<method name="get_indice">
+		<method name="get_index" qualifiers="const">
 			<return type="int">
 			</return>
 			<argument index="0" name="idx" type="int">
@@ -169,13 +213,19 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_indices_count">
+		<method name="get_indices" qualifiers="const">
+			<return type="PoolIntArray">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_indices_count" qualifiers="const">
 			<return type="int">
 			</return>
 			<description>
 			</description>
 		</method>
-		<method name="get_normal">
+		<method name="get_normal" qualifiers="const">
 			<return type="Vector3">
 			</return>
 			<argument index="0" name="idx" type="int">
@@ -183,13 +233,13 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_normal_count">
-			<return type="int">
+		<method name="get_normals" qualifiers="const">
+			<return type="PoolVector3Array">
 			</return>
 			<description>
 			</description>
 		</method>
-		<method name="get_uv">
+		<method name="get_uv" qualifiers="const">
 			<return type="Vector2">
 			</return>
 			<argument index="0" name="idx" type="int">
@@ -197,13 +247,27 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_uv_count">
-			<return type="int">
+		<method name="get_uv2" qualifiers="const">
+			<return type="Vector2">
+			</return>
+			<argument index="0" name="idx" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_uv2s" qualifiers="const">
+			<return type="PoolVector2Array">
 			</return>
 			<description>
 			</description>
 		</method>
-		<method name="get_vertex">
+		<method name="get_uvs" qualifiers="const">
+			<return type="PoolVector2Array">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_vertex" qualifiers="const">
 			<return type="Vector3">
 			</return>
 			<argument index="0" name="idx" type="int">
@@ -211,37 +275,31 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_vertex_count">
+		<method name="get_vertex_count" qualifiers="const">
 			<return type="int">
 			</return>
 			<description>
 			</description>
 		</method>
-		<method name="remove_color">
-			<return type="void">
+		<method name="get_vertices" qualifiers="const">
+			<return type="PoolVector3Array">
 			</return>
-			<argument index="0" name="idx" type="int">
-			</argument>
 			<description>
 			</description>
 		</method>
-		<method name="remove_indices">
+		<method name="remove_doubles">
 			<return type="void">
 			</return>
-			<argument index="0" name="idx" type="int">
-			</argument>
 			<description>
 			</description>
 		</method>
-		<method name="remove_normal">
+		<method name="remove_doubles_hashed">
 			<return type="void">
 			</return>
-			<argument index="0" name="idx" type="int">
-			</argument>
 			<description>
 			</description>
 		</method>
-		<method name="remove_uv">
+		<method name="remove_index">
 			<return type="void">
 			</return>
 			<argument index="0" name="idx" type="int">
@@ -263,17 +321,69 @@
 			<description>
 			</description>
 		</method>
+		<method name="set_colors">
+			<return type="void">
+			</return>
+			<argument index="0" name="values" type="PoolColorArray">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_indices">
+			<return type="void">
+			</return>
+			<argument index="0" name="values" type="PoolIntArray">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_normals">
+			<return type="void">
+			</return>
+			<argument index="0" name="values" type="PoolVector3Array">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_uv2s">
+			<return type="void">
+			</return>
+			<argument index="0" name="values" type="PoolVector2Array">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_uvs">
+			<return type="void">
+			</return>
+			<argument index="0" name="values" type="PoolVector2Array">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_vertices">
+			<return type="void">
+			</return>
+			<argument index="0" name="values" type="PoolVector3Array">
+			</argument>
+			<description>
+			</description>
+		</method>
 	</methods>
 	<members>
 		<member name="ao_strength" type="float" setter="set_ao_strength" getter="get_ao_strength" default="0.25">
 		</member>
 		<member name="base_light_value" type="float" setter="set_base_light_value" getter="get_base_light_value" default="0.5">
 		</member>
+		<member name="format" type="int" setter="set_format" getter="get_format" default="0">
+		</member>
 		<member name="library" type="VoxelmanLibrary" setter="set_library" getter="get_library">
 		</member>
 		<member name="lod_size" type="int" setter="set_lod_size" getter="get_lod_size" default="1">
 		</member>
 		<member name="material" type="Material" setter="set_material" getter="get_material">
+		</member>
+		<member name="mesher_index" type="int" setter="set_mesher_index" getter="get_mesher_index" default="0">
 		</member>
 		<member name="uv_margin" type="Rect2" setter="set_uv_margin" getter="get_uv_margin" default="Rect2( 0, 0, 1, 1 )">
 		</member>
