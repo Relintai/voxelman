@@ -209,6 +209,8 @@ public:
 	//free
 	void free_chunk();
 
+	void emit_build_finished();
+
 	VoxelChunkDefault();
 	~VoxelChunkDefault();
 

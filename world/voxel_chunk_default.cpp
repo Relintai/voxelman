@@ -293,7 +293,6 @@ void VoxelChunkDefault::next_phase() {
 	if (_abort_build) {
 		_current_build_phase = BUILD_PHASE_DONE;
 		_is_generating = false;
-		set_process_internal(false);
 
 		return;
 	}
@@ -303,18 +302,21 @@ void VoxelChunkDefault::next_phase() {
 	if (_current_build_phase >= _max_build_phases) {
 		_current_build_phase = BUILD_PHASE_DONE;
 		_is_generating = false;
-		set_process_internal(false);
 
-		emit_signal("mesh_generation_finished", this);
-
-		if (_voxel_world != NULL) {
-			_voxel_world->on_chunk_mesh_generation_finished(this);
-		}
+		call_deferred("emit_build_finished");
 	}
 }
 
 void VoxelChunkDefault::clear() {
 	_voxel_lights.clear();
+}
+
+void VoxelChunkDefault::emit_build_finished() {
+	emit_signal("mesh_generation_finished", this);
+
+	if (_voxel_world != NULL) {
+		_voxel_world->on_chunk_mesh_generation_finished(this);
+	}
 }
 
 void VoxelChunkDefault::create_colliders() {
@@ -1069,6 +1071,10 @@ void VoxelChunkDefault::_notification(int p_what) {
 
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
+			if (!get_is_generating()) {
+				set_process_internal(false);
+			}
+
 			if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
 				return;
 			}
