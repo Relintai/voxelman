@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlockVoxelStructure" inherits="VoxelStructure" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_voxel" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<argument index="3" name="channel_index" type="int" default="0">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_voxel_data" qualifiers="const">
+			<return type="PoolByteArray">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_voxel">
+			<return type="void">
+			</return>
+			<argument index="0" name="value" type="int">
+			</argument>
+			<argument index="1" name="x" type="int">
+			</argument>
+			<argument index="2" name="y" type="int">
+			</argument>
+			<argument index="3" name="z" type="int">
+			</argument>
+			<argument index="4" name="channel_index" type="int" default="0">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_voxel_data">
+			<return type="void">
+			</return>
+			<argument index="0" name="arr" type="PoolByteArray">
+			</argument>
+			<argument index="1" name="x" type="int">
+			</argument>
+			<argument index="2" name="y" type="int">
+			</argument>
+			<argument index="3" name="z" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="channel_count" type="int" setter="set_channel_count" getter="get_channel_count" default="0">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

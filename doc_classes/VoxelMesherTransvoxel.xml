@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelMesherTransvoxel" inherits="VoxelMesher" category="Core" version="3.2">
+<class name="VoxelMesherTransvoxel" inherits="VoxelMesher" version="3.2">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -176,6 +176,11 @@
 			</description>
 		</method>
 	</methods>
+	<members>
+		<member name="format" type="int" setter="set_format" getter="get_format" override="true" default="58" />
+		<member name="texture_scale" type="int" setter="set_texture_scale" getter="get_texture_scale" default="4">
+		</member>
+	</members>
 	<constants>
 		<constant name="VOXEL_ENTRY_INDEX_000" value="0" enum="VoxelEntryIndices">
 		</constant>
