@@ -169,7 +169,7 @@ void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
 				get_voxel_type_array(type_arr, chunk, x, y, z, lod_size);
 				int case_code = get_case_code_from_arr(type_arr);
 
-				if (case_code == 0 or case_code == 255) {
+				if (case_code == 0 || case_code == 255) {
 					continue;
 				}
 
