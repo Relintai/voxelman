@@ -1240,6 +1240,8 @@ void VoxelChunkDefault::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("free_chunk"), &VoxelChunkDefault::free_chunk);
 
+	ClassDB::bind_method(D_METHOD("emit_build_finished"), &VoxelChunkDefault::emit_build_finished);
+
 	BIND_VMETHOD(MethodInfo("_draw_debug_voxel_lights", PropertyInfo(Variant::OBJECT, "debug_drawer", PROPERTY_HINT_RESOURCE_TYPE, "ImmediateGeometry")));
 
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels", "max"), &VoxelChunkDefault::draw_cross_voxels);
