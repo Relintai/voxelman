@@ -608,12 +608,22 @@ void VoxelChunkDefault::draw_debug_voxel_lights() {
 	_debug_drawer->end();
 }
 
-void VoxelChunkDefault::set_visibility(bool visible) {
-	if (get_mesh_instance_rid() != RID())
-		VS::get_singleton()->instance_set_visible(get_mesh_instance_rid(), is_visible_in_tree());
+void VoxelChunkDefault::visibility_changed(bool visible) {
+	call("visibility_changed", visible);
+}
 
-	if (get_prop_mesh_instance_rid() != RID())
-		VS::get_singleton()->instance_set_visible(get_prop_mesh_instance_rid(), is_visible_in_tree());
+void VoxelChunkDefault::_visibility_changed(bool visible) {
+	if (_mesh_instance_rid != RID())
+		VS::get_singleton()->instance_set_visible(_mesh_instance_rid, visible);
+
+	if (_prop_mesh_instance_rid != RID())
+		VS::get_singleton()->instance_set_visible(_prop_mesh_instance_rid, visible);
+
+	if (_liquid_mesh_instance_rid != RID())
+		VS::get_singleton()->instance_set_visible(_liquid_mesh_instance_rid, visible);
+
+	if (_clutter_mesh_instance_rid != RID())
+		VS::get_singleton()->instance_set_visible(_clutter_mesh_instance_rid, visible);
 }
 
 void VoxelChunkDefault::free_chunk() {
@@ -913,18 +923,6 @@ void VoxelChunkDefault::_build_phase(int phase) {
 		}
 		*/
 		case BUILD_PHASE_FINALIZE: {
-			if (_mesh_instance_rid != RID())
-				VS::get_singleton()->instance_set_visible(_mesh_instance_rid, is_visible());
-
-			if (_prop_mesh_instance_rid != RID())
-				VS::get_singleton()->instance_set_visible(_prop_mesh_instance_rid, is_visible());
-
-			if (_liquid_mesh_instance_rid != RID())
-				VS::get_singleton()->instance_set_visible(_liquid_mesh_instance_rid, is_visible());
-
-			if (_clutter_mesh_instance_rid != RID())
-				VS::get_singleton()->instance_set_visible(_clutter_mesh_instance_rid, is_visible());
-
 			update_transforms();
 
 			next_phase();
@@ -1048,9 +1046,8 @@ void VoxelChunkDefault::_build(bool immediate) {
 void VoxelChunkDefault::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_VISIBILITY_CHANGED: {
-			if (is_inside_tree()) {
-				set_visibility(is_visible_in_tree());
-			}
+			if (is_inside_tree())
+				visibility_changed(is_visible_in_tree());
 		}
 		case NOTIFICATION_ENTER_TREE: {
 			set_notify_transform(true);
@@ -1261,7 +1258,9 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_create_meshers"), &VoxelChunkDefault::_create_meshers);
 	ClassDB::bind_method(D_METHOD("_build", "immediate"), &VoxelChunkDefault::_build);
 
-	//ClassDB::bind_method(D_METHOD("set_visibility", "visible"), &VoxelChunkDefault::set_visibility);
+	BIND_VMETHOD(MethodInfo("_visibility_changed", PropertyInfo(Variant::BOOL, "visible")));
+	ClassDB::bind_method(D_METHOD("visibility_changed", "visible"), &VoxelChunkDefault::visibility_changed);
+	ClassDB::bind_method(D_METHOD("_visibility_changed", "visible"), &VoxelChunkDefault::_visibility_changed);
 
 	BIND_CONSTANT(BUILD_PHASE_DONE);
 	BIND_CONSTANT(BUILD_PHASE_SETUP);

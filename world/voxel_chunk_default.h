@@ -204,7 +204,7 @@ public:
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
 
-	void set_visibility(bool visible);
+	void visibility_changed(bool visible);
 
 	//free
 	void free_chunk();
@@ -224,6 +224,7 @@ protected:
 	virtual void _clear_baked_lights();
 	virtual void _create_meshers();
 	virtual void _build(bool immediate);
+	virtual void _visibility_changed(bool visible);
 
 	void wait_and_finish_thread();
 
