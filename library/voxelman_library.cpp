@@ -24,32 +24,200 @@ SOFTWARE.
 
 #include "../props/prop_data.h"
 
-Ref<Material> VoxelmanLibrary::get_material() const {
-	return _material;
-}
-void VoxelmanLibrary::set_material(Ref<Material> mat) {
-	_material = mat;
+//Materials
+Ref<Material> VoxelmanLibrary::get_material(const int index) {
+	ERR_FAIL_INDEX_V(index, _materials.size(), Ref<VoxelSurface>(NULL));
+
+	return _materials[index];
 }
 
-Ref<Material> VoxelmanLibrary::get_prop_material() const {
-	return _prop_material;
-}
-void VoxelmanLibrary::set_prop_material(Ref<Material> mat) {
-	_prop_material = mat;
+void VoxelmanLibrary::add_material(const Ref<Material> &value) {
+	ERR_FAIL_COND(!value.is_valid());
+
+	_materials.push_back(value);
 }
 
-Ref<Material> VoxelmanLibrary::get_liquid_material() const {
-	return _liquid_material;
-}
-void VoxelmanLibrary::set_liquid_material(Ref<Material> mat) {
-	_liquid_material = mat;
+void VoxelmanLibrary::set_material(const int index, const Ref<Material> &value) {
+	ERR_FAIL_INDEX(index, _materials.size());
+
+	_materials.set(index, value);
 }
 
-Ref<Material> VoxelmanLibrary::get_clutter_material() const {
-	return _clutter_material;
+void VoxelmanLibrary::remove_material(const int index) {
+	_materials.remove(index);
 }
-void VoxelmanLibrary::set_clutter_material(Ref<Material> mat) {
-	_clutter_material = mat;
+
+int VoxelmanLibrary::get_num_materials() const {
+	return _materials.size();
+}
+
+void VoxelmanLibrary::clear_materials() {
+	_materials.clear();
+}
+
+Vector<Variant> VoxelmanLibrary::get_materials() {
+	Vector<Variant> r;
+	for (int i = 0; i < _materials.size(); i++) {
+		r.push_back(_materials[i].get_ref_ptr());
+	}
+	return r;
+}
+
+void VoxelmanLibrary::set_materials(const Vector<Variant> &materials) {
+	_materials.clear();
+
+	for (int i = 0; i < materials.size(); i++) {
+		Ref<Material> material = Ref<Material>(materials[i]);
+
+		_materials.push_back(material);
+	}
+}
+
+//Prop Materials
+Ref<Material> VoxelmanLibrary::get_prop_material(const int index) {
+	ERR_FAIL_INDEX_V(index, _prop_materials.size(), Ref<VoxelSurface>(NULL));
+
+	return _prop_materials[index];
+}
+
+void VoxelmanLibrary::add_prop_material(const Ref<Material> &value) {
+	ERR_FAIL_COND(!value.is_valid());
+
+	_prop_materials.push_back(value);
+}
+
+void VoxelmanLibrary::set_prop_material(const int index, const Ref<Material> &value) {
+	ERR_FAIL_INDEX(index, _prop_materials.size());
+
+	_prop_materials.set(index, value);
+}
+
+void VoxelmanLibrary::remove_prop_material(const int index) {
+	_prop_materials.remove(index);
+}
+
+int VoxelmanLibrary::get_num_prop_materials() const {
+	return _prop_materials.size();
+}
+
+void VoxelmanLibrary::clear_prop_materials() {
+	_prop_materials.clear();
+}
+
+Vector<Variant> VoxelmanLibrary::get_prop_materials() {
+	Vector<Variant> r;
+	for (int i = 0; i < _prop_materials.size(); i++) {
+		r.push_back(_prop_materials[i].get_ref_ptr());
+	}
+	return r;
+}
+
+void VoxelmanLibrary::set_prop_materials(const Vector<Variant> &materials) {
+	_prop_materials.clear();
+
+	for (int i = 0; i < materials.size(); i++) {
+		Ref<Material> material = Ref<Material>(materials[i]);
+
+		_prop_materials.push_back(material);
+	}
+}
+
+//Liquid Materials
+Ref<Material> VoxelmanLibrary::get_liquid_material(const int index) {
+	ERR_FAIL_INDEX_V(index, _liquid_materials.size(), Ref<VoxelSurface>(NULL));
+
+	return _liquid_materials[index];
+}
+
+void VoxelmanLibrary::add_liquid_material(const Ref<Material> &value) {
+	ERR_FAIL_COND(!value.is_valid());
+
+	_liquid_materials.push_back(value);
+}
+
+void VoxelmanLibrary::set_liquid_material(const int index, const Ref<Material> &value) {
+	ERR_FAIL_INDEX(index, _liquid_materials.size());
+
+	_liquid_materials.set(index, value);
+}
+
+void VoxelmanLibrary::remove_liquid_material(const int index) {
+	_liquid_materials.remove(index);
+}
+
+int VoxelmanLibrary::get_num_liquid_materials() const {
+	return _liquid_materials.size();
+}
+
+void VoxelmanLibrary::clear_liquid_materials() {
+	_liquid_materials.clear();
+}
+
+Vector<Variant> VoxelmanLibrary::get_liquid_materials() {
+	Vector<Variant> r;
+	for (int i = 0; i < _liquid_materials.size(); i++) {
+		r.push_back(_liquid_materials[i].get_ref_ptr());
+	}
+	return r;
+}
+
+void VoxelmanLibrary::set_liquid_materials(const Vector<Variant> &materials) {
+	_liquid_materials.clear();
+
+	for (int i = 0; i < materials.size(); i++) {
+		Ref<Material> material = Ref<Material>(materials[i]);
+
+		_liquid_materials.push_back(material);
+	}
+}
+
+//Clutter Materials
+Ref<Material> VoxelmanLibrary::get_clutter_material(const int index) {
+	ERR_FAIL_INDEX_V(index, _clutter_materials.size(), Ref<VoxelSurface>(NULL));
+
+	return _clutter_materials[index];
+}
+
+void VoxelmanLibrary::add_clutter_material(const Ref<Material> &value) {
+	ERR_FAIL_COND(!value.is_valid());
+
+	_clutter_materials.push_back(value);
+}
+
+void VoxelmanLibrary::set_clutter_material(const int index, const Ref<Material> &value) {
+	ERR_FAIL_INDEX(index, _clutter_materials.size());
+
+	_clutter_materials.set(index, value);
+}
+
+void VoxelmanLibrary::remove_clutter_material(const int index) {
+	_clutter_materials.remove(index);
+}
+
+int VoxelmanLibrary::get_num_clutter_materials() const {
+	return _clutter_materials.size();
+}
+
+void VoxelmanLibrary::clear_clutter_materials() {
+	_clutter_materials.clear();
+}
+
+Vector<Variant> VoxelmanLibrary::get_clutter_materials() {
+	Vector<Variant> r;
+	for (int i = 0; i < _clutter_materials.size(); i++) {
+		r.push_back(_clutter_materials[i].get_ref_ptr());
+	}
+	return r;
+}
+
+void VoxelmanLibrary::set_clutter_materials(const Vector<Variant> &materials) {
+	_clutter_materials.clear();
+
+	for (int i = 0; i < materials.size(); i++) {
+		Ref<Material> material = Ref<Material>(materials[i]);
+
+		_clutter_materials.push_back(material);
+	}
 }
 
 //Surfaces
@@ -58,7 +226,7 @@ Ref<VoxelSurface> VoxelmanLibrary::get_voxel_surface(const int index) {
 }
 void VoxelmanLibrary::add_voxel_surface(Ref<VoxelSurface> value) {
 }
-void VoxelmanLibrary::set_voxel_surface(const int index, Ref<VoxelSurface> value) {
+void VoxelmanLibrary::set_voxel_surface(int index, Ref<VoxelSurface> value) {
 }
 void VoxelmanLibrary::remove_surface(const int index) {
 }
@@ -74,7 +242,7 @@ Ref<VoxelSurface> VoxelmanLibrary::get_liquid_surface(const int index) {
 }
 void VoxelmanLibrary::add_liquid_surface(Ref<VoxelSurface> value) {
 }
-void VoxelmanLibrary::set_liquid_surface(const int index, Ref<VoxelSurface> value) {
+void VoxelmanLibrary::set_liquid_surface(int index, Ref<VoxelSurface> value) {
 }
 void VoxelmanLibrary::remove_liquid_surface(const int index) {
 }
@@ -89,7 +257,7 @@ Ref<PropData> VoxelmanLibrary::get_prop(const int id) {
 }
 void VoxelmanLibrary::add_prop(Ref<PropData> value) {
 }
-void VoxelmanLibrary::set_prop(const int id, Ref<PropData> value) {
+void VoxelmanLibrary::set_prop(int id, Ref<PropData> value) {
 }
 void VoxelmanLibrary::remove_prop(const int id) {
 }
@@ -112,30 +280,58 @@ VoxelmanLibrary::VoxelmanLibrary() {
 }
 
 VoxelmanLibrary::~VoxelmanLibrary() {
-	_material.unref();
-	_prop_material.unref();
-	_liquid_material.unref();
-	_clutter_material.unref();
+	_materials.clear();
+	_prop_materials.clear();
+	_liquid_materials.clear();
+	_clutter_materials.clear();
 }
 
 void VoxelmanLibrary::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_setup_material_albedo", PropertyInfo(Variant::INT, "material_index"), PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture")));
 
-	ClassDB::bind_method(D_METHOD("get_material"), &VoxelmanLibrary::get_material);
-	ClassDB::bind_method(D_METHOD("set_material", "value"), &VoxelmanLibrary::set_material);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
+	ClassDB::bind_method(D_METHOD("get_material", "index"), &VoxelmanLibrary::get_material);
+	ClassDB::bind_method(D_METHOD("add_material", "value"), &VoxelmanLibrary::add_material);
+	ClassDB::bind_method(D_METHOD("set_material", "index", "value"), &VoxelmanLibrary::set_material);
+	ClassDB::bind_method(D_METHOD("remove_material", "index"), &VoxelmanLibrary::remove_material);
+	ClassDB::bind_method(D_METHOD("get_num_materials"), &VoxelmanLibrary::get_num_materials);
+	ClassDB::bind_method(D_METHOD("clear_materials"), &VoxelmanLibrary::clear_materials);
 
-	ClassDB::bind_method(D_METHOD("get_prop_material"), &VoxelmanLibrary::get_prop_material);
-	ClassDB::bind_method(D_METHOD("set_prop_material", "value"), &VoxelmanLibrary::set_prop_material);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop_material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_prop_material", "get_prop_material");
+	ClassDB::bind_method(D_METHOD("get_materials"), &VoxelmanLibrary::get_materials);
+	ClassDB::bind_method(D_METHOD("set_materials"), &VoxelmanLibrary::set_materials);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "materials", PROPERTY_HINT_NONE, "17/17:Material", PROPERTY_USAGE_DEFAULT, "Material"), "set_materials", "get_materials");
 
-	ClassDB::bind_method(D_METHOD("get_liquid_material"), &VoxelmanLibrary::get_liquid_material);
-	ClassDB::bind_method(D_METHOD("set_liquid_material", "value"), &VoxelmanLibrary::set_liquid_material);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "liquid_material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_liquid_material", "get_liquid_material");
+	ClassDB::bind_method(D_METHOD("get_prop_material", "index"), &VoxelmanLibrary::get_prop_material);
+	ClassDB::bind_method(D_METHOD("add_prop_material", "value"), &VoxelmanLibrary::add_prop_material);
+	ClassDB::bind_method(D_METHOD("set_prop_material", "index", "value"), &VoxelmanLibrary::set_prop_material);
+	ClassDB::bind_method(D_METHOD("remove_prop_material", "index"), &VoxelmanLibrary::remove_prop_material);
+	ClassDB::bind_method(D_METHOD("get_num_prop_materials"), &VoxelmanLibrary::get_num_prop_materials);
+	ClassDB::bind_method(D_METHOD("clear_prop_materials"), &VoxelmanLibrary::clear_prop_materials);
 
-	ClassDB::bind_method(D_METHOD("get_clutter_material"), &VoxelmanLibrary::get_clutter_material);
-	ClassDB::bind_method(D_METHOD("set_clutter_material", "value"), &VoxelmanLibrary::set_clutter_material);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "clutter_material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_clutter_material", "get_clutter_material");
+	ClassDB::bind_method(D_METHOD("get_prop_materials"), &VoxelmanLibrary::get_prop_materials);
+	ClassDB::bind_method(D_METHOD("set_prop_materials"), &VoxelmanLibrary::set_prop_materials);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "prop_materials", PROPERTY_HINT_NONE, "17/17:Material", PROPERTY_USAGE_DEFAULT, "Material"), "set_prop_materials", "get_prop_materials");
+
+	ClassDB::bind_method(D_METHOD("get_liquid_material", "index"), &VoxelmanLibrary::get_liquid_material);
+	ClassDB::bind_method(D_METHOD("add_liquid_material", "value"), &VoxelmanLibrary::add_liquid_material);
+	ClassDB::bind_method(D_METHOD("set_liquid_material", "index", "value"), &VoxelmanLibrary::set_liquid_material);
+	ClassDB::bind_method(D_METHOD("remove_liquid_material", "index"), &VoxelmanLibrary::remove_liquid_material);
+	ClassDB::bind_method(D_METHOD("get_num_liquid_materials"), &VoxelmanLibrary::get_num_liquid_materials);
+	ClassDB::bind_method(D_METHOD("clear_liquid_materials"), &VoxelmanLibrary::clear_liquid_materials);
+
+	ClassDB::bind_method(D_METHOD("get_liquid_materials"), &VoxelmanLibrary::get_liquid_materials);
+	ClassDB::bind_method(D_METHOD("set_liquid_materials"), &VoxelmanLibrary::set_liquid_materials);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "liquid_materials", PROPERTY_HINT_NONE, "17/17:Material", PROPERTY_USAGE_DEFAULT, "Material"), "set_liquid_materials", "get_liquid_materials");
+
+	ClassDB::bind_method(D_METHOD("get_clutter_material", "index"), &VoxelmanLibrary::get_clutter_material);
+	ClassDB::bind_method(D_METHOD("add_clutter_material", "value"), &VoxelmanLibrary::add_clutter_material);
+	ClassDB::bind_method(D_METHOD("set_clutter_material", "index", "value"), &VoxelmanLibrary::set_clutter_material);
+	ClassDB::bind_method(D_METHOD("remove_clutter_material", "index"), &VoxelmanLibrary::remove_clutter_material);
+	ClassDB::bind_method(D_METHOD("get_num_clutter_materials"), &VoxelmanLibrary::get_num_clutter_materials);
+	ClassDB::bind_method(D_METHOD("clear_clutter_materials"), &VoxelmanLibrary::clear_clutter_materials);
+
+	ClassDB::bind_method(D_METHOD("get_clutter_materials"), &VoxelmanLibrary::get_clutter_materials);
+	ClassDB::bind_method(D_METHOD("set_clutter_materials"), &VoxelmanLibrary::set_clutter_materials);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "clutter_materials", PROPERTY_HINT_NONE, "17/17:Material", PROPERTY_USAGE_DEFAULT, "Material"), "set_clutter_materials", "get_clutter_materials");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_surface", "index"), &VoxelmanLibrary::get_voxel_surface);
 	ClassDB::bind_method(D_METHOD("add_voxel_surface", "value"), &VoxelmanLibrary::add_voxel_surface);

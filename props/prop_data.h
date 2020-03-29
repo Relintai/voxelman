@@ -46,14 +46,14 @@ class PropData : public Resource {
 	GDCLASS(PropData, Resource);
 
 public:
-	int get_id();
-	void set_id(int value);
+	int get_id() const;
+	void set_id(const int value);
 
-	bool get_snap_to_mesh();
-	void set_snap_to_mesh(bool value);
+	bool get_snap_to_mesh() const;
+	void set_snap_to_mesh(const bool value);
 
-	Vector3 get_snap_axis();
-	void set_snap_axis(Vector3 value);
+	Vector3 get_snap_axis() const;
+	void set_snap_axis(const Vector3 &value);
 
 	Ref<PropDataEntry> get_prop(const int index) const;
 	void set_prop(const int index, const Ref<PropDataEntry> prop);

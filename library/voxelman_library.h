@@ -45,17 +45,45 @@ public:
 	};
 
 public:
-	Ref<Material> get_material() const;
-	void set_material(Ref<Material> mat);
+	Ref<Material> get_material(const int index);
+	void add_material(const Ref<Material> &value);
+	void set_material(const int index, const Ref<Material> &value);
+	void remove_material(const int index);
+	int get_num_materials() const;
+	void clear_materials();
 
-	Ref<Material> get_prop_material() const;
-	void set_prop_material(Ref<Material> mat);
+	Vector<Variant> get_materials();
+	void set_materials(const Vector<Variant> &materials);
 
-	Ref<Material> get_liquid_material() const;
-	void set_liquid_material(Ref<Material> mat);
+	Ref<Material> get_prop_material(const int index);
+	void add_prop_material(const Ref<Material> &value);
+	void set_prop_material(const int index, const Ref<Material> &value);
+	void remove_prop_material(const int index);
+	int get_num_prop_materials() const;
+	void clear_prop_materials();
 
-	Ref<Material> get_clutter_material() const;
-	void set_clutter_material(Ref<Material> mat);
+	Vector<Variant> get_prop_materials();
+	void set_prop_materials(const Vector<Variant> &materials);
+
+	Ref<Material> get_liquid_material(const int index);
+	void add_liquid_material(const Ref<Material> &value);
+	void set_liquid_material(const int index, const Ref<Material> &value);
+	void remove_liquid_material(const int index);
+	int get_num_liquid_materials() const;
+	void clear_liquid_materials();
+
+	Vector<Variant> get_liquid_materials();
+	void set_liquid_materials(const Vector<Variant> &materials);
+
+	Ref<Material> get_clutter_material(const int index);
+	void add_clutter_material(const Ref<Material> &value);
+	void set_clutter_material(const int index, const Ref<Material> &value);
+	void remove_clutter_material(const int index);
+	int get_num_clutter_materials() const;
+	void clear_clutter_materials();
+
+	Vector<Variant> get_clutter_materials();
+	void set_clutter_materials(const Vector<Variant> &materials);
 
 	virtual Ref<VoxelSurface> get_voxel_surface(const int index);
 	virtual void add_voxel_surface(Ref<VoxelSurface> value);
@@ -89,10 +117,10 @@ protected:
 	static void _bind_methods();
 
 private:
-	Ref<Material> _material;
-	Ref<Material> _prop_material;
-	Ref<Material> _liquid_material;
-	Ref<Material> _clutter_material;
+	Vector<Ref<Material> > _materials;
+	Vector<Ref<Material> > _prop_materials;
+	Vector<Ref<Material> > _liquid_materials;
+	Vector<Ref<Material> > _clutter_materials;
 };
 
 #endif // VOXEL_LIBRARY_H

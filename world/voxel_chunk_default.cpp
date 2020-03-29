@@ -781,11 +781,11 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 				if (!mesher.is_valid()) {
 					mesher = m;
-					mesher->set_material(get_library()->get_material());
+					mesher->set_material(get_library()->get_material(0));
 					continue;
 				}
 
-				mesher->set_material(get_library()->get_material());
+				mesher->set_material(get_library()->get_material(0));
 				mesher->add_mesher(m);
 			}
 
@@ -807,8 +807,8 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 			VS::get_singleton()->mesh_add_surface_from_arrays(_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-			if (_library->get_material().is_valid())
-				VS::get_singleton()->mesh_surface_set_material(_mesh_rid, 0, _library->get_material()->get_rid());
+			if (_library->get_material(0).is_valid())
+				VS::get_singleton()->mesh_surface_set_material(_mesh_rid, 0, _library->get_material(0)->get_rid());
 
 			next_phase();
 
@@ -834,7 +834,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 					ERR_CONTINUE(!mesher.is_valid());
 
 					mesher->bake_colors(this);
-					mesher->set_material(get_library()->get_material());
+					mesher->set_material(get_library()->get_material(0));
 
 					ERR_FAIL_COND(_prop_mesh_rid == RID());
 
@@ -849,8 +849,8 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 					VS::get_singleton()->mesh_add_surface_from_arrays(_prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
 
-					if (_library->get_material().is_valid())
-						VS::get_singleton()->mesh_surface_set_material(_prop_mesh_rid, 0, _library->get_material()->get_rid());
+					if (_library->get_material(0).is_valid())
+						VS::get_singleton()->mesh_surface_set_material(_prop_mesh_rid, 0, _library->get_material(0)->get_rid());
 				}
 			}
 

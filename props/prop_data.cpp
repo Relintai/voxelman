@@ -25,24 +25,24 @@ SOFTWARE.
 #include "../world/voxel_chunk.h"
 #include "prop_data_prop.h"
 
-int PropData::get_id() {
+int PropData::get_id() const {
 	return _id;
 }
-void PropData::set_id(int value) {
+void PropData::set_id(const int value) {
 	_id = value;
 }
 
-bool PropData::get_snap_to_mesh() {
+bool PropData::get_snap_to_mesh() const {
 	return _snap_to_mesh;
 }
-void PropData::set_snap_to_mesh(bool value) {
+void PropData::set_snap_to_mesh(const bool value) {
 	_snap_to_mesh = value;
 }
 
-Vector3 PropData::get_snap_axis() {
+Vector3 PropData::get_snap_axis() const {
 	return _snap_axis;
 }
-void PropData::set_snap_axis(Vector3 value) {
+void PropData::set_snap_axis(const Vector3 &value) {
 	_snap_axis = value;
 }
 

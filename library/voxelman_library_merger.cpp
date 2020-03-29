@@ -384,47 +384,67 @@ void VoxelmanLibraryMerger::refresh_rects() {
 void VoxelmanLibraryMerger::_setup_material_albedo(int material_index, Ref<Texture> texture) {
 	Ref<SpatialMaterial> mat;
 
-	switch (material_index) {
-		case MATERIAL_INDEX_VOXELS:
-			mat = get_material();
-			break;
-		case MATERIAL_INDEX_PROP:
-			mat = get_prop_material();
-			break;
-		case MATERIAL_INDEX_LIQUID:
-			mat = get_liquid_material();
-			break;
-		case MATERIAL_INDEX_CLUTTER:
-			mat = get_clutter_material();
-			break;
-	}
-
-	Ref<SpatialMaterial> spmat;
-
-	if (spmat.is_valid()) {
-		spmat->set_texture(SpatialMaterial::TEXTURE_ALBEDO, texture);
-		return;
-	}
-
-	Ref<ShaderMaterial> shmat;
+	int count = 0;
 
 	switch (material_index) {
 		case MATERIAL_INDEX_VOXELS:
-			shmat = get_material();
+			count = get_num_materials();
 			break;
 		case MATERIAL_INDEX_PROP:
-			shmat = get_prop_material();
+			count = get_num_prop_materials();
 			break;
 		case MATERIAL_INDEX_LIQUID:
-			shmat = get_liquid_material();
+			count = get_num_liquid_materials();
 			break;
 		case MATERIAL_INDEX_CLUTTER:
-			shmat = get_clutter_material();
+			count = get_num_clutter_materials();
 			break;
 	}
 
-	if (shmat.is_valid()) {
-		shmat->set_shader_param("texture_albedo", texture);
+	for (int i = 0; i < count; ++i) {
+
+		switch (material_index) {
+			case MATERIAL_INDEX_VOXELS:
+				mat = get_material(i);
+				break;
+			case MATERIAL_INDEX_PROP:
+				mat = get_prop_material(i);
+				break;
+			case MATERIAL_INDEX_LIQUID:
+				mat = get_liquid_material(i);
+				break;
+			case MATERIAL_INDEX_CLUTTER:
+				mat = get_clutter_material(i);
+				break;
+		}
+
+		Ref<SpatialMaterial> spmat;
+
+		if (spmat.is_valid()) {
+			spmat->set_texture(SpatialMaterial::TEXTURE_ALBEDO, texture);
+			return;
+		}
+
+		Ref<ShaderMaterial> shmat;
+
+		switch (material_index) {
+			case MATERIAL_INDEX_VOXELS:
+				shmat = get_material(i);
+				break;
+			case MATERIAL_INDEX_PROP:
+				shmat = get_prop_material(i);
+				break;
+			case MATERIAL_INDEX_LIQUID:
+				shmat = get_liquid_material(i);
+				break;
+			case MATERIAL_INDEX_CLUTTER:
+				shmat = get_clutter_material(i);
+				break;
+		}
+
+		if (shmat.is_valid()) {
+			shmat->set_shader_param("texture_albedo", texture);
+		}
 	}
 }
 
