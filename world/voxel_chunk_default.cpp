@@ -101,6 +101,48 @@ void VoxelChunkDefault::set_bake_lights(bool value) {
 	_bake_lights = value;
 }
 
+bool VoxelChunkDefault::get_generate_lod() const {
+	return _generate_lod;
+}
+void VoxelChunkDefault::set_generate_lod(const bool value) {
+	_generate_lod = value;
+}
+
+int VoxelChunkDefault::get_lod_num() const {
+	return _lod_num;
+}
+void VoxelChunkDefault::set_lod_num(const int value) {
+	_lod_num = value;
+}
+
+int VoxelChunkDefault::get_current_lod_level() const {
+	return _current_lod_level;
+}
+void VoxelChunkDefault::set_current_lod_level(const int value) {
+	_current_lod_level = value;
+
+	if (!_generate_lod)
+		return;
+
+	if (_current_lod_level < 0)
+		_current_lod_level = 0;
+
+	if (_current_lod_level > _lod_num)
+		_current_lod_level = _lod_num;
+
+	for (int i = 0; i < _lod_num + 1; ++i) {
+		bool vis = false;
+
+		if (i == _current_lod_level)
+			vis = true;
+
+		RID rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+
+		if (rid != RID())
+			VisualServer::get_singleton()->instance_set_visible(rid, vis);
+	}
+}
+
 //Data Management functions
 void VoxelChunkDefault::generate_ao() {
 	ERR_FAIL_COND(_data_size_x == 0 || _data_size_y == 0 || _data_size_z == 0);
@@ -488,6 +530,9 @@ void VoxelChunkDefault::create_meshes(const int mesh_index, const int mesh_count
 
 		VS::get_singleton()->instance_set_transform(mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
 
+		if (i != 0)
+			VS::get_singleton()->instance_set_visible(mesh_instance_rid, false);
+
 		am.push_back(mesh_rid);
 		ami.push_back(mesh_instance_rid);
 	}
@@ -743,19 +788,17 @@ void VoxelChunkDefault::visibility_changed(bool visible) {
 }
 
 void VoxelChunkDefault::_visibility_changed(bool visible) {
-	/* needs LOD support
-	if (_mesh_instance_rid != RID())
-		VS::get_singleton()->instance_set_visible(_mesh_instance_rid, visible);
+	if (visible) {
+		set_current_lod_level(_current_lod_level);
+		return;
+	}
 
-	if (_prop_mesh_instance_rid != RID())
-		VS::get_singleton()->instance_set_visible(_prop_mesh_instance_rid, visible);
+	for (int i = 0; i < _lod_num + 1; ++i) {
+		RID rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
-	if (_liquid_mesh_instance_rid != RID())
-		VS::get_singleton()->instance_set_visible(_liquid_mesh_instance_rid, visible);
-
-	if (_clutter_mesh_instance_rid != RID())
-		VS::get_singleton()->instance_set_visible(_clutter_mesh_instance_rid, visible);
-		*/
+		if (rid != RID())
+			VisualServer::get_singleton()->instance_set_visible(rid, false);
+	}
 }
 
 void VoxelChunkDefault::free_chunk() {
@@ -804,6 +847,10 @@ VoxelChunkDefault::VoxelChunkDefault() {
 	_build_step_in_progress = false;
 
 	_active_build_phase_type = BUILD_PHASE_TYPE_NORMAL;
+
+	_generate_lod = true;
+	_lod_num = 3;
+	_current_lod_level = 0;
 }
 
 VoxelChunkDefault::~VoxelChunkDefault() {
@@ -940,7 +987,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			Array temp_mesh_arr = mesher->build_mesh();
 
 			if (mesh_rid == RID()) {
-				create_meshes(MESH_INDEX_TERRARIN, 4); //TODO LOD
+				create_meshes(MESH_INDEX_TERRARIN, _lod_num + 1);
 				mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
 			}
 
@@ -948,6 +995,63 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 			if (_library->get_material(0).is_valid())
 				VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_material(0)->get_rid());
+
+			if (_generate_lod) {
+				if (_lod_num >= 1) {
+					//for lod 1 just remove uv2
+					temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
+
+					VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+					if (get_library()->get_material(1).is_valid())
+						VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 1), 0, get_library()->get_material(1)->get_rid());
+				}
+
+				if (_lod_num >= 2) {
+					Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
+
+					VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
+
+					if (get_library()->get_material(2).is_valid())
+						VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 2), 0, get_library()->get_material(2)->get_rid());
+				}
+
+				if (_lod_num >= 3) {
+					Ref<ShaderMaterial> mat = get_library()->get_material(0);
+					Ref<Texture> tex = mat->get_shader_param("texture_albedo");
+
+					temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
+					temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
+
+					VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+					if (get_library()->get_material(3).is_valid())
+						VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), 0, get_library()->get_material(3)->get_rid());
+				}
+
+				/*
+				if (_lod_num > 4) {
+					Ref<FastQuadraticMeshSimplifier> fqms;
+					fqms.instance();
+					fqms->initialize(temp_mesh_arr);
+
+					Array arr_merged_simplified;
+
+					for (int i = 4; i < _lod_num; ++i) {
+						fqms->simplify_mesh(arr_merged_simplified[0].size() * 0.8, 7);
+						arr_merged_simplified = fqms->get_arrays();
+
+						if (arr_merged_simplified[0].size() == 0)
+							break;
+
+						VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, i), VisualServer::PRIMITIVE_TRIANGLES, arr_merged_simplified);
+
+						if (get_library()->get_material(i).is_valid())
+							VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, i), 0, get_library()->get_material(i)->get_rid());
+					}
+				}
+				*/
+			}
 
 			next_phase();
 
@@ -1301,6 +1405,18 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("meshing_get_bake_lights"), &VoxelChunkDefault::get_bake_lights);
 	ClassDB::bind_method(D_METHOD("meshing_set_bake_lights", "value"), &VoxelChunkDefault::set_bake_lights);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "meshing_bake_lights"), "meshing_set_bake_lights", "meshing_get_bake_lights");
+
+	ClassDB::bind_method(D_METHOD("get_generate_lod"), &VoxelChunkDefault::get_generate_lod);
+	ClassDB::bind_method(D_METHOD("set_generate_lod"), &VoxelChunkDefault::set_generate_lod);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "generate_lod"), "set_generate_lod", "get_generate_lod");
+
+	ClassDB::bind_method(D_METHOD("get_lod_num"), &VoxelChunkDefault::get_lod_num);
+	ClassDB::bind_method(D_METHOD("set_lod_num"), &VoxelChunkDefault::set_lod_num);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_num"), "set_lod_num", "get_lod_num");
+
+	ClassDB::bind_method(D_METHOD("get_current_lod_level"), &VoxelChunkDefault::get_current_lod_level);
+	ClassDB::bind_method(D_METHOD("set_current_lod_level"), &VoxelChunkDefault::set_current_lod_level);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_lod_level"), "set_current_lod_level", "get_current_lod_level");
 
 	//Voxel Data
 

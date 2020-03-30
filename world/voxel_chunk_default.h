@@ -152,6 +152,16 @@ public:
 	bool get_bake_lights() const;
 	void set_bake_lights(bool value);
 
+	//Lod
+	bool get_generate_lod() const;
+	void set_generate_lod(const bool value);
+
+	int get_lod_num() const;
+	void set_lod_num(const int value);
+
+	int get_current_lod_level() const;
+	void set_current_lod_level(const int value);
+
 	//Data Management functions
 	void generate_ao();
 
@@ -243,6 +253,11 @@ protected:
 	bool _enabled;
 
 	int _lod_size;
+
+	//lod
+	bool _generate_lod;
+	int _lod_num;
+	int _current_lod_level;
 
 	//Meshes
 	Dictionary _rids;
