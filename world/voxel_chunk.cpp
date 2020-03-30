@@ -486,7 +486,7 @@ Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_colo
 
 		Color c = img->get_pixelv(uv);
 
-		colors[i] = colors[i] * c * mul_color;
+		colors.set(i, colors[i] * c * mul_color);
 	}
 
 	img->unlock();
