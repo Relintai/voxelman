@@ -30,6 +30,7 @@ SOFTWARE.
 class PropToolScene : public Spatial {
 	GDCLASS(PropToolScene, Spatial);
 
+#ifdef TOOLS_ENABLED
 public:
 	Ref<PropDataScene> get_data();
 	void set_data(const Ref<PropDataScene> &data);
@@ -54,6 +55,7 @@ private:
 	bool _snap_to_mesh;
 	Vector3 _snap_axis;
 	Ref<PropDataScene> _prop_scene;
+#endif
 };
 
 #endif

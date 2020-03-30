@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "prop_tool_scene.h"
 
+#ifdef TOOLS_ENABLED
+
 Ref<PropDataScene> PropToolScene::get_data() {
 	if (!is_visible() || !_scene_data.is_valid())
 		return Ref<PropDataScene>();
@@ -93,3 +95,5 @@ void PropToolScene::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_scene_data", "value"), &PropToolScene::set_scene_data);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "scene_data", PROPERTY_HINT_RESOURCE_TYPE, "PackedScene"), "set_scene_data", "get_scene_data");
 }
+
+#endif

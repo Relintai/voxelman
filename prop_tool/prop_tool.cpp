@@ -1,5 +1,7 @@
 #include "prop_tool.h"
 
+#ifdef TOOLS_ENABLED
+
 #include "../props/prop_data.h"
 #include "../props/prop_data_entity.h"
 #include "../props/prop_data_light.h"
@@ -207,3 +209,5 @@ PropTool::~PropTool() {
 
 void PropTool::_bind_methods() {
 }
+
+#endif

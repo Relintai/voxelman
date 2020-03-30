@@ -23,19 +23,10 @@ SOFTWARE.
 #ifndef PROP_TOOL_EDITOR_PLUGIN_H
 #define PROP_TOOL_EDITOR_PLUGIN_H
 
+#include "editor/editor_node.h"
 #include "editor/editor_plugin.h"
-#include "editor/pane_drag.h"
 
-#include "scene/gui/graph_edit.h"
-#include "scene/gui/menu_button.h"
-#include "scene/main/viewport.h"
-
-#include "../props/prop_data.h"
-
-#include "scene/gui/viewport_container.h"
-
-#include "editor/plugins/spatial_editor_plugin.h"
-
+class PropData;
 class PropTool;
 
 class PropToolEditorPlugin : public EditorPlugin {

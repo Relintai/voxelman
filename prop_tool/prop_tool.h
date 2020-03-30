@@ -37,6 +37,7 @@ class PropToolEditorPlugin;
 class PropTool : public Spatial {
 	GDCLASS(PropTool, Spatial);
 
+#ifdef TOOLS_ENABLED
 public:
 	void edit(const Ref<PropData> &prop);
 
@@ -64,6 +65,7 @@ private:
 	bool _snap_to_mesh;
 	Vector3 _snap_axis;
 	PropToolEditorPlugin *_plugin;
+#endif
 };
 
 #endif

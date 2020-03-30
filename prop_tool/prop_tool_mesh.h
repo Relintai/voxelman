@@ -31,6 +31,7 @@ SOFTWARE.
 class PropToolMesh : public MeshInstance {
 	GDCLASS(PropToolMesh, MeshInstance);
 
+#ifdef TOOLS_ENABLED
 public:
 	Ref<MeshDataResource> get_mesh_data();
 	void set_mesh_data(const Ref<MeshDataResource> &data);
@@ -68,6 +69,7 @@ private:
 	Ref<SpatialMaterial> _material;
 	bool _snap_to_mesh;
 	Vector3 _snap_axis;
+#endif
 };
 
 #endif

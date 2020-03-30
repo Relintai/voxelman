@@ -35,6 +35,7 @@ class propData;
 class PropToolLight : public OmniLight {
 	GDCLASS(PropToolLight, OmniLight);
 
+#ifdef TOOLS_ENABLED
 public:
 	Ref<PropDataLight> get_data();
 	void set_data(const Ref<PropDataLight> &data);
@@ -51,6 +52,7 @@ protected:
 private:
 	Ref<PropDataLight> _prop_light;
 	bool _snap_to_mesh;
+#endif
 };
 
 #endif

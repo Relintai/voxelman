@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "prop_tool_mesh.h"
 
+#ifdef TOOLS_ENABLED
+
 Ref<MeshDataResource> PropToolMesh::get_mesh_data() {
 	return _mesh_data;
 }
@@ -177,3 +179,5 @@ void PropToolMesh::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_generate"), &PropToolMesh::set_generate);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "generate"), "set_generate", "get_generate");
 }
+
+#endif

@@ -64,8 +64,12 @@ sources = [
     "prop_tool/prop_tool_scene.cpp",
     "prop_tool/prop_tool_light.cpp",
     "prop_tool/prop_tool_mesh.cpp",
-    "prop_tool/prop_tool_editor_plugin.cpp",
+    
+    
 ]
+
+if env['tools']:
+    sources.append("prop_tool/prop_tool_editor_plugin.cpp")
 
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
     # Shared lib compilation

@@ -25,13 +25,18 @@ SOFTWARE.
 #include "core/os/dir_access.h"
 #include "core/os/file_access.h"
 #include "editor/editor_scale.h"
+#include "editor/editor_settings.h"
 #include "scene/resources/packed_scene.h"
+
+#include "../props/prop_data.h"
 
 #include "prop_tool.h"
 #include "prop_tool_entity.h"
 #include "prop_tool_light.h"
 #include "prop_tool_mesh.h"
 #include "prop_tool_scene.h"
+
+#include "editor/plugins/spatial_editor_plugin.h"
 
 void PropToolEditorPlugin::edit(Object *p_object) {
 	Ref<PropData> pedited_prop(Object::cast_to<PropData>(p_object));

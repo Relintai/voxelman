@@ -31,6 +31,7 @@ SOFTWARE.
 class PropToolProp : public Spatial {
 	GDCLASS(PropToolProp, Spatial);
 
+#ifdef TOOLS_ENABLED
 public:
 	Ref<PropDataProp> get_data();
 	void set_data(const Ref<PropDataProp> &data);
@@ -55,6 +56,7 @@ private:
 	bool _snap_to_mesh;
 	Vector3 _snap_axis;
 	Ref<PropDataProp> _prop_prop;
+#endif
 };
 
 #endif

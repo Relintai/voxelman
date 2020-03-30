@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "prop_tool_prop.h"
 
+#ifdef TOOLS_ENABLED
+
 Ref<PropDataProp> PropToolProp::get_data() {
 	if (!is_visible() || !_prop_data.is_valid())
 		return Ref<PropDataProp>();
@@ -93,3 +95,5 @@ void PropToolProp::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_prop_data", "value"), &PropToolProp::set_prop_data);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop_data", PROPERTY_HINT_RESOURCE_TYPE, "PropData"), "set_prop_data", "get_prop_data");
 }
+
+#endif

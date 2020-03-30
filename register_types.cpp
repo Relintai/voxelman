@@ -67,12 +67,15 @@ SOFTWARE.
 #include "world/voxel_world_editor.h"
 
 #include "prop_tool/prop_tool.h"
-#include "prop_tool/prop_tool_editor_plugin.h"
 #include "prop_tool/prop_tool_entity.h"
 #include "prop_tool/prop_tool_light.h"
 #include "prop_tool/prop_tool_mesh.h"
 #include "prop_tool/prop_tool_prop.h"
 #include "prop_tool/prop_tool_scene.h"
+
+#ifdef TOOLS_ENABLED
+#include "prop_tool/prop_tool_editor_plugin.h"
+#endif
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelmanQueue>();
@@ -126,9 +129,6 @@ void register_voxelman_types() {
 
 #ifdef TOOLS_ENABLED
 	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
-#endif
-
-#ifdef TOOLS_ENABLED
 	EditorPlugins::add_by_type<PropToolEditorPlugin>();
 #endif
 }

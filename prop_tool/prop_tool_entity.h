@@ -34,6 +34,7 @@ class Entity;
 class PropToolEntity : public Spatial {
 	GDCLASS(PropToolEntity, Spatial);
 
+#ifdef TOOLS_ENABLED
 public:
 	Ref<PropDataEntity> get_data();
 	void set_data(const Ref<PropDataEntity> &data);
@@ -62,6 +63,7 @@ private:
 
 	Ref<PropDataEntity> _prop_entity;
 	Entity *_entity;
+#endif
 };
 
 #endif

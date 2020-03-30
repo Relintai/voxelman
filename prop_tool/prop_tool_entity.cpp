@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "prop_tool_entity.h"
 
+#ifdef TOOLS_ENABLED
+
 #include "../../entity_spell_system/entities/data/entity_data.h"
 #include "../../entity_spell_system/entities/entity.h"
 
@@ -146,3 +148,5 @@ void PropToolEntity::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("evaluate_children"), &PropToolEntity::evaluate_children);
 }
+
+#endif

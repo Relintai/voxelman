@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "prop_tool_light.h"
 
+#ifdef TOOLS_ENABLED
+
 Ref<PropDataLight> PropToolLight::get_data() {
 
 	if (!is_visible())
@@ -68,3 +70,5 @@ void PropToolLight::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_snap_to_mesh", "value"), &PropToolLight::set_snap_to_mesh);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_to_mesh"), "set_snap_to_mesh", "get_snap_to_mesh");
 }
+
+#endif
