@@ -113,6 +113,20 @@ public:
 		BUILD_PHASE_TYPE_PHYSICS_PROCESS,
 	};
 
+	enum {
+		MESH_INDEX_TERRARIN = 0,
+		MESH_INDEX_PROP,
+		MESH_INDEX_LIQUID,
+		MESH_INDEX_CLUTTER,
+	};
+
+	enum {
+		MESH_TYPE_INDEX_MESH = 0,
+		MESH_TYPE_INDEX_MESH_INSTANCE,
+		MESH_TYPE_INDEX_SHAPE,
+		MESH_TYPE_INDEX_BODY
+	};
+
 public:
 	bool get_is_build_threaded() const;
 	void set_is_build_threaded(bool value);
@@ -138,22 +152,6 @@ public:
 	bool get_bake_lights() const;
 	void set_bake_lights(bool value);
 
-	RID get_mesh_rid();
-	RID get_mesh_instance_rid();
-	RID get_shape_rid();
-	RID get_body_rid();
-
-	RID get_prop_mesh_rid();
-	RID get_prop_mesh_instance_rid();
-	RID get_prop_shape_rid();
-	RID get_prop_body_rid();
-
-	RID get_liquid_mesh_rid();
-	RID get_liquid_mesh_instance_rid();
-
-	RID get_clutter_mesh_rid();
-	RID get_clutter_mesh_instance_rid();
-
 	//Data Management functions
 	void generate_ao();
 
@@ -173,26 +171,31 @@ public:
 
 	void clear();
 
-	//Colliders
-	void create_colliders();
-	void remove_colliders();
-
 	//Meshes
-	void allocate_main_mesh();
-	void free_main_mesh();
+	Dictionary get_mesh_rids();
+	void set_mesh_rids(const Dictionary &rids);
+	void clear_rids();
 
-	void allocate_prop_mesh();
-	void free_prop_mesh();
+	RID get_mesh_rid(const int mesh_index, const int mesh_type_index);
+	void set_mesh_rid(const int mesh_index, const int mesh_type_index, RID value);
+	RID get_mesh_rid_index(const int mesh_index, const int mesh_type_index, const int index);
+	void set_mesh_rid_index(const int mesh_index, const int mesh_type_index, const int index, RID value);
+	int get_mesh_rid_count(const int mesh_index, const int mesh_type_index);
+	void clear_mesh_rids(const int mesh_index, const int mesh_type_index);
+	Array get_meshes(const int mesh_index, const int mesh_type_index);
+	void set_meshes(const int mesh_index, const int mesh_type_index, const Array &meshes);
+	bool has_meshes(const int mesh_index, const int mesh_type_index);
 
-	void allocate_prop_colliders();
-	void free_prop_colliders();
+	void free_rids();
+	void free_index(const int mesh_index);
 
-	void allocate_liquid_mesh();
-	void free_liquid_mesh();
+	void create_meshes(const int mesh_index, const int mesh_count);
+	void free_meshes(const int mesh_index);
 
-	void allocate_clutter_mesh();
-	void free_clutter_mesh();
+	void create_colliders(const int mesh_index, const int layer_mask = 1);
+	void free_colliders(const int mesh_index);
 
+	//Transform
 	void update_transforms();
 
 	//Debug
@@ -241,26 +244,8 @@ protected:
 
 	int _lod_size;
 
-	//voxel mesh
-	RID _mesh_rid;
-	RID _mesh_instance_rid;
-
-	RID _shape_rid;
-	RID _body_rid;
-
-	RID _prop_mesh_rid;
-	RID _prop_mesh_instance_rid;
-
-	RID _prop_shape_rid;
-	RID _prop_body_rid;
-
-	//liquids
-	RID _liquid_mesh_rid;
-	RID _liquid_mesh_instance_rid;
-
-	//clutter
-	RID _clutter_mesh_rid;
-	RID _clutter_mesh_instance_rid;
+	//Meshes
+	Dictionary _rids;
 
 	//debug
 	ImmediateGeometry *_debug_drawer;

@@ -101,46 +101,6 @@ void VoxelChunkDefault::set_bake_lights(bool value) {
 	_bake_lights = value;
 }
 
-RID VoxelChunkDefault::get_mesh_rid() {
-	return _mesh_rid;
-}
-RID VoxelChunkDefault::get_mesh_instance_rid() {
-	return _mesh_instance_rid;
-}
-RID VoxelChunkDefault::get_shape_rid() {
-	return _shape_rid;
-}
-RID VoxelChunkDefault::get_body_rid() {
-	return _body_rid;
-}
-
-RID VoxelChunkDefault::get_prop_mesh_rid() {
-	return _prop_mesh_rid;
-}
-RID VoxelChunkDefault::get_prop_mesh_instance_rid() {
-	return _prop_mesh_instance_rid;
-}
-RID VoxelChunkDefault::get_prop_shape_rid() {
-	return _prop_shape_rid;
-}
-RID VoxelChunkDefault::get_prop_body_rid() {
-	return _prop_body_rid;
-}
-
-RID VoxelChunkDefault::get_liquid_mesh_rid() {
-	return _liquid_mesh_rid;
-}
-RID VoxelChunkDefault::get_liquid_mesh_instance_rid() {
-	return _liquid_mesh_instance_rid;
-}
-
-RID VoxelChunkDefault::get_clutter_mesh_rid() {
-	return _clutter_mesh_rid;
-}
-RID VoxelChunkDefault::get_clutter_mesh_instance_rid() {
-	return _clutter_mesh_instance_rid;
-}
-
 //Data Management functions
 void VoxelChunkDefault::generate_ao() {
 	ERR_FAIL_COND(_data_size_x == 0 || _data_size_y == 0 || _data_size_z == 0);
@@ -319,176 +279,346 @@ void VoxelChunkDefault::emit_build_finished() {
 	}
 }
 
-void VoxelChunkDefault::create_colliders() {
-	ERR_FAIL_COND(_voxel_world == NULL);
-
-	_shape_rid = PhysicsServer::get_singleton()->shape_create(PhysicsServer::SHAPE_CONCAVE_POLYGON);
-	_body_rid = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
-
-	PhysicsServer::get_singleton()->body_set_collision_layer(_body_rid, 1);
-	PhysicsServer::get_singleton()->body_set_collision_mask(_body_rid, 1);
-
-	PhysicsServer::get_singleton()->body_add_shape(_body_rid, _shape_rid);
-
-	PhysicsServer::get_singleton()->body_set_state(_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
-	PhysicsServer::get_singleton()->body_set_space(_body_rid, get_voxel_world()->get_world()->get_space());
+//Meshes
+Dictionary VoxelChunkDefault::get_mesh_rids() {
+	return _rids;
+}
+void VoxelChunkDefault::set_mesh_rids(const Dictionary &rids) {
+	_rids = rids;
+}
+void VoxelChunkDefault::clear_rids() {
+	_rids.clear();
 }
 
-void VoxelChunkDefault::remove_colliders() {
-	if (_body_rid != RID()) {
-		PhysicsServer::get_singleton()->free(_body_rid);
-		PhysicsServer::get_singleton()->free(_shape_rid);
+RID VoxelChunkDefault::get_mesh_rid(const int mesh_index, const int mesh_type_index) {
+	if (!_rids.has(mesh_index))
+		return RID();
 
-		_body_rid = RID();
-		_shape_rid = RID();
+	Dictionary m = _rids[mesh_index];
+
+	if (!m.has(mesh_type_index))
+		return RID();
+
+	Variant v = m[mesh_type_index];
+
+	if (v.get_type() != Variant::_RID)
+		return RID();
+
+	return v;
+}
+void VoxelChunkDefault::set_mesh_rid(const int mesh_index, const int mesh_type_index, RID value) {
+	if (!_rids.has(mesh_index))
+		_rids[mesh_index] = Dictionary();
+
+	Dictionary m = _rids[mesh_index];
+
+	if (!m.has(mesh_type_index)) {
+		m[mesh_type_index] = value;
+		_rids[mesh_index] = m;
+		return;
+	}
+
+	Variant v = m[mesh_type_index];
+
+	ERR_FAIL_COND(v.get_type() != Variant::_RID);
+
+	m[mesh_type_index] = value;
+	_rids[mesh_index] = m;
+}
+RID VoxelChunkDefault::get_mesh_rid_index(const int mesh_index, const int mesh_type_index, const int index) {
+	if (!_rids.has(mesh_index))
+		return RID();
+
+	Dictionary m = _rids[mesh_index];
+
+	if (!m.has(mesh_type_index))
+		return RID();
+
+	Variant v = m[mesh_type_index];
+
+	if (v.get_type() != Variant::ARRAY)
+		return RID();
+
+	Array arr = v;
+
+	ERR_FAIL_INDEX_V(index, arr.size(), RID());
+
+	return arr[index];
+}
+void VoxelChunkDefault::set_mesh_rid_index(const int mesh_index, const int mesh_type_index, const int index, RID value) {
+	if (!_rids.has(mesh_index))
+		_rids[mesh_index] = Dictionary();
+
+	Dictionary m = _rids[mesh_index];
+
+	if (!m.has(mesh_type_index)) {
+		Array arr;
+		arr.resize(index + 1);
+		arr[index] = value;
+
+		m[mesh_type_index] = arr;
+		_rids[mesh_index] = m;
+		return;
+	}
+
+	Variant v = m[mesh_type_index];
+
+	ERR_FAIL_COND(v.get_type() != Variant::ARRAY);
+
+	Array arr = m[mesh_type_index];
+
+	if (arr.size() <= index)
+		arr.resize(index + 1);
+
+	arr[index] = value;
+
+	m[mesh_type_index] = arr;
+	_rids[mesh_index] = m;
+}
+int VoxelChunkDefault::get_mesh_rid_count(const int mesh_index, const int mesh_type_index) {
+	if (!_rids.has(mesh_index))
+		return 0;
+
+	Dictionary m = _rids[mesh_index];
+
+	if (!m.has(mesh_type_index))
+		return 0;
+
+	Variant v = m[mesh_type_index];
+
+	if (v.get_type() != Variant::ARRAY)
+		return 0;
+
+	Array arr = v;
+
+	return arr.size();
+}
+void VoxelChunkDefault::clear_mesh_rids(const int mesh_index, const int mesh_type_index) {
+	if (!_rids.has(mesh_index))
+		return;
+
+	Dictionary m = _rids[mesh_index];
+
+	if (!m.has(mesh_type_index))
+		return;
+
+	m.erase(mesh_type_index);
+}
+Array VoxelChunkDefault::get_meshes(const int mesh_index, const int mesh_type_index) {
+	if (!_rids.has(mesh_index))
+		return Array();
+
+	Dictionary m = _rids[mesh_index];
+
+	if (!m.has(mesh_type_index))
+		return Array();
+
+	Variant v = m[mesh_type_index];
+
+	if (v.get_type() != Variant::ARRAY)
+		return Array();
+
+	return v;
+}
+void VoxelChunkDefault::set_meshes(const int mesh_index, const int mesh_type_index, const Array &meshes) {
+	if (!_rids.has(mesh_index))
+		_rids[mesh_index] = Dictionary();
+
+	Dictionary m = _rids[mesh_index];
+
+	m[mesh_type_index] = meshes;
+	_rids[mesh_index] = m;
+}
+bool VoxelChunkDefault::has_meshes(const int mesh_index, const int mesh_type_index) {
+	if (!_rids.has(mesh_index))
+		return false;
+
+	Dictionary m = _rids[mesh_index];
+
+	if (!m.has(mesh_type_index))
+		return false;
+
+	return true;
+}
+
+void VoxelChunkDefault::free_rids() {
+	List<Variant> keys;
+
+	_rids.get_key_list(&keys);
+
+	for (List<Variant>::Element *E = keys.front(); E; E = E->next()) {
+		Variant v = E->get();
+
+		if (v.get_type() != Variant::INT)
+			continue;
+
+		free_index(v);
 	}
 }
 
-void VoxelChunkDefault::allocate_main_mesh() {
-	ERR_FAIL_COND(_voxel_world == NULL);
+void VoxelChunkDefault::free_index(const int mesh_index) {
+	free_meshes(mesh_index);
+	free_colliders(mesh_index);
+}
 
+void VoxelChunkDefault::create_meshes(const int mesh_index, const int mesh_count) {
+	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(!get_library().is_valid());
 
-	_mesh_instance_rid = VS::get_singleton()->instance_create();
+	if (!_rids.has(mesh_index))
+		_rids[mesh_index] = Dictionary();
 
-	if (get_voxel_world()->get_world().is_valid())
-		VS::get_singleton()->instance_set_scenario(_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
+	Dictionary m = _rids[mesh_index];
 
-	_mesh_rid = VS::get_singleton()->mesh_create();
+	ERR_FAIL_COND(m.has(MESH_TYPE_INDEX_MESH));
+	ERR_FAIL_COND(m.has(MESH_TYPE_INDEX_MESH_INSTANCE));
 
-	VS::get_singleton()->instance_set_base(_mesh_instance_rid, _mesh_rid);
+	Array am;
+	Array ami;
 
-	VS::get_singleton()->instance_set_transform(_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
-}
+	for (int i = 0; i < mesh_count; ++i) {
+		RID mesh_instance_rid = VS::get_singleton()->instance_create();
 
-void VoxelChunkDefault::free_main_mesh() {
-	if (_mesh_instance_rid != RID()) {
-		VS::get_singleton()->free(_mesh_instance_rid);
-		VS::get_singleton()->free(_mesh_rid);
+		if (get_voxel_world()->get_world().is_valid())
+			VS::get_singleton()->instance_set_scenario(mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
 
-		_mesh_instance_rid = RID();
-		_mesh_rid = RID();
+		RID mesh_rid = VS::get_singleton()->mesh_create();
+
+		VS::get_singleton()->instance_set_base(mesh_instance_rid, mesh_rid);
+
+		VS::get_singleton()->instance_set_transform(mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
+
+		am.push_back(mesh_rid);
+		ami.push_back(mesh_instance_rid);
 	}
+
+	m[MESH_TYPE_INDEX_MESH] = am;
+	m[MESH_TYPE_INDEX_MESH_INSTANCE] = ami;
+
+	_rids[mesh_index] = m;
 }
+void VoxelChunkDefault::free_meshes(const int mesh_index) {
+	if (!_rids.has(mesh_index))
+		return;
 
-void VoxelChunkDefault::allocate_prop_mesh() {
-	ERR_FAIL_COND(_voxel_world == NULL);
-	ERR_FAIL_COND(!get_library().is_valid());
+	Dictionary m = _rids[mesh_index];
+	RID rid;
 
-	_prop_mesh_instance_rid = VS::get_singleton()->instance_create();
+	if (m.has(MESH_TYPE_INDEX_MESH)) {
 
-	if (get_voxel_world()->get_world().is_valid())
-		VS::get_singleton()->instance_set_scenario(_prop_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
+		Array a = m[MESH_TYPE_INDEX_MESH];
 
-	_prop_mesh_rid = VS::get_singleton()->mesh_create();
+		for (int i = 0; i < a.size(); ++i) {
+			RID r = a[i];
 
-	VS::get_singleton()->instance_set_base(_prop_mesh_instance_rid, _prop_mesh_rid);
-
-	VS::get_singleton()->instance_set_transform(_prop_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
-}
-
-void VoxelChunkDefault::free_prop_mesh() {
-	if (_prop_mesh_instance_rid != RID()) {
-		VS::get_singleton()->free(_prop_mesh_instance_rid);
-		VS::get_singleton()->free(_prop_mesh_rid);
-
-		_prop_mesh_instance_rid = RID();
-		_prop_mesh_rid = RID();
+			if (r != rid) {
+				VS::get_singleton()->free(r);
+			}
+		}
 	}
-}
 
-void VoxelChunkDefault::allocate_prop_colliders() {
-	ERR_FAIL_COND(_voxel_world == NULL);
+	if (m.has(MESH_TYPE_INDEX_MESH_INSTANCE)) {
+		Array a = m[MESH_TYPE_INDEX_MESH_INSTANCE];
 
-	_prop_shape_rid = PhysicsServer::get_singleton()->shape_create(PhysicsServer::SHAPE_CONCAVE_POLYGON);
-	_prop_body_rid = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
+		for (int i = 0; i < a.size(); ++i) {
+			RID r = a[i];
 
-	PhysicsServer::get_singleton()->body_set_collision_layer(_prop_body_rid, 1);
-	PhysicsServer::get_singleton()->body_set_collision_mask(_prop_body_rid, 1);
-
-	PhysicsServer::get_singleton()->body_add_shape(_prop_body_rid, _prop_shape_rid);
-
-	PhysicsServer::get_singleton()->body_set_state(_prop_body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
-	PhysicsServer::get_singleton()->body_set_space(_prop_body_rid, get_voxel_world()->get_world()->get_space());
-}
-void VoxelChunkDefault::free_prop_colliders() {
-	if (_prop_body_rid != RID()) {
-		PhysicsServer::get_singleton()->free(_prop_body_rid);
-		PhysicsServer::get_singleton()->free(_prop_shape_rid);
-
-		_prop_body_rid = RID();
-		_prop_shape_rid = RID();
+			if (r != rid) {
+				VS::get_singleton()->free(r);
+			}
+		}
 	}
+
+	m.erase(MESH_TYPE_INDEX_MESH);
+	m.erase(MESH_TYPE_INDEX_MESH_INSTANCE);
 }
 
-//Liquid mesh
-void VoxelChunkDefault::allocate_liquid_mesh() {
-	ERR_FAIL_COND(_voxel_world == NULL);
+void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_mask) {
+	ERR_FAIL_COND(_voxel_world == Variant());
 
-	ERR_FAIL_COND(!get_library().is_valid());
+	if (!_rids.has(mesh_index))
+		_rids[mesh_index] = Dictionary();
 
-	_liquid_mesh_instance_rid = VS::get_singleton()->instance_create();
+	Dictionary m = _rids[mesh_index];
 
-	if (get_voxel_world()->get_world().is_valid())
-		VS::get_singleton()->instance_set_scenario(_liquid_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
+	ERR_FAIL_COND(m.has(MESH_TYPE_INDEX_BODY));
+	ERR_FAIL_COND(m.has(MESH_TYPE_INDEX_SHAPE));
 
-	_liquid_mesh_rid = VS::get_singleton()->mesh_create();
+	RID shape_rid = PhysicsServer::get_singleton()->shape_create(PhysicsServer::SHAPE_CONCAVE_POLYGON);
+	RID body_rid = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
 
-	VS::get_singleton()->instance_set_base(_liquid_mesh_instance_rid, _liquid_mesh_rid);
+	PhysicsServer::get_singleton()->body_set_collision_layer(body_rid, layer_mask);
+	PhysicsServer::get_singleton()->body_set_collision_mask(body_rid, layer_mask);
 
-	VS::get_singleton()->instance_set_transform(_liquid_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
+	PhysicsServer::get_singleton()->body_add_shape(body_rid, shape_rid);
+
+	PhysicsServer::get_singleton()->body_set_state(body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
+	PhysicsServer::get_singleton()->body_set_space(body_rid, get_voxel_world()->get_world()->get_space());
+
+	m[MESH_TYPE_INDEX_BODY] = body_rid;
+	m[MESH_TYPE_INDEX_SHAPE] = shape_rid;
+
+	_rids[mesh_index] = m;
 }
+void VoxelChunkDefault::free_colliders(const int mesh_index) {
+	if (!_rids.has(mesh_index))
+		return;
 
-void VoxelChunkDefault::free_liquid_mesh() {
-	if (_liquid_mesh_instance_rid != RID()) {
-		VS::get_singleton()->free(_liquid_mesh_instance_rid);
-		VS::get_singleton()->free(_liquid_mesh_rid);
+	Dictionary m = _rids[mesh_index];
+	RID rid;
 
-		_liquid_mesh_instance_rid = RID();
-		_liquid_mesh_rid = RID();
+	if (m.has(MESH_TYPE_INDEX_SHAPE)) {
+		RID r = m[MESH_TYPE_INDEX_SHAPE];
+
+		PhysicsServer::get_singleton()->free(r);
 	}
-}
 
-//Clutter mesh
-void VoxelChunkDefault::allocate_clutter_mesh() {
-	ERR_FAIL_COND(_voxel_world == NULL);
+	if (m.has(MESH_TYPE_INDEX_BODY)) {
+		RID r = m[MESH_TYPE_INDEX_BODY];
 
-	ERR_FAIL_COND(!get_library().is_valid());
-
-	_clutter_mesh_instance_rid = VS::get_singleton()->instance_create();
-
-	if (get_voxel_world()->get_world().is_valid())
-		VS::get_singleton()->instance_set_scenario(_clutter_mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
-
-	_clutter_mesh_rid = VS::get_singleton()->mesh_create();
-
-	VS::get_singleton()->instance_set_base(_clutter_mesh_instance_rid, _clutter_mesh_rid);
-
-	VS::get_singleton()->instance_set_transform(_clutter_mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
-}
-
-void VoxelChunkDefault::free_clutter_mesh() {
-	if (_clutter_mesh_instance_rid != RID()) {
-		VS::get_singleton()->free(_clutter_mesh_instance_rid);
-		VS::get_singleton()->free(_clutter_mesh_rid);
-
-		_clutter_mesh_instance_rid = RID();
-		_clutter_mesh_rid = RID();
+		PhysicsServer::get_singleton()->free(r);
 	}
+
+	m.erase(MESH_TYPE_INDEX_SHAPE);
+	m.erase(MESH_TYPE_INDEX_BODY);
+
+	_rids[mesh_index] = m;
 }
 
 void VoxelChunkDefault::update_transforms() {
-	if (get_mesh_instance_rid() != RID())
-		VS::get_singleton()->instance_set_transform(get_mesh_instance_rid(), get_transform());
+	RID empty_rid;
+	Transform t = get_transform();
 
-	if (get_prop_mesh_instance_rid() != RID())
-		VS::get_singleton()->instance_set_transform(get_prop_mesh_instance_rid(), get_transform());
+	List<Variant> keys;
 
-	if (get_body_rid() != RID())
-		PhysicsServer::get_singleton()->body_set_state(get_body_rid(), PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
+	_rids.get_key_list(&keys);
 
-	if (get_prop_body_rid() != RID())
-		PhysicsServer::get_singleton()->body_set_state(get_prop_body_rid(), PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
+	for (List<Variant>::Element *E = keys.front(); E; E = E->next()) {
+		Variant v = E->get();
+
+		if (v.get_type() != Variant::INT)
+			continue;
+
+		Dictionary d = _rids[v];
+
+		if (d.has(MESH_TYPE_INDEX_MESH_INSTANCE)) {
+			Array arr = d[MESH_TYPE_INDEX_MESH_INSTANCE];
+
+			for (int i = 0; i < arr.size(); ++i) {
+				RID rid = arr[i];
+
+				if (rid != empty_rid)
+					VS::get_singleton()->instance_set_transform(rid, get_transform());
+			}
+		}
+
+		if (d.has(MESH_TYPE_INDEX_BODY)) {
+			RID rid = d[MESH_TYPE_INDEX_BODY];
+
+			if (rid != empty_rid)
+				PhysicsServer::get_singleton()->body_set_state(rid, PhysicsServer::BODY_STATE_TRANSFORM, t);
+		}
+	}
 }
 
 void VoxelChunkDefault::create_debug_immediate_geometry() {
@@ -613,6 +743,7 @@ void VoxelChunkDefault::visibility_changed(bool visible) {
 }
 
 void VoxelChunkDefault::_visibility_changed(bool visible) {
+	/* needs LOD support
 	if (_mesh_instance_rid != RID())
 		VS::get_singleton()->instance_set_visible(_mesh_instance_rid, visible);
 
@@ -624,16 +755,11 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 
 	if (_clutter_mesh_instance_rid != RID())
 		VS::get_singleton()->instance_set_visible(_clutter_mesh_instance_rid, visible);
+		*/
 }
 
 void VoxelChunkDefault::free_chunk() {
-	free_main_mesh();
-	remove_colliders();
-	free_prop_mesh();
-	free_prop_colliders();
-	free_spawn_props();
-	free_liquid_mesh();
-	free_clutter_mesh();
+	free_rids();
 }
 
 VoxelChunkDefault::VoxelChunkDefault() {
@@ -754,11 +880,11 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			if (_body_rid == RID()) {
-				create_colliders();
+			if (!has_meshes(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_BODY)) {
+				create_colliders(MESH_INDEX_TERRARIN);
 			}
 
-			PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
+			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
 
 			//temp_arr_collider.resize(0);
 
@@ -806,19 +932,22 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			if (_mesh_rid != RID())
-				VS::get_singleton()->mesh_clear(_mesh_rid);
+			RID mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
+
+			if (mesh_rid != RID())
+				VS::get_singleton()->mesh_clear(mesh_rid);
 
 			Array temp_mesh_arr = mesher->build_mesh();
 
-			if (_mesh_rid == RID()) {
-				allocate_main_mesh();
+			if (mesh_rid == RID()) {
+				create_meshes(MESH_INDEX_TERRARIN, 4); //TODO LOD
+				mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
 			}
 
-			VS::get_singleton()->mesh_add_surface_from_arrays(_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+			VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 			if (_library->get_material(0).is_valid())
-				VS::get_singleton()->mesh_surface_set_material(_mesh_rid, 0, _library->get_material(0)->get_rid());
+				VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_material(0)->get_rid());
 
 			next_phase();
 
@@ -834,8 +963,8 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			}
 
 			if (_props.size() > 0) {
-				if (_prop_mesh_rid == RID()) {
-					allocate_prop_mesh();
+				if (!has_meshes(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH)) {
+					create_meshes(MESH_INDEX_PROP, 1); //TODO LOD
 				}
 
 				for (int i = 0; i < _meshers.size(); ++i) {
@@ -846,9 +975,11 @@ void VoxelChunkDefault::_build_phase(int phase) {
 					mesher->bake_colors(this);
 					mesher->set_material(get_library()->get_material(0));
 
-					ERR_FAIL_COND(_prop_mesh_rid == RID());
+					RID prop_mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
 
-					VS::get_singleton()->mesh_clear(_prop_mesh_rid);
+					ERR_FAIL_COND(prop_mesh_rid == RID());
+
+					VS::get_singleton()->mesh_clear(prop_mesh_rid);
 
 					if (mesher->get_vertex_count() == 0) {
 						next_phase();
@@ -857,10 +988,10 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 					Array arr = mesher->build_mesh();
 
-					VS::get_singleton()->mesh_add_surface_from_arrays(_prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
+					VS::get_singleton()->mesh_add_surface_from_arrays(prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
 
 					if (_library->get_material(0).is_valid())
-						VS::get_singleton()->mesh_surface_set_material(_prop_mesh_rid, 0, _library->get_material(0)->get_rid());
+						VS::get_singleton()->mesh_surface_set_material(prop_mesh_rid, 0, _library->get_material(0)->get_rid());
 				}
 			}
 
@@ -900,11 +1031,11 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			if (_prop_body_rid == RID()) {
-				allocate_prop_colliders();
+			if (!has_meshes(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE)) {
+				create_colliders(MESH_INDEX_PROP);
 			}
 
-			PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
+			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
 
 			//temp_arr_collider.resize(0);
 
@@ -938,11 +1069,11 @@ void VoxelChunkDefault::_build_phase_process(int phase) {
 void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 	if (phase == BUILD_PHASE_TERRARIN_MESH_COLLIDER) {
 
-		if (_body_rid == RID()) {
-			create_colliders();
+		if (!has_meshes(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_SHAPE)) {
+			create_colliders(MESH_INDEX_TERRARIN);
 		}
 
-		PhysicsServer::get_singleton()->shape_set_data(_shape_rid, temp_arr_collider);
+		PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
 		//temp_arr_collider.resize(0);
 
 		set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
@@ -950,11 +1081,11 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 
 	} else if (phase == BUILD_PHASE_PROP_COLLIDER) {
 
-		if (_prop_body_rid == RID()) {
-			allocate_prop_colliders();
+		if (!has_meshes(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE)) {
+			create_colliders(MESH_INDEX_PROP);
 		}
 
-		PhysicsServer::get_singleton()->shape_set_data(_prop_shape_rid, temp_arr_collider);
+		PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
 		//temp_arr_collider.resize(0);
 
 		set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
@@ -1059,12 +1190,7 @@ void VoxelChunkDefault::_notification(int p_what) {
 				wait_and_finish_thread();
 			}
 
-			free_main_mesh();
-			remove_colliders();
-			free_prop_mesh();
-			free_prop_colliders();
-			free_liquid_mesh();
-			free_clutter_mesh();
+			free_rids();
 
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
@@ -1176,22 +1302,6 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("meshing_set_bake_lights", "value"), &VoxelChunkDefault::set_bake_lights);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "meshing_bake_lights"), "meshing_set_bake_lights", "meshing_get_bake_lights");
 
-	ClassDB::bind_method(D_METHOD("get_mesh_rid"), &VoxelChunkDefault::get_mesh_rid);
-	ClassDB::bind_method(D_METHOD("get_mesh_instance_rid"), &VoxelChunkDefault::get_mesh_instance_rid);
-	ClassDB::bind_method(D_METHOD("get_shape_rid"), &VoxelChunkDefault::get_shape_rid);
-	ClassDB::bind_method(D_METHOD("get_body_rid"), &VoxelChunkDefault::get_body_rid);
-
-	ClassDB::bind_method(D_METHOD("get_prop_mesh_rid"), &VoxelChunkDefault::get_prop_mesh_rid);
-	ClassDB::bind_method(D_METHOD("get_prop_mesh_instance_rid"), &VoxelChunkDefault::get_prop_mesh_instance_rid);
-	ClassDB::bind_method(D_METHOD("get_prop_shape_rid"), &VoxelChunkDefault::get_prop_shape_rid);
-	ClassDB::bind_method(D_METHOD("get_prop_body_rid"), &VoxelChunkDefault::get_prop_body_rid);
-
-	ClassDB::bind_method(D_METHOD("get_liquid_mesh_rid"), &VoxelChunkDefault::get_liquid_mesh_rid);
-	ClassDB::bind_method(D_METHOD("get_liquid_mesh_instance_rid"), &VoxelChunkDefault::get_liquid_mesh_instance_rid);
-
-	ClassDB::bind_method(D_METHOD("get_clutter_mesh_rid"), &VoxelChunkDefault::get_clutter_mesh_rid);
-	ClassDB::bind_method(D_METHOD("get_clutter_mesh_instance_rid"), &VoxelChunkDefault::get_clutter_mesh_instance_rid);
-
 	//Voxel Data
 
 	//Data Management functions
@@ -1214,23 +1324,29 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("next_phase"), &VoxelChunkDefault::next_phase);
 	ClassDB::bind_method(D_METHOD("has_next_phase"), &VoxelChunkDefault::has_next_phase);
 
-	ClassDB::bind_method(D_METHOD("create_colliders"), &VoxelChunkDefault::create_colliders);
-	ClassDB::bind_method(D_METHOD("remove_colliders"), &VoxelChunkDefault::remove_colliders);
+	//Meshes
+	ClassDB::bind_method(D_METHOD("get_mesh_rids"), &VoxelChunkDefault::get_mesh_rids);
+	ClassDB::bind_method(D_METHOD("set_mesh_rids", "rids"), &VoxelChunkDefault::set_mesh_rids);
+	ClassDB::bind_method(D_METHOD("clear_rids"), &VoxelChunkDefault::clear_rids);
 
-	ClassDB::bind_method(D_METHOD("allocate_main_mesh"), &VoxelChunkDefault::allocate_main_mesh);
-	ClassDB::bind_method(D_METHOD("free_main_mesh"), &VoxelChunkDefault::free_main_mesh);
+	ClassDB::bind_method(D_METHOD("get_mesh_rid", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::get_mesh_rid);
+	ClassDB::bind_method(D_METHOD("set_mesh_rid", "mesh_index", "mesh_type_index", "value"), &VoxelChunkDefault::set_mesh_rid);
+	ClassDB::bind_method(D_METHOD("get_mesh_rid_index", "mesh_index", "mesh_type_index", "index"), &VoxelChunkDefault::get_mesh_rid_index);
+	ClassDB::bind_method(D_METHOD("set_mesh_rid_index", "mesh_index", "mesh_type_index", "index", "value"), &VoxelChunkDefault::set_mesh_rid_index);
+	ClassDB::bind_method(D_METHOD("get_mesh_rid_count", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::get_mesh_rid_count);
+	ClassDB::bind_method(D_METHOD("clear_mesh_rids", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::clear_mesh_rids);
+	ClassDB::bind_method(D_METHOD("get_meshes", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::get_meshes);
+	ClassDB::bind_method(D_METHOD("set_meshes", "mesh_index", "mesh_type_index", "meshes"), &VoxelChunkDefault::set_meshes);
+	ClassDB::bind_method(D_METHOD("has_meshes", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::has_meshes);
 
-	ClassDB::bind_method(D_METHOD("allocate_prop_mesh"), &VoxelChunkDefault::allocate_prop_mesh);
-	ClassDB::bind_method(D_METHOD("free_prop_mesh"), &VoxelChunkDefault::free_prop_mesh);
+	ClassDB::bind_method(D_METHOD("free_rids"), &VoxelChunkDefault::free_rids);
+	ClassDB::bind_method(D_METHOD("free_index", "mesh_index"), &VoxelChunkDefault::free_index);
 
-	ClassDB::bind_method(D_METHOD("allocate_prop_colliders"), &VoxelChunkDefault::allocate_prop_colliders);
-	ClassDB::bind_method(D_METHOD("free_prop_colliders"), &VoxelChunkDefault::free_prop_colliders);
+	ClassDB::bind_method(D_METHOD("create_meshes", "mesh_index", "mesh_count"), &VoxelChunkDefault::create_meshes);
+	ClassDB::bind_method(D_METHOD("free_meshes", "mesh_index"), &VoxelChunkDefault::free_meshes);
 
-	ClassDB::bind_method(D_METHOD("allocate_liquid_mesh"), &VoxelChunkDefault::allocate_liquid_mesh);
-	ClassDB::bind_method(D_METHOD("free_liquid_mesh"), &VoxelChunkDefault::free_liquid_mesh);
-
-	ClassDB::bind_method(D_METHOD("allocate_clutter_mesh"), &VoxelChunkDefault::allocate_clutter_mesh);
-	ClassDB::bind_method(D_METHOD("free_clutter_mesh"), &VoxelChunkDefault::free_clutter_mesh);
+	ClassDB::bind_method(D_METHOD("create_colliders", "mesh_index", "layer_mask"), &VoxelChunkDefault::create_colliders, DEFVAL(1));
+	ClassDB::bind_method(D_METHOD("free_colliders", "mesh_index"), &VoxelChunkDefault::free_colliders);
 
 	ClassDB::bind_method(D_METHOD("create_debug_immediate_geometry"), &VoxelChunkDefault::create_debug_immediate_geometry);
 	ClassDB::bind_method(D_METHOD("free_debug_immediate_geometry"), &VoxelChunkDefault::free_debug_immediate_geometry);
@@ -1294,4 +1410,14 @@ void VoxelChunkDefault::_bind_methods() {
 	BIND_ENUM_CONSTANT(BUILD_PHASE_TYPE_NORMAL);
 	BIND_ENUM_CONSTANT(BUILD_PHASE_TYPE_PROCESS);
 	BIND_ENUM_CONSTANT(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
+
+	BIND_CONSTANT(MESH_INDEX_TERRARIN);
+	BIND_CONSTANT(MESH_INDEX_PROP);
+	BIND_CONSTANT(MESH_INDEX_LIQUID);
+	BIND_CONSTANT(MESH_INDEX_CLUTTER);
+
+	BIND_CONSTANT(MESH_TYPE_INDEX_MESH);
+	BIND_CONSTANT(MESH_TYPE_INDEX_MESH_INSTANCE);
+	BIND_CONSTANT(MESH_TYPE_INDEX_SHAPE);
+	BIND_CONSTANT(MESH_TYPE_INDEX_BODY);
 }
