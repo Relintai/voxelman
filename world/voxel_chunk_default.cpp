@@ -40,9 +40,9 @@ _FORCE_INLINE_ void VoxelChunkDefault::set_active_build_phase_type(const VoxelCh
 	_active_build_phase_type = value;
 
 	if (_active_build_phase_type == VoxelChunkDefault::BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
-		set_physics_process_internal(true);
+		call_deferred("set_physics_process_internal", true);
 	} else {
-		set_physics_process_internal(false);
+		call_deferred("set_physics_process_internal", false);
 	}
 }
 
