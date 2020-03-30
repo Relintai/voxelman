@@ -155,10 +155,11 @@ public:
 
 	//Meshing
 	void create_meshers();
-
 	void build(bool immediate = false);
-
 	void clear();
+
+	Array merge_mesh_array(Array arr) const;
+	Array bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_color = 0.7) const;
 
 	//lights
 	void add_lights(Array lights);
