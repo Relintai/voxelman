@@ -39,6 +39,9 @@ class VoxelWorld : public Navigation {
 	GDCLASS(VoxelWorld, Navigation);
 
 public:
+	bool get_editable() const;
+	void set_editable(const bool value);
+
 	int get_chunk_size_x() const;
 	void set_chunk_size_x(const int value);
 
@@ -170,6 +173,8 @@ public:
 	};
 
 private:
+	bool _editable;
+
 	int _chunk_size_x;
 	int _chunk_size_y;
 	int _chunk_size_z;

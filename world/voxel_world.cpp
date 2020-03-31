@@ -24,6 +24,13 @@ SOFTWARE.
 
 #include "voxel_chunk.h"
 
+bool VoxelWorld::get_editable() const {
+	return _editable;
+}
+void VoxelWorld::set_editable(const bool value) {
+	_editable = value;
+}
+
 int VoxelWorld::get_chunk_size_x() const {
 	return _chunk_size_x;
 }
@@ -376,6 +383,8 @@ void VoxelWorld::on_chunk_mesh_generation_finished_bind(Node *p_chunk) {
 }
 
 VoxelWorld::VoxelWorld() {
+	_editable = false;
+
 	_chunk_size_x = 16;
 	_chunk_size_y = 16;
 	_chunk_size_z = 16;
@@ -471,6 +480,10 @@ void VoxelWorld::_notification(int p_what) {
 
 void VoxelWorld::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("chunk_mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+
+	ClassDB::bind_method(D_METHOD("get_editable"), &VoxelWorld::get_editable);
+	ClassDB::bind_method(D_METHOD("set_editable", "value"), &VoxelWorld::set_editable);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "editable"), "set_editable", "get_editable");
 
 	ClassDB::bind_method(D_METHOD("get_chunk_size_x"), &VoxelWorld::get_chunk_size_x);
 	ClassDB::bind_method(D_METHOD("set_chunk_size_x", "value"), &VoxelWorld::set_chunk_size_x);

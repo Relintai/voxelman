@@ -82,7 +82,12 @@ void VoxelWorldEditorPlugin::edit(Object *p_object) {
 
 bool VoxelWorldEditorPlugin::handles(Object *p_object) const {
 
-	return p_object->is_class("VoxelWorld");
+	if (!p_object->is_class("VoxelWorld"))
+		return false;
+
+	VoxelWorld *w = Object::cast_to<VoxelWorld>(p_object);
+
+	return w->get_editable();
 }
 
 void VoxelWorldEditorPlugin::make_visible(bool p_visible) {
