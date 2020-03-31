@@ -15,8 +15,6 @@ def get_doc_classes():
         "GroundClutterFoliage",
         "GroundClutter",
 
-        "VoxelmanQueue",
-        "VoxelmanUnboundedQueue",
         "VoxelLight",
 
         "VoxelmanLevelGenerator",

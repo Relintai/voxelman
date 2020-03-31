@@ -11,9 +11,6 @@ sources = [
 
     "register_types.cpp",
 
-    "containers/voxelman_queue.cpp",
-    "containers/voxelman_unbounded_queue.cpp",
-
     "library/voxelman_library.cpp",
     "library/voxelman_library_simple.cpp",
     "library/voxelman_library_merger.cpp",
