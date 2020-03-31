@@ -63,11 +63,11 @@ public:
 	bool get_use_threads();
 	void set_use_threads(bool value);
 
-	uint32_t get_max_concurrent_generations() const;
-	void set_max_concurrent_generations(const uint32_t value);
+	int get_max_concurrent_generations() const;
+	void set_max_concurrent_generations(const int value);
 
-	uint32_t get_max_frame_chunk_build_steps() const;
-	void set_max_frame_chunk_build_steps(const uint32_t value);
+	int get_max_frame_chunk_build_steps() const;
+	void set_max_frame_chunk_build_steps(const int value);
 
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(const Ref<VoxelmanLibrary> library);
@@ -196,11 +196,11 @@ private:
 	Spatial *_player;
 
 	bool _use_threads;
-	uint32_t _max_concurrent_generations;
+	int _max_concurrent_generations;
 	Vector<VoxelChunk *> _generation_queue;
 	Vector<VoxelChunk *> _generating;
-	uint32_t _max_frame_chunk_build_steps;
-	uint32_t _num_frame_chunk_build_steps;
+	int _max_frame_chunk_build_steps;
+	int _num_frame_chunk_build_steps;
 };
 
 _FORCE_INLINE_ bool operator==(const VoxelWorld::IntPos &a, const VoxelWorld::IntPos &b) {

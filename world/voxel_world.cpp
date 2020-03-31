@@ -80,17 +80,17 @@ void VoxelWorld::set_use_threads(bool value) {
 	_use_threads = OS::get_singleton()->can_use_threads() ? value : false;
 }
 
-uint32_t VoxelWorld::get_max_concurrent_generations() const {
+int VoxelWorld::get_max_concurrent_generations() const {
 	return _max_concurrent_generations;
 }
-void VoxelWorld::set_max_concurrent_generations(const uint32_t value) {
+void VoxelWorld::set_max_concurrent_generations(const int value) {
 	_max_concurrent_generations = OS::get_singleton()->can_use_threads() ? value : 1;
 }
 
-uint32_t VoxelWorld::get_max_frame_chunk_build_steps() const {
+int VoxelWorld::get_max_frame_chunk_build_steps() const {
 	return _max_frame_chunk_build_steps;
 }
-void VoxelWorld::set_max_frame_chunk_build_steps(const uint32_t value) {
+void VoxelWorld::set_max_frame_chunk_build_steps(const int value) {
 	_max_frame_chunk_build_steps = value;
 }
 
