@@ -65,7 +65,7 @@ sources = [
     "prop_tool/prop_tool_light.cpp",
     "prop_tool/prop_tool_mesh.cpp",
     
-    
+    "thirdparty/lz4/lz4.c"
 ]
 
 if env['tools']:
