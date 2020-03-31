@@ -675,6 +675,7 @@ VoxelChunk::~VoxelChunk() {
 	}
 }
 
+/*
 bool VoxelChunk::_set(const StringName &p_name, const Variant &p_value) {
 	String name = p_name;
 
@@ -717,6 +718,7 @@ void VoxelChunk::_get_property_list(List<PropertyInfo> *p_list) const {
 		p_list->push_back(PropertyInfo(Variant::POOL_BYTE_ARRAY, "channels/" + String::num(i), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_INTERNAL));
 	}
 }
+*/
 
 void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
