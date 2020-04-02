@@ -23,7 +23,7 @@ SOFTWARE.
 #ifndef VOXEL_CHUNK_H
 #define VOXEL_CHUNK_H
 
-#include "scene/3d/spatial.h"
+#include "core/resource.h"
 
 #include "core/engine.h"
 #include "core/os/mutex.h"
@@ -60,8 +60,8 @@ SOFTWARE.
 
 class VoxelWorld;
 
-class VoxelChunk : public Spatial {
-	GDCLASS(VoxelChunk, Spatial);
+class VoxelChunk : public Resource {
+	GDCLASS(VoxelChunk, Resource);
 
 	_THREAD_SAFE_CLASS_
 
@@ -71,6 +71,15 @@ public:
 	};
 
 public:
+	bool get_process() const;
+	void set_process(const bool value);
+
+	bool get_physics_process() const;
+	void set_physics_process(const bool value);
+
+	bool get_visible() const;
+	void set_visible(const bool value);
+
 	bool get_is_generating() const;
 	void set_is_generating(bool value);
 
@@ -189,16 +198,33 @@ public:
 
 	void free_spawn_props();
 
+	void enter_tree();
+	void exit_tree();
+	void process(float delta);
+	void physics_process(float delta);
+	void world_transform_changed();
+	void visibility_changed(bool visible);
+
+	Transform get_transform() const;
+	void set_transform(const Transform &transform);
+
 	VoxelChunk();
 	~VoxelChunk();
 
 protected:
+	virtual void _world_transform_changed();
+
 	/*
 	bool _set(const StringName &p_name, const Variant &p_value);
 	bool _get(const StringName &p_name, Variant &r_ret) const;
 	void _get_property_list(List<PropertyInfo> *p_list) const;
 	*/
 	static void _bind_methods();
+
+	bool _is_processing;
+	bool _is_phisics_processing;
+
+	bool _is_visible;
 
 	bool _is_generating;
 	bool _dirty;
@@ -235,6 +261,8 @@ protected:
 
 	//spawned props
 	Vector<Node *> _spawned_props;
+
+	Transform _transform;
 };
 
 #endif

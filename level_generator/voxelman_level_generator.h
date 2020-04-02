@@ -31,8 +31,7 @@ class VoxelmanLevelGenerator : public Resource {
 	GDCLASS(VoxelmanLevelGenerator, Resource);
 
 public:
-	void generate_chunk_bind(Node *chunk);
-	void generate_chunk(VoxelChunk *chunk);
+	void generate_chunk(Ref<VoxelChunk> chunk);
 
 	VoxelmanLevelGenerator();
 	~VoxelmanLevelGenerator();

@@ -105,8 +105,8 @@ void PropData::add_textures_into(Ref<TexturePacker> texture_packer) {
 	}
 }
 
-void PropData::add_prop_lights_into(VoxelChunk *chunk, Transform parent_transform, bool allow_snap) {
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void PropData::add_prop_lights_into(Ref<VoxelChunk> chunk, Transform parent_transform, bool allow_snap) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	for (int i = 0; i < _props.size(); ++i) {
 		Ref<PropDataEntry> entry = _props.get(i);
@@ -136,19 +136,12 @@ void PropData::add_prop_lights_into(VoxelChunk *chunk, Transform parent_transfor
 				if (pd->get_snap_to_mesh())
 					print_error(pd->get_name());
 
-				pd->add_prop_lights_into(chunk, get_next_snapped_prop_transform(chunk, parent_transform * pdataprop->get_transform(), pd->get_snap_to_mesh(), pd->get_snap_axis()), allow_snap);
+				pd->add_prop_lights_into(chunk, get_next_snapped_prop_transform(chunk->get_voxel_world(), parent_transform * pdataprop->get_transform(), pd->get_snap_to_mesh(), pd->get_snap_axis()), allow_snap);
 			} else {
 				pd->add_prop_lights_into(chunk, parent_transform * pdataprop->get_transform(), allow_snap);
 			}
 		}
 	}
-}
-void PropData::add_prop_lights_into_bind(Node *chunk, Transform parent_transform, bool allow_snap) {
-	VoxelChunk *c = Object::cast_to<VoxelChunk>(chunk);
-
-	ERR_FAIL_COND(!ObjectDB::instance_validate(c));
-
-	add_prop_lights_into(c, parent_transform, allow_snap);
 }
 
 void PropData::add_meshes_into(Ref<VoxelMesher> mesher, Ref<TexturePacker> texture_packer, Transform parent_transform, Spatial *snap_spatial) {
@@ -198,7 +191,7 @@ void PropData::add_meshes_into(Ref<VoxelMesher> mesher, Ref<TexturePacker> textu
 	}
 }
 void PropData::add_meshes_into_bind(Ref<VoxelMesher> mesher, Ref<TexturePacker> texture_packer, Transform parent_transform, Node *snap_spatial) {
-	Spatial *s = Object::cast_to<VoxelChunk>(snap_spatial);
+	Spatial *s = Object::cast_to<Spatial>(snap_spatial);
 
 	ERR_FAIL_COND(s != NULL && !ObjectDB::instance_validate(s));
 
@@ -226,7 +219,7 @@ Transform PropData::get_next_snapped_prop_transform(Spatial *s, Transform parent
 	return parent_transform;
 }
 Transform PropData::get_next_snapped_prop_transform_bind(Node *spatial, Transform parent_transform, bool snap_to_mesh, Vector3 snap_axis) {
-	Spatial *s = Object::cast_to<VoxelChunk>(spatial);
+	Spatial *s = Object::cast_to<Spatial>(spatial);
 
 	ERR_FAIL_COND_V(!ObjectDB::instance_validate(s), parent_transform);
 
@@ -263,7 +256,7 @@ void PropData::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PropDataEntry", PROPERTY_USAGE_DEFAULT, "PropDataEntry"), "set_props", "get_props");
 
 	ClassDB::bind_method(D_METHOD("add_textures_into", "texture_packer"), &PropData::add_textures_into);
-	ClassDB::bind_method(D_METHOD("add_prop_lights_into", "chunk", "parent_transform", "allow_snap"), &PropData::add_prop_lights_into_bind);
+	ClassDB::bind_method(D_METHOD("add_prop_lights_into", "chunk", "parent_transform", "allow_snap"), &PropData::add_prop_lights_into);
 
 	ClassDB::bind_method(D_METHOD("add_meshes_into", "mesher", "texture_packer", "parent_transform", "snap_spatial"), &PropData::add_meshes_into_bind);
 

@@ -239,9 +239,12 @@ protected:
 	virtual void _build(bool immediate);
 	virtual void _visibility_changed(bool visible);
 
-	void wait_and_finish_thread();
+	virtual void _exit_tree();
+	virtual void _process(float delta);
+	virtual void _physics_process(float delta);
+	virtual void _world_transform_changed();
 
-	void _notification(int p_what);
+	void wait_and_finish_thread();
 
 	static void _bind_methods();
 

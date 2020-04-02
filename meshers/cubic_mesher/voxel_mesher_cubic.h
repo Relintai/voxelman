@@ -35,7 +35,7 @@ class VoxelMesherCubic : public VoxelMesher {
 	GDCLASS(VoxelMesherCubic, VoxelMesher);
 
 public:
-	void _add_chunk(Node *p_chunk);
+	void _add_chunk(Ref<VoxelChunk> p_chunk);
 
 	VoxelMesherCubic();
 	~VoxelMesherCubic();

@@ -35,7 +35,7 @@ void VoxelMesherTransvoxel::set_texture_scale(const int value) {
 	_texture_scale = value;
 }
 
-void VoxelMesherTransvoxel::get_voxel_type_array(int *arr, VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
+void VoxelMesherTransvoxel::get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
 	arr[0] = chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 	arr[1] = chunk->get_voxel(x, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 	arr[2] = chunk->get_voxel(x, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
@@ -74,7 +74,7 @@ int VoxelMesherTransvoxel::get_case_code_from_arr(const int *data) {
 
 	return case_code;
 }
-int VoxelMesherTransvoxel::get_case_code(VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
+int VoxelMesherTransvoxel::get_case_code(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
 	int case_code = 0;
 
 	if (chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
@@ -104,7 +104,7 @@ int VoxelMesherTransvoxel::get_case_code(VoxelChunk *chunk, const int x, const i
 	return case_code;
 }
 
-int VoxelMesherTransvoxel::get_voxel_type(VoxelChunk *chunk, const int x, const int y, const int z, const int size) {
+int VoxelMesherTransvoxel::get_voxel_type(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
 	int type = 0;
 
 	type = chunk->get_voxel(x, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
@@ -147,10 +147,10 @@ int VoxelMesherTransvoxel::get_voxel_type(VoxelChunk *chunk, const int x, const 
 	return type;
 }
 
-void VoxelMesherTransvoxel::_add_chunk(Node *p_chunk) {
-	VoxelChunkDefault *chunk = Object::cast_to<VoxelChunkDefault>(p_chunk);
+void VoxelMesherTransvoxel::_add_chunk(Ref<VoxelChunk> p_chunk) {
+	Ref<VoxelChunkDefault> chunk = p_chunk;
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	chunk->generate_ao();
 

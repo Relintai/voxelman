@@ -86,7 +86,7 @@ void BlockVoxelStructure::set_voxel_data(PoolByteArray p_arr, int p_x, int p_y, 
 }
 
 //void BlockVoxelStructure::_write_to_chunk(Node *chunk) {
-//VoxelChunk *c = Object::cast_to<VoxelChunk>(chunk);
+//Ref<VoxelChunk> c = Object::cast_to<VoxelChunk>(chunk);
 //}
 
 void BlockVoxelStructure::clear() {

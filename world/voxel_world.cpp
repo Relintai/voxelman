@@ -160,29 +160,26 @@ int VoxelWorld::get_world_area_count() const {
 	return _world_areas.size();
 }
 
-void VoxelWorld::add_chunk(VoxelChunk *chunk, const int x, const int y, const int z) {
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void VoxelWorld::add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	IntPos pos(x, y, z);
 
 	ERR_FAIL_COND(_chunks.has(pos));
 
+	chunk->set_voxel_world(this);
 	chunk->set_position(x, y, z);
+	chunk->world_transform_changed();
 
 	_chunks.set(pos, chunk);
 	_chunks_vector.push_back(chunk);
-}
-void VoxelWorld::add_chunk_bind(Node *chunk, const int x, const int y, const int z) {
-	VoxelChunk *v = Object::cast_to<VoxelChunk>(chunk);
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(v));
-
-	add_chunk(v, x, y, z);
+	chunk->enter_tree();
 }
 bool VoxelWorld::has_chunk(const int x, const int y, const int z) const {
 	return _chunks.has(IntPos(x, y, z));
 }
-VoxelChunk *VoxelWorld::get_chunk(const int x, const int y, const int z) {
+Ref<VoxelChunk> VoxelWorld::get_chunk(const int x, const int y, const int z) {
 	IntPos pos(x, y, z);
 
 	if (_chunks.has(pos))
@@ -190,13 +187,13 @@ VoxelChunk *VoxelWorld::get_chunk(const int x, const int y, const int z) {
 
 	return NULL;
 }
-VoxelChunk *VoxelWorld::remove_chunk(const int x, const int y, const int z) {
+Ref<VoxelChunk> VoxelWorld::remove_chunk(const int x, const int y, const int z) {
 	IntPos pos(x, y, z);
 
 	if (!_chunks.has(pos))
 		return NULL;
 
-	VoxelChunk *chunk = _chunks.get(pos);
+	Ref<VoxelChunk> chunk = _chunks.get(pos);
 
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
 		if (_chunks_vector.get(i) == chunk) {
@@ -205,23 +202,26 @@ VoxelChunk *VoxelWorld::remove_chunk(const int x, const int y, const int z) {
 		}
 	}
 
+	chunk->exit_tree();
+
 	ERR_FAIL_COND_V(!_chunks.erase(pos), NULL);
 
 	//_chunks.erase(pos);
 
 	return chunk;
 }
-VoxelChunk *VoxelWorld::remove_chunk_index(const int index) {
+Ref<VoxelChunk> VoxelWorld::remove_chunk_index(const int index) {
 	ERR_FAIL_INDEX_V(index, _chunks_vector.size(), NULL);
 
-	VoxelChunk *chunk = _chunks_vector.get(index);
+	Ref<VoxelChunk> chunk = _chunks_vector.get(index);
 	_chunks_vector.remove(index);
 	_chunks.erase(IntPos(chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z()));
+	chunk->exit_tree();
 
 	return chunk;
 }
 
-VoxelChunk *VoxelWorld::get_chunk_index(const int index) {
+Ref<VoxelChunk> VoxelWorld::get_chunk_index(const int index) {
 	ERR_FAIL_INDEX_V(index, _chunks_vector.size(), NULL);
 
 	return _chunks_vector.get(index);
@@ -230,17 +230,14 @@ int VoxelWorld::get_chunk_count() const {
 	return _chunks_vector.size();
 }
 
-void VoxelWorld::add_to_generation_queue_bind(Node *chunk) {
-	add_to_generation_queue(Object::cast_to<VoxelChunk>(chunk));
-}
-void VoxelWorld::add_to_generation_queue(VoxelChunk *chunk) {
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void VoxelWorld::add_to_generation_queue(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	set_process_internal(true);
 
 	_generation_queue.push_back(chunk);
 }
-VoxelChunk *VoxelWorld::get_generation_queue_index(int index) {
+Ref<VoxelChunk> VoxelWorld::get_generation_queue_index(int index) {
 	ERR_FAIL_INDEX_V(index, _generation_queue.size(), NULL);
 
 	return _generation_queue.get(index);
@@ -254,15 +251,12 @@ int VoxelWorld::get_generation_queue_size() {
 	return _generation_queue.size();
 }
 
-void VoxelWorld::add_to_generation_bind(Node *chunk) {
-	add_to_generation(Object::cast_to<VoxelChunk>(chunk));
-}
-void VoxelWorld::add_to_generation(VoxelChunk *chunk) {
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void VoxelWorld::add_to_generation(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	_generating.push_back(chunk);
 }
-VoxelChunk *VoxelWorld::get_generation_index(int index) {
+Ref<VoxelChunk> VoxelWorld::get_generation_index(int index) {
 	ERR_FAIL_INDEX_V(index, _generating.size(), NULL);
 
 	return _generating.get(index);
@@ -278,7 +272,7 @@ int VoxelWorld::get_generation_size() {
 
 void VoxelWorld::clear() {
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
-		_chunks_vector.get(i)->queue_delete();
+		_chunks_vector.get(i)->exit_tree();
 	}
 
 	_chunks_vector.clear();
@@ -289,29 +283,19 @@ void VoxelWorld::clear() {
 	_generating.clear();
 }
 
-VoxelChunk *VoxelWorld::create_chunk(int x, int y, int z) {
-	Node *np = NULL;
+Ref<VoxelChunk> VoxelWorld::create_chunk(int x, int y, int z) {
+	Ref<VoxelChunk> c = call("_create_chunk", x, y, z, Ref<VoxelChunk>());
 
-	Node *n = call("_create_chunk", x, y, z, np);
-
-	return (Object::cast_to<VoxelChunk>(n));
+	return c;
 }
-VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z, Node *p_chunk) {
-	VoxelChunk *chunk;
-
-	if (p_chunk != NULL) {
-		chunk = Object::cast_to<VoxelChunk>(p_chunk);
-	} else {
-		chunk = memnew(VoxelChunk);
+Ref<VoxelChunk> VoxelWorld::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
+	if (!chunk.is_valid()) {
+		chunk.instance();
 	}
 
-	ERR_FAIL_COND_V(!ObjectDB::instance_validate(chunk), NULL);
+	ERR_FAIL_COND_V(!chunk.is_valid(), NULL);
 
 	chunk->set_name("Chunk[" + String::num(x) + "," + String::num(y) + "," + String::num(z) + "]");
-	add_child(chunk);
-
-	if (Engine::get_singleton()->is_editor_hint())
-		chunk->set_owner(get_tree()->get_edited_scene_root());
 
 	chunk->set_voxel_world(this);
 
@@ -323,7 +307,7 @@ VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z, Node *p_chunk) {
 	chunk->set_library(_library);
 	chunk->set_voxel_scale(_voxel_scale);
 	chunk->set_size(_chunk_size_x, _chunk_size_y, _chunk_size_z, _data_margin_start, _data_margin_end);
-	chunk->set_translation(Vector3(x * _chunk_size_x * _voxel_scale, y * _chunk_size_y * _voxel_scale, z * _chunk_size_z * _voxel_scale));
+	//chunk->set_translation(Vector3(x * _chunk_size_x * _voxel_scale, y * _chunk_size_y * _voxel_scale, z * _chunk_size_z * _voxel_scale));
 
 	add_chunk(chunk, x, y, z);
 
@@ -332,20 +316,17 @@ VoxelChunk *VoxelWorld::_create_chunk(int x, int y, int z, Node *p_chunk) {
 	return chunk;
 }
 
-void VoxelWorld::generate_chunk_bind(Node *p_chunk) {
-	generate_chunk(Object::cast_to<VoxelChunk>(p_chunk));
-}
-void VoxelWorld::generate_chunk(VoxelChunk *p_chunk) {
-	ERR_FAIL_COND(!ObjectDB::instance_validate(p_chunk));
+void VoxelWorld::generate_chunk(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
-	p_chunk->set_is_generating(true);
+	chunk->set_is_generating(true);
 
 	if (has_method("_prepare_chunk_for_generation"))
-		call("_prepare_chunk_for_generation", p_chunk);
+		call("_prepare_chunk_for_generation", chunk);
 
-	call("_generate_chunk", p_chunk);
+	call("_generate_chunk", chunk);
 
-	p_chunk->build();
+	chunk->build();
 }
 
 bool VoxelWorld::can_chunk_do_build_step() {
@@ -362,28 +343,43 @@ bool VoxelWorld::is_position_walkable(const Vector3 &p_pos) {
 	int y = static_cast<int>(Math::floor(p_pos.y / (_chunk_size_y * _voxel_scale)));
 	int z = static_cast<int>(Math::floor(p_pos.z / (_chunk_size_z * _voxel_scale)));
 
-	VoxelChunk *c = get_chunk(x, y, z);
+	Ref<VoxelChunk> c = get_chunk(x, y, z);
 
-	if (!ObjectDB::instance_validate(c))
+	if (!c.is_valid())
 		return false;
 
 	return !c->get_is_generating();
 }
 
-void VoxelWorld::on_chunk_mesh_generation_finished(VoxelChunk *p_chunk) {
+void VoxelWorld::on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk) {
 	emit_signal("chunk_mesh_generation_finished", p_chunk);
 }
 
-void VoxelWorld::on_chunk_mesh_generation_finished_bind(Node *p_chunk) {
-	VoxelChunk *c = Object::cast_to<VoxelChunk>(p_chunk);
+Vector<Variant> VoxelWorld::get_chunks() {
+	Vector<Variant> r;
+	for (int i = 0; i < _chunks_vector.size(); i++) {
+		r.push_back(_chunks_vector[i].get_ref_ptr());
+	}
+	return r;
+}
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(c));
+void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
+	clear();
 
-	on_chunk_mesh_generation_finished(c);
+	for (int i = 0; i < chunks.size(); i++) {
+		Ref<VoxelChunk> chunk = Ref<VoxelChunk>(chunks[i]);
+
+		if (!chunk.is_valid())
+			continue;
+
+		add_chunk(chunk, chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z());
+	}
 }
 
 VoxelWorld::VoxelWorld() {
 	_editable = false;
+
+	_is_priority_generation = true;
 
 	_chunk_size_x = 16;
 	_chunk_size_y = 16;
@@ -417,10 +413,8 @@ VoxelWorld ::~VoxelWorld() {
 	_generating.clear();
 }
 
-void VoxelWorld::_generate_chunk(Node *p_chunk) {
-	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
-
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void VoxelWorld::_generate_chunk(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 	ERR_FAIL_COND(!_level_generator.is_valid());
 
 	_level_generator->generate_chunk(chunk);
@@ -429,27 +423,48 @@ void VoxelWorld::_generate_chunk(Node *p_chunk) {
 void VoxelWorld::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
-			set_process_internal(false);
+			set_process_internal(true);
+			set_physics_process_internal(true);
+			set_notify_transform(true);
 
 			if (!Engine::get_singleton()->is_editor_hint() && _library.is_valid())
 				_library->refresh_rects();
+
+			for (int i = 0; i < _chunks_vector.size(); ++i) {
+				Ref<VoxelChunk> chunk = _chunks_vector[i];
+
+				if (chunk.is_valid()) {
+					chunk->enter_tree();
+				}
+			}
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			_num_frame_chunk_build_steps = 0;
 
-			if (_generation_queue.empty() && _generating.empty()) {
+			for (int i = 0; i < _chunks_vector.size(); ++i) {
+				Ref<VoxelChunk> chunk = _chunks_vector[i];
+
+				ERR_CONTINUE(!chunk.is_valid());
+
+				if (chunk->get_process()) {
+					chunk->process(get_physics_process_delta_time());
+				}
+			}
+
+			if (_is_priority_generation && _generation_queue.empty() && _generating.empty()) {
+				_is_priority_generation = false;
+
 				call("_generation_finished");
 
 				emit_signal("generation_finished");
 
-				set_process_internal(false);
 				return;
 			}
 
 			for (int i = 0; i < _generating.size(); ++i) {
-				VoxelChunk *chunk = _generating.get(i);
+				Ref<VoxelChunk> chunk = _generating.get(i);
 
-				if (!ObjectDB::instance_validate(chunk) || !chunk->get_is_generating()) {
+				if (!chunk.is_valid() || !chunk->get_is_generating()) {
 					_generating.remove(i);
 					--i;
 					continue;
@@ -463,17 +478,47 @@ void VoxelWorld::_notification(int p_what) {
 				return;
 
 			while (_generating.size() < _max_concurrent_generations && _generation_queue.size() != 0) {
-				VoxelChunk *chunk = _generation_queue.get(0);
+				Ref<VoxelChunk> chunk = _generation_queue.get(0);
 				_generation_queue.remove(0);
 
-				ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+				ERR_FAIL_COND(!chunk.is_valid());
 
 				_generating.push_back(chunk);
 
 				generate_chunk(chunk);
 			}
 		} break;
+		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
+			for (int i = 0; i < _chunks_vector.size(); ++i) {
+				Ref<VoxelChunk> chunk = _chunks_vector[i];
+
+				ERR_CONTINUE(!chunk.is_valid());
+
+				if (chunk->get_process()) {
+					chunk->physics_process(get_physics_process_delta_time());
+				}
+			}
+
+		} break;
 		case NOTIFICATION_EXIT_TREE: {
+			for (int i = 0; i < _chunks_vector.size(); ++i) {
+				Ref<VoxelChunk> chunk = _chunks_vector[i];
+
+				if (chunk.is_valid()) {
+					chunk->exit_tree();
+				}
+			}
+
+		} break;
+		case NOTIFICATION_TRANSFORM_CHANGED: {
+			for (int i = 0; i < _chunks_vector.size(); ++i) {
+				Ref<VoxelChunk> chunk = _chunks_vector[i];
+
+				if (chunk.is_valid()) {
+					chunk->world_transform_changed();
+				}
+			}
+
 		} break;
 	}
 }
@@ -545,13 +590,17 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_player", "player"), &VoxelWorld::set_player_bind);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "player", PROPERTY_HINT_RESOURCE_TYPE, "Spatial"), "set_player", "get_player");
 
+	ClassDB::bind_method(D_METHOD("get_chunks"), &VoxelWorld::get_chunks);
+	ClassDB::bind_method(D_METHOD("set_chunks"), &VoxelWorld::set_chunks);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "chunks", PROPERTY_HINT_NONE, "17/17:VoxelChunk", PROPERTY_USAGE_DEFAULT, "VoxelChunk"), "set_chunks", "get_chunks");
+
 	ClassDB::bind_method(D_METHOD("get_world_area", "index"), &VoxelWorld::get_world_area);
 	ClassDB::bind_method(D_METHOD("add_world_area", "area"), &VoxelWorld::add_world_area);
 	ClassDB::bind_method(D_METHOD("remove_world_area", "index"), &VoxelWorld::remove_world_area);
 	ClassDB::bind_method(D_METHOD("clear_world_areas"), &VoxelWorld::clear_world_areas);
 	ClassDB::bind_method(D_METHOD("get_world_area_count"), &VoxelWorld::get_world_area_count);
 
-	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelWorld::add_chunk_bind);
+	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelWorld::add_chunk);
 	ClassDB::bind_method(D_METHOD("has_chunk", "x", "y", "z"), &VoxelWorld::has_chunk);
 	ClassDB::bind_method(D_METHOD("get_chunk", "x", "y", "z"), &VoxelWorld::get_chunk);
 	ClassDB::bind_method(D_METHOD("remove_chunk", "x", "y", "z"), &VoxelWorld::remove_chunk);
@@ -560,12 +609,12 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_chunk_index", "index"), &VoxelWorld::get_chunk_index);
 	ClassDB::bind_method(D_METHOD("get_chunk_count"), &VoxelWorld::get_chunk_count);
 
-	ClassDB::bind_method(D_METHOD("add_to_generation_queue", "chunk"), &VoxelWorld::add_to_generation_queue_bind);
+	ClassDB::bind_method(D_METHOD("add_to_generation_queue", "chunk"), &VoxelWorld::add_to_generation_queue);
 	ClassDB::bind_method(D_METHOD("get_generation_queue_index", "index"), &VoxelWorld::get_generation_queue_index);
 	ClassDB::bind_method(D_METHOD("remove_generation_queue_index", "index"), &VoxelWorld::remove_generation_queue_index);
 	ClassDB::bind_method(D_METHOD("get_generation_queue_size"), &VoxelWorld::get_generation_queue_size);
 
-	ClassDB::bind_method(D_METHOD("add_to_generation", "chunk"), &VoxelWorld::add_to_generation_bind);
+	ClassDB::bind_method(D_METHOD("add_to_generation", "chunk"), &VoxelWorld::add_to_generation);
 	ClassDB::bind_method(D_METHOD("get_generation_index", "index"), &VoxelWorld::get_generation_index);
 	ClassDB::bind_method(D_METHOD("remove_generation_index", "index"), &VoxelWorld::remove_generation_index);
 	ClassDB::bind_method(D_METHOD("get_generation_size"), &VoxelWorld::get_generation_size);
@@ -586,5 +635,5 @@ void VoxelWorld::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("can_chunk_do_build_step"), &VoxelWorld::can_chunk_do_build_step);
 	ClassDB::bind_method(D_METHOD("is_position_walkable", "position"), &VoxelWorld::is_position_walkable);
-	ClassDB::bind_method(D_METHOD("on_chunk_mesh_generation_finished", "chunk"), &VoxelWorld::on_chunk_mesh_generation_finished_bind);
+	ClassDB::bind_method(D_METHOD("on_chunk_mesh_generation_finished", "chunk"), &VoxelWorld::on_chunk_mesh_generation_finished);
 }

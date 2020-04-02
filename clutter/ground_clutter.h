@@ -35,11 +35,9 @@ class GroundClutter : public Resource {
 	GDCLASS(GroundClutter, Resource);
 
 public:
-	bool should_spawn(VoxelChunk *chunk, int x, int y, int z);
-	bool should_spawn_bind(Node *chunk, int x, int y, int z);
+	bool should_spawn(Ref<VoxelChunk> chunk, int x, int y, int z);
 
-	void add_meshes_to(Ref<VoxelMesher> mesher, VoxelChunk *chunk, int x, int y, int z);
-	void add_meshes_to_bind(Ref<VoxelMesher> mesher, Node *chunk, int x, int y, int z);
+	void add_meshes_to(Ref<VoxelMesher> mesher, Ref<VoxelChunk> chunk, int x, int y, int z);
 	void add_textures_to(Ref<TexturePacker> packer);
 
 	GroundClutter();

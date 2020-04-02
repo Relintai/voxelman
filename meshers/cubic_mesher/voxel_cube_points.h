@@ -112,9 +112,8 @@ public:
 
 	void refresh_points();
 	void recalculate_point(int point);
-	void refresh_neighbours(VoxelChunk *chunk);
-	void setup_bind(Node *chunk, int x, int y, int z, int size = 1);
-	void setup(VoxelChunk *chunk, int x, int y, int z, int size = 1);
+	void refresh_neighbours(Ref<VoxelChunk> chunk);
+	void setup(Ref<VoxelChunk> chunk, int x, int y, int z, int size = 1);
 
 	void reset();
 

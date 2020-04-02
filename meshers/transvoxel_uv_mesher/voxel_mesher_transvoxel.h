@@ -69,11 +69,11 @@ public:
 	void set_texture_scale(const int value);
 
 	//arr should have a size of 8
-	void get_voxel_type_array(int *arr, VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
+	void get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size = 1);
 	int get_case_code_from_arr(const int *data);
-	int get_case_code(VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
-	int get_voxel_type(VoxelChunk *chunk, const int x, const int y, const int z, const int size = 1);
-	void _add_chunk(Node *p_chunk);
+	int get_case_code(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size = 1);
+	int get_voxel_type(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size = 1);
+	void _add_chunk(Ref<VoxelChunk> p_chunk);
 
 	Vector3 corner_id_to_vertex(int corner_id) const;
 

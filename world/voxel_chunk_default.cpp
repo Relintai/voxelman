@@ -37,12 +37,21 @@ _FORCE_INLINE_ VoxelChunkDefault::ActiveBuildPhaseType VoxelChunkDefault::get_ac
 	return _active_build_phase_type;
 }
 _FORCE_INLINE_ void VoxelChunkDefault::set_active_build_phase_type(const VoxelChunkDefault::ActiveBuildPhaseType value) {
+	if (_active_build_phase_type == value)
+		return;
+
+	if (_active_build_phase_type == VoxelChunkDefault::BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
+		set_physics_process(false);
+	} else if (_active_build_phase_type == VoxelChunkDefault::BUILD_PHASE_TYPE_PROCESS) {
+		set_process(false);
+	}
+
 	_active_build_phase_type = value;
 
 	if (_active_build_phase_type == VoxelChunkDefault::BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
-		call_deferred("set_physics_process_internal", true);
-	} else {
-		call_deferred("set_physics_process_internal", false);
+		set_physics_process(true);
+	} else if (_active_build_phase_type == VoxelChunkDefault::BUILD_PHASE_TYPE_PROCESS) {
+		set_process(true);
 	}
 }
 
@@ -182,7 +191,7 @@ void VoxelChunkDefault::build_deferred() {
 
 		wait_and_finish_thread();
 
-		set_process_internal(true);
+		set_process(true);
 
 		_is_generating = true;
 
@@ -201,7 +210,7 @@ void VoxelChunkDefault::build_prioritized() {
 
 		wait_and_finish_thread();
 
-		set_process_internal(true);
+		set_process(true);
 
 		_is_generating = true;
 
@@ -528,7 +537,7 @@ void VoxelChunkDefault::create_meshes(const int mesh_index, const int mesh_count
 
 		VS::get_singleton()->instance_set_base(mesh_instance_rid, mesh_rid);
 
-		VS::get_singleton()->instance_set_transform(mesh_instance_rid, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
+		VS::get_singleton()->instance_set_transform(mesh_instance_rid, get_transform());
 
 		if (i != 0)
 			VS::get_singleton()->instance_set_visible(mesh_instance_rid, false);
@@ -597,7 +606,7 @@ void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_m
 
 	PhysicsServer::get_singleton()->body_add_shape(body_rid, shape_rid);
 
-	PhysicsServer::get_singleton()->body_set_state(body_rid, PhysicsServer::BODY_STATE_TRANSFORM, Transform(Basis(), Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale)));
+	PhysicsServer::get_singleton()->body_set_state(body_rid, PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
 	PhysicsServer::get_singleton()->body_set_space(body_rid, get_voxel_world()->get_world()->get_space());
 
 	m[MESH_TYPE_INDEX_BODY] = body_rid;
@@ -672,10 +681,10 @@ void VoxelChunkDefault::create_debug_immediate_geometry() {
 
 	_debug_drawer = memnew(ImmediateGeometry());
 
-	add_child(_debug_drawer);
+	_voxel_world->add_child(_debug_drawer);
 
 	if (Engine::get_singleton()->is_editor_hint())
-		_debug_drawer->set_owner(get_tree()->get_edited_scene_root());
+		_debug_drawer->set_owner(_voxel_world->get_tree()->get_edited_scene_root());
 
 	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_position.x * _size.x * _voxel_scale, _position.y * _size.y * _voxel_scale, _position.z * _size.z * _voxel_scale)));
 	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_position.x * _size.x * _voxel_scale, _position.y * _size.y * _voxel_scale, _position.z * _size.z * _voxel_scale)));
@@ -783,10 +792,6 @@ void VoxelChunkDefault::draw_debug_voxel_lights() {
 	_debug_drawer->end();
 }
 
-void VoxelChunkDefault::visibility_changed(bool visible) {
-	call("visibility_changed", visible);
-}
-
 void VoxelChunkDefault::_visibility_changed(bool visible) {
 	if (visible) {
 		set_current_lod_level(_current_lod_level);
@@ -799,6 +804,85 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, false);
 	}
+}
+
+void VoxelChunkDefault::_exit_tree() {
+	if (_build_thread) {
+		_abort_build = true;
+
+		wait_and_finish_thread();
+	}
+
+	free_rids();
+}
+void VoxelChunkDefault::_process(float delta) {
+	if (!get_is_generating()) {
+		set_process(false);
+	}
+
+	if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
+		return;
+	}
+
+	switch (_active_build_phase_type) {
+		case BUILD_PHASE_TYPE_PROCESS: {
+			if (!_voxel_world->can_chunk_do_build_step())
+				return;
+
+			_build_step_in_progress = true;
+
+			while (has_next_phase() && _active_build_phase_type == BUILD_PHASE_TYPE_PROCESS) {
+				build_phase_process();
+
+				if (!get_build_phase_done())
+					break;
+			}
+
+			_build_step_in_progress = false;
+			return;
+		}
+		case BUILD_PHASE_TYPE_NORMAL: {
+			//normal mode -> build step is not in progress -> need to restart building
+
+			if (!_voxel_world->can_chunk_do_build_step())
+				return;
+
+			build_step();
+
+			return;
+		}
+		case BUILD_PHASE_TYPE_PHYSICS_PROCESS:
+			return;
+	}
+}
+void VoxelChunkDefault::_physics_process(float delta) {
+	if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
+		return;
+	}
+
+	if (_active_build_phase_type == BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
+
+		if (!_voxel_world->can_chunk_do_build_step())
+			return;
+
+		_build_step_in_progress = true;
+
+		while (has_next_phase() && _active_build_phase_type == BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
+			build_phase_physics_process();
+
+			if (!get_build_phase_done())
+				break;
+		}
+
+		_build_step_in_progress = false;
+
+		return;
+	}
+}
+void VoxelChunkDefault::_world_transform_changed() {
+	VoxelChunk::_world_transform_changed();
+
+	update_transforms();
 }
 
 void VoxelChunkDefault::free_chunk() {
@@ -1278,96 +1362,6 @@ void VoxelChunkDefault::_build(bool immediate) {
 	build_deferred();
 }
 
-void VoxelChunkDefault::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_VISIBILITY_CHANGED: {
-			if (is_inside_tree())
-				visibility_changed(is_visible_in_tree());
-		}
-		case NOTIFICATION_ENTER_TREE: {
-			set_notify_transform(true);
-		} break;
-		case NOTIFICATION_EXIT_TREE: {
-			if (_build_thread) {
-				_abort_build = true;
-
-				wait_and_finish_thread();
-			}
-
-			free_rids();
-
-		} break;
-		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (!get_is_generating()) {
-				set_process_internal(false);
-			}
-
-			if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
-				return;
-			}
-
-			switch (_active_build_phase_type) {
-				case BUILD_PHASE_TYPE_PROCESS: {
-					if (!_voxel_world->can_chunk_do_build_step())
-						return;
-
-					_build_step_in_progress = true;
-
-					while (has_next_phase() && _active_build_phase_type == BUILD_PHASE_TYPE_PROCESS) {
-						build_phase_process();
-
-						if (!get_build_phase_done())
-							break;
-					}
-
-					_build_step_in_progress = false;
-					return;
-				}
-				case BUILD_PHASE_TYPE_NORMAL: {
-					//normal mode -> build step is not in progress -> need to restart building
-
-					if (!_voxel_world->can_chunk_do_build_step())
-						return;
-
-					build_step();
-
-					return;
-				}
-				case BUILD_PHASE_TYPE_PHYSICS_PROCESS:
-					return;
-			}
-			break;
-			case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
-				if (!get_is_generating() || !has_next_phase() || _build_step_in_progress) {
-					return;
-				}
-
-				if (_active_build_phase_type == BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
-
-					if (!_voxel_world->can_chunk_do_build_step())
-						return;
-
-					_build_step_in_progress = true;
-
-					while (has_next_phase() && _active_build_phase_type == BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
-						build_phase_physics_process();
-
-						if (!get_build_phase_done())
-							break;
-					}
-
-					_build_step_in_progress = false;
-
-					return;
-				}
-			} break;
-			case NOTIFICATION_TRANSFORM_CHANGED: {
-				update_transforms();
-			} break;
-		}
-	}
-}
-
 void VoxelChunkDefault::wait_and_finish_thread() {
 	if (_build_thread) {
 		Thread::wait_to_finish(_build_thread);
@@ -1490,8 +1484,9 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_create_meshers"), &VoxelChunkDefault::_create_meshers);
 	ClassDB::bind_method(D_METHOD("_build", "immediate"), &VoxelChunkDefault::_build);
 
-	BIND_VMETHOD(MethodInfo("_visibility_changed", PropertyInfo(Variant::BOOL, "visible")));
-	ClassDB::bind_method(D_METHOD("visibility_changed", "visible"), &VoxelChunkDefault::visibility_changed);
+	ClassDB::bind_method(D_METHOD("_exit_tree"), &VoxelChunkDefault::_exit_tree);
+	ClassDB::bind_method(D_METHOD("_process", "delta"), &VoxelChunkDefault::_process);
+	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &VoxelChunkDefault::_physics_process);
 	ClassDB::bind_method(D_METHOD("_visibility_changed", "visible"), &VoxelChunkDefault::_visibility_changed);
 
 	BIND_CONSTANT(BUILD_PHASE_DONE);

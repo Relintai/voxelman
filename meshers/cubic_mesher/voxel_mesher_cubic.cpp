@@ -24,10 +24,10 @@ SOFTWARE.
 
 #include "../../world/voxel_chunk_default.h"
 
-void VoxelMesherCubic::_add_chunk(Node *p_chunk) {
-	VoxelChunkDefault *chunk = Object::cast_to<VoxelChunkDefault>(p_chunk);
+void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
+	Ref<VoxelChunkDefault> chunk = p_chunk;
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	chunk->generate_ao();
 

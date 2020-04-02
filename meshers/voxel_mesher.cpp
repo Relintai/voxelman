@@ -394,26 +394,16 @@ void VoxelMesher::reset() {
 	_last_tangent = Plane();
 }
 
-void VoxelMesher::add_chunk_bind(Node *chunk) {
-	VoxelChunk *vchunk = Object::cast_to<VoxelChunk>(chunk);
-
-	add_chunk(vchunk);
-}
-void VoxelMesher::add_chunk(VoxelChunk *chunk) {
+void VoxelMesher::add_chunk(Ref<VoxelChunk> chunk) {
 	ERR_FAIL_COND(!has_method("_add_chunk"));
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	call("_add_chunk", chunk);
 }
 
-void VoxelMesher::add_chunk_liquid_bind(Node *chunk) {
-	VoxelChunk *vchunk = Object::cast_to<VoxelChunk>(chunk);
-
-	add_chunk_liquid(vchunk);
-}
-void VoxelMesher::add_chunk_liquid(VoxelChunk *chunk) {
+void VoxelMesher::add_chunk_liquid(Ref<VoxelChunk> chunk) {
 	ERR_FAIL_COND(!has_method("_add_chunk_liquid"));
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	call("_add_chunk_liquid", chunk);
 }
@@ -568,21 +558,14 @@ void VoxelMesher::_add_mesher(const Ref<VoxelMesher> &mesher) {
 	}
 }
 
-void VoxelMesher::bake_colors_bind(Node *chunk) {
-	VoxelChunk *vchunk = Object::cast_to<VoxelChunk>(chunk);
-
-	bake_colors(vchunk);
-}
-void VoxelMesher::bake_colors(VoxelChunk *chunk) {
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void VoxelMesher::bake_colors(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	if (has_method("_bake_colors"))
 		call("_bake_colors", chunk);
 }
-void VoxelMesher::_bake_colors(Node *p_chunk) {
-	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
-
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void VoxelMesher::_bake_colors(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	if (_vertices.size() == 0)
 		return;
@@ -637,21 +620,14 @@ void VoxelMesher::_bake_colors(Node *p_chunk) {
 	}
 }
 
-void VoxelMesher::bake_liquid_colors_bind(Node *chunk) {
-	VoxelChunk *vchunk = Object::cast_to<VoxelChunk>(chunk);
-
-	bake_liquid_colors(vchunk);
-}
-void VoxelMesher::bake_liquid_colors(VoxelChunk *chunk) {
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void VoxelMesher::bake_liquid_colors(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	if (has_method("_bake_liquid_colors"))
 		call("_bake_liquid_colors", chunk);
 }
-void VoxelMesher::_bake_liquid_colors(Node *p_chunk) {
-	VoxelChunk *chunk = Object::cast_to<VoxelChunk>(p_chunk);
-
-	ERR_FAIL_COND(!ObjectDB::instance_validate(chunk));
+void VoxelMesher::_bake_liquid_colors(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	if (_vertices.size() == 0)
 		return;
@@ -1095,8 +1071,8 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_uv_margin", "value"), &VoxelMesher::set_uv_margin);
 	ADD_PROPERTY(PropertyInfo(Variant::RECT2, "uv_margin"), "set_uv_margin", "get_uv_margin");
 
-	ClassDB::bind_method(D_METHOD("add_chunk", "chunk"), &VoxelMesher::add_chunk_bind);
-	ClassDB::bind_method(D_METHOD("add_chunk_liquid", "chunk"), &VoxelMesher::add_chunk_liquid_bind);
+	ClassDB::bind_method(D_METHOD("add_chunk", "chunk"), &VoxelMesher::add_chunk);
+	ClassDB::bind_method(D_METHOD("add_chunk_liquid", "chunk"), &VoxelMesher::add_chunk_liquid);
 
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale", "uv_rect"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Rect2(0, 0, 1, 1)), DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform", "mesh", "transform", "uv_rect"), &VoxelMesher::add_mesh_data_resource_transform, DEFVAL(Rect2(0, 0, 1, 1)));
@@ -1105,10 +1081,10 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_mesher", "mesher"), &VoxelMesher::add_mesher);
 	ClassDB::bind_method(D_METHOD("_add_mesher", "mesher"), &VoxelMesher::_add_mesher);
 
-	ClassDB::bind_method(D_METHOD("bake_colors", "chunk"), &VoxelMesher::bake_colors_bind);
+	ClassDB::bind_method(D_METHOD("bake_colors", "chunk"), &VoxelMesher::bake_colors);
 	ClassDB::bind_method(D_METHOD("_bake_colors", "chunk"), &VoxelMesher::_bake_colors);
 
-	ClassDB::bind_method(D_METHOD("bake_liquid_colors", "chunk"), &VoxelMesher::bake_liquid_colors_bind);
+	ClassDB::bind_method(D_METHOD("bake_liquid_colors", "chunk"), &VoxelMesher::bake_liquid_colors);
 	ClassDB::bind_method(D_METHOD("_bake_liquid_colors", "chunk"), &VoxelMesher::_bake_liquid_colors);
 
 	ClassDB::bind_method(D_METHOD("get_vertices"), &VoxelMesher::get_vertices);

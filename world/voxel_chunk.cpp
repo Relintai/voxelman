@@ -24,6 +24,29 @@ SOFTWARE.
 
 #include "voxel_world.h"
 
+_FORCE_INLINE_ bool VoxelChunk::get_process() const {
+	return _is_processing;
+}
+_FORCE_INLINE_ void VoxelChunk::set_process(const bool value) {
+	_is_processing = value;
+}
+
+_FORCE_INLINE_ bool VoxelChunk::get_physics_process() const {
+	return _is_phisics_processing;
+}
+_FORCE_INLINE_ void VoxelChunk::set_physics_process(const bool value) {
+	_is_phisics_processing = value;
+}
+
+bool VoxelChunk::get_visible() const {
+	return _is_visible;
+}
+void VoxelChunk::set_visible(const bool value) {
+	_is_visible = value;
+
+	visibility_changed(value);
+}
+
 _FORCE_INLINE_ bool VoxelChunk::get_is_generating() const {
 	return _is_generating;
 }
@@ -630,7 +653,43 @@ void VoxelChunk::free_spawn_props() {
 	_spawned_props.clear();
 }
 
+void VoxelChunk::enter_tree() {
+	if (has_method("_enter_tree"))
+		call("_enter_tree");
+}
+void VoxelChunk::exit_tree() {
+	if (has_method("_exit_tree"))
+		call("_exit_tree");
+}
+void VoxelChunk::process(float delta) {
+	if (has_method("_process"))
+		call("_process", delta);
+}
+void VoxelChunk::physics_process(float delta) {
+	if (has_method("_physics_process"))
+		call("_physics_process", delta);
+}
+void VoxelChunk::world_transform_changed() {
+	call("_world_transform_changed");
+}
+void VoxelChunk::visibility_changed(bool visible) {
+	if (has_method("_visibility_changed"))
+		call("_visibility_changed", _is_visible);
+}
+
+Transform VoxelChunk::get_transform() const {
+	return _transform;
+}
+void VoxelChunk::set_transform(const Transform &transform) {
+	_transform = transform;
+}
+
 VoxelChunk::VoxelChunk() {
+	_is_processing = false;
+	_is_phisics_processing = false;
+
+	_is_visible = true;
+
 	_is_generating = false;
 	_dirty = false;
 	_state = VOXEL_CHUNK_STATE_OK;
@@ -673,6 +732,16 @@ VoxelChunk::~VoxelChunk() {
 			memdelete_arr(ch);
 		}
 	}
+}
+
+void VoxelChunk::_world_transform_changed() {
+	Transform wt;
+
+	if (_voxel_world != NULL) {
+		wt = _voxel_world->get_transform();
+	}
+
+	set_transform(wt * Transform(Basis(), Vector3(_position_x * static_cast<int>(_size_x) * _voxel_scale, _position_y * static_cast<int>(_size_y) * _voxel_scale, _position_z * static_cast<int>(_size_z) * _voxel_scale)));
 }
 
 /*
@@ -727,6 +796,29 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_create_meshers"));
 	BIND_VMETHOD(MethodInfo("_setup_channels"));
 	BIND_VMETHOD(MethodInfo("_add_light", PropertyInfo(Variant::INT, "local_x"), PropertyInfo(Variant::INT, "local_y"), PropertyInfo(Variant::INT, "local_z"), PropertyInfo(Variant::INT, "size"), PropertyInfo(Variant::COLOR, "color")));
+
+	BIND_VMETHOD(MethodInfo("_enter_tree"));
+	BIND_VMETHOD(MethodInfo("_exit_tree"));
+	BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
+	BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));
+	BIND_VMETHOD(MethodInfo("_world_transform_changed"));
+	BIND_VMETHOD(MethodInfo("_visibility_changed", PropertyInfo(Variant::BOOL, "visible")));
+
+	ClassDB::bind_method(D_METHOD("visibility_changed", "visible"), &VoxelChunk::visibility_changed);
+
+	ClassDB::bind_method(D_METHOD("get_process"), &VoxelChunk::get_process);
+	ClassDB::bind_method(D_METHOD("set_process", "value"), &VoxelChunk::set_process);
+
+	ClassDB::bind_method(D_METHOD("get_physics_process"), &VoxelChunk::get_physics_process);
+	ClassDB::bind_method(D_METHOD("set_physics_process", "value"), &VoxelChunk::set_physics_process);
+
+	ClassDB::bind_method(D_METHOD("get_transform"), &VoxelChunk::get_transform);
+	ClassDB::bind_method(D_METHOD("set_transform", "value"), &VoxelChunk::set_transform);
+	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM, "transform"), "set_transform", "get_transform");
+
+	ClassDB::bind_method(D_METHOD("get_visible"), &VoxelChunk::get_visible);
+	ClassDB::bind_method(D_METHOD("set_visible", "value"), &VoxelChunk::set_visible);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "visible"), "set_visible", "get_visible");
 
 	ClassDB::bind_method(D_METHOD("get_is_generating"), &VoxelChunk::get_is_generating);
 	ClassDB::bind_method(D_METHOD("set_is_generating", "value"), &VoxelChunk::set_is_generating);
@@ -857,4 +949,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("free_spawn_props"), &VoxelChunk::free_spawn_props);
 
 	ClassDB::bind_method(D_METHOD("create_meshers"), &VoxelChunk::create_meshers);
+
+	ClassDB::bind_method(D_METHOD("_world_transform_changed"), &VoxelChunk::_world_transform_changed);
 }

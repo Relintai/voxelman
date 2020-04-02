@@ -94,47 +94,45 @@ public:
 	void clear_world_areas();
 	int get_world_area_count() const;
 
-	void add_chunk(VoxelChunk *chunk, const int x, const int y, const int z);
-	void add_chunk_bind(Node *chunk, const int x, const int y, const int z);
+	void add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z);
 	bool has_chunk(const int x, const int y, const int z) const;
-	VoxelChunk *get_chunk(const int x, const int y, const int z);
-	VoxelChunk *remove_chunk(const int x, const int y, const int z);
-	VoxelChunk *remove_chunk_index(const int index);
+	Ref<VoxelChunk> get_chunk(const int x, const int y, const int z);
+	Ref<VoxelChunk> remove_chunk(const int x, const int y, const int z);
+	Ref<VoxelChunk> remove_chunk_index(const int index);
+	Ref<VoxelChunk> get_chunk_index(const int index);
 
-	VoxelChunk *get_chunk_index(const int index);
 	int get_chunk_count() const;
 
-	void add_to_generation_queue_bind(Node *chunk);
-	void add_to_generation_queue(VoxelChunk *chunk);
-	VoxelChunk *get_generation_queue_index(int index);
+	void add_to_generation_queue(Ref<VoxelChunk> chunk);
+	Ref<VoxelChunk> get_generation_queue_index(int index);
 	void remove_generation_queue_index(int index);
 	int get_generation_queue_size();
 
-	void add_to_generation_bind(Node *chunk);
-	void add_to_generation(VoxelChunk *chunk);
-	VoxelChunk *get_generation_index(int index);
+	void add_to_generation(Ref<VoxelChunk> chunk);
+	Ref<VoxelChunk> get_generation_index(int index);
 	void remove_generation_index(int index);
 	int get_generation_size();
 
 	void clear();
 
-	VoxelChunk *create_chunk(int x, int y, int z);
-	VoxelChunk *_create_chunk(int x, int y, int z, Node *p_chunk);
+	Ref<VoxelChunk> create_chunk(int x, int y, int z);
+	Ref<VoxelChunk> _create_chunk(int x, int y, int z, Ref<VoxelChunk> p_chunk);
 
-	void generate_chunk_bind(Node *p_chunk);
-	void generate_chunk(VoxelChunk *p_chunk);
+	void generate_chunk(Ref<VoxelChunk> chunk);
 
 	bool can_chunk_do_build_step();
 	bool is_position_walkable(const Vector3 &p_pos);
 
-	void on_chunk_mesh_generation_finished(VoxelChunk *p_chunk);
-	void on_chunk_mesh_generation_finished_bind(Node *p_chunk);
+	void on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk);
+
+	Vector<Variant> get_chunks();
+	void set_chunks(const Vector<Variant> &chunks);
 
 	VoxelWorld();
 	~VoxelWorld();
 
 protected:
-	void _generate_chunk(Node *p_chunk);
+	void _generate_chunk(Ref<VoxelChunk> chunk);
 
 	virtual void _notification(int p_what);
 	static void _bind_methods();
@@ -175,6 +173,8 @@ public:
 private:
 	bool _editable;
 
+	bool _is_priority_generation;
+
 	int _chunk_size_x;
 	int _chunk_size_y;
 	int _chunk_size_z;
@@ -187,8 +187,8 @@ private:
 	float _voxel_scale;
 	int _chunk_spawn_range;
 
-	HashMap<IntPos, VoxelChunk *, IntPosHasher> _chunks;
-	Vector<VoxelChunk *> _chunks_vector;
+	HashMap<IntPos, Ref<VoxelChunk>, IntPosHasher> _chunks;
+	Vector<Ref<VoxelChunk> > _chunks_vector;
 
 	Vector<Ref<WorldArea> > _world_areas;
 
@@ -197,8 +197,8 @@ private:
 
 	bool _use_threads;
 	int _max_concurrent_generations;
-	Vector<VoxelChunk *> _generation_queue;
-	Vector<VoxelChunk *> _generating;
+	Vector<Ref<VoxelChunk> > _generation_queue;
+	Vector<Ref<VoxelChunk> > _generating;
 	int _max_frame_chunk_build_steps;
 	int _num_frame_chunk_build_steps;
 };

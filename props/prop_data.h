@@ -66,8 +66,7 @@ public:
 	void set_props(const Vector<Variant> &props);
 
 	void add_textures_into(Ref<TexturePacker> texture_packer);
-	void add_prop_lights_into(VoxelChunk *chunk, Transform parent_transform, bool allow_snap);
-	void add_prop_lights_into_bind(Node *chunk, Transform parent_transform, bool allow_snap);
+	void add_prop_lights_into(Ref<VoxelChunk> chunk, Transform parent_transform, bool allow_snap);
 	void add_meshes_into(Ref<VoxelMesher> mesher, Ref<TexturePacker> texture_packer, Transform parent_transform, Spatial *snap_spatial = NULL);
 	void add_meshes_into_bind(Ref<VoxelMesher> mesher, Ref<TexturePacker> texture_packer, Transform parent_transform, Node *snap_spatial = NULL);
 
