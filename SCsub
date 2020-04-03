@@ -38,29 +38,11 @@ sources = [
     "meshers/cubic_mesher/voxel_mesher_cubic.cpp",
     "meshers/cubic_mesher/voxel_cube_points.cpp",
 
-    "props/prop_data.cpp",
-    "props/prop_data_entry.cpp",
-    "props/prop_data_scene.cpp",
-    "props/prop_data_mesh.cpp",
-    "props/prop_data_light.cpp",
-    "props/prop_data_prop.cpp",
-    "props/prop_data_entity.cpp",
-
     "level_generator/voxelman_level_generator.cpp",
 
     "areas/world_area.cpp",
 
-    "clutter/ground_clutter.cpp",
-    "clutter/ground_clutter_foliage.cpp",
-
     "world/voxel_world_editor.cpp",
-
-    "prop_tool/prop_tool.cpp",
-    "prop_tool/prop_tool_entity.cpp",
-    "prop_tool/prop_tool_prop.cpp",
-    "prop_tool/prop_tool_scene.cpp",
-    "prop_tool/prop_tool_light.cpp",
-    "prop_tool/prop_tool_mesh.cpp",
     
     "thirdparty/lz4/lz4.c"
 ]

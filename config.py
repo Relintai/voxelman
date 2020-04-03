@@ -12,9 +12,6 @@ def get_doc_classes():
     return [
         "WorldArea",
 
-        "GroundClutterFoliage",
-        "GroundClutter",
-
         "VoxelLight",
 
         "VoxelmanLevelGenerator",
@@ -33,14 +30,6 @@ def get_doc_classes():
         "VoxelMesherTransvoxel",
         "VoxelMesher",
 
-        "PropDataEntity",
-        "PropDataEntry",
-        "PropDataLight",
-        "PropDataMesh",
-        "PropDataProp",
-        "PropDataScene",
-        "PropData",
-
         "EnvironmentData",
         "VoxelChunkPropData",
         "VoxelChunk",
@@ -48,13 +37,6 @@ def get_doc_classes():
         "VoxelStructure",
         "BlockVoxelStructure",
         "VoxelWorld",
-
-        "PropTool",
-        "PropToolEntity",
-        "PropToolLight",
-        "PropToolMesh",
-        "PropToolProp",
-        "PropToolScene",
     ]
 
 def get_doc_path():

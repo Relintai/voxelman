@@ -30,7 +30,7 @@ SOFTWARE.
 #include "core/vector.h"
 #include "scene/resources/material.h"
 
-#include "../clutter/ground_clutter.h"
+#include "../../props/clutter/ground_clutter.h"
 #include "voxelman_library.h"
 
 class VoxelmanLibrary;

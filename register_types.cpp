@@ -46,33 +46,11 @@ SOFTWARE.
 #include "meshers/cubic_mesher/voxel_cube_points.h"
 #include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 
-#include "props/prop_data.h"
-#include "props/prop_data_entity.h"
-#include "props/prop_data_entry.h"
-#include "props/prop_data_light.h"
-#include "props/prop_data_mesh.h"
-#include "props/prop_data_prop.h"
-#include "props/prop_data_scene.h"
-
 #include "level_generator/voxelman_level_generator.h"
 
 #include "areas/world_area.h"
 
-#include "clutter/ground_clutter.h"
-#include "clutter/ground_clutter_foliage.h"
-
 #include "world/voxel_world_editor.h"
-
-#include "prop_tool/prop_tool.h"
-#include "prop_tool/prop_tool_entity.h"
-#include "prop_tool/prop_tool_light.h"
-#include "prop_tool/prop_tool_mesh.h"
-#include "prop_tool/prop_tool_prop.h"
-#include "prop_tool/prop_tool_scene.h"
-
-#ifdef TOOLS_ENABLED
-#include "prop_tool/prop_tool_editor_plugin.h"
-#endif
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
@@ -100,26 +78,9 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesherCubic>();
 	ClassDB::register_class<VoxelCubePoints>();
 
-	ClassDB::register_class<PropData>();
-	ClassDB::register_class<PropDataEntry>();
-	ClassDB::register_class<PropDataScene>();
-	ClassDB::register_class<PropDataMesh>();
-	ClassDB::register_class<PropDataLight>();
-	ClassDB::register_class<PropDataProp>();
-	ClassDB::register_class<PropDataEntity>();
-
 	ClassDB::register_class<VoxelmanLevelGenerator>();
 
 	ClassDB::register_class<WorldArea>();
-
-	ClassDB::register_class<GroundClutterFoliage>();
-
-	ClassDB::register_class<PropTool>();
-	ClassDB::register_class<PropToolEntity>();
-	ClassDB::register_class<PropToolProp>();
-	ClassDB::register_class<PropToolMesh>();
-	ClassDB::register_class<PropToolLight>();
-	ClassDB::register_class<PropToolScene>();
 
 #ifdef TOOLS_ENABLED
 	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
