@@ -84,7 +84,6 @@ void register_voxelman_types() {
 
 #ifdef TOOLS_ENABLED
 	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
-	EditorPlugins::add_by_type<PropToolEditorPlugin>();
 #endif
 }
 

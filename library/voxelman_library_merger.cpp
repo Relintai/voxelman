@@ -24,9 +24,9 @@ SOFTWARE.
 
 #include "scene/resources/texture.h"
 
-#include "../props/prop_data.h"
-#include "../props/prop_data_mesh.h"
-#include "../props/prop_data_prop.h"
+#include "../../props/props/prop_data.h"
+#include "../../props/props/prop_data_mesh.h"
+#include "../../props/props/prop_data_prop.h"
 
 int VoxelmanLibraryMerger::get_texture_flags() const {
 	return _packer->get_texture_flags();

@@ -47,9 +47,6 @@ sources = [
     "thirdparty/lz4/lz4.c"
 ]
 
-if env['tools']:
-    sources.append("prop_tool/prop_tool_editor_plugin.cpp")
-
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
     # Shared lib compilation
     module_env.Append(CCFLAGS=['-fPIC'])
