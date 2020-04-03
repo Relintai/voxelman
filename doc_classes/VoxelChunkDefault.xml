@@ -39,36 +39,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="allocate_clutter_mesh">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="allocate_liquid_mesh">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="allocate_main_mesh">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="allocate_prop_colliders">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="allocate_prop_mesh">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
 		<method name="build_deferred">
 			<return type="void">
 			</return>
@@ -99,15 +69,45 @@
 			<description>
 			</description>
 		</method>
+		<method name="clear_mesh_rids">
+			<return type="void">
+			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="clear_rids">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
 		<method name="create_colliders">
 			<return type="void">
 			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="layer_mask" type="int" default="1">
+			</argument>
 			<description>
 			</description>
 		</method>
 		<method name="create_debug_immediate_geometry">
 			<return type="void">
 			</return>
+			<description>
+			</description>
+		</method>
+		<method name="create_meshes">
+			<return type="void">
+			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_count" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
@@ -145,15 +145,23 @@
 			<description>
 			</description>
 		</method>
+		<method name="emit_build_finished">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
 		<method name="free_chunk">
 			<return type="void">
 			</return>
 			<description>
 			</description>
 		</method>
-		<method name="free_clutter_mesh">
+		<method name="free_colliders">
 			<return type="void">
 			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
@@ -163,25 +171,23 @@
 			<description>
 			</description>
 		</method>
-		<method name="free_liquid_mesh">
+		<method name="free_index">
 			<return type="void">
 			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
-		<method name="free_main_mesh">
+		<method name="free_meshes">
 			<return type="void">
 			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
-		<method name="free_prop_colliders">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="free_prop_mesh">
+		<method name="free_rids">
 			<return type="void">
 			</return>
 			<description>
@@ -193,75 +199,61 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_body_rid">
-			<return type="RID">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_clutter_mesh_instance_rid">
-			<return type="RID">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_clutter_mesh_rid">
-			<return type="RID">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_liquid_mesh_instance_rid">
-			<return type="RID">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_liquid_mesh_rid">
-			<return type="RID">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_mesh_instance_rid">
-			<return type="RID">
-			</return>
-			<description>
-			</description>
-		</method>
 		<method name="get_mesh_rid">
 			<return type="RID">
 			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
-		<method name="get_prop_body_rid">
+		<method name="get_mesh_rid_count">
+			<return type="int">
+			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_mesh_rid_index">
 			<return type="RID">
+			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
+			<argument index="2" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_mesh_rids">
+			<return type="Dictionary">
 			</return>
 			<description>
 			</description>
 		</method>
-		<method name="get_prop_mesh_instance_rid">
-			<return type="RID">
+		<method name="get_meshes">
+			<return type="Array">
 			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
-		<method name="get_prop_mesh_rid">
-			<return type="RID">
+		<method name="has_meshes">
+			<return type="bool">
 			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_prop_shape_rid">
-			<return type="RID">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_shape_rid">
-			<return type="RID">
-			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
@@ -277,9 +269,49 @@
 			<description>
 			</description>
 		</method>
-		<method name="remove_colliders">
+		<method name="set_mesh_rid">
 			<return type="void">
 			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
+			<argument index="2" name="value" type="RID">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_mesh_rid_index">
+			<return type="void">
+			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
+			<argument index="2" name="index" type="int">
+			</argument>
+			<argument index="3" name="value" type="RID">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_mesh_rids">
+			<return type="void">
+			</return>
+			<argument index="0" name="rids" type="Dictionary">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_meshes">
+			<return type="void">
+			</return>
+			<argument index="0" name="mesh_index" type="int">
+			</argument>
+			<argument index="1" name="mesh_type_index" type="int">
+			</argument>
+			<argument index="2" name="meshes" type="Array">
+			</argument>
 			<description>
 			</description>
 		</method>
@@ -289,7 +321,13 @@
 		</member>
 		<member name="current_build_phase" type="int" setter="set_current_build_phase" getter="get_current_build_phase" default="0">
 		</member>
+		<member name="current_lod_level" type="int" setter="set_current_lod_level" getter="get_current_lod_level" default="0">
+		</member>
+		<member name="generate_lod" type="bool" setter="set_generate_lod" getter="get_generate_lod" default="true">
+		</member>
 		<member name="is_build_threaded" type="bool" setter="set_is_build_threaded" getter="get_is_build_threaded" default="false">
+		</member>
+		<member name="lod_num" type="int" setter="set_lod_num" getter="get_lod_num" default="3">
 		</member>
 		<member name="lod_size" type="int" setter="set_lod_size" getter="get_lod_size" default="1">
 		</member>
@@ -358,6 +396,22 @@
 		<constant name="BUILD_PHASE_TYPE_PROCESS" value="1" enum="ActiveBuildPhaseType">
 		</constant>
 		<constant name="BUILD_PHASE_TYPE_PHYSICS_PROCESS" value="2" enum="ActiveBuildPhaseType">
+		</constant>
+		<constant name="MESH_INDEX_TERRARIN" value="0">
+		</constant>
+		<constant name="MESH_INDEX_PROP" value="1">
+		</constant>
+		<constant name="MESH_INDEX_LIQUID" value="2">
+		</constant>
+		<constant name="MESH_INDEX_CLUTTER" value="3">
+		</constant>
+		<constant name="MESH_TYPE_INDEX_MESH" value="0">
+		</constant>
+		<constant name="MESH_TYPE_INDEX_MESH_INSTANCE" value="1">
+		</constant>
+		<constant name="MESH_TYPE_INDEX_SHAPE" value="2">
+		</constant>
+		<constant name="MESH_TYPE_INDEX_BODY" value="3">
 		</constant>
 	</constants>
 </class>

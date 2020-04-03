@@ -50,7 +50,7 @@
 		<method name="add_chunk">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<description>
 			</description>
@@ -58,7 +58,7 @@
 		<method name="add_chunk_liquid">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<description>
 			</description>
@@ -150,7 +150,7 @@
 		<method name="bake_colors">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<description>
 			</description>
@@ -158,7 +158,7 @@
 		<method name="bake_liquid_colors">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<description>
 			</description>

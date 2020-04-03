@@ -18,7 +18,7 @@
 		<method name="generate_chunk">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<description>
 			</description>

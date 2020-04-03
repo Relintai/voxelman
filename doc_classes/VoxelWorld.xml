@@ -46,7 +46,7 @@
 		<method name="add_chunk">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<argument index="1" name="x" type="int">
 			</argument>
@@ -60,7 +60,7 @@
 		<method name="add_to_generation">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<description>
 			</description>
@@ -68,7 +68,7 @@
 		<method name="add_to_generation_queue">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<description>
 			</description>
@@ -202,7 +202,7 @@
 		<method name="on_chunk_mesh_generation_finished">
 			<return type="void">
 			</return>
-			<argument index="0" name="chunk" type="Node">
+			<argument index="0" name="chunk" type="VoxelChunk">
 			</argument>
 			<description>
 			</description>
@@ -261,11 +261,15 @@
 		</member>
 		<member name="chunk_spawn_range" type="int" setter="set_chunk_spawn_range" getter="get_chunk_spawn_range" default="4">
 		</member>
+		<member name="chunks" type="Array" setter="set_chunks" getter="get_chunks" default="[  ]">
+		</member>
 		<member name="current_seed" type="int" setter="set_current_seed" getter="get_current_seed" default="0">
 		</member>
 		<member name="data_margin_end" type="int" setter="set_data_margin_end" getter="get_data_margin_end" default="0">
 		</member>
 		<member name="data_margin_start" type="int" setter="set_data_margin_start" getter="get_data_margin_start" default="0">
+		</member>
+		<member name="editable" type="bool" setter="set_editable" getter="get_editable" default="false">
 		</member>
 		<member name="level_generator" type="VoxelmanLevelGenerator" setter="set_level_generator" getter="get_level_generator">
 		</member>
