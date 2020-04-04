@@ -221,7 +221,7 @@ void VoxelChunk::setup_channels() {
 	call("_setup_channels");
 }
 
-void VoxelChunk::set_size(uint32_t size_x, uint32_t size_y, uint32_t size_z, uint32_t margin_start, uint32_t margin_end) {
+void VoxelChunk::set_size(int size_x, int size_y, int size_z, int margin_start, int margin_end) {
 	if (_size_x == size_x && _size_y == size_y && _size_z == size_z && _margin_start == margin_start && _margin_end == margin_end) {
 		return;
 	}
@@ -248,7 +248,7 @@ void VoxelChunk::set_size(uint32_t size_x, uint32_t size_y, uint32_t size_z, uin
 	_margin_end = margin_end;
 }
 
-bool VoxelChunk::validate_channel_data_position(uint32_t x, uint32_t y, uint32_t z) const {
+bool VoxelChunk::validate_channel_data_position(int x, int y, int z) const {
 	return x < _data_size_x && y < _data_size_y && z < _data_size_z;
 }
 

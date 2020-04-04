@@ -135,9 +135,9 @@ public:
 	//Channels
 	void setup_channels();
 
-	void set_size(uint32_t size_x, uint32_t size_y, uint32_t size_z, uint32_t margin_start = 0, uint32_t margin_end = 0);
+	void set_size(int size_x, int size_y, int size_z, int margin_start = 0, int margin_end = 0);
 
-	bool validate_channel_data_position(uint32_t x, uint32_t y, uint32_t z) const;
+	bool validate_channel_data_position(int x, int y, int z) const;
 
 	uint8_t get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const;
 	void set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index);
@@ -232,16 +232,16 @@ protected:
 	int _position_y;
 	int _position_z;
 
-	uint32_t _size_x;
-	uint32_t _size_y;
-	uint32_t _size_z;
+	int _size_x;
+	int _size_y;
+	int _size_z;
 
-	uint32_t _data_size_x;
-	uint32_t _data_size_y;
-	uint32_t _data_size_z;
+	int _data_size_x;
+	int _data_size_y;
+	int _data_size_z;
 
-	uint32_t _margin_start;
-	uint32_t _margin_end;
+	int _margin_start;
+	int _margin_end;
 
 	Vector<uint8_t *> _channels;
 

@@ -116,7 +116,6 @@ public:
 	void clear();
 
 	Ref<VoxelChunk> create_chunk(int x, int y, int z);
-	Ref<VoxelChunk> _create_chunk(int x, int y, int z, Ref<VoxelChunk> p_chunk);
 
 	void generate_chunk(Ref<VoxelChunk> chunk);
 
@@ -132,7 +131,8 @@ public:
 	~VoxelWorld();
 
 protected:
-	void _generate_chunk(Ref<VoxelChunk> chunk);
+	virtual void _generate_chunk(Ref<VoxelChunk> chunk);
+	virtual Ref<VoxelChunk> _create_chunk(int x, int y, int z, Ref<VoxelChunk> p_chunk);
 
 	virtual void _notification(int p_what);
 	static void _bind_methods();

@@ -37,6 +37,10 @@ def get_doc_classes():
         "VoxelStructure",
         "BlockVoxelStructure",
         "VoxelWorld",
+
+        "VoxelMesherBlocky",
+	    "VoxelWorldBlocky",
+	    "VoxelChunkBlocky",
     ]
 
 def get_doc_path():

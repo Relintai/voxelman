@@ -27,6 +27,8 @@ sources = [
     "meshers/transvoxel_uv_mesher/voxel_mesher_transvoxel.cpp",
     "meshers/transvoxel_uv_mesher/transvoxel_tables.cpp",
 
+    "meshers/blocky/voxel_mesher_blocky.cpp",
+
     "world/voxel_world.cpp",
     "world/voxel_chunk.cpp",
     "world/voxel_chunk_default.cpp",
@@ -37,6 +39,9 @@ sources = [
 
     "meshers/cubic_mesher/voxel_mesher_cubic.cpp",
     "meshers/cubic_mesher/voxel_cube_points.cpp",
+
+    "world/blocky/voxel_chunk_blocky.cpp",
+    "world/blocky/voxel_world_blocky.cpp",
 
     "level_generator/voxelman_level_generator.cpp",
 

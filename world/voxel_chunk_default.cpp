@@ -24,6 +24,8 @@ SOFTWARE.
 
 #include "voxel_world.h"
 
+#include "../../opensimplex/open_simplex_noise.h"
+
 const String VoxelChunkDefault::BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE = "Normal,Process,Physics Process";
 
 _FORCE_INLINE_ bool VoxelChunkDefault::get_is_build_threaded() const {
@@ -327,6 +329,35 @@ void VoxelChunkDefault::emit_build_finished() {
 
 	if (_voxel_world != NULL) {
 		_voxel_world->on_chunk_mesh_generation_finished(this);
+	}
+}
+
+void VoxelChunkDefault::generate_random_ao(int seed, int octaves, int period, float persistence, float scale_factor) {
+
+	Ref<OpenSimplexNoise> noise;
+	noise.instance();
+
+	noise->set_seed(seed);
+	noise->set_octaves(octaves);
+	noise->set_period(period);
+	noise->set_persistence(persistence);
+
+	for (int x = -get_margin_start(); x < _size_x + get_margin_end(); ++x) {
+		for (int z = -get_margin_start(); z < _size_z + get_margin_end(); ++z) {
+			for (int y = -get_margin_start(); y < _size_y + get_margin_end(); ++y) {
+				float val = noise->get_noise_3d(x + (_position_x * _size_x), y + (_position_y * _size_y), z + (_position_z * _size_z));
+
+				val *= scale_factor;
+
+				if (val > 1)
+					val = 1;
+
+				if (val < 0)
+					val = -val;
+
+				set_voxel(int(val * 255.0), x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO);
+			}
+		}
 	}
 }
 
@@ -1141,6 +1172,15 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 			return;
 		}
+		case BUILD_PHASE_LIGHTS: {
+			clear_baked_lights();
+			generate_random_ao(123);
+			bake_lights();
+
+			next_phase();
+
+			return;
+		}
 		/*
 		case BUILD_PHASE_LIQUID: {
 			next_phase();
@@ -1366,6 +1406,8 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "max", "color"), &VoxelChunkDefault::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunkDefault::draw_debug_voxel_lights);
+
+	ClassDB::bind_method(D_METHOD("generate_random_ao", "seed", "octaves", "period", "persistence", "scale_factor"), &VoxelChunkDefault::generate_random_ao, DEFVAL(4), DEFVAL(30), DEFVAL(0.3), DEFVAL(0.6));
 
 	ClassDB::bind_method(D_METHOD("_setup_channels"), &VoxelChunkDefault::_setup_channels);
 	ClassDB::bind_method(D_METHOD("_build_phase", "phase"), &VoxelChunkDefault::_build_phase);

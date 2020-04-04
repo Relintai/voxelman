@@ -216,6 +216,8 @@ public:
 
 	void emit_build_finished();
 
+	void generate_random_ao(int seed, int octaves = 4, int period = 30, float persistence = 0.3, float scale_factor = 0.6);
+
 	VoxelChunkDefault();
 	~VoxelChunkDefault();
 
