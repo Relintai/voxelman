@@ -34,7 +34,7 @@ SOFTWARE.
 
 class VoxelSurfaceSimple;
 class VoxelMesher;
-class PropData;
+class PackedScene;
 
 class VoxelmanLibraryMerger : public VoxelmanLibrary {
 	GDCLASS(VoxelmanLibraryMerger, VoxelmanLibrary)
@@ -75,9 +75,9 @@ public:
 	Vector<Variant> get_liquid_voxel_surfaces();
 	void set_liquid_voxel_surfaces(const Vector<Variant> &surfaces);
 
-	Ref<PropData> get_prop(const int id);
-	void add_prop(Ref<PropData> value);
-	void set_prop(const int id, Ref<PropData> value);
+	Ref<PackedScene> get_prop(const int id);
+	void add_prop(Ref<PackedScene> value);
+	void set_prop(const int id, Ref<PackedScene> value);
 	void remove_prop(const int id);
 	int get_num_props() const;
 	void clear_props();
@@ -93,18 +93,14 @@ public:
 	~VoxelmanLibraryMerger();
 
 protected:
-	bool process_prop_textures(Ref<PropData> prop);
-
 	static void _bind_methods();
 
 private:
 	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
 	Vector<Ref<VoxelSurfaceMerger> > _liquid_surfaces;
-	//Vector<Ref<PropData> > _prop_vector;
-	Map<int, Ref<PropData> > _props;
+	Map<int, Ref<PackedScene> > _props;
 
 	Ref<TexturePacker> _packer;
-	Ref<TexturePacker> _prop_packer;
 };
 
 #endif

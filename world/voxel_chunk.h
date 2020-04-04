@@ -52,11 +52,6 @@ SOFTWARE.
 
 #include "../../mesh_data_resource/mesh_data_resource.h"
 
-#include "../../props/props/prop_data.h"
-#include "../../props/props/prop_data_entry.h"
-#include "../../props/props/prop_data_light.h"
-#include "../../props/props/prop_data_mesh.h"
-#include "../../props/props/prop_data_scene.h"
 #include "voxel_chunk_prop_data.h"
 
 class VoxelWorld;

@@ -31,7 +31,7 @@ SOFTWARE.
 
 class VoxelSurface;
 class VoxelMesher;
-class PropData;
+class PackedScene;
 
 class VoxelmanLibrary : public Resource {
 	GDCLASS(VoxelmanLibrary, Resource)
@@ -39,9 +39,7 @@ class VoxelmanLibrary : public Resource {
 public:
 	enum {
 		MATERIAL_INDEX_VOXELS = 0,
-		MATERIAL_INDEX_PROP = 1,
-		MATERIAL_INDEX_LIQUID = 2,
-		MATERIAL_INDEX_CLUTTER = 3,
+		MATERIAL_INDEX_LIQUID = 1,
 	};
 
 public:
@@ -55,16 +53,6 @@ public:
 	Vector<Variant> get_materials();
 	void set_materials(const Vector<Variant> &materials);
 
-	Ref<Material> get_prop_material(const int index);
-	void add_prop_material(const Ref<Material> &value);
-	void set_prop_material(const int index, const Ref<Material> &value);
-	void remove_prop_material(const int index);
-	int get_num_prop_materials() const;
-	void clear_prop_materials();
-
-	Vector<Variant> get_prop_materials();
-	void set_prop_materials(const Vector<Variant> &materials);
-
 	Ref<Material> get_liquid_material(const int index);
 	void add_liquid_material(const Ref<Material> &value);
 	void set_liquid_material(const int index, const Ref<Material> &value);
@@ -74,16 +62,6 @@ public:
 
 	Vector<Variant> get_liquid_materials();
 	void set_liquid_materials(const Vector<Variant> &materials);
-
-	Ref<Material> get_clutter_material(const int index);
-	void add_clutter_material(const Ref<Material> &value);
-	void set_clutter_material(const int index, const Ref<Material> &value);
-	void remove_clutter_material(const int index);
-	int get_num_clutter_materials() const;
-	void clear_clutter_materials();
-
-	Vector<Variant> get_clutter_materials();
-	void set_clutter_materials(const Vector<Variant> &materials);
 
 	virtual Ref<VoxelSurface> get_voxel_surface(const int index);
 	virtual void add_voxel_surface(Ref<VoxelSurface> value);
@@ -99,9 +77,9 @@ public:
 	virtual int get_num_liquid_surfaces() const;
 	virtual void clear_liquid_surfaces();
 
-	virtual Ref<PropData> get_prop(const int id);
-	virtual void add_prop(Ref<PropData> value);
-	virtual void set_prop(const int id, Ref<PropData> value);
+	virtual Ref<PackedScene> get_prop(const int id);
+	virtual void add_prop(Ref<PackedScene> value);
+	virtual void set_prop(const int id, Ref<PackedScene> value);
 	virtual void remove_prop(const int id);
 	virtual int get_num_props() const;
 	virtual void clear_props();
@@ -118,7 +96,6 @@ protected:
 
 private:
 	Vector<Ref<Material> > _materials;
-	Vector<Ref<Material> > _prop_materials;
 	Vector<Ref<Material> > _liquid_materials;
 	Vector<Ref<Material> > _clutter_materials;
 };

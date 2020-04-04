@@ -23,54 +23,36 @@ SOFTWARE.
 #ifndef VOXEL_CHUNK_PROP_DATA_H
 #define VOXEL_CHUNK_PROP_DATA_H
 
-#include "core/math/vector3.h"
-#include "core/reference.h"
+#include "core/resource.h"
 
-#include "../../mesh_data_resource/mesh_data_resource.h"
-#include "../../props/props/prop_data.h"
-#include "../../props/props/prop_data_light.h"
+#include "core/math/transform.h"
+
+#include "scene/main/node.h"
+
 #include "scene/resources/packed_scene.h"
-#include "scene/resources/texture.h"
 
-class VoxelChunkPropData : public Reference {
-	GDCLASS(VoxelChunkPropData, Reference);
+class VoxelChunk;
+
+class VoxelChunkPropData : public Resource {
+	GDCLASS(VoxelChunkPropData, Resource);
 
 public:
-	int get_x();
-	void set_x(int value);
+	int get_scene_id() const;
+	void set_scene_id(const int id);
 
-	int get_y();
-	void set_y(int value);
+	Transform get_transform() const;
+	void set_transform(const Transform &value);
 
-	int get_z();
-	void set_z(int value);
+	Ref<PackedScene> get_scene();
+	void set_scene(const Ref<PackedScene> &value);
 
-	Vector3 get_rotation();
-	void set_rotation(Vector3 value);
+	Node *get_spawned_prop() const;
+	void set_spawned_prop(Node *value);
 
-	Vector3 get_scale();
-	void set_scale(Vector3 value);
+	Node *spawn_prop(Node *parent);
+	void free_prop();
 
-	bool get_snap_to_mesh();
-	void set_snap_to_mesh(bool value);
-
-	Vector3 get_snap_axis();
-	void set_snap_axis(Vector3 value);
-
-	Ref<MeshDataResource> get_mesh() const;
-	void set_mesh(const Ref<MeshDataResource> value);
-
-	Ref<Texture> get_mesh_texture() const;
-	void set_mesh_texture(const Ref<Texture> value);
-
-	Ref<PropDataLight> get_light() const;
-	void set_light(const Ref<PropDataLight> value);
-
-	Ref<PropData> get_prop() const;
-	void set_prop(const Ref<PropData> value);
-
-	Ref<PackedScene> get_scene() const;
-	void set_scene(const Ref<PackedScene> value);
+	void set_translation_for_chunk(const Ref<VoxelChunk> &chunk, const int local_x, const int local_y, const int local_z);
 
 	VoxelChunkPropData();
 	~VoxelChunkPropData();
@@ -79,19 +61,9 @@ protected:
 	static void _bind_methods();
 
 private:
-	int _x;
-	int _y;
-	int _z;
-	Vector3 _rotation;
-	Vector3 _scale;
-
-	bool _snap_to_mesh;
-	Vector3 _snap_axis;
-
-	Ref<MeshDataResource> _mesh;
-	Ref<Texture> _texture;
-	Ref<PropDataLight> _light;
-	Ref<PropData> _prop;
+	int _scene_id;
+	Transform _transform;
+	Node *_spawned_prop;
 	Ref<PackedScene> _scene;
 };
 
