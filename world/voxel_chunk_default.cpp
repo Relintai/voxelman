@@ -58,16 +58,10 @@ _FORCE_INLINE_ void VoxelChunkDefault::set_active_build_phase_type(const VoxelCh
 }
 
 bool VoxelChunkDefault::get_build_phase_done() const {
-	_build_phase_done_mutex->lock();
-	bool v = _build_phase_done;
-	_build_phase_done_mutex->unlock();
-
-	return v;
+	return _build_phase_done;
 }
 void VoxelChunkDefault::set_build_phase_done(bool value) {
-	_build_phase_done_mutex->lock();
 	_build_phase_done = value;
-	_build_phase_done_mutex->unlock();
 }
 
 int VoxelChunkDefault::get_lod_size() const {
@@ -956,7 +950,6 @@ VoxelChunkDefault::VoxelChunkDefault() {
 	_margin_end = 0;
 
 	_build_prioritized = false;
-	_build_phase_done_mutex = Mutex::create();
 	_build_phase_done = false;
 	_build_thread = NULL;
 	_build_step_in_progress = false;
@@ -973,8 +966,6 @@ VoxelChunkDefault::~VoxelChunkDefault() {
 		_abort_build = true;
 		wait_and_finish_thread();
 	}
-
-	memdelete(_build_phase_done_mutex);
 }
 
 void VoxelChunkDefault::_setup_channels() {

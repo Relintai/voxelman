@@ -268,7 +268,6 @@ protected:
 	bool _bake_lights;
 
 	bool _build_prioritized;
-	Mutex *_build_phase_done_mutex;
 	bool _build_phase_done;
 	Thread *_build_thread;
 	bool _build_step_in_progress;
