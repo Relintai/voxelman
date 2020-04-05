@@ -364,12 +364,25 @@ Vector<Variant> VoxelWorld::get_chunks() {
 }
 
 void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
-	clear();
 
-	for (int i = 0; i < chunks.size(); i++) {
+	for (int i = 0; i < _chunks_vector.size(); ++i) {
+		Ref<VoxelChunk> chunk = Ref<VoxelChunk>(_chunks_vector[i]);
+
+		if (chunks.find(chunk) == -1) {
+			remove_chunk_index(i);
+			_generation_queue.erase(chunk);
+			_generating.erase(chunk);
+			--i;
+		}
+	}
+
+	for (int i = 0; i < chunks.size(); ++i) {
 		Ref<VoxelChunk> chunk = Ref<VoxelChunk>(chunks[i]);
 
 		if (!chunk.is_valid())
+			continue;
+
+		if (_chunks_vector.find(chunk) != -1)
 			continue;
 
 		add_chunk(chunk, chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z());
@@ -434,7 +447,16 @@ void VoxelWorld::_notification(int p_what) {
 				Ref<VoxelChunk> chunk = _chunks_vector[i];
 
 				if (chunk.is_valid()) {
+					IntPos pos(chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z());
+
+					chunk->set_voxel_world(this);
+					chunk->world_transform_changed();
+
+					_chunks.set(pos, chunk);
+
 					chunk->enter_tree();
+
+					chunk->build();
 				}
 			}
 		} break;

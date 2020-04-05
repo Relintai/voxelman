@@ -35,7 +35,7 @@ SOFTWARE.
 #include "voxel_chunk.h"
 
 bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event) {
-	if (!_world && !_world->get_editable()) {
+	if (!_world || !_world->get_editable()) {
 		return false;
 	}
 
