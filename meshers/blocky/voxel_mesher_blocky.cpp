@@ -35,7 +35,6 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	int y_size = chunk->get_size_y();
 	int z_size = chunk->get_size_z();
 
-	float voxel_size = get_lod_size();
 	float voxel_scale = get_voxel_scale();
 
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
@@ -63,6 +62,7 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					chunk->get_voxel(x, y, z - 1, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE),
 				};
 
+				//x + 1
 				if (neighbours[0] == 0) {
 					Color light(chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
 							chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
@@ -79,28 +79,272 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					light.g = CLAMP(light.g, 0, 1.0);
 					light.b = CLAMP(light.b, 0, 1.0);
 
-					add_indices(get_vertex_count() + 2);
-					add_indices(get_vertex_count() + 1);
-					add_indices(get_vertex_count() + 0);
-					add_indices(get_vertex_count() + 3);
-					add_indices(get_vertex_count() + 2);
-					add_indices(get_vertex_count() + 0);
+					int vc = get_vertex_count();
+					add_indices(vc + 2);
+					add_indices(vc + 1);
+					add_indices(vc + 0);
+					add_indices(vc + 3);
+					add_indices(vc + 2);
+					add_indices(vc + 0);
+
+					Vector2 uvs[] = {
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 1)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 1))
+					};
+
+					Vector3 verts[] = {
+						Vector3(0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+					};
 
 					for (int i = 0; i < 4; ++i) {
 						add_normal(Vector3(1, 0, 0));
-
 						add_color(light);
+						add_uv(uvs[i]);
+						add_vertex(verts[i]);
 					}
+				}
 
-					add_uv(surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 0)));
-					add_uv(surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 1)));
-					add_uv(surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 0)));
-					add_uv(surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 1)));
+				//x - 1
+				if (neighbours[1] == 0) {
+					Color light(chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+							chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+							chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-					add_vertex((Vector3(1, 0, 0) * voxel_size + Vector3(x, y, z)) * voxel_scale);
-					add_vertex((Vector3(1, 1, 0) * voxel_size + Vector3(x, y, z)) * voxel_scale);
-					add_vertex((Vector3(1, 1, 1) * voxel_size + Vector3(x, y, z)) * voxel_scale);
-					add_vertex((Vector3(1, 0, 1) * voxel_size + Vector3(x, y, z)) * voxel_scale);
+					float ao = chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
+					float rao = chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+					ao += rao;
+
+					light += base_light;
+					light -= Color(ao, ao, ao) * _ao_strength;
+
+					light.r = CLAMP(light.r, 0, 1.0);
+					light.g = CLAMP(light.g, 0, 1.0);
+					light.b = CLAMP(light.b, 0, 1.0);
+
+					int vc = get_vertex_count();
+					add_indices(vc + 0);
+					add_indices(vc + 1);
+					add_indices(vc + 2);
+
+					add_indices(vc + 0);
+					add_indices(vc + 2);
+					add_indices(vc + 3);
+
+					Vector2 uvs[] = {
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 1)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 1))
+					};
+
+					Vector3 verts[] = {
+						Vector3(-0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+					};
+
+					for (int i = 0; i < 4; ++i) {
+						add_normal(Vector3(-1, 0, 0));
+						add_color(light);
+						add_uv(uvs[i]);
+						add_vertex(verts[i]);
+					}
+				}
+
+				//y + 1
+				if (neighbours[2] == 0) {
+					Color light(chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+							chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+							chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+
+					float ao = chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
+					float rao = chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+					ao += rao;
+
+					light += base_light;
+					light -= Color(ao, ao, ao) * _ao_strength;
+
+					light.r = CLAMP(light.r, 0, 1.0);
+					light.g = CLAMP(light.g, 0, 1.0);
+					light.b = CLAMP(light.b, 0, 1.0);
+
+					int vc = get_vertex_count();
+					add_indices(vc + 2);
+					add_indices(vc + 1);
+					add_indices(vc + 0);
+					add_indices(vc + 3);
+					add_indices(vc + 2);
+					add_indices(vc + 0);
+
+					Vector2 uvs[] = {
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_TOP, Vector2(0, 1)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_TOP, Vector2(0, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_TOP, Vector2(1, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_TOP, Vector2(1, 1))
+					};
+
+					Vector3 verts[] = {
+						Vector3(0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+					};
+
+					for (int i = 0; i < 4; ++i) {
+						add_normal(Vector3(0, 1, 0));
+						add_color(light);
+						add_uv(uvs[i]);
+						add_vertex(verts[i]);
+					}
+				}
+
+				//y - 1
+				if (neighbours[3] == 0) {
+					Color light(chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+							chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+							chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+
+					float ao = chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
+					float rao = chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+					ao += rao;
+
+					light += base_light;
+					light -= Color(ao, ao, ao) * _ao_strength;
+
+					light.r = CLAMP(light.r, 0, 1.0);
+					light.g = CLAMP(light.g, 0, 1.0);
+					light.b = CLAMP(light.b, 0, 1.0);
+
+					int vc = get_vertex_count();
+					add_indices(vc + 0);
+					add_indices(vc + 1);
+					add_indices(vc + 2);
+
+					add_indices(vc + 0);
+					add_indices(vc + 2);
+					add_indices(vc + 3);
+
+					Vector2 uvs[] = {
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_BOTTOM, Vector2(0, 1)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_BOTTOM, Vector2(0, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_BOTTOM, Vector2(1, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_BOTTOM, Vector2(1, 1))
+					};
+
+					Vector3 verts[] = {
+						Vector3(0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+					};
+
+					for (int i = 0; i < 4; ++i) {
+						add_normal(Vector3(0, -1, 0));
+						add_color(light);
+						add_uv(uvs[i]);
+						add_vertex(verts[i]);
+					}
+				}
+
+				//z + 1
+				if (neighbours[4] == 0) {
+					Color light(chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+							chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+							chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+
+					float ao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
+					float rao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+					ao += rao;
+
+					light += base_light;
+					light -= Color(ao, ao, ao) * _ao_strength;
+
+					light.r = CLAMP(light.r, 0, 1.0);
+					light.g = CLAMP(light.g, 0, 1.0);
+					light.b = CLAMP(light.b, 0, 1.0);
+
+					int vc = get_vertex_count();
+					add_indices(vc + 2);
+					add_indices(vc + 1);
+					add_indices(vc + 0);
+					add_indices(vc + 3);
+					add_indices(vc + 2);
+					add_indices(vc + 0);
+
+					Vector2 uvs[] = {
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 1)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 1))
+					};
+
+					Vector3 verts[] = {
+						Vector3(0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+					};
+
+					for (int i = 0; i < 4; ++i) {
+						add_normal(Vector3(0, 0, 1));
+						add_color(light);
+						add_uv(uvs[i]);
+						add_vertex(verts[i]);
+					}
+				}
+
+				//z - 1
+				if (neighbours[5] == 0) {
+					Color light(chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+							chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+							chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+
+					float ao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
+					float rao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+					ao += rao;
+
+					light += base_light;
+					light -= Color(ao, ao, ao) * _ao_strength;
+
+					light.r = CLAMP(light.r, 0, 1.0);
+					light.g = CLAMP(light.g, 0, 1.0);
+					light.b = CLAMP(light.b, 0, 1.0);
+
+					int vc = get_vertex_count();
+					add_indices(vc + 0);
+					add_indices(vc + 1);
+					add_indices(vc + 2);
+
+					add_indices(vc + 0);
+					add_indices(vc + 2);
+					add_indices(vc + 3);
+
+					Vector2 uvs[] = {
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 1)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(0, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 0)),
+						surface->transform_uv(VoxelSurface::VOXEL_SIDE_SIDE, Vector2(1, 1))
+					};
+
+					Vector3 verts[] = {
+						Vector3(0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
+						Vector3(-0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+					};
+
+					for (int i = 0; i < 4; ++i) {
+						add_normal(Vector3(0, 0, -1));
+						add_color(light);
+						add_uv(uvs[i]);
+						add_vertex(verts[i]);
+					}
 				}
 			}
 		}
