@@ -24,6 +24,8 @@ SOFTWARE.
 
 #include "voxel_world.h"
 
+#include "../thirdparty/lz4/lz4.h"
+
 _FORCE_INLINE_ bool VoxelChunk::get_process() const {
 	return _is_processing;
 }
@@ -409,6 +411,60 @@ void VoxelChunk::set_channel_array(int channel_index, const PoolByteArray &array
 	for (int i = 0; i < array.size(); ++i) {
 		ch[i] = array[i];
 	}
+}
+
+PoolByteArray VoxelChunk::get_channel_compressed(int channel_index) const {
+	PoolByteArray arr;
+
+	int size = _data_size_x * _data_size_y * _data_size_z;
+
+	if (channel_index >= _channels.size())
+		return arr;
+
+	uint8_t *ch = _channels.get(channel_index);
+
+	if (ch == NULL)
+		return arr;
+
+	int bound = LZ4_compressBound(size);
+	arr.resize(bound);
+
+	PoolByteArray::Write w = arr.write();
+
+	int ns = LZ4_compress_default(reinterpret_cast<char *>(ch), reinterpret_cast<char *>(w.ptr()), size, bound);
+
+	w.release();
+	arr.resize(ns);
+
+	return arr;
+}
+void VoxelChunk::set_channel_compressed(int channel_index, const PoolByteArray &data) {
+	if (data.size() == 0)
+		return;
+
+	int size = _data_size_x * _data_size_y * _data_size_z;
+
+	if (_channels.size() <= channel_index)
+		set_channel_count(channel_index + 1);
+
+	uint8_t *ch = _channels.get(channel_index);
+
+	if (ch == NULL) {
+		if (_channels[channel_index] != NULL)
+			return;
+
+		ch = memnew_arr(uint8_t, size);
+		_channels.set(channel_index, ch);
+	}
+
+	int ds = data.size();
+	print_error(String::num(ds));
+	PoolByteArray::Read r = data.read();
+
+	//We are not going to write to it
+	uint8_t *data_arr = const_cast<uint8_t *>(r.ptr());
+
+	LZ4_decompress_safe(reinterpret_cast<char *>(data_arr), reinterpret_cast<char *>(ch), ds, size);
 }
 
 _FORCE_INLINE_ uint32_t VoxelChunk::get_data_index(uint32_t x, uint32_t y, uint32_t z) const {
@@ -917,6 +973,9 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_channel_array", "channel_index"), &VoxelChunk::get_channel_array);
 	ClassDB::bind_method(D_METHOD("set_channel_array", "channel_index", "array"), &VoxelChunk::set_channel_array);
+
+	ClassDB::bind_method(D_METHOD("get_channel_compressed", "channel_index"), &VoxelChunk::get_channel_compressed);
+	ClassDB::bind_method(D_METHOD("set_channel_compressed", "channel_index", "array"), &VoxelChunk::set_channel_compressed);
 
 	ClassDB::bind_method(D_METHOD("get_data_index", "x", "y", "z"), &VoxelChunk::get_data_index);
 	ClassDB::bind_method(D_METHOD("get_data_size"), &VoxelChunk::get_data_size);
