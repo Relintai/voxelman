@@ -1124,15 +1124,24 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 				if (_lod_num >= 3) {
 					Ref<ShaderMaterial> mat = get_library()->get_material(0);
-					Ref<Texture> tex = mat->get_shader_param("texture_albedo");
+					Ref<SpatialMaterial> spmat = get_library()->get_material(0);
+					Ref<Texture> tex;
 
-					temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
-					temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
+					if (mat.is_valid()) {
+						tex = mat->get_shader_param("texture_albedo");
+					} else if (spmat.is_valid()) {
+						tex = spmat->get_texture(SpatialMaterial::TEXTURE_ALBEDO);
+					}
 
-					VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+					if (tex.is_valid()) {
+						temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
+						temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
 
-					if (get_library()->get_material(3).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), 0, get_library()->get_material(3)->get_rid());
+						VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+						if (get_library()->get_material(3).is_valid())
+							VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), 0, get_library()->get_material(3)->get_rid());
+					}
 				}
 
 				/*
