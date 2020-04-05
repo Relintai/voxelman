@@ -458,7 +458,7 @@ void VoxelChunk::set_channel_compressed(int channel_index, const PoolByteArray &
 	}
 
 	int ds = data.size();
-	print_error(String::num(ds));
+
 	PoolByteArray::Read r = data.read();
 
 	//We are not going to write to it
