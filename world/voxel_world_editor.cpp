@@ -32,16 +32,109 @@ SOFTWARE.
 #include "core/math/geometry.h"
 #include "core/os/keyboard.h"
 
+#include "voxel_chunk.h"
+
 bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event) {
+	if (!_world && !_world->get_editable()) {
+		return false;
+	}
+
+	Ref<InputEventMouseButton> mb = p_event;
+
+	if (mb.is_valid()) {
+
+		if (mb->is_pressed()) {
+			Ref<VoxelmanLibrary> lib = _world->get_library();
+
+			if (!lib.is_valid())
+				return false;
+
+			if (mb->get_button_index() == BUTTON_LEFT) {
+				return do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true, _seletced_type);
+			} else if (mb->get_button_index() == BUTTON_RIGHT) {
+				return do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true, 0);
+			} else {
+				return false;
+			}
+
+			//return do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true);
+		}
+	}
+
+	return false;
+}
+
+bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click, int selected_voxel) {
+
+	if (!spatial_editor)
+		return false;
+
+	Camera *camera = p_camera;
+	Vector3 from = camera->project_ray_origin(p_point);
+	Vector3 to = from + camera->project_ray_normal(p_point) * 10000;
+	Transform local_xform = _world->get_global_transform().affine_inverse();
+
+	from = local_xform.xform(from);
+	to = local_xform.xform(to);
+
+	PhysicsDirectSpaceState *ss = _world->get_world()->get_direct_space_state();
+	PhysicsDirectSpaceState::RayResult res;
+
+	if (ss->intersect_ray(from, to, res)) {
+		Vector3 pos = res.position;
+
+		//_world->set_voxel(pos, data[]);
+		//Ref<VoxelChunk> chunk = _world->get_or_spawn_chunk_at_world_pos(pos);
+
+		int x = (pos.x - _world->get_chunk_size_x()) / _world->get_chunk_size_x() / _world->get_voxel_scale();
+		int y = (pos.y - _world->get_chunk_size_y()) / _world->get_chunk_size_y() / _world->get_voxel_scale();
+		int z = (pos.z - _world->get_chunk_size_z()) / _world->get_chunk_size_z() / _world->get_voxel_scale();
+
+		Ref<VoxelChunk> chunk = _world->get_chunk(x, y, z);
+
+		if (!chunk.is_valid()) {
+			chunk = _world->create_chunk(x, y, z);
+		}
+
+		int bx = static_cast<int>((pos.x - _world->get_chunk_size_x()) / _world->get_voxel_scale()) % _world->get_chunk_size_x();
+		int by = static_cast<int>((pos.y - _world->get_chunk_size_y()) / _world->get_voxel_scale()) % _world->get_chunk_size_y();
+		int bz = static_cast<int>((pos.z - _world->get_chunk_size_z()) / _world->get_voxel_scale()) % _world->get_chunk_size_z();
+
+		if (bx < 0)
+			bx += _world->get_chunk_size_x();
+
+		if (by < 0)
+			by += _world->get_chunk_size_y();
+
+		if (bz < 0)
+			bz += _world->get_chunk_size_z();
+
+		chunk->set_voxel(selected_voxel, bx, by, bz, 0);
+
+		chunk->build();
+
+		return true;
+	}
+
 	return false;
 }
 
 void VoxelWorldEditor::edit(VoxelWorld *p_world) {
+	_world = p_world;
+
+	spatial_editor = Object::cast_to<SpatialEditorPlugin>(_editor->get_editor_plugin_screen());
 }
 
 VoxelWorldEditor::VoxelWorldEditor() {
+	_world = NULL;
+	_seletced_type = 1;
+	_editor = NULL;
 }
 VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
+	_world = NULL;
+	_seletced_type = 1;
+	_editor = p_editor;
+
 	spatial_editor_hb = memnew(HBoxContainer);
 	spatial_editor_hb->set_h_size_flags(SIZE_EXPAND_FILL);
 	spatial_editor_hb->set_alignment(BoxContainer::ALIGN_END);

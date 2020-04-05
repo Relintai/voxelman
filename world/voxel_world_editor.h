@@ -36,6 +36,7 @@ public:
 	bool forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event);
 
 	void edit(VoxelWorld *p_world);
+	bool do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click, int selected_voxel);
 
 	VoxelWorldEditor();
 	VoxelWorldEditor(EditorNode *p_editor);
@@ -49,6 +50,9 @@ protected:
 
 private:
 	VoxelWorld *_world;
+	int _seletced_type;
+	SpatialEditorPlugin *spatial_editor;
+	EditorNode *_editor;
 };
 
 class VoxelWorldEditorPlugin : public EditorPlugin {
