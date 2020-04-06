@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "voxel_mesher_transvoxel.h"
+#include "voxel_mesher_uv_transvoxel.h"
 
 #include "../../world/default/voxel_chunk_default.h"
 #include "../../world/voxel_chunk.h"
@@ -28,14 +28,14 @@ SOFTWARE.
 #include "core/dictionary.h"
 #include "servers/visual_server.h"
 
-int VoxelMesherTransvoxel::get_texture_scale() const {
+int VoxelMesherUVTransvoxel::get_texture_scale() const {
 	return _texture_scale;
 }
-void VoxelMesherTransvoxel::set_texture_scale(const int value) {
+void VoxelMesherUVTransvoxel::set_texture_scale(const int value) {
 	_texture_scale = value;
 }
 
-void VoxelMesherTransvoxel::get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
+void VoxelMesherUVTransvoxel::get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
 	arr[0] = chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 	arr[1] = chunk->get_voxel(x, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 	arr[2] = chunk->get_voxel(x, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
@@ -45,7 +45,7 @@ void VoxelMesherTransvoxel::get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk
 	arr[6] = chunk->get_voxel(x + size, y, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 	arr[7] = chunk->get_voxel(x + size, y + size, z + size, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 }
-int VoxelMesherTransvoxel::get_case_code_from_arr(const int *data) {
+int VoxelMesherUVTransvoxel::get_case_code_from_arr(const int *data) {
 	int case_code = 0;
 
 	if (data[0] != 0)
@@ -74,7 +74,7 @@ int VoxelMesherTransvoxel::get_case_code_from_arr(const int *data) {
 
 	return case_code;
 }
-int VoxelMesherTransvoxel::get_case_code(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
+int VoxelMesherUVTransvoxel::get_case_code(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
 	int case_code = 0;
 
 	if (chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE) != 0)
@@ -104,7 +104,7 @@ int VoxelMesherTransvoxel::get_case_code(Ref<VoxelChunk> chunk, const int x, con
 	return case_code;
 }
 
-int VoxelMesherTransvoxel::get_voxel_type(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
+int VoxelMesherUVTransvoxel::get_voxel_type(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
 	int type = 0;
 
 	type = chunk->get_voxel(x, y + size, z, VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
@@ -147,7 +147,7 @@ int VoxelMesherTransvoxel::get_voxel_type(Ref<VoxelChunk> chunk, const int x, co
 	return type;
 }
 
-void VoxelMesherTransvoxel::_add_chunk(Ref<VoxelChunk> p_chunk) {
+void VoxelMesherUVTransvoxel::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	Ref<VoxelChunkDefault> chunk = p_chunk;
 
 	ERR_FAIL_COND(!chunk.is_valid());
@@ -400,80 +400,80 @@ void VoxelMesherTransvoxel::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	remove_doubles_hashed();
 }
 
-Vector3 VoxelMesherTransvoxel::corner_id_to_vertex(int corner_id) const {
+Vector3 VoxelMesherUVTransvoxel::corner_id_to_vertex(int corner_id) const {
 	ERR_FAIL_COND_V(corner_id < 0 || corner_id > 8, Vector3());
 
 	return transvoxel_vertices[corner_id];
 }
 
-int VoxelMesherTransvoxel::get_regular_cell_class(int index) const {
+int VoxelMesherUVTransvoxel::get_regular_cell_class(int index) const {
 	return static_cast<int>(regularCellClass[index]);
 }
 
-Ref<TransvoxelCellData> VoxelMesherTransvoxel::get_regular_cell_data(int index) const {
+Ref<TransvoxelCellData> VoxelMesherUVTransvoxel::get_regular_cell_data(int index) const {
 	return _regular_cell_datas[index];
 }
 
-int VoxelMesherTransvoxel::get_regular_vertex_data(int index1, int index2) const {
+int VoxelMesherUVTransvoxel::get_regular_vertex_data(int index1, int index2) const {
 	//return static_cast<int>(regularVertexData[index1][index2]);
 	return regularVertexData[index1][index2];
 }
 
-//void VoxelMesherTransvoxel::set_regular_vertex_data(int index1, int index2, int value) {
+//void VoxelMesherUVTransvoxel::set_regular_vertex_data(int index1, int index2, int value) {
 //   ERR_FAIL_INDEX(index1, 256);
 //    ERR_FAIL_INDEX(index2, 13);
 
 //    regularVertexData[index1][index2] = value;
 //}
 
-int VoxelMesherTransvoxel::get_regular_vertex_data_first_vertex(int index1, int index2) const {
+int VoxelMesherUVTransvoxel::get_regular_vertex_data_first_vertex(int index1, int index2) const {
 	int vert1 = regularVertexData[index1][index2] & 0x000F;
 
 	return vert1;
 }
 
-int VoxelMesherTransvoxel::get_regular_vertex_data_second_vertex(int index1, int index2) const {
+int VoxelMesherUVTransvoxel::get_regular_vertex_data_second_vertex(int index1, int index2) const {
 	int vert2 = (regularVertexData[index1][index2] & 0x00F0) >> 4;
 
 	return vert2;
 }
 
-Vector3 VoxelMesherTransvoxel::get_regular_vertex_first_position(int index1, int index2) const {
+Vector3 VoxelMesherUVTransvoxel::get_regular_vertex_first_position(int index1, int index2) const {
 	int vert = regularVertexData[index1][index2] & 0x000F;
 
 	return transvoxel_vertices[vert];
 }
 
-Vector3 VoxelMesherTransvoxel::get_regular_vertex_second_position(int index1, int index2) const {
+Vector3 VoxelMesherUVTransvoxel::get_regular_vertex_second_position(int index1, int index2) const {
 	int vert = (regularVertexData[index1][index2] & 0x00F0) >> 4;
 
 	return transvoxel_vertices[vert];
 }
 
-Vector3 VoxelMesherTransvoxel::get_regular_vertex_direction(int index1, int index2) const {
+Vector3 VoxelMesherUVTransvoxel::get_regular_vertex_direction(int index1, int index2) const {
 	int vert1 = regularVertexData[index1][index2] & 0x000F;
 	int vert2 = (regularVertexData[index1][index2] & 0x00F0) >> 4;
 
 	return transvoxel_vertices[vert2] - transvoxel_vertices[vert1];
 }
 
-int VoxelMesherTransvoxel::get_transition_cell_class(int index) const {
+int VoxelMesherUVTransvoxel::get_transition_cell_class(int index) const {
 	return static_cast<int>(transitionCellClass[index]);
 }
 
-Ref<TransvoxelCellData> VoxelMesherTransvoxel::get_transition_cell_data(int index) const {
+Ref<TransvoxelCellData> VoxelMesherUVTransvoxel::get_transition_cell_data(int index) const {
 	return _transition_cell_data[index];
 }
 
-int VoxelMesherTransvoxel::get_transition_corner_data(int index) const {
+int VoxelMesherUVTransvoxel::get_transition_corner_data(int index) const {
 	return static_cast<int>(transitionCornerData[index]);
 }
 
-int VoxelMesherTransvoxel::get_transition_vertex_data(int index1, int index2) const {
+int VoxelMesherUVTransvoxel::get_transition_vertex_data(int index1, int index2) const {
 	return static_cast<int>(transitionVertexData[index1][index2]);
 }
 
-int VoxelMesherTransvoxel::get_transition_vertex_data_first_vertex(int index1, int index2) const {
+int VoxelMesherUVTransvoxel::get_transition_vertex_data_first_vertex(int index1, int index2) const {
 	unsigned short val = transitionVertexData[index1][index2];
 
 	unsigned short vert = val & 0x000F;
@@ -481,7 +481,7 @@ int VoxelMesherTransvoxel::get_transition_vertex_data_first_vertex(int index1, i
 	return static_cast<int>(vert);
 }
 
-int VoxelMesherTransvoxel::get_transition_vertex_data_second_vertex(int index1, int index2) const {
+int VoxelMesherUVTransvoxel::get_transition_vertex_data_second_vertex(int index1, int index2) const {
 	unsigned short val = transitionVertexData[index1][index2];
 
 	unsigned short vert = (val & 0x00F0) >> 4;
@@ -489,26 +489,26 @@ int VoxelMesherTransvoxel::get_transition_vertex_data_second_vertex(int index1, 
 	return static_cast<int>(vert);
 }
 
-Vector3 VoxelMesherTransvoxel::get_transition_vertex_first_position(int index1, int index2) const {
+Vector3 VoxelMesherUVTransvoxel::get_transition_vertex_first_position(int index1, int index2) const {
 	int vert = transitionVertexData[index1][index2] & 0x000F;
 
 	return transvoxel_vertices[vert];
 }
 
-Vector3 VoxelMesherTransvoxel::get_transition_vertex_second_position(int index1, int index2) const {
+Vector3 VoxelMesherUVTransvoxel::get_transition_vertex_second_position(int index1, int index2) const {
 	int vert = (transitionVertexData[index1][index2] & 0x00F0) >> 4;
 
 	return transvoxel_vertices[vert];
 }
 
-Vector3 VoxelMesherTransvoxel::get_transition_vertex_direction(int index1, int index2) const {
+Vector3 VoxelMesherUVTransvoxel::get_transition_vertex_direction(int index1, int index2) const {
 	int vert1 = transitionVertexData[index1][index2] & 0x000F;
 	int vert2 = (transitionVertexData[index1][index2] & 0x00F0) >> 4;
 
 	return transvoxel_vertices[vert2] - transvoxel_vertices[vert1];
 }
 
-VoxelMesherTransvoxel::VoxelMesherTransvoxel() {
+VoxelMesherUVTransvoxel::VoxelMesherUVTransvoxel() {
 	_format = VisualServer::ARRAY_FORMAT_NORMAL | VisualServer::ARRAY_FORMAT_COLOR | VisualServer::ARRAY_FORMAT_TEX_UV | VisualServer::ARRAY_FORMAT_TEX_UV2;
 
 	_texture_scale = 4;
@@ -522,37 +522,37 @@ VoxelMesherTransvoxel::VoxelMesherTransvoxel() {
 	}
 }
 
-VoxelMesherTransvoxel::~VoxelMesherTransvoxel() {
+VoxelMesherUVTransvoxel::~VoxelMesherUVTransvoxel() {
 }
 
-void VoxelMesherTransvoxel::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_texture_scale"), &VoxelMesherTransvoxel::get_texture_scale);
-	ClassDB::bind_method(D_METHOD("set_texture_scale", "value"), &VoxelMesherTransvoxel::set_texture_scale);
+void VoxelMesherUVTransvoxel::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_texture_scale"), &VoxelMesherUVTransvoxel::get_texture_scale);
+	ClassDB::bind_method(D_METHOD("set_texture_scale", "value"), &VoxelMesherUVTransvoxel::set_texture_scale);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "texture_scale"), "set_texture_scale", "get_texture_scale");
 
-	ClassDB::bind_method(D_METHOD("_add_chunk", "chunk"), &VoxelMesherTransvoxel::_add_chunk);
+	ClassDB::bind_method(D_METHOD("_add_chunk", "chunk"), &VoxelMesherUVTransvoxel::_add_chunk);
 
-	ClassDB::bind_method(D_METHOD("corner_id_to_vertex", "index1"), &VoxelMesherTransvoxel::corner_id_to_vertex);
+	ClassDB::bind_method(D_METHOD("corner_id_to_vertex", "index1"), &VoxelMesherUVTransvoxel::corner_id_to_vertex);
 
-	ClassDB::bind_method(D_METHOD("get_regular_cell_class", "index"), &VoxelMesherTransvoxel::get_regular_cell_class);
-	ClassDB::bind_method(D_METHOD("get_regular_cell_data", "index"), &VoxelMesherTransvoxel::get_regular_cell_data);
-	ClassDB::bind_method(D_METHOD("get_regular_vertex_data", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data);
-	//  ClassDB::bind_method(D_METHOD("set_regular_vertex_data", "index1", "index2", "value"), &VoxelMesherTransvoxel::set_regular_vertex_data);
-	ClassDB::bind_method(D_METHOD("get_regular_vertex_data_first_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data_first_vertex);
-	ClassDB::bind_method(D_METHOD("get_regular_vertex_data_second_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_data_second_vertex);
-	ClassDB::bind_method(D_METHOD("get_regular_vertex_first_position", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_first_position);
-	ClassDB::bind_method(D_METHOD("get_regular_vertex_second_position", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_second_position);
-	ClassDB::bind_method(D_METHOD("get_regular_vertex_direction", "index1", "index2"), &VoxelMesherTransvoxel::get_regular_vertex_direction);
+	ClassDB::bind_method(D_METHOD("get_regular_cell_class", "index"), &VoxelMesherUVTransvoxel::get_regular_cell_class);
+	ClassDB::bind_method(D_METHOD("get_regular_cell_data", "index"), &VoxelMesherUVTransvoxel::get_regular_cell_data);
+	ClassDB::bind_method(D_METHOD("get_regular_vertex_data", "index1", "index2"), &VoxelMesherUVTransvoxel::get_regular_vertex_data);
+	//  ClassDB::bind_method(D_METHOD("set_regular_vertex_data", "index1", "index2", "value"), &VoxelMesherUVTransvoxel::set_regular_vertex_data);
+	ClassDB::bind_method(D_METHOD("get_regular_vertex_data_first_vertex", "index1", "index2"), &VoxelMesherUVTransvoxel::get_regular_vertex_data_first_vertex);
+	ClassDB::bind_method(D_METHOD("get_regular_vertex_data_second_vertex", "index1", "index2"), &VoxelMesherUVTransvoxel::get_regular_vertex_data_second_vertex);
+	ClassDB::bind_method(D_METHOD("get_regular_vertex_first_position", "index1", "index2"), &VoxelMesherUVTransvoxel::get_regular_vertex_first_position);
+	ClassDB::bind_method(D_METHOD("get_regular_vertex_second_position", "index1", "index2"), &VoxelMesherUVTransvoxel::get_regular_vertex_second_position);
+	ClassDB::bind_method(D_METHOD("get_regular_vertex_direction", "index1", "index2"), &VoxelMesherUVTransvoxel::get_regular_vertex_direction);
 
-	ClassDB::bind_method(D_METHOD("get_transition_cell_class", "index"), &VoxelMesherTransvoxel::get_transition_cell_class);
-	ClassDB::bind_method(D_METHOD("get_transition_cell_data", "index"), &VoxelMesherTransvoxel::get_transition_cell_data);
-	ClassDB::bind_method(D_METHOD("get_transition_corner_data", "index"), &VoxelMesherTransvoxel::get_transition_corner_data);
-	ClassDB::bind_method(D_METHOD("get_transition_vertex_data", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_data);
-	ClassDB::bind_method(D_METHOD("get_transition_vertex_data_first_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_data_first_vertex);
-	ClassDB::bind_method(D_METHOD("get_transition_vertex_data_second_vertex", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_data_second_vertex);
-	ClassDB::bind_method(D_METHOD("get_transition_vertex_first_position", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_first_position);
-	ClassDB::bind_method(D_METHOD("get_transition_vertex_second_position", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_second_position);
-	ClassDB::bind_method(D_METHOD("get_transition_vertex_direction", "index1", "index2"), &VoxelMesherTransvoxel::get_transition_vertex_direction);
+	ClassDB::bind_method(D_METHOD("get_transition_cell_class", "index"), &VoxelMesherUVTransvoxel::get_transition_cell_class);
+	ClassDB::bind_method(D_METHOD("get_transition_cell_data", "index"), &VoxelMesherUVTransvoxel::get_transition_cell_data);
+	ClassDB::bind_method(D_METHOD("get_transition_corner_data", "index"), &VoxelMesherUVTransvoxel::get_transition_corner_data);
+	ClassDB::bind_method(D_METHOD("get_transition_vertex_data", "index1", "index2"), &VoxelMesherUVTransvoxel::get_transition_vertex_data);
+	ClassDB::bind_method(D_METHOD("get_transition_vertex_data_first_vertex", "index1", "index2"), &VoxelMesherUVTransvoxel::get_transition_vertex_data_first_vertex);
+	ClassDB::bind_method(D_METHOD("get_transition_vertex_data_second_vertex", "index1", "index2"), &VoxelMesherUVTransvoxel::get_transition_vertex_data_second_vertex);
+	ClassDB::bind_method(D_METHOD("get_transition_vertex_first_position", "index1", "index2"), &VoxelMesherUVTransvoxel::get_transition_vertex_first_position);
+	ClassDB::bind_method(D_METHOD("get_transition_vertex_second_position", "index1", "index2"), &VoxelMesherUVTransvoxel::get_transition_vertex_second_position);
+	ClassDB::bind_method(D_METHOD("get_transition_vertex_direction", "index1", "index2"), &VoxelMesherUVTransvoxel::get_transition_vertex_direction);
 
 	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_000);
 	BIND_ENUM_CONSTANT(VOXEL_ENTRY_INDEX_100);

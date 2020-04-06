@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXEL_MESHER_TRANSVOXEL_H
-#define VOXEL_MESHER_TRANSVOXEL_H
+#ifndef VOXEL_MESHER_UV_TRANSVOXEL_H
+#define VOXEL_MESHER_UV_TRANSVOXEL_H
 
 #include "../default/voxel_mesher_default.h"
 #include "core/reference.h"
@@ -32,8 +32,8 @@ SOFTWARE.
 
 using namespace Transvoxel;
 
-class VoxelMesherTransvoxel : public VoxelMesherDefault {
-	GDCLASS(VoxelMesherTransvoxel, VoxelMesherDefault)
+class VoxelMesherUVTransvoxel : public VoxelMesherDefault {
+	GDCLASS(VoxelMesherUVTransvoxel, VoxelMesherDefault)
 
 public:
 	static const String BINDING_STRING_VOXEL_ENTRY_INDICES;
@@ -99,8 +99,8 @@ public:
 	Vector3 get_transition_vertex_second_position(int index1, int index2) const;
 	Vector3 get_transition_vertex_direction(int index1, int index2) const;
 
-	VoxelMesherTransvoxel();
-	~VoxelMesherTransvoxel();
+	VoxelMesherUVTransvoxel();
+	~VoxelMesherUVTransvoxel();
 
 protected:
 	static void _bind_methods();
@@ -111,7 +111,7 @@ protected:
 	int _texture_scale;
 };
 
-VARIANT_ENUM_CAST(VoxelMesherTransvoxel::VoxelEntryIndices);
-VARIANT_ENUM_CAST(VoxelMesherTransvoxel::VoxelEntryMask);
+VARIANT_ENUM_CAST(VoxelMesherUVTransvoxel::VoxelEntryIndices);
+VARIANT_ENUM_CAST(VoxelMesherUVTransvoxel::VoxelEntryMask);
 
 #endif // VOXEL_MESHER_SMOOTH_H

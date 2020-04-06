@@ -24,7 +24,7 @@ sources = [
     "meshers/voxel_mesher.cpp",
     
     "meshers/transvoxel_uv_mesher/transvoxel_cell_data.cpp",
-    "meshers/transvoxel_uv_mesher/voxel_mesher_transvoxel.cpp",
+    "meshers/transvoxel_uv_mesher/voxel_mesher_uv_transvoxel.cpp",
     "meshers/transvoxel_uv_mesher/transvoxel_tables.cpp",
 
     "meshers/blocky/voxel_mesher_blocky.cpp",
