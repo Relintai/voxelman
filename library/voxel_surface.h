@@ -30,11 +30,9 @@ SOFTWARE.
 #include "core/vector.h"
 #include "scene/resources/material.h"
 
-#include "../../props/clutter/ground_clutter.h"
 #include "voxelman_library.h"
 
 class VoxelmanLibrary;
-class GroundClutter;
 
 class VoxelSurface : public Resource {
 	GDCLASS(VoxelSurface, Resource)
@@ -78,9 +76,6 @@ public:
 	Rect2 get_rect(const VoxelSurfaceSides side) const;
 	void set_rect(const VoxelSurfaceSides side, const Rect2 rect);
 
-	Ref<GroundClutter> get_clutter();
-	void set_clutter(Ref<GroundClutter> clutter);
-
 	Ref<VoxelmanLibrary> get_library() const;
 	void set_library(Ref<VoxelmanLibrary> library);
 
@@ -101,7 +96,6 @@ protected:
 	int _mesher_index;
 	bool _is_transparent;
 	Rect2 _rects[VOXEL_SIDES_COUNT];
-	Ref<GroundClutter> _clutter;
 };
 
 VARIANT_ENUM_CAST(VoxelSurface::VoxelSurfaceSides);

@@ -50,8 +50,6 @@ SOFTWARE.
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
 
-#include "../../mesh_data_resource/mesh_data_resource.h"
-
 #include "voxel_chunk_prop_data.h"
 
 class VoxelWorld;

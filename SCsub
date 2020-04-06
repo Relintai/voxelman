@@ -4,8 +4,16 @@ Import('env')
 
 module_env = env.Clone()
 
+has_texture_packer = False
+if os.path.isdir('../texture_packer'):
+    module_env.Append(CPPDEFINES=['TEXTURE_PACKER_PRESENT'])
+    has_texture_packer = True
+
 if os.path.isdir('../mesh_data_resource'):
     module_env.Append(CPPDEFINES=['MESH_DATA_RESOURCE_PRESENT'])
+
+if os.path.isdir('../props'):
+    module_env.Append(CPPDEFINES=['PROPS_PRESENT'])
 
 sources = [
 
@@ -13,11 +21,10 @@ sources = [
 
     "library/voxelman_library.cpp",
     "library/voxelman_library_simple.cpp",
-    "library/voxelman_library_merger.cpp",
+    
 
     "library/voxel_surface.cpp",
     "library/voxel_surface_simple.cpp",
-    "library/voxel_surface_merger.cpp",
 
     "data/voxel_light.cpp",
 
@@ -46,7 +53,6 @@ sources = [
     "meshers/cubic_mesher/voxel_mesher_cubic.cpp",
     "meshers/cubic_mesher/voxel_cube_points.cpp",
 
-
     "level_generator/voxelman_level_generator.cpp",
 
     "areas/world_area.cpp",
@@ -55,6 +61,11 @@ sources = [
     
     "thirdparty/lz4/lz4.c"
 ]
+
+if has_texture_packer:
+    sources.append("library/voxelman_library_merger.cpp")
+    sources.append("library/voxel_surface_merger.cpp")
+
 
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
     # Shared lib compilation

@@ -38,7 +38,10 @@ SOFTWARE.
 #include "scene/resources/material.h"
 #include "scene/resources/mesh.h"
 
+#ifdef MESH_DATA_RESOURCE_PRESENT
 #include "../../mesh_data_resource/mesh_data_resource.h"
+#endif
+
 #include "../library/voxelman_library.h"
 
 const double PI_2 = 3.141592653589793238463 / 2;
@@ -114,8 +117,10 @@ public:
 
 	void add_chunk_liquid(Ref<VoxelChunk> chunk);
 
+#ifdef MESH_DATA_RESOURCE_PRESENT
 	void add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position = Vector3(0, 0, 0), const Vector3 rotation = Vector3(0, 0, 0), const Vector3 scale = Vector3(1.0, 1.0, 1.0), const Rect2 uv_rect = Rect2(0, 0, 1, 1));
 	void add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform, const Rect2 uv_rect = Rect2(0, 0, 1, 1));
+#endif
 
 	void add_mesher(const Ref<VoxelMesher> &mesher);
 	void _add_mesher(const Ref<VoxelMesher> &mesher);

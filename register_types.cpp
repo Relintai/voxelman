@@ -23,12 +23,15 @@ SOFTWARE.
 #include "register_types.h"
 
 #include "library/voxel_surface.h"
-#include "library/voxel_surface_merger.h"
 #include "library/voxel_surface_simple.h"
 
 #include "library/voxelman_library.h"
-#include "library/voxelman_library_merger.h"
 #include "library/voxelman_library_simple.h"
+
+#ifdef TEXTURE_PACKER_PRESENT
+#include "library/voxel_surface_merger.h"
+#include "library/voxelman_library_merger.h"
+#endif
 
 #include "data/voxel_light.h"
 #include "meshers/transvoxel_uv_mesher/transvoxel_cell_data.h"
@@ -65,11 +68,14 @@ void register_voxelman_types() {
 
 	ClassDB::register_class<VoxelSurface>();
 	ClassDB::register_class<VoxelSurfaceSimple>();
-	ClassDB::register_class<VoxelSurfaceMerger>();
 
 	ClassDB::register_class<VoxelmanLibrary>();
 	ClassDB::register_class<VoxelmanLibrarySimple>();
+
+#ifdef TEXTURE_PACKER_PRESENT
+	ClassDB::register_class<VoxelSurfaceMerger>();
 	ClassDB::register_class<VoxelmanLibraryMerger>();
+#endif
 
 	ClassDB::register_class<VoxelLight>();
 
