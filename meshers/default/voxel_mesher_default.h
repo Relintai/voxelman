@@ -40,6 +40,9 @@ public:
 	~VoxelMesherDefault();
 
 protected:
+	virtual void _bake_colors(Ref<VoxelChunk> p_chunk);
+	virtual void _bake_liquid_colors(Ref<VoxelChunk> p_chunk);
+
 	static void _bind_methods();
 
 private:

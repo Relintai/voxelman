@@ -23,7 +23,7 @@ SOFTWARE.
 #ifndef VOXEL_MESHER_TRANSVOXEL_H
 #define VOXEL_MESHER_TRANSVOXEL_H
 
-#include "../voxel_mesher.h"
+#include "../default/voxel_mesher_default.h"
 #include "core/reference.h"
 
 #include "transvoxel_cell_data.h"
@@ -32,8 +32,8 @@ SOFTWARE.
 
 using namespace Transvoxel;
 
-class VoxelMesherTransvoxel : public VoxelMesher {
-	GDCLASS(VoxelMesherTransvoxel, VoxelMesher)
+class VoxelMesherTransvoxel : public VoxelMesherDefault {
+	GDCLASS(VoxelMesherTransvoxel, VoxelMesherDefault)
 
 public:
 	static const String BINDING_STRING_VOXEL_ENTRY_INDICES;

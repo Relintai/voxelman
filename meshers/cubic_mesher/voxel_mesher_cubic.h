@@ -27,12 +27,12 @@ SOFTWARE.
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
 
-#include "../voxel_mesher.h"
+#include "../default/voxel_mesher_default.h"
 
 #include "voxel_cube_points.h"
 
-class VoxelMesherCubic : public VoxelMesher {
-	GDCLASS(VoxelMesherCubic, VoxelMesher);
+class VoxelMesherCubic : public VoxelMesherDefault {
+	GDCLASS(VoxelMesherCubic, VoxelMesherDefault);
 
 public:
 	void _add_chunk(Ref<VoxelChunk> p_chunk);

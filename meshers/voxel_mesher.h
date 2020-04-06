@@ -121,10 +121,7 @@ public:
 	void _add_mesher(const Ref<VoxelMesher> &mesher);
 
 	void bake_colors(Ref<VoxelChunk> chunk);
-	void _bake_colors(Ref<VoxelChunk> p_chunk);
-
 	void bake_liquid_colors(Ref<VoxelChunk> chunk);
-	void _bake_liquid_colors(Ref<VoxelChunk> p_chunk);
 
 	PoolVector<Vector3> build_collider() const;
 
