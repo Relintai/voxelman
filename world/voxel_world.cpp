@@ -444,7 +444,7 @@ void VoxelWorld::_notification(int p_what) {
 			set_physics_process_internal(true);
 			set_notify_transform(true);
 
-			if (!Engine::get_singleton()->is_editor_hint() && _library.is_valid())
+			if (_library.is_valid())
 				_library->refresh_rects();
 
 			for (int i = 0; i < _chunks_vector.size(); ++i) {
