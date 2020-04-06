@@ -46,6 +46,14 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 	return VoxelWorld::_create_chunk(x, y, z, chunk);
 }
 
+void VoxelWorldDefault::_chunk_added(Ref<VoxelChunk> chunk) {
+	Ref<VoxelChunkDefault> c = chunk;
+
+	if (c.is_valid()) {
+		c->set_build_flags(get_build_flags());
+	}
+}
+
 VoxelWorldDefault::VoxelWorldDefault() {
 	_build_flags = VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER | VoxelChunkDefault::BUILD_FLAG_CREATE_LODS;
 
@@ -57,6 +65,8 @@ VoxelWorldDefault ::~VoxelWorldDefault() {
 }
 
 void VoxelWorldDefault::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("_chunk_added", "chunk"), &VoxelWorldDefault::_chunk_added);
+
 	ClassDB::bind_method(D_METHOD("get_build_flags"), &VoxelWorldDefault::get_build_flags);
 	ClassDB::bind_method(D_METHOD("set_build_flags", "value"), &VoxelWorldDefault::set_build_flags);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_flags", PROPERTY_HINT_FLAGS, VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS), "set_build_flags", "get_build_flags");

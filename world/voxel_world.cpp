@@ -175,6 +175,9 @@ void VoxelWorld::add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, cons
 	_chunks_vector.push_back(chunk);
 
 	chunk->enter_tree();
+
+	if (has_method("_chunk_added"))
+		call("_chunk_added", chunk);
 }
 bool VoxelWorld::has_chunk(const int x, const int y, const int z) const {
 	return _chunks.has(IntPos(x, y, z));
@@ -621,6 +624,8 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_world_area", "index"), &VoxelWorld::remove_world_area);
 	ClassDB::bind_method(D_METHOD("clear_world_areas"), &VoxelWorld::clear_world_areas);
 	ClassDB::bind_method(D_METHOD("get_world_area_count"), &VoxelWorld::get_world_area_count);
+
+	BIND_VMETHOD(MethodInfo("_chunk_added", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
 	ClassDB::bind_method(D_METHOD("add_chunk", "chunk", "x", "y", "z"), &VoxelWorld::add_chunk);
 	ClassDB::bind_method(D_METHOD("has_chunk", "x", "y", "z"), &VoxelWorld::has_chunk);
