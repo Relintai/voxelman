@@ -385,8 +385,9 @@ void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
 		if (!chunk.is_valid())
 			continue;
 
-		if (_chunks_vector.find(chunk) != -1)
+		if (_chunks_vector.find(chunk) != -1) {
 			continue;
+		}
 
 		add_chunk(chunk, chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z());
 	}

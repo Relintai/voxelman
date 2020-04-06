@@ -1016,10 +1016,10 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			if (_is_build_threaded) {
-				set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
-				return;
-			}
+			//if (_is_build_threaded) {
+			//	set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
+			//	return;
+			//}
 
 			if (!has_meshes(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_BODY)) {
 				create_colliders(MESH_INDEX_TERRARIN);
@@ -1039,15 +1039,17 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 				ERR_CONTINUE(!mesher.is_valid());
 
-				mesher->bake_colors(this);
+				mesher->set_library(_library);
 			}
 
-			for (int i = 0; i < _meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _meshers.get(i);
+			if ((_build_flags & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
+				for (int i = 0; i < _meshers.size(); ++i) {
+					Ref<VoxelMesher> mesher = _meshers.get(i);
 
-				ERR_CONTINUE(!mesher.is_valid());
+					ERR_CONTINUE(!mesher.is_valid());
 
-				mesher->set_library(_library);
+					mesher->bake_colors(this);
+				}
 			}
 
 			Ref<VoxelMesher> mesher;
@@ -1081,7 +1083,11 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			Array temp_mesh_arr = mesher->build_mesh();
 
 			if (mesh_rid == RID()) {
-				create_meshes(MESH_INDEX_TERRARIN, _lod_num + 1);
+				if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0)
+					create_meshes(MESH_INDEX_TERRARIN, _lod_num + 1);
+				else
+					create_meshes(MESH_INDEX_TERRARIN, 1);
+
 				mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
 			}
 
