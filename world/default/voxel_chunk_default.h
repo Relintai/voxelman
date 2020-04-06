@@ -23,7 +23,7 @@ SOFTWARE.
 #ifndef VOXEL_CHUNK_DEFAULT_H
 #define VOXEL_CHUNK_DEFAULT_H
 
-#include "voxel_chunk.h"
+#include "../voxel_chunk.h"
 
 #include "scene/3d/spatial.h"
 
@@ -42,18 +42,18 @@ SOFTWARE.
 #include "scene/resources/concave_polygon_shape.h"
 #include "scene/resources/packed_scene.h"
 
-#include "voxel_world.h"
+#include "../voxel_world.h"
 
-#include "../data/voxel_light.h"
+#include "../../data/voxel_light.h"
 
-#include "../meshers/cubic_mesher/voxel_mesher_cubic.h"
-#include "../meshers/voxel_mesher.h"
+#include "../../meshers/cubic_mesher/voxel_mesher_cubic.h"
+#include "../../meshers/voxel_mesher.h"
 
-#include "../library/voxel_surface.h"
-#include "../library/voxelman_library.h"
+#include "../../library/voxel_surface.h"
+#include "../../library/voxelman_library.h"
 
-#include "../../mesh_data_resource/mesh_data_resource.h"
-#include "voxel_chunk_prop_data.h"
+#include "../../../mesh_data_resource/mesh_data_resource.h"
+#include "../voxel_chunk_prop_data.h"
 
 class VoxelWorld;
 
@@ -64,6 +64,7 @@ class VoxelChunkDefault : public VoxelChunk {
 
 public:
 	static const String BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE;
+	static const String BINDING_STRING_BUILD_FLAGS;
 
 	enum {
 		VOXEL_CHUNK_STATE_GENERATION_QUEUED = 1,
@@ -119,35 +120,41 @@ public:
 		MESH_TYPE_INDEX_BODY
 	};
 
+	enum BuildFlags {
+		BUILD_FLAG_USE_ISOLEVEL = 1 << 0,
+		BUILD_FLAG_USE_LIGHTING = 1 << 1,
+		BUILD_FLAG_USE_AO = 1 << 2,
+		BUILD_FLAG_USE_RAO = 1 << 3,
+		BUILD_FLAG_GENERATE_AO = 1 << 4,
+		BUILD_FLAG_AUTO_GENERATE_RAO = 1 << 5,
+		BUILD_FLAG_BAKE_LIGHTS = 1 << 6,
+		BUILD_FLAG_CREATE_COLLIDER = 1 << 7,
+		BUILD_FLAG_CREATE_LODS = 1 << 8,
+	};
+
 public:
 	bool get_is_build_threaded() const;
-	void set_is_build_threaded(bool value);
+	void set_is_build_threaded(const bool value);
+
+	int get_build_flags() const;
+	void set_build_flags(const int flags);
 
 	ActiveBuildPhaseType get_active_build_phase_type() const;
 	void set_active_build_phase_type(const ActiveBuildPhaseType value);
 
 	bool get_build_phase_done() const;
-	void set_build_phase_done(bool value);
+	void set_build_phase_done(const bool value);
 
 	int get_lod_size() const;
-	void set_lod_size(int lod_size);
+	void set_lod_size(const int lod_size);
 
-	int get_current_build_phase();
-	void set_current_build_phase(int value);
+	int get_current_build_phase() const;
+	void set_current_build_phase(const int value);
 
-	int get_max_build_phase();
-	void set_max_build_phase(int value);
-
-	bool get_create_collider() const;
-	void set_create_collider(bool value);
-
-	bool get_bake_lights() const;
-	void set_bake_lights(bool value);
+	int get_max_build_phase() const;
+	void set_max_build_phase(const int value);
 
 	//Lod
-	bool get_generate_lod() const;
-	void set_generate_lod(const bool value);
-
 	int get_lod_num() const;
 	void set_lod_num(const int value);
 
@@ -216,7 +223,7 @@ public:
 
 	void emit_build_finished();
 
-	void generate_random_ao(int seed, int octaves = 4, int period = 30, float persistence = 0.3, float scale_factor = 0.6);
+	void generate_random_ao(const int seed, const int octaves = 4, const int period = 30, const float persistence = 0.3, const float scale_factor = 0.6);
 
 	VoxelChunkDefault();
 	~VoxelChunkDefault();
@@ -242,6 +249,8 @@ protected:
 
 	static void _bind_methods();
 
+	int _build_flags;
+
 	bool _is_build_threaded;
 	bool _abort_build;
 
@@ -252,7 +261,6 @@ protected:
 	int _lod_size;
 
 	//lod
-	bool _generate_lod;
 	int _lod_num;
 	int _current_lod_level;
 
@@ -261,11 +269,6 @@ protected:
 
 	//debug
 	ImmediateGeometry *_debug_drawer;
-
-	bool _build_mesh;
-	bool _create_collider;
-
-	bool _bake_lights;
 
 	bool _build_prioritized;
 	bool _build_phase_done;
@@ -280,5 +283,6 @@ protected:
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);
 VARIANT_ENUM_CAST(VoxelChunkDefault::ActiveBuildPhaseType);
+VARIANT_ENUM_CAST(VoxelChunkDefault::BuildFlags);
 
 #endif

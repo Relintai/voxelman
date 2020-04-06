@@ -23,9 +23,7 @@ SOFTWARE.
 #ifndef VOXEL_CHUNK_BLOCKY_H
 #define VOXEL_CHUNK_BLOCKY_H
 
-#include "../voxel_chunk_default.h"
-
-class VoxelWorld;
+#include "../default/voxel_chunk_default.h"
 
 class VoxelChunkBlocky : public VoxelChunkDefault {
 	GDCLASS(VoxelChunkBlocky, VoxelChunkDefault);

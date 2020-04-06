@@ -22,17 +22,27 @@ SOFTWARE.
 
 #include "voxel_chunk_default.h"
 
-#include "voxel_world.h"
+#include "../voxel_world.h"
 
-#include "../../opensimplex/open_simplex_noise.h"
+#include "../../meshers/default/voxel_mesher_default.h"
+
+#include "../../../opensimplex/open_simplex_noise.h"
 
 const String VoxelChunkDefault::BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE = "Normal,Process,Physics Process";
+const String VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS = "Use Isolevel,Use Lighting,Use AO,Use RAO,Generate AO,Generate RAO,Bake Lights,Create Collider,Create Lods";
 
 _FORCE_INLINE_ bool VoxelChunkDefault::get_is_build_threaded() const {
 	return _is_build_threaded;
 }
-_FORCE_INLINE_ void VoxelChunkDefault::set_is_build_threaded(bool value) {
+_FORCE_INLINE_ void VoxelChunkDefault::set_is_build_threaded(const bool value) {
 	_is_build_threaded = value;
+}
+
+_FORCE_INLINE_ int VoxelChunkDefault::get_build_flags() const {
+	return _build_flags;
+}
+_FORCE_INLINE_ void VoxelChunkDefault::set_build_flags(const int flags) {
+	_build_flags = flags;
 }
 
 _FORCE_INLINE_ VoxelChunkDefault::ActiveBuildPhaseType VoxelChunkDefault::get_active_build_phase_type() const {
@@ -60,7 +70,7 @@ _FORCE_INLINE_ void VoxelChunkDefault::set_active_build_phase_type(const VoxelCh
 bool VoxelChunkDefault::get_build_phase_done() const {
 	return _build_phase_done;
 }
-void VoxelChunkDefault::set_build_phase_done(bool value) {
+void VoxelChunkDefault::set_build_phase_done(const bool value) {
 	_build_phase_done = value;
 }
 
@@ -79,38 +89,18 @@ void VoxelChunkDefault::set_lod_size(const int lod_size) {
 	}
 }
 
-int VoxelChunkDefault::get_current_build_phase() {
+int VoxelChunkDefault::get_current_build_phase() const {
 	return _current_build_phase;
 }
-void VoxelChunkDefault::set_current_build_phase(int value) {
+void VoxelChunkDefault::set_current_build_phase(const int value) {
 	_current_build_phase = value;
 }
 
-int VoxelChunkDefault::get_max_build_phase() {
+int VoxelChunkDefault::get_max_build_phase() const {
 	return _max_build_phases;
 }
-void VoxelChunkDefault::set_max_build_phase(int value) {
+void VoxelChunkDefault::set_max_build_phase(const int value) {
 	_max_build_phases = value;
-}
-bool VoxelChunkDefault::get_create_collider() const {
-	return _create_collider;
-}
-void VoxelChunkDefault::set_create_collider(bool value) {
-	_create_collider = value;
-}
-
-bool VoxelChunkDefault::get_bake_lights() const {
-	return _bake_lights;
-}
-void VoxelChunkDefault::set_bake_lights(bool value) {
-	_bake_lights = value;
-}
-
-bool VoxelChunkDefault::get_generate_lod() const {
-	return _generate_lod;
-}
-void VoxelChunkDefault::set_generate_lod(const bool value) {
-	_generate_lod = value;
 }
 
 int VoxelChunkDefault::get_lod_num() const {
@@ -126,7 +116,7 @@ int VoxelChunkDefault::get_current_lod_level() const {
 void VoxelChunkDefault::set_current_lod_level(const int value) {
 	_current_lod_level = value;
 
-	if (!_generate_lod)
+	if ((_build_flags & BUILD_FLAG_CREATE_LODS) == 0)
 		return;
 
 	if (_current_lod_level < 0)
@@ -922,9 +912,6 @@ VoxelChunkDefault::VoxelChunkDefault() {
 	_state = VOXEL_CHUNK_STATE_OK;
 
 	_enabled = true;
-	_build_mesh = true;
-	_create_collider = true;
-	_bake_lights = true;
 	_current_build_phase = BUILD_PHASE_DONE;
 	_max_build_phases = BUILD_PHASE_MAX;
 
@@ -956,9 +943,10 @@ VoxelChunkDefault::VoxelChunkDefault() {
 
 	_active_build_phase_type = BUILD_PHASE_TYPE_NORMAL;
 
-	_generate_lod = true;
 	_lod_num = 3;
 	_current_lod_level = 0;
+
+	_build_flags = BUILD_FLAG_CREATE_COLLIDER | BUILD_FLAG_CREATE_LODS;
 }
 
 VoxelChunkDefault::~VoxelChunkDefault() {
@@ -1010,7 +998,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_COLLIDER: {
-			if (!get_create_collider()) {
+			if ((_build_flags & BUILD_FLAG_CREATE_COLLIDER) == 0) {
 				next_phase();
 				return;
 			}
@@ -1102,7 +1090,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			if (_library->get_material(0).is_valid())
 				VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_material(0)->get_rid());
 
-			if (_generate_lod) {
+			if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0) {
 				if (_lod_num >= 1) {
 					//for lod 1 just remove uv2
 					temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
@@ -1173,9 +1161,23 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_LIGHTS: {
-			clear_baked_lights();
-			generate_random_ao(123);
-			bake_lights();
+			bool gr = (_build_flags & BUILD_FLAG_AUTO_GENERATE_RAO) != 0;
+
+			if (!gr && (_build_flags & BUILD_FLAG_USE_LIGHTING) == 0) {
+				next_phase();
+				return;
+			}
+
+			bool bl = (_build_flags & BUILD_FLAG_BAKE_LIGHTS) != 0;
+
+			if (bl)
+				clear_baked_lights();
+
+			if (gr)
+				generate_random_ao(_voxel_world->get_current_seed());
+
+			if (bl)
+				bake_lights();
 
 			next_phase();
 
@@ -1280,8 +1282,6 @@ void VoxelChunkDefault::_clear_baked_lights() {
 }
 
 void VoxelChunkDefault::_create_meshers() {
-	add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic())));
-
 	for (int i = 0; i < _meshers.size(); ++i) {
 		Ref<VoxelMesher> mesher = _meshers.get(i);
 
@@ -1289,6 +1289,12 @@ void VoxelChunkDefault::_create_meshers() {
 
 		mesher->set_lod_size(get_lod_size());
 		mesher->set_voxel_scale(get_voxel_scale());
+
+		Ref<VoxelMesherDefault> md = mesher;
+
+		if (md.is_valid()) {
+			md->set_build_flags(get_build_flags());
+		}
 	}
 }
 
@@ -1309,6 +1315,10 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_is_build_threaded", "value"), &VoxelChunkDefault::set_is_build_threaded);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_build_threaded"), "set_is_build_threaded", "get_is_build_threaded");
 
+	ClassDB::bind_method(D_METHOD("get_build_flags"), &VoxelChunkDefault::get_build_flags);
+	ClassDB::bind_method(D_METHOD("set_build_flags", "value"), &VoxelChunkDefault::set_build_flags);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_flags", PROPERTY_HINT_FLAGS, BINDING_STRING_BUILD_FLAGS), "set_build_flags", "get_build_flags");
+
 	ClassDB::bind_method(D_METHOD("get_active_build_phase_type"), &VoxelChunkDefault::get_active_build_phase_type);
 	ClassDB::bind_method(D_METHOD("set_active_build_phase_type", "value"), &VoxelChunkDefault::set_active_build_phase_type);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "active_build_phase_type", PROPERTY_HINT_ENUM, BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE), "set_active_build_phase_type", "get_active_build_phase_type");
@@ -1324,19 +1334,6 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_max_build_phase"), &VoxelChunkDefault::get_max_build_phase);
 	ClassDB::bind_method(D_METHOD("set_max_build_phase", "value"), &VoxelChunkDefault::set_max_build_phase);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_build_phase"), "set_max_build_phase", "get_max_build_phase");
-
-	ADD_GROUP("Meshing", "meshing");
-	ClassDB::bind_method(D_METHOD("meshing_get_create_collider"), &VoxelChunkDefault::get_create_collider);
-	ClassDB::bind_method(D_METHOD("meshing_set_create_collider", "value"), &VoxelChunkDefault::set_create_collider);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "meshing_create_collider"), "meshing_set_create_collider", "meshing_get_create_collider");
-
-	ClassDB::bind_method(D_METHOD("meshing_get_bake_lights"), &VoxelChunkDefault::get_bake_lights);
-	ClassDB::bind_method(D_METHOD("meshing_set_bake_lights", "value"), &VoxelChunkDefault::set_bake_lights);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "meshing_bake_lights"), "meshing_set_bake_lights", "meshing_get_bake_lights");
-
-	ClassDB::bind_method(D_METHOD("get_generate_lod"), &VoxelChunkDefault::get_generate_lod);
-	ClassDB::bind_method(D_METHOD("set_generate_lod"), &VoxelChunkDefault::set_generate_lod);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "generate_lod"), "set_generate_lod", "get_generate_lod");
 
 	ClassDB::bind_method(D_METHOD("get_lod_num"), &VoxelChunkDefault::get_lod_num);
 	ClassDB::bind_method(D_METHOD("set_lod_num"), &VoxelChunkDefault::set_lod_num);
@@ -1465,4 +1462,14 @@ void VoxelChunkDefault::_bind_methods() {
 	BIND_CONSTANT(MESH_TYPE_INDEX_MESH_INSTANCE);
 	BIND_CONSTANT(MESH_TYPE_INDEX_SHAPE);
 	BIND_CONSTANT(MESH_TYPE_INDEX_BODY);
+
+	BIND_ENUM_CONSTANT(BUILD_FLAG_USE_ISOLEVEL);
+	BIND_ENUM_CONSTANT(BUILD_FLAG_USE_LIGHTING);
+	BIND_ENUM_CONSTANT(BUILD_FLAG_USE_AO);
+	BIND_ENUM_CONSTANT(BUILD_FLAG_USE_RAO);
+	BIND_ENUM_CONSTANT(BUILD_FLAG_GENERATE_AO);
+	BIND_ENUM_CONSTANT(BUILD_FLAG_AUTO_GENERATE_RAO);
+	BIND_ENUM_CONSTANT(BUILD_FLAG_BAKE_LIGHTS);
+	BIND_ENUM_CONSTANT(BUILD_FLAG_CREATE_COLLIDER);
+	BIND_ENUM_CONSTANT(BUILD_FLAG_CREATE_LODS);
 }

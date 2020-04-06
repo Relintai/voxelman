@@ -27,10 +27,10 @@ SOFTWARE.
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
 
-#include "../voxel_mesher.h"
+#include "../default/voxel_mesher_default.h"
 
-class VoxelMesherBlocky : public VoxelMesher {
-	GDCLASS(VoxelMesherBlocky, VoxelMesher);
+class VoxelMesherBlocky : public VoxelMesherDefault {
+	GDCLASS(VoxelMesherBlocky, VoxelMesherDefault);
 
 public:
 	void _add_chunk(Ref<VoxelChunk> p_chunk);

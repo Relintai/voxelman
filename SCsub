@@ -28,20 +28,24 @@ sources = [
     "meshers/transvoxel_uv_mesher/transvoxel_tables.cpp",
 
     "meshers/blocky/voxel_mesher_blocky.cpp",
+    "meshers/default/voxel_mesher_default.cpp",
 
     "world/voxel_world.cpp",
     "world/voxel_chunk.cpp",
-    "world/voxel_chunk_default.cpp",
     "world/voxel_structure.cpp",
     "world/block_voxel_structure.cpp",
     "world/environment_data.cpp",
     "world/voxel_chunk_prop_data.cpp",
 
+    "world/blocky/voxel_chunk_blocky.cpp",
+    "world/blocky/voxel_world_blocky.cpp",
+
+    "world/default/voxel_world_default.cpp",
+    "world/default/voxel_chunk_default.cpp",
+
     "meshers/cubic_mesher/voxel_mesher_cubic.cpp",
     "meshers/cubic_mesher/voxel_cube_points.cpp",
 
-    "world/blocky/voxel_chunk_blocky.cpp",
-    "world/blocky/voxel_world_blocky.cpp",
 
     "level_generator/voxelman_level_generator.cpp",
 

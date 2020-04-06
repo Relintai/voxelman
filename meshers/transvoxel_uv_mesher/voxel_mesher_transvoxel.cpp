@@ -22,8 +22,8 @@ SOFTWARE.
 
 #include "voxel_mesher_transvoxel.h"
 
+#include "../../world/default/voxel_chunk_default.h"
 #include "../../world/voxel_chunk.h"
-#include "../../world/voxel_chunk_default.h"
 #include "core/array.h"
 #include "core/dictionary.h"
 #include "servers/visual_server.h"

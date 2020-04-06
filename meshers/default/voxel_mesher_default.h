@@ -20,22 +20,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXEL_WORLD_BLOCKY_H
-#define VOXEL_WORLD_BLOCKY_H
+#ifndef VOXEL_MESHER_DEFAULT_H
+#define VOXEL_MESHER_DEFAULT_H
 
-#include "../default/voxel_world_default.h"
+#include "core/color.h"
+#include "core/math/vector2.h"
+#include "core/math/vector3.h"
 
-class VoxelWorldBlocky : public VoxelWorldDefault {
-	GDCLASS(VoxelWorldBlocky, VoxelWorldDefault);
+#include "../voxel_mesher.h"
+
+class VoxelMesherDefault : public VoxelMesher {
+	GDCLASS(VoxelMesherDefault, VoxelMesher);
 
 public:
-	VoxelWorldBlocky();
-	~VoxelWorldBlocky();
+	int get_build_flags() const;
+	void set_build_flags(const int flags);
+
+	VoxelMesherDefault();
+	~VoxelMesherDefault();
 
 protected:
-	Ref<VoxelChunk> _create_chunk(int x, int y, int z, Ref<VoxelChunk> p_chunk);
-
 	static void _bind_methods();
+
+private:
+	int _build_flags;
 };
 
 #endif

@@ -21,8 +21,8 @@ SOFTWARE.
 */
 
 #include "voxel_cube_points.h"
+#include "../../world/default/voxel_chunk_default.h"
 #include "../../world/voxel_chunk.h"
-#include "../../world/voxel_chunk_default.h"
 
 const unsigned int VoxelCubePoints::index_table[6][4] = {
 	{ P000, P010, P110, P100 }, //VOXEL_FACE_FRONT 0

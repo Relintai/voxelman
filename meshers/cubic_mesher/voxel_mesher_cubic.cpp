@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "voxel_mesher_cubic.h"
 
-#include "../../world/voxel_chunk_default.h"
+#include "../../world/default/voxel_chunk_default.h"
 
 void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	Ref<VoxelChunkDefault> chunk = p_chunk;

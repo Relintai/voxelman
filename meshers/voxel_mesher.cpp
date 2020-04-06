@@ -22,8 +22,8 @@ SOFTWARE.
 
 #include "voxel_mesher.h"
 
+#include "../world/default/voxel_chunk_default.h"
 #include "../world/voxel_chunk.h"
-#include "../world/voxel_chunk_default.h"
 
 bool VoxelMesher::Vertex::operator==(const Vertex &p_vertex) const {
 

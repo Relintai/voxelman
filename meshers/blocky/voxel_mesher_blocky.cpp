@@ -22,14 +22,15 @@ SOFTWARE.
 
 #include "voxel_mesher_blocky.h"
 
-#include "../../world/voxel_chunk_default.h"
+#include "../../world/default/voxel_chunk_default.h"
 
 void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	Ref<VoxelChunkDefault> chunk = p_chunk;
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	chunk->generate_ao();
+	if ((get_build_flags() & VoxelChunkDefault::BUILD_FLAG_GENERATE_AO) != 0)
+		chunk->generate_ao();
 
 	int x_size = chunk->get_size_x();
 	int y_size = chunk->get_size_y();
@@ -38,6 +39,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	float voxel_scale = get_voxel_scale();
 
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
+	Color light;
+	bool use_lighting = (get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0;
+	bool use_ao = (get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_AO) != 0;
+	bool use_rao = (get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_RAO) != 0;
 
 	for (int y = 0; y < y_size; ++y) {
 		for (int z = 0; z < z_size; ++z) {
@@ -64,20 +69,30 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 				//x + 1
 				if (neighbours[0] == 0) {
-					Color light(chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
-							chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
-							chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+					if (use_lighting) {
+						light = Color(chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+								chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+								chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-					float ao = chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
-					float rao = chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
-					ao += rao;
+						float ao = 0;
 
-					light += base_light;
-					light -= Color(ao, ao, ao) * _ao_strength;
+						if (use_ao)
+							ao = chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
 
-					light.r = CLAMP(light.r, 0, 1.0);
-					light.g = CLAMP(light.g, 0, 1.0);
-					light.b = CLAMP(light.b, 0, 1.0);
+						if (use_rao) {
+							float rao = chunk->get_voxel(x + 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+							ao += rao;
+						}
+
+						light += base_light;
+
+						if (ao > 0)
+							light -= Color(ao, ao, ao) * _ao_strength;
+
+						light.r = CLAMP(light.r, 0, 1.0);
+						light.g = CLAMP(light.g, 0, 1.0);
+						light.b = CLAMP(light.b, 0, 1.0);
+					}
 
 					int vc = get_vertex_count();
 					add_indices(vc + 2);
@@ -103,7 +118,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 					for (int i = 0; i < 4; ++i) {
 						add_normal(Vector3(1, 0, 0));
-						add_color(light);
+
+						if (use_lighting)
+							add_color(light);
+
 						add_uv(uvs[i]);
 						add_vertex(verts[i]);
 					}
@@ -111,20 +129,30 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 				//x - 1
 				if (neighbours[1] == 0) {
-					Color light(chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
-							chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
-							chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+					if (use_lighting) {
+						light = Color(chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+								chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+								chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-					float ao = chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
-					float rao = chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
-					ao += rao;
+						float ao = 0;
 
-					light += base_light;
-					light -= Color(ao, ao, ao) * _ao_strength;
+						if (use_ao)
+							ao = chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
 
-					light.r = CLAMP(light.r, 0, 1.0);
-					light.g = CLAMP(light.g, 0, 1.0);
-					light.b = CLAMP(light.b, 0, 1.0);
+						if (use_rao) {
+							float rao = chunk->get_voxel(x - 1, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+							ao += rao;
+						}
+
+						light += base_light;
+
+						if (ao > 0)
+							light -= Color(ao, ao, ao) * _ao_strength;
+
+						light.r = CLAMP(light.r, 0, 1.0);
+						light.g = CLAMP(light.g, 0, 1.0);
+						light.b = CLAMP(light.b, 0, 1.0);
+					}
 
 					int vc = get_vertex_count();
 					add_indices(vc + 0);
@@ -151,7 +179,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 					for (int i = 0; i < 4; ++i) {
 						add_normal(Vector3(-1, 0, 0));
-						add_color(light);
+
+						if (use_lighting)
+							add_color(light);
+
 						add_uv(uvs[i]);
 						add_vertex(verts[i]);
 					}
@@ -159,16 +190,26 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 				//y + 1
 				if (neighbours[2] == 0) {
-					Color light(chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
-							chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
-							chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+					if (use_lighting) {
+						light = Color(chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+								chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+								chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-					float ao = chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
-					float rao = chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
-					ao += rao;
+						float ao = 0;
 
-					light += base_light;
-					light -= Color(ao, ao, ao) * _ao_strength;
+						if (use_ao)
+							ao = chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
+
+						if (use_rao) {
+							float rao = chunk->get_voxel(x, y + 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+							ao += rao;
+						}
+
+						light += base_light;
+
+						if (ao > 0)
+							light -= Color(ao, ao, ao) * _ao_strength;
+					}
 
 					light.r = CLAMP(light.r, 0, 1.0);
 					light.g = CLAMP(light.g, 0, 1.0);
@@ -198,7 +239,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 					for (int i = 0; i < 4; ++i) {
 						add_normal(Vector3(0, 1, 0));
-						add_color(light);
+
+						if (use_lighting)
+							add_color(light);
+
 						add_uv(uvs[i]);
 						add_vertex(verts[i]);
 					}
@@ -206,16 +250,26 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 				//y - 1
 				if (neighbours[3] == 0) {
-					Color light(chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
-							chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
-							chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+					if (use_lighting) {
+						light = Color(chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+								chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+								chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-					float ao = chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
-					float rao = chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
-					ao += rao;
+						float ao = 0;
 
-					light += base_light;
-					light -= Color(ao, ao, ao) * _ao_strength;
+						if (use_ao)
+							ao = chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
+
+						if (use_rao) {
+							float rao = chunk->get_voxel(x, y - 1, z, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+							ao += rao;
+						}
+
+						light += base_light;
+
+						if (ao > 0)
+							light -= Color(ao, ao, ao) * _ao_strength;
+					}
 
 					light.r = CLAMP(light.r, 0, 1.0);
 					light.g = CLAMP(light.g, 0, 1.0);
@@ -246,7 +300,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 					for (int i = 0; i < 4; ++i) {
 						add_normal(Vector3(0, -1, 0));
-						add_color(light);
+
+						if (use_lighting)
+							add_color(light);
+
 						add_uv(uvs[i]);
 						add_vertex(verts[i]);
 					}
@@ -254,20 +311,30 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 				//z + 1
 				if (neighbours[4] == 0) {
-					Color light(chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
-							chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
-							chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+					if (use_lighting) {
+						light = Color(chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+								chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+								chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-					float ao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
-					float rao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
-					ao += rao;
+						float ao = 0;
 
-					light += base_light;
-					light -= Color(ao, ao, ao) * _ao_strength;
+						if (use_ao)
+							ao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
 
-					light.r = CLAMP(light.r, 0, 1.0);
-					light.g = CLAMP(light.g, 0, 1.0);
-					light.b = CLAMP(light.b, 0, 1.0);
+						if (use_rao) {
+							float rao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+							ao += rao;
+						}
+
+						light += base_light;
+
+						if (ao > 0)
+							light -= Color(ao, ao, ao) * _ao_strength;
+
+						light.r = CLAMP(light.r, 0, 1.0);
+						light.g = CLAMP(light.g, 0, 1.0);
+						light.b = CLAMP(light.b, 0, 1.0);
+					}
 
 					int vc = get_vertex_count();
 					add_indices(vc + 2);
@@ -293,7 +360,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 					for (int i = 0; i < 4; ++i) {
 						add_normal(Vector3(0, 0, 1));
-						add_color(light);
+
+						if (use_lighting)
+							add_color(light);
+
 						add_uv(uvs[i]);
 						add_vertex(verts[i]);
 					}
@@ -301,20 +371,30 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 				//z - 1
 				if (neighbours[5] == 0) {
-					Color light(chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
-							chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
-							chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+					if (use_lighting) {
+						light = Color(chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+								chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+								chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
 
-					float ao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
-					float rao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
-					ao += rao;
+						float ao = 0;
 
-					light += base_light;
-					light -= Color(ao, ao, ao) * _ao_strength;
+						if (use_ao)
+							ao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0;
 
-					light.r = CLAMP(light.r, 0, 1.0);
-					light.g = CLAMP(light.g, 0, 1.0);
-					light.b = CLAMP(light.b, 0, 1.0);
+						if (use_rao) {
+							float rao = chunk->get_voxel(x, y, z + 1, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+							ao += rao;
+						}
+
+						light += base_light;
+
+						if (ao > 0)
+							light -= Color(ao, ao, ao) * _ao_strength;
+
+						light.r = CLAMP(light.r, 0, 1.0);
+						light.g = CLAMP(light.g, 0, 1.0);
+						light.b = CLAMP(light.b, 0, 1.0);
+					}
 
 					int vc = get_vertex_count();
 					add_indices(vc + 0);
@@ -341,7 +421,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 					for (int i = 0; i < 4; ++i) {
 						add_normal(Vector3(0, 0, -1));
-						add_color(light);
+
+						if (use_lighting)
+							add_color(light);
+
 						add_uv(uvs[i]);
 						add_vertex(verts[i]);
 					}
@@ -352,7 +435,6 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 }
 
 VoxelMesherBlocky::VoxelMesherBlocky() {
-	_format = VisualServer::ARRAY_FORMAT_NORMAL | VisualServer::ARRAY_FORMAT_COLOR | VisualServer::ARRAY_FORMAT_TEX_UV;
 }
 
 VoxelMesherBlocky::~VoxelMesherBlocky() {

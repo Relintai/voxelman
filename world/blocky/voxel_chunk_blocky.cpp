@@ -44,6 +44,12 @@ void VoxelChunkBlocky::_create_meshers() {
 
 		mesher->set_lod_size(get_lod_size());
 		mesher->set_voxel_scale(get_voxel_scale());
+
+		Ref<VoxelMesherDefault> md = mesher;
+
+		if (md.is_valid()) {
+			md->set_build_flags(get_build_flags());
+		}
 	}
 }
 
