@@ -86,9 +86,13 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 		//_world->set_voxel(pos, data[]);
 		//Ref<VoxelChunk> chunk = _world->get_or_spawn_chunk_at_world_pos(pos);
 
-		int x = (pos.x - _world->get_chunk_size_x()) / _world->get_chunk_size_x() / _world->get_voxel_scale();
-		int y = (pos.y - _world->get_chunk_size_y()) / _world->get_chunk_size_y() / _world->get_voxel_scale();
-		int z = (pos.z - _world->get_chunk_size_z()) / _world->get_chunk_size_z() / _world->get_voxel_scale();
+		float fx = pos.x / _world->get_chunk_size_x() / _world->get_voxel_scale();
+		float fy = pos.y / _world->get_chunk_size_y() / _world->get_voxel_scale();
+		float fz = pos.z / _world->get_chunk_size_z() / _world->get_voxel_scale();
+
+		int x = Math::floor(fx);
+		int y = Math::floor(fy);
+		int z = Math::floor(fz);
 
 		Ref<VoxelChunk> chunk = _world->get_chunk(x, y, z);
 
@@ -96,9 +100,9 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 			chunk = _world->create_chunk(x, y, z);
 		}
 
-		int bx = static_cast<int>((pos.x - _world->get_chunk_size_x()) / _world->get_voxel_scale()) % _world->get_chunk_size_x();
-		int by = static_cast<int>((pos.y - _world->get_chunk_size_y()) / _world->get_voxel_scale()) % _world->get_chunk_size_y();
-		int bz = static_cast<int>((pos.z - _world->get_chunk_size_z()) / _world->get_voxel_scale()) % _world->get_chunk_size_z();
+		int bx = static_cast<int>(Math::round(pos.x / _world->get_voxel_scale())) % _world->get_chunk_size_x();
+		int by = static_cast<int>(Math::round(pos.y / _world->get_voxel_scale())) % _world->get_chunk_size_y();
+		int bz = static_cast<int>(Math::round(pos.z / _world->get_voxel_scale())) % _world->get_chunk_size_z();
 
 		if (bx < 0)
 			bx += _world->get_chunk_size_x();
