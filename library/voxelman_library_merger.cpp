@@ -272,12 +272,6 @@ void VoxelmanLibraryMerger::refresh_rects() {
 					surface->set_region(static_cast<VoxelSurface::VoxelSurfaceSides>(j), _packer->get_texture(tex));
 				}
 			}
-
-			Ref<GroundClutter> gc = surface->get_clutter();
-
-			if (gc.is_valid()) {
-				gc->add_textures_to(_packer);
-			}
 		}
 	}
 
