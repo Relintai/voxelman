@@ -156,6 +156,7 @@ public:
 	PoolByteArray get_channel_compressed(int channel_index) const;
 	void set_channel_compressed(int channel_index, const PoolByteArray &data);
 
+	int get_index(int x, int y, int z) const;
 	int get_data_index(int x, int y, int z) const;
 	int get_data_size() const;
 

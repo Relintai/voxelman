@@ -467,6 +467,10 @@ void VoxelChunk::set_channel_compressed(int channel_index, const PoolByteArray &
 	LZ4_decompress_safe(reinterpret_cast<char *>(data_arr), reinterpret_cast<char *>(ch), ds, size);
 }
 
+_FORCE_INLINE_ int VoxelChunk::get_index(const int x, const int y, const int z) const {
+	return (y + _margin_start) + _data_size_y * ((x + _margin_start) + _data_size_x * (z + _margin_start));
+}
+
 _FORCE_INLINE_ int VoxelChunk::get_data_index(const int x, const int y, const int z) const {
 	return y + _data_size_y * (x + _data_size_x * z);
 }
@@ -977,6 +981,7 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_channel_compressed", "channel_index"), &VoxelChunk::get_channel_compressed);
 	ClassDB::bind_method(D_METHOD("set_channel_compressed", "channel_index", "array"), &VoxelChunk::set_channel_compressed);
 
+	ClassDB::bind_method(D_METHOD("get_index", "x", "y", "z"), &VoxelChunk::get_index);
 	ClassDB::bind_method(D_METHOD("get_data_index", "x", "y", "z"), &VoxelChunk::get_data_index);
 	ClassDB::bind_method(D_METHOD("get_data_size"), &VoxelChunk::get_data_size);
 
