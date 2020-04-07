@@ -467,11 +467,11 @@ void VoxelChunk::set_channel_compressed(int channel_index, const PoolByteArray &
 	LZ4_decompress_safe(reinterpret_cast<char *>(data_arr), reinterpret_cast<char *>(ch), ds, size);
 }
 
-_FORCE_INLINE_ uint32_t VoxelChunk::get_data_index(uint32_t x, uint32_t y, uint32_t z) const {
+_FORCE_INLINE_ int VoxelChunk::get_data_index(const int x, const int y, const int z) const {
 	return y + _data_size_y * (x + _data_size_x * z);
 }
 
-_FORCE_INLINE_ uint32_t VoxelChunk::get_data_size() const {
+_FORCE_INLINE_ int VoxelChunk::get_data_size() const {
 	return _data_size_x * _data_size_y * _data_size_z;
 }
 

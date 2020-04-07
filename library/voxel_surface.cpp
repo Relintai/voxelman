@@ -58,7 +58,7 @@ void VoxelSurface::set_library(Ref<VoxelmanLibrary> library) {
 	_library = (*library);
 }
 
-Vector2 VoxelSurface::transform_uv(const VoxelSurfaceSides p_side, const Vector2 p_uv) const {
+_FORCE_INLINE_ Vector2 VoxelSurface::transform_uv(const VoxelSurfaceSides p_side, const Vector2 p_uv) const {
 	Vector2 uv = p_uv;
 
 	Rect2 r = _rects[p_side];
@@ -71,7 +71,7 @@ Vector2 VoxelSurface::transform_uv(const VoxelSurfaceSides p_side, const Vector2
 	return uv;
 }
 
-Vector2 VoxelSurface::transform_uv_scaled(const VoxelSurfaceSides p_side, const Vector2 p_uv, int p_current_x, int p_current_y, int p_max) const {
+_FORCE_INLINE_ Vector2 VoxelSurface::transform_uv_scaled(const VoxelSurfaceSides p_side, const Vector2 p_uv, int p_current_x, int p_current_y, int p_max) const {
 	Vector2 uv = p_uv;
 
 	Rect2 r = _rects[p_side];

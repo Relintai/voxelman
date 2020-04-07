@@ -156,8 +156,8 @@ public:
 	PoolByteArray get_channel_compressed(int channel_index) const;
 	void set_channel_compressed(int channel_index, const PoolByteArray &data);
 
-	uint32_t get_data_index(uint32_t x, uint32_t y, uint32_t z) const;
-	uint32_t get_data_size() const;
+	int get_data_index(int x, int y, int z) const;
+	int get_data_size() const;
 
 	//Meshing
 	void create_meshers();
