@@ -137,10 +137,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					};
 
 					Vector3 verts[] = {
-						Vector3(0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+						Vector3(1, 0, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(1, 1, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(1, 1, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(1, 0, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale
 					};
 
 					for (int i = 0; i < 4; ++i) {
@@ -198,10 +198,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					};
 
 					Vector3 verts[] = {
-						Vector3(-0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+						Vector3(0, 0, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 1, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 1, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 0, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale
 					};
 
 					for (int i = 0; i < 4; ++i) {
@@ -258,10 +258,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					};
 
 					Vector3 verts[] = {
-						Vector3(0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+						Vector3(1, 1, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 1, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 1, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(1, 1, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale
 					};
 
 					for (int i = 0; i < 4; ++i) {
@@ -319,10 +319,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					};
 
 					Vector3 verts[] = {
-						Vector3(0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+						Vector3(1, 0, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 0, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 0, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(1, 0, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale
 					};
 
 					for (int i = 0; i < 4; ++i) {
@@ -379,10 +379,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					};
 
 					Vector3 verts[] = {
-						Vector3(0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, 0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, -0.5, 0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+						Vector3(1, 0, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(1, 1, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 1, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 0, 1) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale
 					};
 
 					for (int i = 0; i < 4; ++i) {
@@ -440,10 +440,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					};
 
 					Vector3 verts[] = {
-						Vector3(0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, 0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale,
-						Vector3(-0.5, -0.5, -0.5) * voxel_scale + Vector3(x, y, z) * voxel_scale
+						Vector3(1, 0, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(1, 1, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 1, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale,
+						Vector3(0, 0, 0) * voxel_scale + Vector3(x - 1, y - 1, z - 1) * voxel_scale
 					};
 
 					for (int i = 0; i < 4; ++i) {
