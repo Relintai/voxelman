@@ -26,6 +26,15 @@ SOFTWARE.
 #include "editor/editor_node.h"
 #include "editor/editor_plugin.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define Camera Camera3D
+#define PhysicsDirectSpaceState PhysicsDirectSpaceState3D
+#define SpatialEditor Node3DEditor
+#define SpatialEditorPlugin Node3DEditorPlugin
+#endif
+
 class VoxelWorld;
 class SpatialEditorPlugin;
 

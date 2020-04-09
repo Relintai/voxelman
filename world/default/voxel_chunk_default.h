@@ -25,7 +25,16 @@ SOFTWARE.
 
 #include "../voxel_chunk.h"
 
-#include "scene/3d/spatial.h"
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
+#include "scene/3d/immediate_geometry.h"
+#else
+#include "scene/3d/immediate_geometry_3d.h"
+
+typedef class ImmediateGeometry3D ImmediateGeometry;
+#endif
+
 
 #include "core/engine.h"
 #include "core/os/mutex.h"
@@ -34,12 +43,7 @@ SOFTWARE.
 #include "core/ustring.h"
 
 #include "core/array.h"
-#include "core/pool_vector.h"
-#include "scene/3d/collision_shape.h"
-#include "scene/3d/mesh_instance.h"
-#include "scene/3d/physics_body.h"
-#include "scene/3d/spatial.h"
-#include "scene/resources/concave_polygon_shape.h"
+
 #include "scene/resources/packed_scene.h"
 
 #include "../voxel_world.h"

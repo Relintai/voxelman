@@ -22,10 +22,25 @@ SOFTWARE.
 
 #include "voxel_chunk_default.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
+#include "servers/visual_server.h"
+#else
+#include "servers/rendering_server.h"
+
+typedef class RenderingServer VisualServer;
+typedef class RenderingServer VS;
+
+#include "servers/physics_server_3d.h"
+
+typedef class PhysicsServer3D PhysicsServer;
+
+typedef class StandardMaterial3D SpatialMaterial;
+#endif
+
 #include "../voxel_world.h"
-
 #include "../../meshers/default/voxel_mesher_default.h"
-
 #include "../../../opensimplex/open_simplex_noise.h"
 
 const String VoxelChunkDefault::BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE = "Normal,Process,Physics Process";
@@ -706,7 +721,7 @@ void VoxelChunkDefault::create_debug_immediate_geometry() {
 }
 
 void VoxelChunkDefault::free_debug_immediate_geometry() {
-	if (ObjectDB::instance_validate(_debug_drawer)) {
+	if (_debug_drawer != NULL) {
 		_debug_drawer->queue_delete();
 
 		_debug_drawer = NULL;

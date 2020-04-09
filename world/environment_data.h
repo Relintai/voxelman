@@ -23,9 +23,19 @@ SOFTWARE.
 #ifndef ENVIRONMENT_DATA_H
 #define ENVIRONMENT_DATA_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
+#include "scene/3d/light.h"
+#else
+#include "scene/3d/light_3d.h"
+
+typedef class DirectionalLight3D DirectionalLight;
+#endif
+
 #include "core/color.h"
 #include "core/resource.h"
-#include "scene/3d/light.h"
+
 #include "scene/3d/world_environment.h"
 #include "scene/main/node.h"
 

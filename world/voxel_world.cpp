@@ -24,6 +24,12 @@ SOFTWARE.
 
 #include "voxel_chunk.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define REAL FLOAT
+#endif
+
 bool VoxelWorld::get_editable() const {
 	return _editable;
 }
@@ -361,7 +367,11 @@ void VoxelWorld::on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk) {
 Vector<Variant> VoxelWorld::get_chunks() {
 	Vector<Variant> r;
 	for (int i = 0; i < _chunks_vector.size(); i++) {
+		#if VERSION_MAJOR < 4
 		r.push_back(_chunks_vector[i].get_ref_ptr());
+		#else
+		r.push_back(_chunks_vector[i]);
+		#endif
 	}
 	return r;
 }

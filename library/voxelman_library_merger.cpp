@@ -23,8 +23,13 @@ SOFTWARE.
 #include "voxelman_library_merger.h"
 
 #include "scene/resources/packed_scene.h"
-
 #include "scene/resources/texture.h"
+
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define SpatialMaterial StandardMaterial3D
+#endif
 
 int VoxelmanLibraryMerger::get_texture_flags() const {
 	return _packer->get_texture_flags();
@@ -130,7 +135,11 @@ void VoxelmanLibraryMerger::clear_surfaces() {
 Vector<Variant> VoxelmanLibraryMerger::get_voxel_surfaces() {
 	Vector<Variant> r;
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
+		#if VERSION_MAJOR < 4
 		r.push_back(_voxel_surfaces[i].get_ref_ptr());
+		#else
+		r.push_back(_voxel_surfaces[i]);
+		#endif
 	}
 	return r;
 }
@@ -208,7 +217,11 @@ void VoxelmanLibraryMerger::clear_liquid_surfaces() {
 Vector<Variant> VoxelmanLibraryMerger::get_liquid_voxel_surfaces() {
 	Vector<Variant> r;
 	for (int i = 0; i < _liquid_surfaces.size(); i++) {
+		#if VERSION_MAJOR < 4
 		r.push_back(_liquid_surfaces[i].get_ref_ptr());
+		#else
+		r.push_back(_liquid_surfaces[i]);
+		#endif
 	}
 	return r;
 }
@@ -373,7 +386,13 @@ void VoxelmanLibraryMerger::_setup_material_albedo(int material_index, Ref<Textu
 
 VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
 	_packer.instance();
+
+	#if VERSION_MAJOR < 4
 	_packer->set_texture_flags(Texture::FLAG_MIPMAPS | Texture::FLAG_FILTER);
+	#else
+	//nyi
+	#endif
+
 	_packer->set_max_atlas_size(1024);
 	_packer->set_keep_original_atlases(false);
 	_packer->set_margin(0);

@@ -26,6 +26,22 @@ SOFTWARE.
 
 #include "../thirdparty/lz4/lz4.h"
 
+#if VERSION_MAJOR < 4
+#include "servers/visual_server.h"
+#else
+#include "servers/rendering_server.h"
+
+typedef class RenderingServer VisualServer;
+typedef class RenderingServer VS;
+
+#define REAL FLOAT
+
+typedef PackedVector3Array PoolVector3Array;
+typedef PackedVector2Array PoolVector2Array;
+typedef PackedColorArray PoolColorArray;
+typedef PackedInt32Array PoolIntArray;
+#endif
+
 _FORCE_INLINE_ bool VoxelChunk::get_process() const {
 	return _is_processing;
 }
@@ -429,11 +445,15 @@ PoolByteArray VoxelChunk::get_channel_compressed(int channel_index) const {
 	int bound = LZ4_compressBound(size);
 	arr.resize(bound);
 
+	#if VERSION_MAJOR < 4
 	PoolByteArray::Write w = arr.write();
 
 	int ns = LZ4_compress_default(reinterpret_cast<char *>(ch), reinterpret_cast<char *>(w.ptr()), size, bound);
-
+	
 	w.release();
+	#else
+	int ns = LZ4_compress_default(reinterpret_cast<char *>(ch), reinterpret_cast<char *>(arr.ptrw()), size, bound);
+	#endif
 	arr.resize(ns);
 
 	return arr;
@@ -459,12 +479,19 @@ void VoxelChunk::set_channel_compressed(int channel_index, const PoolByteArray &
 
 	int ds = data.size();
 
+	#if VERSION_MAJOR < 4
 	PoolByteArray::Read r = data.read();
 
 	//We are not going to write to it
 	uint8_t *data_arr = const_cast<uint8_t *>(r.ptr());
 
 	LZ4_decompress_safe(reinterpret_cast<char *>(data_arr), reinterpret_cast<char *>(ch), ds, size);
+	#else
+	//We are not going to write to it
+	uint8_t *data_arr = const_cast<uint8_t *>(data.ptr());
+
+	LZ4_decompress_safe(reinterpret_cast<char *>(data_arr), reinterpret_cast<char *>(ch), ds, size);
+	#endif
 }
 
 _FORCE_INLINE_ int VoxelChunk::get_index(const int x, const int y, const int z) const {
@@ -561,7 +588,9 @@ Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_colo
 	PoolVector2Array uvs = arr[VisualServer::ARRAY_TEX_UV];
 	PoolColorArray colors = arr[VisualServer::ARRAY_COLOR];
 
+	#if VERSION_MAJOR < 4
 	img->lock();
+	#endif
 
 	for (int i = 0; i < uvs.size(); ++i) {
 		Vector2 uv = uvs[i];
@@ -572,7 +601,9 @@ Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_colo
 		colors.set(i, colors[i] * c * mul_color);
 	}
 
+	#if VERSION_MAJOR < 4
 	img->unlock();
+	#endif
 
 	arr[VisualServer::ARRAY_COLOR] = colors;
 

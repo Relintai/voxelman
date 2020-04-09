@@ -29,6 +29,12 @@ SOFTWARE.
 
 #include "../../texture_packer/texture_packer.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define Texture Texture2D
+#endif
+
 class VoxelSurfaceMerger : public VoxelSurface {
 	GDCLASS(VoxelSurfaceMerger, VoxelSurface)
 

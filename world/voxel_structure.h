@@ -25,9 +25,19 @@ SOFTWARE.
 
 #include "core/reference.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
+#include "core/pool_vector.h"
+#else
+#include "core/vector.h"
+
+template <class N>
+using PoolVector = Vector<N>;
+#endif
+
 #include "core/hash_map.h"
 #include "core/math/aabb.h"
-#include "core/pool_vector.h"
 #include "voxel_chunk.h"
 
 class VoxelStructure : public Reference {

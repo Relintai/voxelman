@@ -23,9 +23,21 @@ SOFTWARE.
 #ifndef VOXEL_WORLD_H
 #define VOXEL_WORLD_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
+#include "scene/3d/navigation.h"
+#include "scene/3d/spatial.h"
+#else
+#include "scene/3d/navigation_3d.h"
+#include "scene/3d/node_3d.h"
+
+typedef class Navigation3D Navigation;
+typedef class Node3D Spatial;
+#endif
+
 #include "core/engine.h"
 #include "core/hash_map.h"
-#include "scene/3d/navigation.h"
 
 #include "../areas/world_area.h"
 #include "../level_generator/voxelman_level_generator.h"

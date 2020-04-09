@@ -24,6 +24,14 @@ SOFTWARE.
 
 #include "voxelman_library_merger.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define Texture Texture2D
+
+typedef class StandardMaterial3D SpatialMaterial;
+#endif
+
 Ref<AtlasTexture> VoxelSurfaceMerger::get_region(const VoxelSurfaceSides side) {
 	return _regions[side];
 }
@@ -41,7 +49,7 @@ void VoxelSurfaceMerger::set_texture(const VoxelSurfaceSides side, Ref<Texture> 
 void VoxelSurfaceMerger::refresh_rects() {
 	VoxelmanLibraryMerger *lib = Object::cast_to<VoxelmanLibraryMerger>(_library);
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(lib));
+	ERR_FAIL_COND(lib == NULL);
 
 	for (int i = 0; i < VOXEL_SIDES_COUNT; ++i) {
 		if (!_regions[i].is_valid()) {

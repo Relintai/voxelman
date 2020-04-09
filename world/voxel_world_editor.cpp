@@ -22,17 +22,39 @@ SOFTWARE.
 
 #include "voxel_world_editor.h"
 
-#include "core/os/input.h"
+#include "core/version.h"
+
+
+
 #include "editor/editor_scale.h"
 #include "editor/editor_settings.h"
-#include "editor/plugins/spatial_editor_plugin.h"
-#include "scene/3d/camera.h"
+
 #include "voxel_world.h"
 
 #include "core/math/geometry.h"
 #include "core/os/keyboard.h"
 
 #include "voxel_chunk.h"
+
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
+
+#include "core/os/input.h"
+#include "editor/plugins/spatial_editor_plugin.h"
+#include "scene/3d/camera.h"
+
+#else
+
+#include "core/input/input_event.h"
+#include "editor/plugins/node_3d_editor_plugin.h"
+#include "scene/3d/camera_3d.h"
+
+#define PhysicsDirectSpaceState PhysicsDirectSpaceState3D
+#define SpatialEditor Node3DEditor
+#define SpatialEditorPlugin Node3DEditorPlugin
+
+#endif
 
 bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event) {
 	if (!_world || !_world->get_editable()) {

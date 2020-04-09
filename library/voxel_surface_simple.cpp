@@ -49,7 +49,7 @@ void VoxelSurfaceSimple::set_atlas_y(const VoxelSurfaceSides side, int value) {
 void VoxelSurfaceSimple::refresh_rects() {
 	VoxelmanLibrarySimple *lib = Object::cast_to<VoxelmanLibrarySimple>(_library);
 
-	ERR_FAIL_COND(!ObjectDB::instance_validate(lib));
+	ERR_FAIL_COND(lib == NULL);
 
 	for (int i = 0; i < VOXEL_SIDES_COUNT; ++i) {
 		float culomn = 1.0 / static_cast<float>(lib->get_atlas_columns());

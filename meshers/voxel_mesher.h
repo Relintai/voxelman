@@ -23,18 +23,30 @@ SOFTWARE.
 #ifndef VOXEL_TOOLS_H
 #define VOXEL_TOOLS_H
 
+#include "core/reference.h"
+
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
+#include "core/pool_vector.h"
+#else
+#include "core/vector.h"
+
+template <class N>
+using PoolVector = Vector<N>;
+
+typedef PackedByteArray PoolByteArray;
+
+class MeshInstance3D;
+typedef MeshInstance3D MeshInstance;
+#endif
+
 #include "core/color.h"
 #include "core/math/rect2.h"
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
-#include "core/pool_vector.h"
-#include "core/reference.h"
 #include "core/vector.h"
-#include "scene/3d/immediate_geometry.h"
-#include "scene/3d/mesh_instance.h"
-#include "scene/3d/spatial.h"
 #include "scene/main/node.h"
-#include "scene/resources/concave_polygon_shape.h"
 #include "scene/resources/material.h"
 #include "scene/resources/mesh.h"
 

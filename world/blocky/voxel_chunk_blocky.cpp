@@ -24,6 +24,14 @@ SOFTWARE.
 
 #include "../../meshers/blocky/voxel_mesher_blocky.h"
 
+
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define POOL_BYTE_ARRAY PACKED_BYTE_ARRAY
+#endif
+
+
 VoxelChunkBlocky::VoxelChunkBlocky() {
 }
 
@@ -54,7 +62,7 @@ void VoxelChunkBlocky::_create_meshers() {
 }
 
 void VoxelChunkBlocky::_bind_methods() {
-	ADD_PROPERTYI(PropertyInfo(Variant::POOL_BYTE_ARRAY, "data_channel"), "set_channel_compressed", "get_channel_compressed", 0);
+	ADD_PROPERTYI(PropertyInfo(Variant::PACKED_BYTE_ARRAY, "data_channel"), "set_channel_compressed", "get_channel_compressed", 0);
 
 	//ClassDB::bind_method(D_METHOD("get_channel_compressed", "channel_index"), &VoxelChunk::get_channel_compressed);
 	//ClassDB::bind_method(D_METHOD("set_channel_compressed", "channel_index", "array"), &VoxelChunk::set_channel_compressed);

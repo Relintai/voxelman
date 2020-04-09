@@ -22,6 +22,12 @@ SOFTWARE.
 
 #include "environment_data.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define REAL FLOAT
+#endif
+
 Ref<Environment> EnvironmentData::get_environment() {
 	return _environment;
 }

@@ -58,7 +58,7 @@ void VoxelStructure::set_world_position_z(const int value) {
 }
 
 void VoxelStructure::write_to_chunk(Node *chunk) {
-	ERR_FAIL_COND(!ObjectDB::instance_validate(Object::cast_to<VoxelChunk>(chunk)));
+	ERR_FAIL_COND(Object::cast_to<VoxelChunk>(chunk) == NULL);
 
 	if (has_method("_write_to_chunk"))
 		call("_write_to_chunk", chunk);

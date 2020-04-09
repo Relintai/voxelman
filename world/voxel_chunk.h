@@ -25,6 +25,14 @@ SOFTWARE.
 
 #include "core/resource.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
+#include "core/pool_vector.h"
+#else
+#include "core/vector.h"
+#endif
+
 #include "core/engine.h"
 #include "core/os/mutex.h"
 #include "core/os/thread.h"
@@ -32,12 +40,7 @@ SOFTWARE.
 #include "core/ustring.h"
 
 #include "core/array.h"
-#include "core/pool_vector.h"
-#include "scene/3d/collision_shape.h"
-#include "scene/3d/mesh_instance.h"
-#include "scene/3d/physics_body.h"
-#include "scene/3d/spatial.h"
-#include "scene/resources/concave_polygon_shape.h"
+
 #include "scene/resources/packed_scene.h"
 
 #include "voxel_world.h"
@@ -52,7 +55,14 @@ SOFTWARE.
 
 #include "voxel_chunk_prop_data.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define Texture Texture2D
+#endif
+
 class VoxelWorld;
+
 
 class VoxelChunk : public Resource {
 	GDCLASS(VoxelChunk, Resource);

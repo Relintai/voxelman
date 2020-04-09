@@ -26,7 +26,16 @@ SOFTWARE.
 #include "../../world/voxel_chunk.h"
 #include "core/array.h"
 #include "core/dictionary.h"
+
+#include "core/version.h"
+
+#if VERSION_MAJOR < 4
 #include "servers/visual_server.h"
+#else
+#include "servers/rendering_server.h"
+
+typedef class RenderingServer VisualServer;
+#endif
 
 int VoxelMesherUVTransvoxel::get_texture_scale() const {
 	return _texture_scale;
