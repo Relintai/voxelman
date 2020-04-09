@@ -29,6 +29,7 @@ SOFTWARE.
 
 #if VERSION_MAJOR < 4
 #include "core/pool_vector.h"
+#include "scene/3d/mesh_instance.h"
 #else
 #include "core/vector.h"
 
