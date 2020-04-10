@@ -71,8 +71,6 @@ bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<I
 
 			if (mb->get_button_index() == BUTTON_LEFT) {
 				return do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true, _seletced_type);
-			} else if (mb->get_button_index() == BUTTON_RIGHT) {
-				return do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true, 0);
 			} else {
 				return false;
 			}
