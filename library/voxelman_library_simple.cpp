@@ -91,11 +91,11 @@ void VoxelmanLibrarySimple::clear_surfaces() {
 Vector<Variant> VoxelmanLibrarySimple::get_voxel_surfaces() {
 	Vector<Variant> r;
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		r.push_back(_voxel_surfaces[i].get_ref_ptr());
-		#else
+#else
 		r.push_back(_voxel_surfaces[i]);
-		#endif
+#endif
 	}
 	return r;
 }
@@ -164,11 +164,11 @@ void VoxelmanLibrarySimple::clear_liquid_surfaces() {
 Vector<Variant> VoxelmanLibrarySimple::get_liquid_voxel_surfaces() {
 	Vector<Variant> r;
 	for (int i = 0; i < _liquid_surfaces.size(); i++) {
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		r.push_back(_liquid_surfaces[i].get_ref_ptr());
-		#else
+#else
 		r.push_back(_liquid_surfaces[i]);
-		#endif
+#endif
 	}
 	return r;
 }

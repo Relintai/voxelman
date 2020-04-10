@@ -167,17 +167,17 @@ Array VoxelMesher::build_mesh() {
 	{
 		PoolVector<Vector3> array;
 		array.resize(_vertices.size());
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		PoolVector<Vector3>::Write w = array.write();
-		#endif
+#endif
 
 		for (int i = 0; i < _vertices.size(); ++i) {
 			array.set(i, _vertices[i].vertex);
 		}
 
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		w.release();
-		#endif
+#endif
 
 		a[VisualServer::ARRAY_VERTEX] = array;
 	}
@@ -189,51 +189,51 @@ Array VoxelMesher::build_mesh() {
 	{
 		PoolVector<Vector3> array;
 		array.resize(_vertices.size());
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		PoolVector<Vector3>::Write w = array.write();
-		#endif
+#endif
 
 		for (int i = 0; i < _vertices.size(); ++i) {
 			array.set(i, _vertices[i].normal);
 		}
 
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		w.release();
-		#endif
+#endif
 		a[VisualServer::ARRAY_NORMAL] = array;
 	}
 
 	if ((_format & VisualServer::ARRAY_FORMAT_COLOR) != 0) {
 		PoolVector<Color> array;
 		array.resize(_vertices.size());
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		PoolVector<Color>::Write w = array.write();
-		#endif
+#endif
 
 		for (int i = 0; i < _vertices.size(); ++i) {
 			array.set(i, _vertices[i].color);
 		}
 
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		w.release();
-		#endif
+#endif
 		a[VisualServer::ARRAY_COLOR] = array;
 	}
 
 	if ((_format & VisualServer::ARRAY_FORMAT_TEX_UV) != 0) {
 		PoolVector<Vector2> array;
 		array.resize(_vertices.size());
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		PoolVector<Vector2>::Write w = array.write();
-		#endif
+#endif
 
 		for (int i = 0; i < _vertices.size(); ++i) {
 			array.set(i, _vertices[i].uv);
 		}
 
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		w.release();
-		#endif
+#endif
 
 		a[VisualServer::ARRAY_TEX_UV] = array;
 	}
@@ -241,34 +241,34 @@ Array VoxelMesher::build_mesh() {
 	if ((_format & VisualServer::ARRAY_FORMAT_TEX_UV2) != 0) {
 		PoolVector<Vector2> array;
 		array.resize(_vertices.size());
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		PoolVector<Vector2>::Write w = array.write();
-		#endif
+#endif
 
 		for (int i = 0; i < _vertices.size(); ++i) {
 			array.set(i, _vertices[i].uv2);
 		}
 
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		w.release();
-		#endif
+#endif
 		a[VisualServer::ARRAY_TEX_UV2] = array;
 	}
 
 	if (_indices.size() > 0) {
 		PoolVector<int> array;
 		array.resize(_indices.size());
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		PoolVector<int>::Write w = array.write();
-		#endif
+#endif
 
 		for (int i = 0; i < _indices.size(); ++i) {
 			array.set(i, _indices[i]);
 		}
 
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		w.release();
-		#endif
+#endif
 		a[VisualServer::ARRAY_INDEX] = array;
 	}
 

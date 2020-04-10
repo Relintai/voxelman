@@ -63,7 +63,6 @@ SOFTWARE.
 
 class VoxelWorld;
 
-
 class VoxelChunk : public Resource {
 	GDCLASS(VoxelChunk, Resource);
 

@@ -60,11 +60,11 @@ void VoxelmanLibrary::clear_materials() {
 Vector<Variant> VoxelmanLibrary::get_materials() {
 	Vector<Variant> r;
 	for (int i = 0; i < _materials.size(); i++) {
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		r.push_back(_materials[i].get_ref_ptr());
-		#else
+#else
 		r.push_back(_materials[i]);
-		#endif
+#endif
 	}
 	return r;
 }
@@ -113,11 +113,11 @@ void VoxelmanLibrary::clear_liquid_materials() {
 Vector<Variant> VoxelmanLibrary::get_liquid_materials() {
 	Vector<Variant> r;
 	for (int i = 0; i < _liquid_materials.size(); i++) {
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		r.push_back(_liquid_materials[i].get_ref_ptr());
-		#else
+#else
 		r.push_back(_liquid_materials[i]);
-		#endif
+#endif
 	}
 	return r;
 }

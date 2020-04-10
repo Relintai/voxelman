@@ -35,7 +35,6 @@ SOFTWARE.
 typedef class ImmediateGeometry3D ImmediateGeometry;
 #endif
 
-
 #include "core/engine.h"
 #include "core/os/mutex.h"
 #include "core/os/thread.h"

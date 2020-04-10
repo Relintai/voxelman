@@ -33,7 +33,6 @@ typedef class RenderingServer VisualServer;
 typedef class RenderingServer VS;
 #endif
 
-
 void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	Ref<VoxelChunkDefault> chunk = p_chunk;
 
