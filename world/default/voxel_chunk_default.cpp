@@ -39,9 +39,9 @@ typedef class PhysicsServer3D PhysicsServer;
 typedef class StandardMaterial3D SpatialMaterial;
 #endif
 
-#include "../voxel_world.h"
-#include "../../meshers/default/voxel_mesher_default.h"
 #include "../../../opensimplex/open_simplex_noise.h"
+#include "../../meshers/default/voxel_mesher_default.h"
+#include "../voxel_world.h"
 
 const String VoxelChunkDefault::BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE = "Normal,Process,Physics Process";
 const String VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS = "Use Isolevel,Use Lighting,Use AO,Use RAO,Generate AO,Generate RAO,Bake Lights,Create Collider,Create Lods";
