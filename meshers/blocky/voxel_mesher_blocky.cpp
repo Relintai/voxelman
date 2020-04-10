@@ -63,9 +63,9 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 			channel_rao = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO);
 	}
 
-	for (int y = chunk->get_margin_start(); y < y_size; ++y) {
-		for (int z = chunk->get_margin_start(); z < z_size; ++z) {
-			for (int x = chunk->get_margin_start(); x < x_size; ++x) {
+	for (int y = chunk->get_margin_start(); y < y_size + chunk->get_margin_start(); ++y) {
+		for (int z = chunk->get_margin_start(); z < z_size + chunk->get_margin_start(); ++z) {
+			for (int x = chunk->get_margin_start(); x < x_size + chunk->get_margin_start(); ++x) {
 
 				int index = chunk->get_data_index(x, y, z);
 				int indexxp = chunk->get_data_index(x + 1, y, z);
