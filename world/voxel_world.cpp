@@ -292,6 +292,16 @@ void VoxelWorld::clear() {
 	_generating.clear();
 }
 
+Ref<VoxelChunk> VoxelWorld::get_or_create_chunk(int x, int y, int z) {
+	Ref<VoxelChunk> chunk = get_chunk(x, y, z);
+
+	if (!chunk.is_valid()) {
+		chunk = create_chunk(x, y, z);
+	}
+
+	return chunk;
+}
+
 Ref<VoxelChunk> VoxelWorld::create_chunk(int x, int y, int z) {
 	Ref<VoxelChunk> c = call("_create_chunk", x, y, z, Ref<VoxelChunk>());
 
@@ -367,11 +377,11 @@ void VoxelWorld::on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk) {
 Vector<Variant> VoxelWorld::get_chunks() {
 	Vector<Variant> r;
 	for (int i = 0; i < _chunks_vector.size(); i++) {
-		#if VERSION_MAJOR < 4
+#if VERSION_MAJOR < 4
 		r.push_back(_chunks_vector[i].get_ref_ptr());
-		#else
+#else
 		r.push_back(_chunks_vector[i]);
-		#endif
+#endif
 	}
 	return r;
 }
@@ -666,6 +676,7 @@ void VoxelWorld::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_prepare_chunk_for_generation", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
+	ClassDB::bind_method(D_METHOD("get_or_create_chunk", "x", "y", "z"), &VoxelWorld::get_or_create_chunk);
 	ClassDB::bind_method(D_METHOD("create_chunk", "x", "y", "z"), &VoxelWorld::create_chunk);
 	ClassDB::bind_method(D_METHOD("_create_chunk", "x", "y", "z", "chunk"), &VoxelWorld::_create_chunk);
 

@@ -127,6 +127,7 @@ public:
 
 	void clear();
 
+	Ref<VoxelChunk> get_or_create_chunk(int x, int y, int z);
 	Ref<VoxelChunk> create_chunk(int x, int y, int z);
 
 	void generate_chunk(Ref<VoxelChunk> chunk);
