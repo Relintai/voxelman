@@ -70,7 +70,7 @@ bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<I
 				return false;
 
 			if (mb->get_button_index() == BUTTON_LEFT) {
-				return do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true, _seletced_type);
+				return do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true);
 			} else {
 				return false;
 			}
@@ -82,7 +82,7 @@ bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<I
 	return false;
 }
 
-bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click, int selected_voxel) {
+bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click) {
 
 	if (!spatial_editor || !_world)
 		return false;
@@ -99,7 +99,16 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 	PhysicsDirectSpaceState::RayResult res;
 
 	if (ss->intersect_ray(from, to, res)) {
-		Vector3 pos = (res.position + (Vector3(0.1, 0.1, 0.1) * res.normal)) / _world->get_voxel_scale();
+		Vector3 pos;
+		int selected_voxel = 0;
+
+		if (_tool_mode == TOOL_MODE_ADD) {
+			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * res.normal)) / _world->get_voxel_scale();
+			selected_voxel = _seletced_type;
+		} else if (_tool_mode == TOOL_MODE_REMOVE) {
+			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * -res.normal)) / _world->get_voxel_scale();
+			selected_voxel = 0;
+		}
 
 		//todo add these?:
 		//_world->set_voxel(pos, data[]);
@@ -186,11 +195,13 @@ VoxelWorldEditor::VoxelWorldEditor() {
 	_world = NULL;
 	_seletced_type = 1;
 	_editor = NULL;
+	_tool_mode = TOOL_MODE_ADD;
 }
 VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	_world = NULL;
 	_seletced_type = 1;
 	_editor = p_editor;
+	_tool_mode = TOOL_MODE_ADD;
 
 	spatial_editor_hb = memnew(HBoxContainer);
 	spatial_editor_hb->set_h_size_flags(SIZE_EXPAND_FILL);

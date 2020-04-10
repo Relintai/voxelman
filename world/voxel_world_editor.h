@@ -42,10 +42,16 @@ class VoxelWorldEditor : public VBoxContainer {
 	GDCLASS(VoxelWorldEditor, VBoxContainer);
 
 public:
+	enum VoxelWorldEditorToolMode {
+		TOOL_MODE_ADD = 0,
+		TOOL_MODE_REMOVE,
+	};
+
+public:
 	bool forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event);
 
 	void edit(VoxelWorld *p_world);
-	bool do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click, int selected_voxel);
+	bool do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click);
 
 	VoxelWorldEditor();
 	VoxelWorldEditor(EditorNode *p_editor);
@@ -58,6 +64,7 @@ protected:
 	void _node_removed(Node *p_node);
 
 private:
+	VoxelWorldEditorToolMode _tool_mode;
 	VoxelWorld *_world;
 	int _seletced_type;
 	SpatialEditorPlugin *spatial_editor;
