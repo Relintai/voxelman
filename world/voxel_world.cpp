@@ -371,7 +371,7 @@ bool VoxelWorld::is_position_walkable(const Vector3 &p_pos) {
 }
 
 void VoxelWorld::on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk) {
-	emit_signal("chunk_mesh_generation_finished", p_chunk);
+	call_deferred("emit_signal", "chunk_mesh_generation_finished", p_chunk);
 }
 
 Vector<Variant> VoxelWorld::get_chunks() {

@@ -1031,10 +1031,10 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			//if (_is_build_threaded) {
-			//	set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
-			//	return;
-			//}
+			if (_is_build_threaded) { //&& Engine::get_singleton()->is_editor_hint()?
+				set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
+				return;
+			}
 
 			if (!has_meshes(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_BODY)) {
 				create_colliders(MESH_INDEX_TERRARIN);
@@ -1092,9 +1092,6 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 			RID mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
 
-			if (mesh_rid != RID())
-				VS::get_singleton()->mesh_clear(mesh_rid);
-
 			Array temp_mesh_arr = mesher->build_mesh();
 
 			if (mesh_rid == RID()) {
@@ -1105,6 +1102,9 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 				mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
 			}
+
+			if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
+				VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
 
 			VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 

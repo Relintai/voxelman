@@ -86,7 +86,7 @@ bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<I
 
 bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click, int selected_voxel) {
 
-	if (!spatial_editor)
+	if (!spatial_editor || !_world)
 		return false;
 
 	Camera *camera = p_camera;
@@ -200,6 +200,7 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	SpatialEditor::get_singleton()->add_control_to_menu_panel(spatial_editor_hb);
 }
 VoxelWorldEditor::~VoxelWorldEditor() {
+	_world = NULL;
 }
 
 void VoxelWorldEditor::_node_removed(Node *p_node) {
