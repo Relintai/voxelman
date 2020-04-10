@@ -128,40 +128,44 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 			bz += _world->get_chunk_size_z();
 		}
 
-		if (bx == 0) {
-			Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x - 1, y, z);
-			chunk->set_voxel(selected_voxel, _world->get_chunk_size_x(), by, bz, 0);
-			chunk->build();
+		if (_world->get_data_margin_end() > 0) {
+			if (bx == 0) {
+				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x - 1, y, z);
+				chunk->set_voxel(selected_voxel, _world->get_chunk_size_x(), by, bz, 0);
+				chunk->build();
+			}
+
+			if (by == 0) {
+				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y - 1, z);
+				chunk->set_voxel(selected_voxel, bx, _world->get_chunk_size_y(), bz, 0);
+				chunk->build();
+			}
+
+			if (bz == 0) {
+				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y, z - 1);
+				chunk->set_voxel(selected_voxel, bx, by, _world->get_chunk_size_z(), 0);
+				chunk->build();
+			}
 		}
 
-		if (by == 0) {
-			Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y - 1, z);
-			chunk->set_voxel(selected_voxel, bx, _world->get_chunk_size_y(), bz, 0);
-			chunk->build();
-		}
+		if (_world->get_data_margin_start() > 0) {
+			if (bx == _world->get_chunk_size_x() - 1) {
+				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x + 1, y, z);
+				chunk->set_voxel(selected_voxel, -1, by, bz, 0);
+				chunk->build();
+			}
 
-		if (bz == 0) {
-			Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y, z - 1);
-			chunk->set_voxel(selected_voxel, bx, by, _world->get_chunk_size_z(), 0);
-			chunk->build();
-		}
+			if (by == _world->get_chunk_size_y() - 1) {
+				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y + 1, z);
+				chunk->set_voxel(selected_voxel, bx, -1, bz, 0);
+				chunk->build();
+			}
 
-		if (bx == _world->get_chunk_size_x() - 1) {
-			Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x + 1, y, z);
-			chunk->set_voxel(selected_voxel, -1, by, bz, 0);
-			chunk->build();
-		}
-
-		if (by == _world->get_chunk_size_y() - 1) {
-			Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y + 1, z);
-			chunk->set_voxel(selected_voxel, bx, -1, bz, 0);
-			chunk->build();
-		}
-
-		if (bz == _world->get_chunk_size_z() - 1) {
-			Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y, z + 1);
-			chunk->set_voxel(selected_voxel, bx, by, -1, 0);
-			chunk->build();
+			if (bz == _world->get_chunk_size_z() - 1) {
+				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y, z + 1);
+				chunk->set_voxel(selected_voxel, bx, by, -1, 0);
+				chunk->build();
+			}
 		}
 
 		Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y, z);
