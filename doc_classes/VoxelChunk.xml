@@ -265,6 +265,14 @@
 			<description>
 			</description>
 		</method>
+		<method name="get_channel_compressed" qualifiers="const">
+			<return type="PoolByteArray">
+			</return>
+			<argument index="0" name="channel_index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
 		<method name="get_data_index" qualifiers="const">
 			<return type="int">
 			</return>
@@ -280,6 +288,18 @@
 		<method name="get_data_size" qualifiers="const">
 			<return type="int">
 			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_index" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
@@ -382,6 +402,16 @@
 			</description>
 		</method>
 		<method name="set_channel_array">
+			<return type="void">
+			</return>
+			<argument index="0" name="channel_index" type="int">
+			</argument>
+			<argument index="1" name="array" type="PoolByteArray">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_channel_compressed">
 			<return type="void">
 			</return>
 			<argument index="0" name="channel_index" type="int">

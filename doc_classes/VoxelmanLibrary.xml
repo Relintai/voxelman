@@ -17,14 +17,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="add_clutter_material">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="Material">
-			</argument>
-			<description>
-			</description>
-		</method>
 		<method name="add_liquid_material">
 			<return type="void">
 			</return>
@@ -52,15 +44,7 @@
 		<method name="add_prop">
 			<return type="void">
 			</return>
-			<argument index="0" name="value" type="PropData">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_prop_material">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="Material">
+			<argument index="0" name="value" type="PackedScene">
 			</argument>
 			<description>
 			</description>
@@ -70,12 +54,6 @@
 			</return>
 			<argument index="0" name="value" type="VoxelSurface">
 			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="clear_clutter_materials">
-			<return type="void">
-			</return>
 			<description>
 			</description>
 		</method>
@@ -97,12 +75,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="clear_prop_materials">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
 		<method name="clear_props">
 			<return type="void">
 			</return>
@@ -112,14 +84,6 @@
 		<method name="clear_surfaces">
 			<return type="void">
 			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_clutter_material">
-			<return type="Material">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
 			<description>
 			</description>
 		</method>
@@ -147,12 +111,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_num_clutter_materials" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
 		<method name="get_num_liquid_materials" qualifiers="const">
 			<return type="int">
 			</return>
@@ -171,12 +129,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_num_prop_materials" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
 		<method name="get_num_props" qualifiers="const">
 			<return type="int">
 			</return>
@@ -190,17 +142,9 @@
 			</description>
 		</method>
 		<method name="get_prop">
-			<return type="PropData">
+			<return type="PackedScene">
 			</return>
 			<argument index="0" name="id" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_prop_material">
-			<return type="Material">
-			</return>
-			<argument index="0" name="index" type="int">
 			</argument>
 			<description>
 			</description>
@@ -216,14 +160,6 @@
 		<method name="refresh_rects">
 			<return type="void">
 			</return>
-			<description>
-			</description>
-		</method>
-		<method name="remove_clutter_material">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
 			<description>
 			</description>
 		</method>
@@ -259,28 +195,10 @@
 			<description>
 			</description>
 		</method>
-		<method name="remove_prop_material">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
 		<method name="remove_surface">
 			<return type="void">
 			</return>
 			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="set_clutter_material">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<argument index="1" name="value" type="Material">
 			</argument>
 			<description>
 			</description>
@@ -320,17 +238,7 @@
 			</return>
 			<argument index="0" name="id" type="int">
 			</argument>
-			<argument index="1" name="surface" type="PropData">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="set_prop_material">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<argument index="1" name="value" type="Material">
+			<argument index="1" name="surface" type="PackedScene">
 			</argument>
 			<description>
 			</description>
@@ -357,23 +265,15 @@
 		</method>
 	</methods>
 	<members>
-		<member name="clutter_materials" type="Array" setter="set_clutter_materials" getter="get_clutter_materials" default="[  ]">
-		</member>
 		<member name="liquid_materials" type="Array" setter="set_liquid_materials" getter="get_liquid_materials" default="[  ]">
 		</member>
 		<member name="materials" type="Array" setter="set_materials" getter="get_materials" default="[  ]">
-		</member>
-		<member name="prop_materials" type="Array" setter="set_prop_materials" getter="get_prop_materials" default="[  ]">
 		</member>
 	</members>
 	<constants>
 		<constant name="MATERIAL_INDEX_VOXELS" value="0">
 		</constant>
-		<constant name="MATERIAL_INDEX_PROP" value="1">
-		</constant>
-		<constant name="MATERIAL_INDEX_LIQUID" value="2">
-		</constant>
-		<constant name="MATERIAL_INDEX_CLUTTER" value="3">
+		<constant name="MATERIAL_INDEX_LIQUID" value="1">
 		</constant>
 	</constants>
 </class>

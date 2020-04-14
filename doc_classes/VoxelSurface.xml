@@ -59,8 +59,6 @@
 		</method>
 	</methods>
 	<members>
-		<member name="clutter" type="GroundClutter" setter="set_clutter" getter="get_clutter">
-		</member>
 		<member name="id" type="int" setter="set_id" getter="get_id" default="0">
 		</member>
 		<member name="mesher_index" type="int" setter="set_mesher_index" getter="get_mesher_index" default="0">

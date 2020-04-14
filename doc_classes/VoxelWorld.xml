@@ -7,6 +7,14 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="_chunk_added" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="chunk" type="VoxelChunk">
+			</argument>
+			<description>
+			</description>
+		</method>
 		<method name="_create_chunk" qualifiers="virtual">
 			<return type="VoxelChunk">
 			</return>
@@ -162,6 +170,18 @@
 		<method name="get_generation_size">
 			<return type="int">
 			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_or_create_chunk">
+			<return type="VoxelChunk">
+			</return>
+			<argument index="0" name="x" type="int">
+			</argument>
+			<argument index="1" name="y" type="int">
+			</argument>
+			<argument index="2" name="z" type="int">
+			</argument>
 			<description>
 			</description>
 		</method>
