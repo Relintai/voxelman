@@ -66,8 +66,6 @@ class VoxelWorld;
 class VoxelChunk : public Resource {
 	GDCLASS(VoxelChunk, Resource);
 
-	_THREAD_SAFE_CLASS_
-
 public:
 	enum {
 		VOXEL_CHUNK_STATE_OK = 0,
