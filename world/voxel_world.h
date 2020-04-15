@@ -100,12 +100,14 @@ public:
 	void set_player(Spatial *player);
 	void set_player_bind(Node *player);
 
+	//World Areas
 	Ref<WorldArea> get_world_area(const int index) const;
 	void add_world_area(Ref<WorldArea> area);
 	void remove_world_area(const int index);
 	void clear_world_areas();
 	int get_world_area_count() const;
 
+	//Chunks
 	void add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z);
 	bool has_chunk(const int x, const int y, const int z) const;
 	Ref<VoxelChunk> get_chunk(const int x, const int y, const int z);
@@ -125,7 +127,7 @@ public:
 	void remove_generation_index(int index);
 	int get_generation_size();
 
-	void clear();
+	void clear_chunks();
 
 	Ref<VoxelChunk> get_or_create_chunk(int x, int y, int z);
 	Ref<VoxelChunk> create_chunk(int x, int y, int z);
@@ -139,6 +141,16 @@ public:
 
 	Vector<Variant> get_chunks();
 	void set_chunks(const Vector<Variant> &chunks);
+
+	//Lights
+	void add_light(const Ref<VoxelLight> &light);
+	Ref<VoxelLight> get_light(const int index);
+	void remove_light(const int index);
+	int get_light_count() const;
+	void clear_lights();
+
+	Vector<Variant> get_lights();
+	void set_lights(const Vector<Variant> &chunks);
 
 	VoxelWorld();
 	~VoxelWorld();
@@ -214,6 +226,8 @@ private:
 	Vector<Ref<VoxelChunk> > _generating;
 	int _max_frame_chunk_build_steps;
 	int _num_frame_chunk_build_steps;
+
+	Vector<Ref<VoxelLight> > _lights;
 };
 
 _FORCE_INLINE_ bool operator==(const VoxelWorld::IntPos &a, const VoxelWorld::IntPos &b) {

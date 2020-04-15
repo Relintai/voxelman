@@ -177,24 +177,10 @@ public:
 	Array merge_mesh_array(Array arr) const;
 	Array bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_color = 0.7) const;
 
-	//lights
-	void add_lights(Array lights);
-	void add_voxel_light(Ref<VoxelLight> light);
-	void create_voxel_light(const Color color, const int size, const int x, const int y, const int z);
-	void remove_voxel_light(Ref<VoxelLight> light);
-	void clear_voxel_lights();
-
-	void add_lights_into(Array target);
-	void add_unique_lights_into(Array target);
-	Array get_lights();
-
+	//light Baking
 	void bake_lights();
 	void bake_light(Ref<VoxelLight> light);
 	void clear_baked_lights();
-
-	void add_light(int local_x, int local_y, int local_z, int size, Color color);
-
-	void add_prop_light(Ref<VoxelLight> light);
 
 	//props
 	void add_prop(Ref<VoxelChunkPropData> prop);
@@ -211,6 +197,8 @@ public:
 	void physics_process(float delta);
 	void world_transform_changed();
 	void visibility_changed(bool visible);
+	void world_light_added(const Ref<VoxelLight> &light);
+	void world_light_removed(const Ref<VoxelLight> &light);
 
 	Transform get_transform() const;
 	void set_transform(const Transform &transform);
@@ -255,8 +243,6 @@ protected:
 	int _margin_end;
 
 	Vector<uint8_t *> _channels;
-
-	Vector<Ref<VoxelLight> > _voxel_lights;
 
 	float _voxel_scale;
 

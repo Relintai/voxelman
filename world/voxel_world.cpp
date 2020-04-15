@@ -279,7 +279,7 @@ int VoxelWorld::get_generation_size() {
 	return _generating.size();
 }
 
-void VoxelWorld::clear() {
+void VoxelWorld::clear_chunks() {
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
 		_chunks_vector.get(i)->exit_tree();
 	}
@@ -413,6 +413,81 @@ void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
 	}
 }
 
+//Lights
+
+void VoxelWorld::add_light(const Ref<VoxelLight> &light) {
+	_lights.push_back(light);
+
+	for (int i = 0; i < _chunks_vector.size(); ++i) {
+		Ref<VoxelChunk> chunk = _chunks_vector[i];
+
+		if (chunk.is_valid()) {
+			chunk->world_light_added(light);
+		}
+	}
+}
+Ref<VoxelLight> VoxelWorld::get_light(const int index) {
+	ERR_FAIL_INDEX_V(index, _lights.size(), Ref<VoxelLight>());
+
+	return _lights.get(index);
+}
+void VoxelWorld::remove_light(const int index) {
+	ERR_FAIL_INDEX(index, _lights.size());
+
+	Ref<VoxelLight> light = _lights[index];
+
+	for (int i = 0; i < _chunks_vector.size(); ++i) {
+		Ref<VoxelChunk> chunk = _chunks_vector[i];
+
+		if (chunk.is_valid()) {
+			chunk->world_light_removed(light);
+		}
+	}
+}
+int VoxelWorld::get_light_count() const {
+	return _lights.size();
+}
+void VoxelWorld::clear_lights() {
+	for (int i = 0; i < _lights.size(); ++i) {
+
+		Ref<VoxelLight> light = _lights[i];
+
+		if (!light.is_valid())
+			continue;
+
+		for (int j = 0; j < _chunks_vector.size(); ++j) {
+			Ref<VoxelChunk> chunk = _chunks_vector[j];
+
+			if (chunk.is_valid()) {
+				chunk->world_light_removed(light);
+			}
+		}
+	}
+
+	_lights.clear();
+}
+
+Vector<Variant> VoxelWorld::get_lights() {
+	Vector<Variant> r;
+	for (int i = 0; i < _lights.size(); i++) {
+#if VERSION_MAJOR < 4
+		r.push_back(_lights[i].get_ref_ptr());
+#else
+		r.push_back(_lights[i]);
+#endif
+	}
+	return r;
+}
+void VoxelWorld::set_lights(const Vector<Variant> &chunks) {
+	clear_lights();
+
+	for (int i = 0; i < chunks.size(); ++i) {
+		Ref<VoxelLight> light = Ref<VoxelLight>(chunks[i]);
+
+		add_light(light);
+	}
+}
+
 VoxelWorld::VoxelWorld() {
 	_editable = false;
 
@@ -448,6 +523,8 @@ VoxelWorld ::~VoxelWorld() {
 
 	_generation_queue.clear();
 	_generating.clear();
+
+	_lights.clear();
 }
 
 void VoxelWorld::_generate_chunk(Ref<VoxelChunk> chunk) {
@@ -667,7 +744,7 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_generation_index", "index"), &VoxelWorld::remove_generation_index);
 	ClassDB::bind_method(D_METHOD("get_generation_size"), &VoxelWorld::get_generation_size);
 
-	ClassDB::bind_method(D_METHOD("clear"), &VoxelWorld::clear);
+	ClassDB::bind_method(D_METHOD("clear_chunks"), &VoxelWorld::clear_chunks);
 
 	ADD_SIGNAL(MethodInfo("generation_finished"));
 	BIND_VMETHOD(MethodInfo("_generation_finished"));
@@ -685,4 +762,14 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("can_chunk_do_build_step"), &VoxelWorld::can_chunk_do_build_step);
 	ClassDB::bind_method(D_METHOD("is_position_walkable", "position"), &VoxelWorld::is_position_walkable);
 	ClassDB::bind_method(D_METHOD("on_chunk_mesh_generation_finished", "chunk"), &VoxelWorld::on_chunk_mesh_generation_finished);
+
+	//Lights
+	ClassDB::bind_method(D_METHOD("add_light", "light"), &VoxelWorld::add_light);
+	ClassDB::bind_method(D_METHOD("get_light", "index"), &VoxelWorld::get_light);
+	ClassDB::bind_method(D_METHOD("remove_light", "index"), &VoxelWorld::remove_light);
+	ClassDB::bind_method(D_METHOD("get_light_count"), &VoxelWorld::get_light_count);
+	ClassDB::bind_method(D_METHOD("clear_lights"), &VoxelWorld::clear_lights);
+
+	ClassDB::bind_method(D_METHOD("get_lights"), &VoxelWorld::get_lights);
+	ClassDB::bind_method(D_METHOD("set_lights", "chunks"), &VoxelWorld::set_lights);
 }

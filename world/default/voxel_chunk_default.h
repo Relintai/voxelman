@@ -156,6 +156,9 @@ public:
 	int get_max_build_phase() const;
 	void set_max_build_phase(const int value);
 
+	bool get_lights_dirty() const;
+	void set_lights_dirty(const bool value);
+
 	//Lod
 	int get_lod_num() const;
 	void set_lod_num(const int value);
@@ -179,8 +182,6 @@ public:
 
 	bool has_next_phase();
 	void next_phase();
-
-	void clear();
 
 	//Meshes
 	Dictionary get_mesh_rids();
@@ -209,6 +210,10 @@ public:
 	//Transform
 	void update_transforms();
 
+	//Lights
+	Ref<VoxelLight> get_light(const int index);
+	int get_light_count() const;
+
 	//Debug
 	void create_debug_immediate_geometry();
 	void free_debug_immediate_geometry();
@@ -218,11 +223,13 @@ public:
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
 
+	//Visibility
 	void visibility_changed(bool visible);
 
 	//free
 	void free_chunk();
 
+	//etc
 	void emit_build_finished();
 
 	void generate_random_ao(const int seed, const int octaves = 4, const int period = 30, const float persistence = 0.3, const float scale_factor = 0.6);
@@ -236,8 +243,6 @@ protected:
 	virtual void _build_phase_process(int phase);
 	virtual void _build_phase_physics_process(int phase);
 
-	virtual void _add_light(int local_x, int local_y, int local_z, int size, Color color);
-	virtual void _clear_baked_lights();
 	virtual void _create_meshers();
 	virtual void _build(bool immediate);
 	virtual void _visibility_changed(bool visible);
@@ -246,6 +251,13 @@ protected:
 	virtual void _process(float delta);
 	virtual void _physics_process(float delta);
 	virtual void _world_transform_changed();
+
+	//lights
+	virtual void _bake_lights();
+	virtual void _bake_light(Ref<VoxelLight> light);
+	virtual void _clear_baked_lights();
+	virtual void _world_light_added(const Ref<VoxelLight> &light);
+	virtual void _world_light_removed(const Ref<VoxelLight> &light);
 
 	void wait_and_finish_thread();
 
@@ -259,6 +271,8 @@ protected:
 	int _current_build_phase;
 	int _max_build_phases;
 	bool _enabled;
+
+	bool _lights_dirty;
 
 	int _lod_size;
 
@@ -281,6 +295,8 @@ protected:
 	PoolVector<Vector3> temp_arr_collider;
 
 	ActiveBuildPhaseType _active_build_phase_type;
+
+	Vector<Ref<VoxelLight> > _lights;
 };
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);

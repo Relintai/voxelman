@@ -610,111 +610,20 @@ Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_colo
 	return arr;
 }
 
-void VoxelChunk::add_lights(Array lights) {
-	for (int i = 0; i < lights.size(); ++i) {
-		Ref<VoxelLight> light = Ref<VoxelLight>(lights.get(i));
-
-		if (light.is_valid()) {
-			add_voxel_light(light);
-		}
-	}
-}
-void VoxelChunk::add_voxel_light(Ref<VoxelLight> light) {
-	_voxel_lights.push_back(light);
-}
-
-void VoxelChunk::create_voxel_light(const Color color, const int size, const int x, const int y, const int z) {
-	Ref<VoxelLight> light;
-	light.instance();
-
-	light->set_world_position(_position_x * _size_x + x, _position_y * _size_y + y, _position_z * _size_z + z);
-	light->set_color(color);
-	light->set_size(size);
-
-	add_voxel_light(light);
-}
-
-void VoxelChunk::remove_voxel_light(Ref<VoxelLight> light) {
-	for (int i = 0; i < _voxel_lights.size(); ++i) {
-		if (_voxel_lights[i] == light) {
-			_voxel_lights.remove(i);
-			return;
-		}
-	}
-}
-void VoxelChunk::clear_voxel_lights() {
-	_voxel_lights.clear();
-}
-
-void VoxelChunk::add_lights_into(Array target) {
-	for (int i = 0; i < _voxel_lights.size(); ++i) {
-		target.append(_voxel_lights[i]);
-	}
-}
-
-void VoxelChunk::add_unique_lights_into(Array target) {
-	for (int i = 0; i < _voxel_lights.size(); ++i) {
-		Ref<VoxelLight> l = _voxel_lights.get(i);
-
-		bool append = true;
-		for (int j = 0; j < target.size(); ++j) {
-			Ref<VoxelLight> l2 = target.get(j);
-
-			if (!l2.is_valid())
-				continue;
-
-			if (l2->get_world_position() == l->get_world_position() && l2->get_size() == l->get_size()) {
-				append = false;
-				break;
-			}
-		}
-
-		if (append)
-			target.append(l);
-	}
-}
-
-Array VoxelChunk::get_lights() {
-	Array target;
-
-	for (int i = 0; i < _voxel_lights.size(); ++i) {
-		target.append(_voxel_lights[i]);
-	}
-
-	return target;
-}
-
 void VoxelChunk::bake_lights() {
-	clear_baked_lights();
-
-	for (int i = 0; i < _voxel_lights.size(); ++i) {
-		bake_light(_voxel_lights[i]);
-	}
+	if (has_method("_bake_lights"))
+		call("_bake_lights");
 }
 void VoxelChunk::bake_light(Ref<VoxelLight> light) {
-	ERR_FAIL_COND(!light.is_valid());
+	if (!light.is_valid())
+		return;
 
-	int wpx = light->get_world_position_x() - (_position_x * _size_x);
-	int wpy = light->get_world_position_y() - (_position_y * _size_y);
-	int wpz = light->get_world_position_z() - (_position_z * _size_z);
-
-	add_light(wpx, wpy, wpz, light->get_size(), light->get_color());
+	if (has_method("_bake_lights"))
+		call("_bake_light", light);
 }
-
 void VoxelChunk::clear_baked_lights() {
-	ERR_FAIL_COND_MSG(!has_method("_clear_baked_lights"), "VoxelChunk: _clear_baked_lights() is missing! Please implement it!");
-
-	call("_clear_baked_lights");
-}
-
-void VoxelChunk::add_light(int local_x, int local_y, int local_z, int size, Color color) {
-	ERR_FAIL_COND_MSG(!has_method("_add_light"), "VoxelChunk: _add_light() is missing! Please implement it!");
-
-	call("_add_light", local_x, local_y, local_z, size, color);
-}
-
-void VoxelChunk::add_prop_light(Ref<VoxelLight> light) {
-	bake_light(light);
+	if (has_method("_clear_baked_lights"))
+		call("_clear_baked_lights");
 }
 
 void VoxelChunk::add_prop(Ref<VoxelChunkPropData> prop) {
@@ -767,6 +676,14 @@ void VoxelChunk::visibility_changed(bool visible) {
 	if (has_method("_visibility_changed"))
 		call("_visibility_changed", _is_visible);
 }
+void VoxelChunk::world_light_added(const Ref<VoxelLight> &light) {
+	if (has_method("_world_light_added"))
+		call("_world_light_added", light);
+}
+void VoxelChunk::world_light_removed(const Ref<VoxelLight> &light) {
+	if (has_method("_world_light_removed"))
+		call("_world_light_removed", light);
+}
 
 Transform VoxelChunk::get_transform() const {
 	return _transform;
@@ -806,8 +723,6 @@ VoxelChunk::VoxelChunk() {
 }
 
 VoxelChunk::~VoxelChunk() {
-	_voxel_lights.clear();
-
 	_meshers.clear();
 
 	if (_library.is_valid()) {
@@ -886,7 +801,14 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
 	BIND_VMETHOD(MethodInfo("_create_meshers"));
 	BIND_VMETHOD(MethodInfo("_setup_channels"));
-	BIND_VMETHOD(MethodInfo("_add_light", PropertyInfo(Variant::INT, "local_x"), PropertyInfo(Variant::INT, "local_y"), PropertyInfo(Variant::INT, "local_z"), PropertyInfo(Variant::INT, "size"), PropertyInfo(Variant::COLOR, "color")));
+
+	BIND_VMETHOD(MethodInfo("_bake_lights"));
+	BIND_VMETHOD(MethodInfo("_bake_light", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
+	BIND_VMETHOD(MethodInfo("_clear_baked_lights"));
+
+	ClassDB::bind_method(D_METHOD("bake_lights"), &VoxelChunk::bake_lights);
+	ClassDB::bind_method(D_METHOD("bake_light", "light"), &VoxelChunk::bake_light);
+	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
 
 	BIND_VMETHOD(MethodInfo("_enter_tree"));
 	BIND_VMETHOD(MethodInfo("_exit_tree"));
@@ -894,8 +816,17 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));
 	BIND_VMETHOD(MethodInfo("_world_transform_changed"));
 	BIND_VMETHOD(MethodInfo("_visibility_changed", PropertyInfo(Variant::BOOL, "visible")));
+	BIND_VMETHOD(MethodInfo("_world_light_added", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
+	BIND_VMETHOD(MethodInfo("_world_light_removed", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
 
+	ClassDB::bind_method(D_METHOD("enter_tree"), &VoxelChunk::enter_tree);
+	ClassDB::bind_method(D_METHOD("exit_tree"), &VoxelChunk::exit_tree);
+	ClassDB::bind_method(D_METHOD("process", "delta"), &VoxelChunk::process);
+	ClassDB::bind_method(D_METHOD("physics_process", "delta"), &VoxelChunk::physics_process);
+	ClassDB::bind_method(D_METHOD("world_transform_changed"), &VoxelChunk::world_transform_changed);
 	ClassDB::bind_method(D_METHOD("visibility_changed", "visible"), &VoxelChunk::visibility_changed);
+	ClassDB::bind_method(D_METHOD("world_light_added", "light"), &VoxelChunk::world_light_added);
+	ClassDB::bind_method(D_METHOD("world_light_removed", "light"), &VoxelChunk::world_light_removed);
 
 	ClassDB::bind_method(D_METHOD("get_process"), &VoxelChunk::get_process);
 	ClassDB::bind_method(D_METHOD("set_process", "value"), &VoxelChunk::set_process);
@@ -1020,20 +951,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("bake_mesh_array_uv", "arr", "tex", "mul_color"), &VoxelChunk::bake_mesh_array_uv, DEFVAL(0.7));
 
 	//Meshes
-	ClassDB::bind_method(D_METHOD("add_lights", "lights"), &VoxelChunk::add_lights);
-	ClassDB::bind_method(D_METHOD("add_voxel_light", "light"), &VoxelChunk::add_voxel_light);
-	ClassDB::bind_method(D_METHOD("create_voxel_light", "color", "size", "x", "y", "z"), &VoxelChunk::create_voxel_light);
-
-	ClassDB::bind_method(D_METHOD("remove_voxel_light", "light"), &VoxelChunk::remove_voxel_light);
-	ClassDB::bind_method(D_METHOD("clear_voxel_lights"), &VoxelChunk::clear_voxel_lights);
-	ClassDB::bind_method(D_METHOD("add_lights_into", "lights"), &VoxelChunk::add_lights_into);
-	ClassDB::bind_method(D_METHOD("add_unique_lights_into", "lights"), &VoxelChunk::add_unique_lights_into);
-	ClassDB::bind_method(D_METHOD("get_lights"), &VoxelChunk::get_lights);
-
-	ClassDB::bind_method(D_METHOD("bake_lights"), &VoxelChunk::bake_lights);
-	ClassDB::bind_method(D_METHOD("bake_light", "light"), &VoxelChunk::bake_light);
-
-	ClassDB::bind_method(D_METHOD("add_prop_light", "light"), &VoxelChunk::add_prop_light);
 
 	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelChunk::add_prop);
 	ClassDB::bind_method(D_METHOD("get_prop", "index"), &VoxelChunk::get_prop);

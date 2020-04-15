@@ -118,6 +118,13 @@ void VoxelChunkDefault::set_max_build_phase(const int value) {
 	_max_build_phases = value;
 }
 
+bool VoxelChunkDefault::get_lights_dirty() const {
+	return _lights_dirty;
+}
+void VoxelChunkDefault::set_lights_dirty(const bool value) {
+	_lights_dirty = value;
+}
+
 int VoxelChunkDefault::get_lod_num() const {
 	return _lod_num;
 }
@@ -317,10 +324,6 @@ void VoxelChunkDefault::next_phase() {
 
 		call_deferred("emit_build_finished");
 	}
-}
-
-void VoxelChunkDefault::clear() {
-	_voxel_lights.clear();
 }
 
 void VoxelChunkDefault::emit_build_finished() {
@@ -705,6 +708,16 @@ void VoxelChunkDefault::update_transforms() {
 	}
 }
 
+//Lights
+Ref<VoxelLight> VoxelChunkDefault::get_light(const int index) {
+	ERR_FAIL_INDEX_V(index, _lights.size(), Ref<VoxelLight>());
+
+	return _lights.get(index);
+}
+int VoxelChunkDefault::get_light_count() const {
+	return _lights.size();
+}
+
 void VoxelChunkDefault::create_debug_immediate_geometry() {
 	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(_debug_drawer != NULL);
@@ -806,8 +819,8 @@ void VoxelChunkDefault::draw_debug_voxel_lights() {
 	_debug_drawer->begin(Mesh::PrimitiveType::PRIMITIVE_LINES);
 	_debug_drawer->set_color(Color(1, 1, 1));
 
-	for (int i = 0; i < _voxel_lights.size(); ++i) {
-		Ref<VoxelLight> v = _voxel_lights[i];
+	for (int i = 0; i < _lights.size(); ++i) {
+		Ref<VoxelLight> v = _lights[i];
 
 		int pos_x = v->get_world_position_x() - (_size_x * _position_x);
 		int pos_y = v->get_world_position_y() - (_size_y * _position_y);
@@ -915,11 +928,106 @@ void VoxelChunkDefault::_world_transform_changed() {
 	update_transforms();
 }
 
+void VoxelChunkDefault::_bake_lights() {
+	clear_baked_lights();
+
+	for (int i = 0; i < _lights.size(); ++i) {
+		bake_light(_lights.get(i));
+	}
+}
+void VoxelChunkDefault::_bake_light(Ref<VoxelLight> light) {
+	ERR_FAIL_COND(!light.is_valid());
+
+	Color color = light->get_color();
+	int size = light->get_size();
+
+	int local_x = light->get_world_position_x() - (_position_x * _size_x);
+	int local_y = light->get_world_position_y() - (_position_y * _size_y);
+	int local_z = light->get_world_position_z() - (_position_z * _size_z);
+
+	ERR_FAIL_COND(size < 0);
+
+	//float sizef = static_cast<float>(size);
+	//float rf = (color.r / sizef);
+	//float gf = (color.g / sizef);
+	//float bf = (color.b / sizef);
+
+	int64_t dsx = static_cast<int64_t>(_data_size_x);
+	int64_t dsy = static_cast<int64_t>(_data_size_y);
+	int64_t dsz = static_cast<int64_t>(_data_size_z);
+
+	for (int y = local_y - size; y <= local_y + size; ++y) {
+		if (y < 0 || y >= dsy)
+			continue;
+
+		for (int z = local_z - size; z <= local_z + size; ++z) {
+			if (z < 0 || z >= dsz)
+				continue;
+
+			for (int x = local_x - size; x <= local_x + size; ++x) {
+				if (x < 0 || x >= dsx)
+					continue;
+
+				int lx = x - local_x;
+				int ly = y - local_y;
+				int lz = z - local_z;
+
+				float str = size - (((float)lx * lx + ly * ly + lz * lz));
+				str /= size;
+
+				if (str < 0)
+					continue;
+
+				int r = color.r * str * 255.0;
+				int g = color.g * str * 255.0;
+				int b = color.b * str * 255.0;
+
+				r += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_R);
+				g += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_G);
+				b += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_B);
+
+				if (r > 255)
+					r = 255;
+
+				if (g > 255)
+					g = 255;
+
+				if (b > 255)
+					b = 255;
+
+				set_voxel(r, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_R);
+				set_voxel(g, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_G);
+				set_voxel(b, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_B);
+			}
+		}
+	}
+}
+void VoxelChunkDefault::_clear_baked_lights() {
+	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_R);
+	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_G);
+	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_B);
+}
+void VoxelChunkDefault::_world_light_added(const Ref<VoxelLight> &light) {
+	_lights.push_back(light);
+
+	set_lights_dirty(true);
+}
+void VoxelChunkDefault::_world_light_removed(const Ref<VoxelLight> &light) {
+	int index = _lights.find(light);
+
+	if (index != -1) {
+		_lights.remove(index);
+
+		set_lights_dirty(true);
+	}
+}
+
 void VoxelChunkDefault::free_chunk() {
 	free_rids();
 }
 
 VoxelChunkDefault::VoxelChunkDefault() {
+	_lights_dirty = false;
 	_is_generating = false;
 	_is_build_threaded = false;
 	_abort_build = false;
@@ -969,6 +1077,8 @@ VoxelChunkDefault::~VoxelChunkDefault() {
 		_abort_build = true;
 		wait_and_finish_thread();
 	}
+
+	_lights.clear();
 }
 
 void VoxelChunkDefault::_setup_channels() {
@@ -1238,70 +1348,6 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 	}
 }
 
-void VoxelChunkDefault::_add_light(int local_x, int local_y, int local_z, int size, Color color) {
-	ERR_FAIL_COND(size < 0);
-
-	//float sizef = static_cast<float>(size);
-	//float rf = (color.r / sizef);
-	//float gf = (color.g / sizef);
-	//float bf = (color.b / sizef);
-
-	int64_t dsx = static_cast<int64_t>(_data_size_x);
-	int64_t dsy = static_cast<int64_t>(_data_size_y);
-	int64_t dsz = static_cast<int64_t>(_data_size_z);
-
-	for (int y = local_y - size; y <= local_y + size; ++y) {
-		if (y < 0 || y >= dsy)
-			continue;
-
-		for (int z = local_z - size; z <= local_z + size; ++z) {
-			if (z < 0 || z >= dsz)
-				continue;
-
-			for (int x = local_x - size; x <= local_x + size; ++x) {
-				if (x < 0 || x >= dsx)
-					continue;
-
-				int lx = x - local_x;
-				int ly = y - local_y;
-				int lz = z - local_z;
-
-				float str = size - (((float)lx * lx + ly * ly + lz * lz));
-				str /= size;
-
-				if (str < 0)
-					continue;
-
-				int r = color.r * str * 255.0;
-				int g = color.g * str * 255.0;
-				int b = color.b * str * 255.0;
-
-				r += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_R);
-				g += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_G);
-				b += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_B);
-
-				if (r > 255)
-					r = 255;
-
-				if (g > 255)
-					g = 255;
-
-				if (b > 255)
-					b = 255;
-
-				set_voxel(r, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_R);
-				set_voxel(g, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_G);
-				set_voxel(b, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_B);
-			}
-		}
-	}
-}
-void VoxelChunkDefault::_clear_baked_lights() {
-	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_R);
-	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_G);
-	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_B);
-}
-
 void VoxelChunkDefault::_create_meshers() {
 	for (int i = 0; i < _meshers.size(); ++i) {
 		Ref<VoxelMesher> mesher = _meshers.get(i);
@@ -1356,6 +1402,10 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_max_build_phase", "value"), &VoxelChunkDefault::set_max_build_phase);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_build_phase"), "set_max_build_phase", "get_max_build_phase");
 
+	ClassDB::bind_method(D_METHOD("get_lights_dirty"), &VoxelChunkDefault::get_lights_dirty);
+	ClassDB::bind_method(D_METHOD("set_lights_dirty", "value"), &VoxelChunkDefault::set_lights_dirty);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "lights_dirty", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_lights_dirty", "get_lights_dirty");
+
 	ClassDB::bind_method(D_METHOD("get_lod_num"), &VoxelChunkDefault::get_lod_num);
 	ClassDB::bind_method(D_METHOD("set_lod_num"), &VoxelChunkDefault::set_lod_num);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_num"), "set_lod_num", "get_lod_num");
@@ -1364,14 +1414,10 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_current_lod_level"), &VoxelChunkDefault::set_current_lod_level);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_lod_level"), "set_current_lod_level", "get_current_lod_level");
 
-	//Voxel Data
-
 	//Data Management functions
 	ClassDB::bind_method(D_METHOD("generate_ao"), &VoxelChunkDefault::generate_ao);
-	ClassDB::bind_method(D_METHOD("add_light", "local_x", "local_y", "local_z", "size", "color"), &VoxelChunkDefault::add_light);
-	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunkDefault::clear_baked_lights);
 
-	//Meshes
+	//Meshing
 	BIND_VMETHOD(MethodInfo("_build_phase", PropertyInfo(Variant::INT, "phase")));
 	BIND_VMETHOD(MethodInfo("_build_phase_process", PropertyInfo(Variant::INT, "phase")));
 	BIND_VMETHOD(MethodInfo("_build_phase_physics_process", PropertyInfo(Variant::INT, "phase")));
@@ -1410,12 +1456,13 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("create_colliders", "mesh_index", "layer_mask"), &VoxelChunkDefault::create_colliders, DEFVAL(1));
 	ClassDB::bind_method(D_METHOD("free_colliders", "mesh_index"), &VoxelChunkDefault::free_colliders);
 
+	//Lights
+	ClassDB::bind_method(D_METHOD("get_light", "index"), &VoxelChunkDefault::get_light);
+	ClassDB::bind_method(D_METHOD("get_light_count"), &VoxelChunkDefault::get_light_count);
+
+	//Debug
 	ClassDB::bind_method(D_METHOD("create_debug_immediate_geometry"), &VoxelChunkDefault::create_debug_immediate_geometry);
 	ClassDB::bind_method(D_METHOD("free_debug_immediate_geometry"), &VoxelChunkDefault::free_debug_immediate_geometry);
-
-	ClassDB::bind_method(D_METHOD("free_chunk"), &VoxelChunkDefault::free_chunk);
-
-	ClassDB::bind_method(D_METHOD("emit_build_finished"), &VoxelChunkDefault::emit_build_finished);
 
 	BIND_VMETHOD(MethodInfo("_draw_debug_voxel_lights", PropertyInfo(Variant::OBJECT, "debug_drawer", PROPERTY_HINT_RESOURCE_TYPE, "ImmediateGeometry")));
 
@@ -1425,23 +1472,35 @@ void VoxelChunkDefault::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunkDefault::draw_debug_voxel_lights);
 
+	//Free
+	ClassDB::bind_method(D_METHOD("free_chunk"), &VoxelChunkDefault::free_chunk);
+
+	//etc
+	ClassDB::bind_method(D_METHOD("emit_build_finished"), &VoxelChunkDefault::emit_build_finished);
+
 	ClassDB::bind_method(D_METHOD("generate_random_ao", "seed", "octaves", "period", "persistence", "scale_factor"), &VoxelChunkDefault::generate_random_ao, DEFVAL(4), DEFVAL(30), DEFVAL(0.3), DEFVAL(0.6));
 
+	//virtuals
 	ClassDB::bind_method(D_METHOD("_setup_channels"), &VoxelChunkDefault::_setup_channels);
 	ClassDB::bind_method(D_METHOD("_build_phase", "phase"), &VoxelChunkDefault::_build_phase);
 	ClassDB::bind_method(D_METHOD("_build_phase_process", "phase"), &VoxelChunkDefault::_build_phase_process);
 	ClassDB::bind_method(D_METHOD("_build_phase_physics_process", "phase"), &VoxelChunkDefault::_build_phase_physics_process);
 
-	ClassDB::bind_method(D_METHOD("_add_light", "local_x", "local_y", "local_z", "size", "color"), &VoxelChunkDefault::_add_light);
-
-	ClassDB::bind_method(D_METHOD("_clear_baked_lights"), &VoxelChunkDefault::_clear_baked_lights);
 	ClassDB::bind_method(D_METHOD("_create_meshers"), &VoxelChunkDefault::_create_meshers);
 	ClassDB::bind_method(D_METHOD("_build", "immediate"), &VoxelChunkDefault::_build);
+	ClassDB::bind_method(D_METHOD("_visibility_changed", "visible"), &VoxelChunkDefault::_visibility_changed);
 
 	ClassDB::bind_method(D_METHOD("_exit_tree"), &VoxelChunkDefault::_exit_tree);
 	ClassDB::bind_method(D_METHOD("_process", "delta"), &VoxelChunkDefault::_process);
 	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &VoxelChunkDefault::_physics_process);
-	ClassDB::bind_method(D_METHOD("_visibility_changed", "visible"), &VoxelChunkDefault::_visibility_changed);
+
+	//lights
+	ClassDB::bind_method(D_METHOD("_bake_lights"), &VoxelChunkDefault::_bake_lights);
+	ClassDB::bind_method(D_METHOD("_bake_light", "light"), &VoxelChunkDefault::_bake_light);
+	ClassDB::bind_method(D_METHOD("_clear_baked_lights"), &VoxelChunkDefault::_clear_baked_lights);
+
+	ClassDB::bind_method(D_METHOD("_world_light_added", "light"), &VoxelChunkDefault::_world_light_added);
+	ClassDB::bind_method(D_METHOD("_world_light_removed", "light"), &VoxelChunkDefault::_world_light_removed);
 
 	BIND_CONSTANT(BUILD_PHASE_DONE);
 	BIND_CONSTANT(BUILD_PHASE_SETUP);
