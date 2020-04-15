@@ -252,6 +252,9 @@ protected:
 	virtual void _physics_process(float delta);
 	virtual void _world_transform_changed();
 
+	//Props
+	virtual void _add_prop(Ref<VoxelChunkPropData> prop);
+
 	//lights
 	virtual void _bake_lights();
 	virtual void _bake_light(Ref<VoxelLight> light);

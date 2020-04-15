@@ -23,6 +23,7 @@ SOFTWARE.
 #include "voxel_world.h"
 
 #include "voxel_chunk.h"
+#include "voxel_chunk_prop_data.h"
 
 #include "core/version.h"
 
@@ -413,8 +414,14 @@ void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
 	}
 }
 
-//Lights
+//Props
+void VoxelWorld::add_prop(Ref<VoxelChunkPropData> prop) {
+	ERR_FAIL_COND(!has_method("_add_prop"));
 
+	call("_add_prop", prop);
+}
+
+//Lights
 void VoxelWorld::add_light(const Ref<VoxelLight> &light) {
 	_lights.push_back(light);
 
@@ -762,6 +769,11 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("can_chunk_do_build_step"), &VoxelWorld::can_chunk_do_build_step);
 	ClassDB::bind_method(D_METHOD("is_position_walkable", "position"), &VoxelWorld::is_position_walkable);
 	ClassDB::bind_method(D_METHOD("on_chunk_mesh_generation_finished", "chunk"), &VoxelWorld::on_chunk_mesh_generation_finished);
+
+	//Props
+	BIND_VMETHOD(MethodInfo("_add_prop", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
+
+	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelWorld::add_prop);
 
 	//Lights
 	ClassDB::bind_method(D_METHOD("add_light", "light"), &VoxelWorld::add_light);

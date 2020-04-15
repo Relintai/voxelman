@@ -928,6 +928,12 @@ void VoxelChunkDefault::_world_transform_changed() {
 	update_transforms();
 }
 
+//Props
+void VoxelChunkDefault::_add_prop(Ref<VoxelChunkPropData> prop) {
+	ERR_FAIL_MSG("TODO! _add_prop not yet implemented, send prop to the relevant chunk");
+}
+
+//Lights
 void VoxelChunkDefault::_bake_lights() {
 	clear_baked_lights();
 
@@ -1493,6 +1499,9 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_exit_tree"), &VoxelChunkDefault::_exit_tree);
 	ClassDB::bind_method(D_METHOD("_process", "delta"), &VoxelChunkDefault::_process);
 	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &VoxelChunkDefault::_physics_process);
+
+	//Props
+	ClassDB::bind_method(D_METHOD("_add_prop", "prop"), &VoxelChunkDefault::_add_prop);
 
 	//lights
 	ClassDB::bind_method(D_METHOD("_bake_lights"), &VoxelChunkDefault::_bake_lights);

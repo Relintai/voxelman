@@ -187,8 +187,7 @@ public:
 	void remove_prop(int index);
 	void clear_props();
 
-	void free_spawn_props();
-
+	//handlers
 	void enter_tree();
 	void exit_tree();
 	void process(float delta);
@@ -249,9 +248,6 @@ protected:
 
 	//mergeable props
 	Vector<Ref<VoxelChunkPropData> > _props;
-
-	//spawned props
-	Vector<Node *> _spawned_props;
 
 	Transform _transform;
 };

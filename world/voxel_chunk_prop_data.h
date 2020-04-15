@@ -37,6 +37,9 @@ class VoxelChunkPropData : public Resource {
 	GDCLASS(VoxelChunkPropData, Resource);
 
 public:
+	Ref<VoxelChunk> get_owner();
+	void set_owner(const Ref<VoxelChunk> &chunk);
+
 	int get_scene_id() const;
 	void set_scene_id(const int id);
 
@@ -61,6 +64,7 @@ protected:
 	static void _bind_methods();
 
 private:
+	Ref<VoxelChunk> _owner;
 	int _scene_id;
 	Transform _transform;
 	Node *_spawned_prop;

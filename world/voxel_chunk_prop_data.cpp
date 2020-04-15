@@ -24,6 +24,13 @@ SOFTWARE.
 
 #include "voxel_chunk.h"
 
+Ref<VoxelChunk> VoxelChunkPropData::get_owner() {
+	return _owner;
+}
+void VoxelChunkPropData::set_owner(const Ref<VoxelChunk> &chunk) {
+	_owner = chunk;
+}
+
 int VoxelChunkPropData::get_scene_id() const {
 	return _scene_id;
 }
@@ -66,10 +73,15 @@ VoxelChunkPropData::VoxelChunkPropData() {
 	_scene_id = 0;
 }
 VoxelChunkPropData::~VoxelChunkPropData() {
+	_owner.unref();
 	_scene.unref();
 }
 
 void VoxelChunkPropData::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_owner"), &VoxelChunkPropData::get_owner);
+	ClassDB::bind_method(D_METHOD("set_owner", "value"), &VoxelChunkPropData::set_owner);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "owner", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), "set_owner", "get_owner");
+
 	ClassDB::bind_method(D_METHOD("get_scene_id"), &VoxelChunkPropData::get_scene_id);
 	ClassDB::bind_method(D_METHOD("set_scene_id", "value"), &VoxelChunkPropData::set_scene_id);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "scene_id"), "set_scene_id", "get_scene_id");

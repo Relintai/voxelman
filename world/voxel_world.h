@@ -46,6 +46,7 @@ typedef class Node3D Spatial;
 #include "core/os/os.h"
 
 class VoxelChunk;
+class VoxelChunkPropData;
 
 class VoxelWorld : public Navigation {
 	GDCLASS(VoxelWorld, Navigation);
@@ -141,6 +142,9 @@ public:
 
 	Vector<Variant> get_chunks();
 	void set_chunks(const Vector<Variant> &chunks);
+
+	//Props
+	void add_prop(Ref<VoxelChunkPropData> prop);
 
 	//Lights
 	void add_light(const Ref<VoxelLight> &light);

@@ -627,30 +627,42 @@ void VoxelChunk::clear_baked_lights() {
 }
 
 void VoxelChunk::add_prop(Ref<VoxelChunkPropData> prop) {
+	ERR_FAIL_COND(!prop.is_valid());
+	ERR_FAIL_COND(prop->get_owner().is_valid());
+
+	prop->set_owner(Ref<VoxelChunk>(this));
 	_props.push_back(prop);
 
 	if (has_method("_prop_added"))
 		call("_prop_added", prop);
 }
 Ref<VoxelChunkPropData> VoxelChunk::get_prop(int index) {
+	ERR_FAIL_INDEX_V(index, _props.size(), Ref<VoxelChunkPropData>());
+
 	return _props.get(index);
 }
 int VoxelChunk::get_prop_count() {
 	return _props.size();
 }
 void VoxelChunk::remove_prop(int index) {
-	return _props.remove(index);
+	ERR_FAIL_INDEX(index, _props.size());
+
+	Ref<VoxelChunkPropData> prop = _props.get(index);
+
+	if (prop.is_valid())
+		prop->set_owner(Ref<VoxelChunk>());
+
+	_props.remove(index);
 }
 void VoxelChunk::clear_props() {
-	_props.clear();
-}
+	for (int i = 0; i < _props.size(); ++i) {
+		Ref<VoxelChunkPropData> prop = _props.get(i);
 
-void VoxelChunk::free_spawn_props() {
-	for (int i = 0; i < _spawned_props.size(); ++i) {
-		_spawned_props[i]->queue_delete();
+		if (prop.is_valid())
+			prop->set_owner(Ref<VoxelChunk>());
 	}
 
-	_spawned_props.clear();
+	_props.clear();
 }
 
 void VoxelChunk::enter_tree() {
@@ -729,7 +741,7 @@ VoxelChunk::~VoxelChunk() {
 		_library.unref();
 	}
 
-	_props.clear();
+	clear_props();
 
 	for (int i = 0; i < _channels.size(); ++i) {
 		uint8_t *ch = _channels[i];
@@ -957,8 +969,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_prop_count"), &VoxelChunk::get_prop_count);
 	ClassDB::bind_method(D_METHOD("remove_prop", "index"), &VoxelChunk::remove_prop);
 	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
-
-	ClassDB::bind_method(D_METHOD("free_spawn_props"), &VoxelChunk::free_spawn_props);
 
 	ClassDB::bind_method(D_METHOD("create_meshers"), &VoxelChunk::create_meshers);
 
