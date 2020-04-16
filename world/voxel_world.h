@@ -118,6 +118,9 @@ public:
 	int get_voxel_structure_count() const;
 	void add_voxel_structure_at_position(Ref<VoxelStructure> structure, const Vector3 &world_position);
 
+	Vector<Variant> get_voxel_structures();
+	void set_voxel_structures(const Vector<Variant> &structures);
+
 	//Chunks
 	void add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z);
 	bool has_chunk(const int x, const int y, const int z) const;

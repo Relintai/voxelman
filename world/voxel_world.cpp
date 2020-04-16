@@ -176,8 +176,6 @@ Ref<VoxelStructure> VoxelWorld::get_voxel_structure(const int index) const {
 	return _voxel_structures.get(index);
 }
 void VoxelWorld::add_voxel_structure(const Ref<VoxelStructure> &structure) {
-	ERR_FAIL_COND(!structure.is_valid());
-
 	_voxel_structures.push_back(structure);
 }
 void VoxelWorld::remove_voxel_structure(const Ref<VoxelStructure> &structure) {
@@ -208,6 +206,27 @@ void VoxelWorld::add_voxel_structure_at_position(Ref<VoxelStructure> structure, 
 	structure->set_position_z(static_cast<int>(world_position.z / _voxel_scale));
 
 	add_voxel_structure(structure);
+}
+
+Vector<Variant> VoxelWorld::get_voxel_structures() {
+	Vector<Variant> r;
+	for (int i = 0; i < _voxel_structures.size(); i++) {
+#if VERSION_MAJOR < 4
+		r.push_back(_voxel_structures[i].get_ref_ptr());
+#else
+		r.push_back(_voxel_structures[i]);
+#endif
+	}
+	return r;
+}
+void VoxelWorld::set_voxel_structures(const Vector<Variant> &structures) {
+	clear_voxel_structures();
+
+	for (int i = 0; i < structures.size(); ++i) {
+		Ref<VoxelLight> structure = Ref<VoxelLight>(structures[i]);
+
+		add_voxel_structure(structure);
+	}
 }
 
 void VoxelWorld::add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z) {
@@ -795,6 +814,10 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_voxel_structures"), &VoxelWorld::clear_voxel_structures);
 	ClassDB::bind_method(D_METHOD("get_voxel_structure_count"), &VoxelWorld::get_voxel_structure_count);
 	ClassDB::bind_method(D_METHOD("add_voxel_structure_at_position", "structure", "world_position"), &VoxelWorld::add_voxel_structure_at_position);
+
+	ClassDB::bind_method(D_METHOD("get_voxel_structures"), &VoxelWorld::get_voxel_structures);
+	ClassDB::bind_method(D_METHOD("set_voxel_structures"), &VoxelWorld::set_voxel_structures);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_structures", PROPERTY_HINT_NONE, "17/17:VoxelStructure", PROPERTY_USAGE_DEFAULT, "VoxelStructure"), "set_voxel_structures", "get_voxel_structures");
 
 	BIND_VMETHOD(MethodInfo("_chunk_added", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
