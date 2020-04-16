@@ -34,6 +34,9 @@ SOFTWARE.
 
 #include "voxel_chunk.h"
 
+#include "../library/voxel_surface.h"
+#include "../library/voxelman_library.h"
+
 #include "core/version.h"
 
 #if VERSION_MAJOR < 4
@@ -104,7 +107,7 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 
 		if (_tool_mode == TOOL_MODE_ADD) {
 			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * res.normal));
-			selected_voxel = _seletced_type;
+			selected_voxel = _selected_type + 1;
 		} else if (_tool_mode == TOOL_MODE_REMOVE) {
 			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * -res.normal));
 			selected_voxel = 0;
@@ -121,18 +124,92 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 	_world = p_world;
 
+	if (!_world)
+		return;
+
 	spatial_editor = Object::cast_to<SpatialEditorPlugin>(_editor->get_editor_plugin_screen());
+
+	for (int i = 0; i < _surfaces_vbox_container->get_child_count(); ++i) {
+		Node *child = _surfaces_vbox_container->get_child(i);
+
+		if (!child->is_queued_for_deletion()) {
+			child->queue_delete();
+		}
+	}
+
+	for (int i = 0; i < _liquid_surfaces_vbox_container->get_child_count(); ++i) {
+		Node *child = _liquid_surfaces_vbox_container->get_child(i);
+
+		if (!child->is_queued_for_deletion()) {
+			child->queue_delete();
+		}
+	}
+
+	Ref<VoxelmanLibrary> library = _world->get_library();
+
+	if (!library.is_valid())
+		return;
+
+	bool f = false;
+	for (int i = 0; i < library->get_num_surfaces(); ++i) {
+		Ref<VoxelSurface> surface = library->get_voxel_surface(i);
+
+		if (!surface.is_valid())
+			continue;
+
+		String text = String::num(i) + " - " + surface->get_name();
+
+		Button *button = memnew(Button);
+		button->set_h_size_flags(SIZE_EXPAND_FILL);
+		button->set_text(text);
+		button->set_meta("index", i);
+		button->set_toggle_mode(true);
+		button->set_button_group(_surfaces_button_group);
+		button->connect("button_up", this, "_on_surface_button_pressed");
+		_surfaces_vbox_container->add_child(button);
+
+		if (!f) {
+			button->set_pressed(true);
+			f = true;
+		}
+	}
+
+	f = false;
+	for (int i = 0; i < library->get_num_liquid_surfaces(); ++i) {
+		Ref<VoxelSurface> surface = library->get_liquid_surface(i);
+
+		if (!surface.is_valid())
+			continue;
+
+		String text = String::num(i) + " - " + surface->get_name();
+
+		Button *button = memnew(Button);
+		button->set_h_size_flags(SIZE_EXPAND_FILL);
+		button->set_text(text);
+		button->set_meta("index", i);
+		button->set_toggle_mode(true);
+		button->set_button_group(_liquid_surfaces_button_group);
+		button->connect("button_up", this, "_on_surface_button_pressed");
+		_liquid_surfaces_vbox_container->add_child(button);
+
+		if (!f) {
+			button->set_pressed(true);
+			f = true;
+		}
+	}
 }
 
 VoxelWorldEditor::VoxelWorldEditor() {
 	_world = NULL;
-	_seletced_type = 1;
+	_selected_type = 0;
+	_selected_liquid_type = 0;
 	_editor = NULL;
 	_tool_mode = TOOL_MODE_ADD;
 }
 VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	_world = NULL;
-	_seletced_type = 1;
+	_selected_type = 0;
+	_selected_liquid_type = 0;
 	_editor = p_editor;
 	_tool_mode = TOOL_MODE_ADD;
 
@@ -140,9 +217,35 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	spatial_editor_hb->set_h_size_flags(SIZE_EXPAND_FILL);
 	spatial_editor_hb->set_alignment(BoxContainer::ALIGN_END);
 	SpatialEditor::get_singleton()->add_control_to_menu_panel(spatial_editor_hb);
+
+	set_custom_minimum_size(Size2(200 * EDSCALE, 0));
+
+	TabContainer *tab_container = memnew(TabContainer);
+	tab_container->set_h_size_flags(SIZE_EXPAND_FILL);
+	tab_container->set_v_size_flags(SIZE_EXPAND_FILL);
+	tab_container->set_name("Surfaces");
+	add_child(tab_container);
+
+	_surfaces_vbox_container = memnew(VBoxContainer);
+	_surfaces_vbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
+	_surfaces_vbox_container->set_v_size_flags(SIZE_EXPAND_FILL);
+	_surfaces_vbox_container->set_name("Surfaces");
+	tab_container->add_child(_surfaces_vbox_container);
+
+	_liquid_surfaces_vbox_container = memnew(VBoxContainer);
+	_liquid_surfaces_vbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
+	_liquid_surfaces_vbox_container->set_v_size_flags(SIZE_EXPAND_FILL);
+	_liquid_surfaces_vbox_container->set_name("Liquids");
+	tab_container->add_child(_liquid_surfaces_vbox_container);
+
+	_surfaces_button_group.instance();
+	_liquid_surfaces_button_group.instance();
 }
 VoxelWorldEditor::~VoxelWorldEditor() {
 	_world = NULL;
+
+	_surfaces_button_group.unref();
+	_liquid_surfaces_button_group.unref();
 }
 
 void VoxelWorldEditor::_node_removed(Node *p_node) {
@@ -151,8 +254,24 @@ void VoxelWorldEditor::_node_removed(Node *p_node) {
 		_world = NULL;
 }
 
+void VoxelWorldEditor::_on_surface_button_pressed() {
+
+	BaseButton *button = _surfaces_button_group->get_pressed_button();
+
+	if (button) {
+		_selected_type = button->get_meta("index");
+	}
+
+	button = _liquid_surfaces_button_group->get_pressed_button();
+
+	if (button) {
+		_selected_liquid_type = button->get_meta("index");
+	}
+}
+
 void VoxelWorldEditor::_bind_methods() {
 	ClassDB::bind_method("_node_removed", &VoxelWorldEditor::_node_removed);
+	ClassDB::bind_method("_on_surface_button_pressed", &VoxelWorldEditor::_on_surface_button_pressed);
 }
 
 void VoxelWorldEditorPlugin::_notification(int p_what) {

@@ -159,7 +159,7 @@ void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 }
 
 //Liquids
-Ref<VoxelSurface> VoxelmanLibraryMerger::get_liquid_voxel_surface(const int index) {
+Ref<VoxelSurface> VoxelmanLibraryMerger::get_liquid_surface(const int index) {
 	ERR_FAIL_INDEX_V(index, _liquid_surfaces.size(), Ref<VoxelSurface>(NULL));
 
 	return _liquid_surfaces[index];

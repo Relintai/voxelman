@@ -38,8 +38,8 @@ SOFTWARE.
 class VoxelWorld;
 class SpatialEditorPlugin;
 
-class VoxelWorldEditor : public VBoxContainer {
-	GDCLASS(VoxelWorldEditor, VBoxContainer);
+class VoxelWorldEditor : public PanelContainer {
+	GDCLASS(VoxelWorldEditor, PanelContainer);
 
 public:
 	enum VoxelWorldEditorToolMode {
@@ -62,11 +62,20 @@ public:
 protected:
 	static void _bind_methods();
 	void _node_removed(Node *p_node);
+	void _on_surface_button_pressed();
 
 private:
+	VBoxContainer *_surfaces_vbox_container;
+	VBoxContainer *_liquid_surfaces_vbox_container;
+	Ref<ButtonGroup> _surfaces_button_group;
+	Ref<ButtonGroup> _liquid_surfaces_button_group;
+
 	VoxelWorldEditorToolMode _tool_mode;
 	VoxelWorld *_world;
-	int _seletced_type;
+
+	int _selected_type;
+	int _selected_liquid_type;
+
 	SpatialEditorPlugin *spatial_editor;
 	EditorNode *_editor;
 };

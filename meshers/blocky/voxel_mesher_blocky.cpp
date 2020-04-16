@@ -80,7 +80,7 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 				if (type == 0)
 					continue;
 
-				Ref<VoxelSurface> surface = _library->get_voxel_surface(type);
+				Ref<VoxelSurface> surface = _library->get_voxel_surface(type - 1);
 
 				if (!surface.is_valid())
 					continue;

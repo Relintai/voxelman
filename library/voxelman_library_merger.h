@@ -65,7 +65,7 @@ public:
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
 
-	Ref<VoxelSurface> get_liquid_voxel_surface(const int index);
+	Ref<VoxelSurface> get_liquid_surface(const int index);
 	void add_liquid_surface(Ref<VoxelSurface> value);
 	void set_liquid_voxel_surface(const int index, Ref<VoxelSurface> value);
 	void remove_liquid_surface(const int index);
