@@ -215,8 +215,29 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 
 	spatial_editor_hb = memnew(HBoxContainer);
 	spatial_editor_hb->set_h_size_flags(SIZE_EXPAND_FILL);
-	spatial_editor_hb->set_alignment(BoxContainer::ALIGN_END);
+	spatial_editor_hb->set_alignment(BoxContainer::ALIGN_BEGIN);
 	SpatialEditor::get_singleton()->add_control_to_menu_panel(spatial_editor_hb);
+
+	_tool_button_group.instance();
+
+	ToolButton *add_button = memnew(ToolButton);
+	add_button->set_text("Add");
+	add_button->set_toggle_mode(true);
+	add_button->set_pressed(true);
+	add_button->set_button_group(_tool_button_group);
+	add_button->set_meta("tool_mode", TOOL_MODE_ADD);
+	add_button->connect("button_up", this, "_on_tool_button_pressed");
+	add_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/add_mode", "Add Mode", KEY_A));
+	spatial_editor_hb->add_child(add_button);
+
+	ToolButton *remove_button = memnew(ToolButton);
+	remove_button->set_text("Remove");
+	remove_button->set_toggle_mode(true);
+	remove_button->set_button_group(_tool_button_group);
+	remove_button->set_meta("tool_mode", TOOL_MODE_REMOVE);
+	remove_button->connect("button_up", this, "_on_tool_button_pressed");
+	remove_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/remove_mode", "Remove Mode", KEY_S));
+	spatial_editor_hb->add_child(remove_button);
 
 	set_custom_minimum_size(Size2(200 * EDSCALE, 0));
 
@@ -269,9 +290,18 @@ void VoxelWorldEditor::_on_surface_button_pressed() {
 	}
 }
 
+void VoxelWorldEditor::_on_tool_button_pressed() {
+	BaseButton *button = _tool_button_group->get_pressed_button();
+
+	if (button) {
+		_tool_mode = static_cast<VoxelWorldEditorToolMode>(static_cast<int>(button->get_meta("tool_mode")));
+	}
+}
+
 void VoxelWorldEditor::_bind_methods() {
 	ClassDB::bind_method("_node_removed", &VoxelWorldEditor::_node_removed);
 	ClassDB::bind_method("_on_surface_button_pressed", &VoxelWorldEditor::_on_surface_button_pressed);
+	ClassDB::bind_method("_on_tool_button_pressed", &VoxelWorldEditor::_on_tool_button_pressed);
 }
 
 void VoxelWorldEditorPlugin::_notification(int p_what) {

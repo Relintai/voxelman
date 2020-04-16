@@ -63,12 +63,15 @@ protected:
 	static void _bind_methods();
 	void _node_removed(Node *p_node);
 	void _on_surface_button_pressed();
+	void _on_tool_button_pressed();
 
 private:
 	VBoxContainer *_surfaces_vbox_container;
 	VBoxContainer *_liquid_surfaces_vbox_container;
 	Ref<ButtonGroup> _surfaces_button_group;
 	Ref<ButtonGroup> _liquid_surfaces_button_group;
+
+	Ref<ButtonGroup> _tool_button_group;
 
 	VoxelWorldEditorToolMode _tool_mode;
 	VoxelWorld *_world;
