@@ -81,10 +81,10 @@ void VoxelWorld::set_current_seed(const int value) {
 	_current_seed = value;
 }
 
-bool VoxelWorld::get_use_threads() {
+bool VoxelWorld::get_use_threads() const {
 	return _use_threads;
 }
-void VoxelWorld::set_use_threads(bool value) {
+void VoxelWorld::set_use_threads(const bool value) {
 	_use_threads = OS::get_singleton()->can_use_threads() ? value : false;
 }
 
@@ -105,14 +105,14 @@ void VoxelWorld::set_max_frame_chunk_build_steps(const int value) {
 Ref<VoxelmanLibrary> VoxelWorld::get_library() {
 	return _library;
 }
-void VoxelWorld::set_library(const Ref<VoxelmanLibrary> library) {
+void VoxelWorld::set_library(const Ref<VoxelmanLibrary> &library) {
 	_library = library;
 }
 
 Ref<VoxelmanLevelGenerator> VoxelWorld::get_level_generator() const {
 	return _level_generator;
 }
-void VoxelWorld::set_level_generator(const Ref<VoxelmanLevelGenerator> level_generator) {
+void VoxelWorld::set_level_generator(const Ref<VoxelmanLevelGenerator> &level_generator) {
 	_level_generator = level_generator;
 }
 
@@ -130,11 +130,11 @@ void VoxelWorld::set_chunk_spawn_range(const int value) {
 	_chunk_spawn_range = value;
 }
 
-NodePath VoxelWorld::get_player_path() {
+NodePath VoxelWorld::get_player_path() const {
 	return _player_path;
 }
 
-void VoxelWorld::set_player_path(NodePath player_path) {
+void VoxelWorld::set_player_path(const NodePath &player_path) {
 	_player_path = player_path;
 }
 
@@ -302,7 +302,7 @@ int VoxelWorld::get_chunk_count() const {
 	return _chunks_vector.size();
 }
 
-void VoxelWorld::add_to_generation_queue(Ref<VoxelChunk> chunk) {
+void VoxelWorld::add_to_generation_queue(const Ref<VoxelChunk> &chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
 	set_process_internal(true);
@@ -319,26 +319,26 @@ void VoxelWorld::remove_generation_queue_index(int index) {
 
 	_generation_queue.remove(index);
 }
-int VoxelWorld::get_generation_queue_size() {
+int VoxelWorld::get_generation_queue_size() const {
 	return _generation_queue.size();
 }
 
-void VoxelWorld::add_to_generation(Ref<VoxelChunk> chunk) {
+void VoxelWorld::add_to_generation(const Ref<VoxelChunk> &chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
 	_generating.push_back(chunk);
 }
-Ref<VoxelChunk> VoxelWorld::get_generation_index(int index) {
+Ref<VoxelChunk> VoxelWorld::get_generation_index(const int index) {
 	ERR_FAIL_INDEX_V(index, _generating.size(), NULL);
 
 	return _generating.get(index);
 }
-void VoxelWorld::remove_generation_index(int index) {
+void VoxelWorld::remove_generation_index(const int index) {
 	ERR_FAIL_INDEX(index, _generating.size());
 
 	_generating.remove(index);
 }
-int VoxelWorld::get_generation_size() {
+int VoxelWorld::get_generation_size() const {
 	return _generating.size();
 }
 
@@ -365,12 +365,12 @@ Ref<VoxelChunk> VoxelWorld::get_or_create_chunk(int x, int y, int z) {
 	return chunk;
 }
 
-Ref<VoxelChunk> VoxelWorld::create_chunk(int x, int y, int z) {
+Ref<VoxelChunk> VoxelWorld::create_chunk(const int x, const int y, const int z) {
 	Ref<VoxelChunk> c = call("_create_chunk", x, y, z, Ref<VoxelChunk>());
 
 	return c;
 }
-Ref<VoxelChunk> VoxelWorld::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
+Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 		chunk.instance();
 	}

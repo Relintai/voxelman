@@ -74,8 +74,8 @@ public:
 	int get_current_seed() const;
 	void set_current_seed(const int value);
 
-	bool get_use_threads();
-	void set_use_threads(bool value);
+	bool get_use_threads() const;
+	void set_use_threads(const bool value);
 
 	int get_max_concurrent_generations() const;
 	void set_max_concurrent_generations(const int value);
@@ -84,10 +84,10 @@ public:
 	void set_max_frame_chunk_build_steps(const int value);
 
 	Ref<VoxelmanLibrary> get_library();
-	void set_library(const Ref<VoxelmanLibrary> library);
+	void set_library(const Ref<VoxelmanLibrary> &library);
 
 	Ref<VoxelmanLevelGenerator> get_level_generator() const;
-	void set_level_generator(const Ref<VoxelmanLevelGenerator> level_generator);
+	void set_level_generator(const Ref<VoxelmanLevelGenerator> &level_generator);
 
 	float get_voxel_scale() const;
 	void set_voxel_scale(const float value);
@@ -95,8 +95,8 @@ public:
 	int get_chunk_spawn_range() const;
 	void set_chunk_spawn_range(const int value);
 
-	NodePath get_player_path();
-	void set_player_path(NodePath player_path);
+	NodePath get_player_path() const;
+	void set_player_path(const NodePath &player_path);
 
 	Spatial *get_player() const;
 	void set_player(Spatial *player);
@@ -131,20 +131,20 @@ public:
 
 	int get_chunk_count() const;
 
-	void add_to_generation_queue(Ref<VoxelChunk> chunk);
-	Ref<VoxelChunk> get_generation_queue_index(int index);
-	void remove_generation_queue_index(int index);
-	int get_generation_queue_size();
+	void add_to_generation_queue(const Ref<VoxelChunk> &chunk);
+	Ref<VoxelChunk> get_generation_queue_index(const int index);
+	void remove_generation_queue_index(const int index);
+	int get_generation_queue_size() const;
 
-	void add_to_generation(Ref<VoxelChunk> chunk);
-	Ref<VoxelChunk> get_generation_index(int index);
-	void remove_generation_index(int index);
-	int get_generation_size();
+	void add_to_generation(const Ref<VoxelChunk> &chunk);
+	Ref<VoxelChunk> get_generation_index(const int index);
+	void remove_generation_index(const int index);
+	int get_generation_size() const;
 
 	void clear_chunks();
 
-	Ref<VoxelChunk> get_or_create_chunk(int x, int y, int z);
-	Ref<VoxelChunk> create_chunk(int x, int y, int z);
+	Ref<VoxelChunk> get_or_create_chunk(const int x, const int y, const int z);
+	Ref<VoxelChunk> create_chunk(const int x, const int y, const int z);
 
 	void generate_chunk(Ref<VoxelChunk> chunk);
 

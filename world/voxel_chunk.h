@@ -82,94 +82,94 @@ public:
 	void set_visible(const bool value);
 
 	bool get_is_generating() const;
-	void set_is_generating(bool value);
+	void set_is_generating(const bool value);
 
 	bool get_dirty() const;
-	void set_dirty(bool value);
+	void set_dirty(const bool value);
 
 	int get_state() const;
 	void set_state(int value);
 
-	int get_position_x();
-	void set_position_x(int value);
-	int get_position_y();
-	void set_position_y(int value);
-	int get_position_z();
-	void set_position_z(int value);
+	int get_position_x() const;
+	void set_position_x(const int value);
+	int get_position_y() const;
+	void set_position_y(const int value);
+	int get_position_z() const;
+	void set_position_z(const int value);
 
-	int get_size_x();
-	int get_size_y();
-	int get_size_z();
-	void set_size_x(int value);
-	void set_size_y(int value);
-	void set_size_z(int value);
+	int get_size_x() const;
+	int get_size_y() const;
+	int get_size_z() const;
+	void set_size_x(const int value);
+	void set_size_y(const int value);
+	void set_size_z(const int value);
 
-	int get_data_size_x();
-	int get_data_size_y();
-	int get_data_size_z();
-	void set_data_size_x(int value);
-	void set_data_size_y(int value);
-	void set_data_size_z(int value);
+	int get_data_size_x() const;
+	int get_data_size_y() const;
+	int get_data_size_z() const;
+	void set_data_size_x(const int value);
+	void set_data_size_y(const int value);
+	void set_data_size_z(const int value);
 
 	Vector3 get_position() const;
 	Vector3 get_size() const;
-	void set_position(int x, int y, int z);
+	void set_position(const int x, const int y, const int z);
 
 	int get_margin_start() const;
 	int get_margin_end() const;
-	void set_margin_start(int value);
-	void set_margin_end(int value);
+	void set_margin_start(const int value);
+	void set_margin_end(const int value);
 
 	Ref<VoxelmanLibrary> get_library();
 	void set_library(const Ref<VoxelmanLibrary> &value);
 
 	float get_voxel_scale() const;
-	void set_voxel_scale(float value);
+	void set_voxel_scale(const float value);
 
 	VoxelWorld *get_voxel_world() const;
 	void set_voxel_world(VoxelWorld *world);
 	void set_voxel_world_bind(Node *world);
 
 	//Meshers
-	Ref<VoxelMesher> get_mesher(int index) const;
-	void set_mesher(int index, Ref<VoxelMesher> mesher);
-	void remove_mesher(int index);
-	void add_mesher(Ref<VoxelMesher> mesher);
-	int get_mesher_count();
+	Ref<VoxelMesher> get_mesher(const int index) const;
+	void set_mesher(const int index, const Ref<VoxelMesher> &mesher);
+	void remove_mesher(const int index);
+	void add_mesher(const Ref<VoxelMesher> &mesher);
+	int get_mesher_count() const;
 
 	//Channels
 	void setup_channels();
 
-	void set_size(int size_x, int size_y, int size_z, int margin_start = 0, int margin_end = 0);
+	void set_size(const int size_x, const int size_y, const int size_z, const int margin_start = 0, const int margin_end = 0);
 
-	bool validate_channel_data_position(int x, int y, int z) const;
+	bool validate_channel_data_position(const int x, const int y, const int z) const;
 
-	uint8_t get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const;
-	void set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index);
+	uint8_t get_voxel(const int p_x, const int p_y, const int p_z, const int p_channel_index) const;
+	void set_voxel(const uint8_t p_value, const int p_x, const int p_y, const int p_z, const int p_channel_index);
 
-	int get_channel_count();
-	void set_channel_count(int count);
+	int get_channel_count() const;
+	void set_channel_count(const int count);
 
-	void allocate_channel(int channel_index, uint8_t default_value = 0);
-	void fill_channel(uint8_t value, int channel_index);
-	void dealloc_channel(int channel_index);
+	void allocate_channel(const int channel_index, const uint8_t default_value = 0);
+	void fill_channel(const uint8_t value, const int channel_index);
+	void dealloc_channel(const int channel_index);
 
-	uint8_t *get_channel(int channel_index);
-	uint8_t *get_valid_channel(int channel_index, uint8_t default_value = 0);
+	uint8_t *get_channel(const int channel_index);
+	uint8_t *get_valid_channel(const int channel_index, const uint8_t default_value = 0);
 
-	PoolByteArray get_channel_array(int channel_index) const;
-	void set_channel_array(int channel_index, const PoolByteArray &array);
+	PoolByteArray get_channel_array(const int channel_index) const;
+	void set_channel_array(const int channel_index, const PoolByteArray &array);
 
-	PoolByteArray get_channel_compressed(int channel_index) const;
-	void set_channel_compressed(int channel_index, const PoolByteArray &data);
+	PoolByteArray get_channel_compressed(const int channel_index) const;
+	void set_channel_compressed(const int channel_index, const PoolByteArray &data);
 
-	int get_index(int x, int y, int z) const;
-	int get_data_index(int x, int y, int z) const;
+	int get_index(const int x, const int y, const int z) const;
+	int get_data_index(const int x, const int y, const int z) const;
 	int get_data_size() const;
 
 	//Meshing
 	void create_meshers();
-	void build(bool immediate = false);
+	void build(const bool immediate = false);
 	void clear();
 
 	Array merge_mesh_array(Array arr) const;
@@ -182,18 +182,18 @@ public:
 
 	//props
 	void add_prop(Ref<VoxelChunkPropData> prop);
-	Ref<VoxelChunkPropData> get_prop(int index);
-	int get_prop_count();
-	void remove_prop(int index);
+	Ref<VoxelChunkPropData> get_prop(const int index);
+	int get_prop_count() const;
+	void remove_prop(const int index);
 	void clear_props();
 
 	//handlers
 	void enter_tree();
 	void exit_tree();
-	void process(float delta);
-	void physics_process(float delta);
+	void process(const float delta);
+	void physics_process(const float delta);
 	void world_transform_changed();
-	void visibility_changed(bool visible);
+	void visibility_changed(const bool visible);
 	void world_light_added(const Ref<VoxelLight> &light);
 	void world_light_removed(const Ref<VoxelLight> &light);
 

@@ -68,40 +68,40 @@ void VoxelChunk::set_visible(const bool value) {
 _FORCE_INLINE_ bool VoxelChunk::get_is_generating() const {
 	return _is_generating;
 }
-_FORCE_INLINE_ void VoxelChunk::set_is_generating(bool value) {
+_FORCE_INLINE_ void VoxelChunk::set_is_generating(const bool value) {
 	_is_generating = value;
 }
 
 _FORCE_INLINE_ bool VoxelChunk::get_dirty() const {
 	return _dirty;
 }
-_FORCE_INLINE_ void VoxelChunk::set_dirty(bool value) {
+_FORCE_INLINE_ void VoxelChunk::set_dirty(const bool value) {
 	_dirty = value;
 }
 
 _FORCE_INLINE_ int VoxelChunk::get_state() const {
 	return _state;
 }
-_FORCE_INLINE_ void VoxelChunk::set_state(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_state(const int value) {
 	_state = value;
 }
 
-_FORCE_INLINE_ int VoxelChunk::get_position_x() {
+_FORCE_INLINE_ int VoxelChunk::get_position_x() const {
 	return _position_x;
 }
-void VoxelChunk::set_position_x(int value) {
+void VoxelChunk::set_position_x(const int value) {
 	_position_x = value;
 }
-_FORCE_INLINE_ int VoxelChunk::get_position_y() {
+_FORCE_INLINE_ int VoxelChunk::get_position_y() const {
 	return _position_y;
 }
-void VoxelChunk::set_position_y(int value) {
+void VoxelChunk::set_position_y(const int value) {
 	_position_y = value;
 }
-_FORCE_INLINE_ int VoxelChunk::get_position_z() {
+_FORCE_INLINE_ int VoxelChunk::get_position_z() const {
 	return _position_z;
 }
-void VoxelChunk::set_position_z(int value) {
+void VoxelChunk::set_position_z(const int value) {
 	_position_z = value;
 }
 
@@ -109,23 +109,23 @@ _FORCE_INLINE_ Vector3 VoxelChunk::get_position() const {
 	return Vector3(_position_x, _position_y, _position_z);
 }
 
-_FORCE_INLINE_ int VoxelChunk::get_size_x() {
+_FORCE_INLINE_ int VoxelChunk::get_size_x() const {
 	return _size_x;
 }
-_FORCE_INLINE_ int VoxelChunk::get_size_y() {
+_FORCE_INLINE_ int VoxelChunk::get_size_y() const {
 	return _size_y;
 }
-_FORCE_INLINE_ int VoxelChunk::get_size_z() {
+_FORCE_INLINE_ int VoxelChunk::get_size_z() const {
 	return _size_z;
 }
 
-_FORCE_INLINE_ void VoxelChunk::set_size_x(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_size_x(const int value) {
 	_size_x = value;
 }
-_FORCE_INLINE_ void VoxelChunk::set_size_y(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_size_y(const int value) {
 	_size_y = value;
 }
-_FORCE_INLINE_ void VoxelChunk::set_size_z(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_size_z(const int value) {
 	_size_z = value;
 }
 
@@ -133,27 +133,27 @@ _FORCE_INLINE_ Vector3 VoxelChunk::get_size() const {
 	return Vector3(_size_x, _size_y, _size_z);
 }
 
-_FORCE_INLINE_ int VoxelChunk::get_data_size_x() {
+_FORCE_INLINE_ int VoxelChunk::get_data_size_x() const {
 	return _data_size_x;
 }
-_FORCE_INLINE_ int VoxelChunk::get_data_size_y() {
+_FORCE_INLINE_ int VoxelChunk::get_data_size_y() const {
 	return _data_size_y;
 }
-_FORCE_INLINE_ int VoxelChunk::get_data_size_z() {
+_FORCE_INLINE_ int VoxelChunk::get_data_size_z() const {
 	return _data_size_z;
 }
 
-_FORCE_INLINE_ void VoxelChunk::set_data_size_x(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_data_size_x(const int value) {
 	_data_size_x = value;
 }
-_FORCE_INLINE_ void VoxelChunk::set_data_size_y(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_data_size_y(const int value) {
 	_data_size_y = value;
 }
-_FORCE_INLINE_ void VoxelChunk::set_data_size_z(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_data_size_z(const int value) {
 	_data_size_z = value;
 }
 
-void VoxelChunk::set_position(int x, int y, int z) {
+void VoxelChunk::set_position(const int x, const int y, const int z) {
 	_position_x = x;
 	_position_y = y;
 	_position_z = z;
@@ -166,10 +166,10 @@ _FORCE_INLINE_ int VoxelChunk::get_margin_end() const {
 	return _margin_end;
 }
 
-_FORCE_INLINE_ void VoxelChunk::set_margin_start(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_margin_start(const int value) {
 	_margin_start = value;
 }
-_FORCE_INLINE_ void VoxelChunk::set_margin_end(int value) {
+_FORCE_INLINE_ void VoxelChunk::set_margin_end(const int value) {
 	_margin_end = value;
 }
 
@@ -183,7 +183,7 @@ void VoxelChunk::set_library(const Ref<VoxelmanLibrary> &value) {
 float VoxelChunk::get_voxel_scale() const {
 	return _voxel_scale;
 }
-void VoxelChunk::set_voxel_scale(float value) {
+void VoxelChunk::set_voxel_scale(const float value) {
 	_voxel_scale = value;
 
 	for (int i = 0; i < _meshers.size(); ++i) {
@@ -215,20 +215,20 @@ Ref<VoxelMesher> VoxelChunk::get_mesher(int index) const {
 
 	return _meshers.get(index);
 }
-void VoxelChunk::set_mesher(int index, Ref<VoxelMesher> mesher) {
+void VoxelChunk::set_mesher(int index, const Ref<VoxelMesher> &mesher) {
 	ERR_FAIL_INDEX(index, _meshers.size());
 
 	_meshers.set(index, mesher);
 }
-void VoxelChunk::remove_mesher(int index) {
+void VoxelChunk::remove_mesher(const int index) {
 	ERR_FAIL_INDEX(index, _meshers.size());
 
 	_meshers.remove(index);
 }
-void VoxelChunk::add_mesher(Ref<VoxelMesher> mesher) {
+void VoxelChunk::add_mesher(const Ref<VoxelMesher> &mesher) {
 	_meshers.push_back(mesher);
 }
-int VoxelChunk::get_mesher_count() {
+int VoxelChunk::get_mesher_count() const {
 	return _meshers.size();
 }
 
@@ -239,7 +239,7 @@ void VoxelChunk::setup_channels() {
 	call("_setup_channels");
 }
 
-void VoxelChunk::set_size(int size_x, int size_y, int size_z, int margin_start, int margin_end) {
+void VoxelChunk::set_size(const int size_x, const int size_y, const int size_z, const int margin_start, const int margin_end) {
 	if (_size_x == size_x && _size_y == size_y && _size_z == size_z && _margin_start == margin_start && _margin_end == margin_end) {
 		return;
 	}
@@ -266,11 +266,11 @@ void VoxelChunk::set_size(int size_x, int size_y, int size_z, int margin_start, 
 	_margin_end = margin_end;
 }
 
-bool VoxelChunk::validate_channel_data_position(int x, int y, int z) const {
+bool VoxelChunk::validate_channel_data_position(const int x, const int y, const int z) const {
 	return x < _data_size_x && y < _data_size_y && z < _data_size_z;
 }
 
-uint8_t VoxelChunk::get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const {
+uint8_t VoxelChunk::get_voxel(const int p_x, const int p_y, const int p_z, const int p_channel_index) const {
 	int x = p_x + _margin_start;
 	int y = p_y + _margin_start;
 	int z = p_z + _margin_start;
@@ -285,7 +285,7 @@ uint8_t VoxelChunk::get_voxel(int p_x, int p_y, int p_z, int p_channel_index) co
 
 	return ch[get_data_index(x, y, z)];
 }
-void VoxelChunk::set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index) {
+void VoxelChunk::set_voxel(const uint8_t p_value, const int p_x, const int p_y, const int p_z, const int p_channel_index) {
 	int x = p_x + _margin_start;
 	int y = p_y + _margin_start;
 	int z = p_z + _margin_start;
@@ -298,11 +298,11 @@ void VoxelChunk::set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_cha
 	ch[get_data_index(x, y, z)] = p_value;
 }
 
-int VoxelChunk::get_channel_count() {
+int VoxelChunk::get_channel_count() const {
 	return _channels.size();
 }
 
-void VoxelChunk::set_channel_count(int count) {
+void VoxelChunk::set_channel_count(const int count) {
 	if (count == _channels.size())
 		return;
 
@@ -326,7 +326,7 @@ void VoxelChunk::set_channel_count(int count) {
 		_channels.set(i, NULL);
 	}
 }
-void VoxelChunk::allocate_channel(int channel_index, uint8_t default_value) {
+void VoxelChunk::allocate_channel(const int channel_index, const uint8_t default_value) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
 
 	if (_channels[channel_index] != NULL)
@@ -339,7 +339,7 @@ void VoxelChunk::allocate_channel(int channel_index, uint8_t default_value) {
 
 	_channels.set(channel_index, ch);
 }
-void VoxelChunk::fill_channel(uint8_t value, int channel_index) {
+void VoxelChunk::fill_channel(const uint8_t value, const int channel_index) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
 
 	uint8_t *ch = _channels.get(channel_index);
@@ -355,7 +355,7 @@ void VoxelChunk::fill_channel(uint8_t value, int channel_index) {
 		ch[i] = value;
 	}
 }
-void VoxelChunk::dealloc_channel(int channel_index) {
+void VoxelChunk::dealloc_channel(const int channel_index) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
 
 	uint8_t *ch = _channels.get(channel_index);
@@ -367,12 +367,12 @@ void VoxelChunk::dealloc_channel(int channel_index) {
 	}
 }
 
-uint8_t *VoxelChunk::get_channel(int channel_index) {
+uint8_t *VoxelChunk::get_channel(const int channel_index) {
 	ERR_FAIL_INDEX_V(channel_index, _channels.size(), NULL);
 
 	return _channels.get(channel_index);
 }
-uint8_t *VoxelChunk::get_valid_channel(int channel_index, uint8_t default_value) {
+uint8_t *VoxelChunk::get_valid_channel(const int channel_index, const uint8_t default_value) {
 	ERR_FAIL_INDEX_V(channel_index, _channels.size(), 0);
 
 	uint8_t *ch = _channels.get(channel_index);
@@ -386,7 +386,7 @@ uint8_t *VoxelChunk::get_valid_channel(int channel_index, uint8_t default_value)
 	return ch;
 }
 
-PoolByteArray VoxelChunk::get_channel_array(int channel_index) const {
+PoolByteArray VoxelChunk::get_channel_array(const int channel_index) const {
 	PoolByteArray arr;
 
 	uint32_t size = _data_size_x * _data_size_y * _data_size_z;
@@ -407,7 +407,7 @@ PoolByteArray VoxelChunk::get_channel_array(int channel_index) const {
 
 	return arr;
 }
-void VoxelChunk::set_channel_array(int channel_index, const PoolByteArray &array) {
+void VoxelChunk::set_channel_array(const int channel_index, const PoolByteArray &array) {
 	if (array.size() == 0)
 		return;
 
@@ -429,7 +429,7 @@ void VoxelChunk::set_channel_array(int channel_index, const PoolByteArray &array
 	}
 }
 
-PoolByteArray VoxelChunk::get_channel_compressed(int channel_index) const {
+PoolByteArray VoxelChunk::get_channel_compressed(const int channel_index) const {
 	PoolByteArray arr;
 
 	int size = _data_size_x * _data_size_y * _data_size_z;
@@ -458,7 +458,7 @@ PoolByteArray VoxelChunk::get_channel_compressed(int channel_index) const {
 
 	return arr;
 }
-void VoxelChunk::set_channel_compressed(int channel_index, const PoolByteArray &data) {
+void VoxelChunk::set_channel_compressed(const int channel_index, const PoolByteArray &data) {
 	if (data.size() == 0)
 		return;
 
@@ -575,7 +575,7 @@ Array VoxelChunk::merge_mesh_array(Array arr) const {
 
 	return arr;
 }
-Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_color) const {
+Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, const float mul_color) const {
 	ERR_FAIL_COND_V(arr.size() != VisualServer::ARRAY_MAX, arr);
 	ERR_FAIL_COND_V(!tex.is_valid(), arr);
 
@@ -641,10 +641,10 @@ Ref<VoxelChunkPropData> VoxelChunk::get_prop(int index) {
 
 	return _props.get(index);
 }
-int VoxelChunk::get_prop_count() {
+int VoxelChunk::get_prop_count() const {
 	return _props.size();
 }
-void VoxelChunk::remove_prop(int index) {
+void VoxelChunk::remove_prop(const int index) {
 	ERR_FAIL_INDEX(index, _props.size());
 
 	Ref<VoxelChunkPropData> prop = _props.get(index);
@@ -673,18 +673,18 @@ void VoxelChunk::exit_tree() {
 	if (has_method("_exit_tree"))
 		call("_exit_tree");
 }
-void VoxelChunk::process(float delta) {
+void VoxelChunk::process(const float delta) {
 	if (has_method("_process"))
 		call("_process", delta);
 }
-void VoxelChunk::physics_process(float delta) {
+void VoxelChunk::physics_process(const float delta) {
 	if (has_method("_physics_process"))
 		call("_physics_process", delta);
 }
 void VoxelChunk::world_transform_changed() {
 	call("_world_transform_changed");
 }
-void VoxelChunk::visibility_changed(bool visible) {
+void VoxelChunk::visibility_changed(const bool visible) {
 	if (has_method("_visibility_changed"))
 		call("_visibility_changed", _is_visible);
 }
