@@ -45,6 +45,7 @@ typedef class Node3D Spatial;
 
 #include "core/os/os.h"
 
+class VoxelStructure;
 class VoxelChunk;
 class VoxelChunkPropData;
 
@@ -103,10 +104,19 @@ public:
 
 	//World Areas
 	Ref<WorldArea> get_world_area(const int index) const;
-	void add_world_area(Ref<WorldArea> area);
+	void add_world_area(const Ref<WorldArea> &area);
 	void remove_world_area(const int index);
 	void clear_world_areas();
 	int get_world_area_count() const;
+
+	//Voxel Structures
+	Ref<VoxelStructure> get_voxel_structure(const int index) const;
+	void add_voxel_structure(const Ref<VoxelStructure> &structure);
+	void remove_voxel_structure(const Ref<VoxelStructure> &structure);
+	void remove_voxel_structure_index(const int index);
+	void clear_voxel_structures();
+	int get_voxel_structure_count() const;
+	void add_voxel_structure_at_position(Ref<VoxelStructure> structure, const Vector3 &world_position);
 
 	//Chunks
 	void add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z);
@@ -220,6 +230,8 @@ private:
 	Vector<Ref<VoxelChunk> > _chunks_vector;
 
 	Vector<Ref<WorldArea> > _world_areas;
+
+	Vector<Ref<VoxelStructure> > _voxel_structures;
 
 	NodePath _player_path;
 	Spatial *_player;

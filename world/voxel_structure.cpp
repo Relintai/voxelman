@@ -29,36 +29,42 @@ void VoxelStructure::set_use_aabb(const bool value) {
 	_use_aabb = value;
 }
 
-AABB VoxelStructure::get_aabb() const {
-	return _aabb;
+AABB VoxelStructure::get_chunk_aabb() const {
+	return _chunk_aabb;
 }
-void VoxelStructure::set_aabb(const AABB &value) {
-	_aabb = value;
-}
-
-int VoxelStructure::get_world_position_x() const {
-	return _world_position_x;
-}
-void VoxelStructure::set_world_position_x(const int value) {
-	_world_position_x = value;
+void VoxelStructure::set_chunk_aabb(const AABB &value) {
+	_chunk_aabb = value;
 }
 
-int VoxelStructure::get_world_position_y() const {
-	return _world_position_y;
+int VoxelStructure::get_position_x() const {
+	return _position_x;
 }
-void VoxelStructure::set_world_position_y(const int value) {
-	_world_position_y = value;
-}
-
-int VoxelStructure::get_world_position_z() const {
-	return _world_position_z;
-}
-void VoxelStructure::set_world_position_z(const int value) {
-	_world_position_z = value;
+void VoxelStructure::set_position_x(const int value) {
+	_position_x = value;
 }
 
-void VoxelStructure::write_to_chunk(Node *chunk) {
-	ERR_FAIL_COND(Object::cast_to<VoxelChunk>(chunk) == NULL);
+int VoxelStructure::get_position_y() const {
+	return _position_y;
+}
+void VoxelStructure::set_position_y(const int value) {
+	_position_y = value;
+}
+
+int VoxelStructure::get_position_z() const {
+	return _position_z;
+}
+void VoxelStructure::set_position_z(const int value) {
+	_position_z = value;
+}
+
+void VoxelStructure::set_position(const int x, const int y, const int z) {
+	_position_x = x;
+	_position_y = y;
+	_position_z = z;
+}
+
+void VoxelStructure::write_to_chunk(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
 
 	if (has_method("_write_to_chunk"))
 		call("_write_to_chunk", chunk);
@@ -66,9 +72,9 @@ void VoxelStructure::write_to_chunk(Node *chunk) {
 
 VoxelStructure::VoxelStructure() {
 	_use_aabb = true;
-	_world_position_x = 0;
-	_world_position_y = 0;
-	_world_position_z = 0;
+	_position_x = 0;
+	_position_y = 0;
+	_position_z = 0;
 }
 
 VoxelStructure::~VoxelStructure() {
@@ -81,21 +87,23 @@ void VoxelStructure::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_use_aabb", "value"), &VoxelStructure::set_use_aabb);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_aabb"), "set_use_aabb", "get_use_aabb");
 
-	ClassDB::bind_method(D_METHOD("get_aabb"), &VoxelStructure::get_aabb);
-	ClassDB::bind_method(D_METHOD("set_aabb", "value"), &VoxelStructure::set_aabb);
-	ADD_PROPERTY(PropertyInfo(Variant::AABB, "aabb"), "set_aabb", "get_aabb");
+	ClassDB::bind_method(D_METHOD("get_chunk_aabb"), &VoxelStructure::get_chunk_aabb);
+	ClassDB::bind_method(D_METHOD("set_chunk_aabb", "value"), &VoxelStructure::set_chunk_aabb);
+	ADD_PROPERTY(PropertyInfo(Variant::AABB, "chunk_aabb"), "set_chunk_aabb", "get_chunk_aabb");
 
-	ClassDB::bind_method(D_METHOD("get_world_position_x"), &VoxelStructure::get_world_position_x);
-	ClassDB::bind_method(D_METHOD("set_world_position_x", "value"), &VoxelStructure::set_world_position_x);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "world_position_x"), "set_world_position_x", "get_world_position_x");
+	ClassDB::bind_method(D_METHOD("get_position_x"), &VoxelStructure::get_position_x);
+	ClassDB::bind_method(D_METHOD("set_position_x", "value"), &VoxelStructure::set_position_x);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_x"), "set_position_x", "get_position_x");
 
-	ClassDB::bind_method(D_METHOD("get_world_position_y"), &VoxelStructure::get_world_position_y);
-	ClassDB::bind_method(D_METHOD("set_world_position_y", "value"), &VoxelStructure::set_world_position_y);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "world_position_y"), "set_world_position_y", "get_world_position_y");
+	ClassDB::bind_method(D_METHOD("get_position_y"), &VoxelStructure::get_position_y);
+	ClassDB::bind_method(D_METHOD("set_position_y", "value"), &VoxelStructure::set_position_y);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_y"), "set_position_y", "get_position_y");
 
-	ClassDB::bind_method(D_METHOD("get_world_position_z"), &VoxelStructure::get_world_position_z);
-	ClassDB::bind_method(D_METHOD("set_world_position_z", "value"), &VoxelStructure::set_world_position_z);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "world_position_z"), "set_world_position_z", "get_world_position_z");
+	ClassDB::bind_method(D_METHOD("get_position_z"), &VoxelStructure::get_position_z);
+	ClassDB::bind_method(D_METHOD("set_position_z", "value"), &VoxelStructure::set_position_z);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "position_z"), "set_position_z", "get_position_z");
+
+	ClassDB::bind_method(D_METHOD("set_position", "x", "y", "z"), &VoxelStructure::set_position);
 
 	ClassDB::bind_method(D_METHOD("write_to_chunk", "chunk"), &VoxelStructure::write_to_chunk);
 }

@@ -23,7 +23,7 @@ SOFTWARE.
 #ifndef VOXEL_STRUCTURE_H
 #define VOXEL_STRUCTURE_H
 
-#include "core/reference.h"
+#include "core/resource.h"
 
 #include "core/version.h"
 
@@ -40,26 +40,28 @@ using PoolVector = Vector<N>;
 #include "core/math/aabb.h"
 #include "voxel_chunk.h"
 
-class VoxelStructure : public Reference {
-	GDCLASS(VoxelStructure, Reference);
+class VoxelStructure : public Resource {
+	GDCLASS(VoxelStructure, Resource);
 
 public:
 	bool get_use_aabb() const;
 	void set_use_aabb(const bool value);
 
-	AABB get_aabb() const;
-	void set_aabb(const AABB &value);
+	AABB get_chunk_aabb() const;
+	void set_chunk_aabb(const AABB &value);
 
-	int get_world_position_x() const;
-	void set_world_position_x(const int value);
+	int get_position_x() const;
+	void set_position_x(const int value);
 
-	int get_world_position_y() const;
-	void set_world_position_y(const int value);
+	int get_position_y() const;
+	void set_position_y(const int value);
 
-	int get_world_position_z() const;
-	void set_world_position_z(const int value);
+	int get_position_z() const;
+	void set_position_z(const int value);
 
-	void write_to_chunk(Node *chunk);
+	void set_position(const int x, const int y, const int z);
+
+	void write_to_chunk(Ref<VoxelChunk> chunk);
 
 	VoxelStructure();
 	~VoxelStructure();
@@ -69,11 +71,11 @@ protected:
 
 private:
 	bool _use_aabb;
-	AABB _aabb;
+	AABB _chunk_aabb;
 
-	int _world_position_x;
-	int _world_position_y;
-	int _world_position_z;
+	int _position_x;
+	int _position_y;
+	int _position_z;
 };
 
 #endif
