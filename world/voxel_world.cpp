@@ -32,6 +32,8 @@ SOFTWARE.
 #define REAL FLOAT
 #endif
 
+const String VoxelWorld::BINDING_STRING_CHANNEL_TYPE_INFO = "Type,Isolevel,Liquid,Liquid Level";
+
 bool VoxelWorld::get_editable() const {
 	return _editable;
 }
@@ -410,6 +412,9 @@ void VoxelWorld::generate_chunk(Ref<VoxelChunk> chunk) {
 
 	chunk->build();
 }
+int VoxelWorld::_get_channel_index_info(const VoxelWorld::ChannelTypeInfo channel_type) {
+	return -1;
+}
 
 bool VoxelWorld::can_chunk_do_build_step() {
 	if (_max_frame_chunk_build_steps == 0) {
@@ -624,6 +629,10 @@ void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, cons
 	Ref<VoxelChunk> chunk = get_or_create_chunk(x, y, z);
 	chunk->set_voxel(data, bx, by, bz, channel_index);
 	chunk->build();
+}
+
+int VoxelWorld::get_channel_index_info(const VoxelWorld::ChannelTypeInfo channel_type) {
+	return call("_get_channel_index_info", channel_type);
 }
 
 VoxelWorld::VoxelWorld() {
@@ -944,4 +953,14 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_lights", "chunks"), &VoxelWorld::set_lights);
 
 	ClassDB::bind_method(D_METHOD("set_voxel_at_world_position", "world_position", "data", "channel_index"), &VoxelWorld::set_voxel_at_world_position);
+
+	BIND_VMETHOD(MethodInfo("_get_channel_index_info", PropertyInfo(Variant::INT, "channel_type", PROPERTY_HINT_ENUM, BINDING_STRING_CHANNEL_TYPE_INFO)));
+
+	ClassDB::bind_method(D_METHOD("get_channel_index_info", "channel_type"), &VoxelWorld::get_channel_index_info);
+	ClassDB::bind_method(D_METHOD("_get_channel_index_info", "channel_type"), &VoxelWorld::_get_channel_index_info);
+
+	BIND_ENUM_CONSTANT(CHANNEL_TYPE_INFO_TYPE);
+	BIND_ENUM_CONSTANT(CHANNEL_TYPE_INFO_ISOLEVEL);
+	BIND_ENUM_CONSTANT(CHANNEL_TYPE_INFO_LIQUID);
+	BIND_ENUM_CONSTANT(CHANNEL_TYPE_INFO_LIQUID_LEVEL);
 }

@@ -54,6 +54,21 @@ void VoxelWorldDefault::_chunk_added(Ref<VoxelChunk> chunk) {
 	}
 }
 
+int VoxelWorldDefault::_get_channel_index_info(const VoxelWorld::ChannelTypeInfo channel_type) {
+	switch (channel_type) {
+		case CHANNEL_TYPE_INFO_TYPE:
+			return VoxelChunkDefault::DEFAULT_CHANNEL_TYPE;
+		case CHANNEL_TYPE_INFO_ISOLEVEL:
+			return VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL;
+		case CHANNEL_TYPE_INFO_LIQUID:
+			return VoxelChunkDefault::DEFAULT_CHANNEL_LIQUID_TYPES;
+		case CHANNEL_TYPE_INFO_LIQUID_LEVEL:
+			return VoxelChunkDefault::DEFAULT_CHANNEL_LIQUID_FILL;
+		default:
+			return -1;
+	}
+}
+
 VoxelWorldDefault::VoxelWorldDefault() {
 	_build_flags = VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER | VoxelChunkDefault::BUILD_FLAG_CREATE_LODS;
 

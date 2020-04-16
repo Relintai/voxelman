@@ -53,6 +53,16 @@ class VoxelWorld : public Navigation {
 	GDCLASS(VoxelWorld, Navigation);
 
 public:
+	enum ChannelTypeInfo {
+		CHANNEL_TYPE_INFO_TYPE = 0,
+		CHANNEL_TYPE_INFO_ISOLEVEL,
+		CHANNEL_TYPE_INFO_LIQUID,
+		CHANNEL_TYPE_INFO_LIQUID_LEVEL,
+	};
+
+	static const String BINDING_STRING_CHANNEL_TYPE_INFO;
+
+public:
 	bool get_editable() const;
 	void set_editable(const bool value);
 
@@ -171,6 +181,7 @@ public:
 
 	//Helpers
 	void set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index);
+	int get_channel_index_info(const ChannelTypeInfo channel_type);
 
 	VoxelWorld();
 	~VoxelWorld();
@@ -178,6 +189,7 @@ public:
 protected:
 	virtual void _generate_chunk(Ref<VoxelChunk> chunk);
 	virtual Ref<VoxelChunk> _create_chunk(int x, int y, int z, Ref<VoxelChunk> p_chunk);
+	virtual int _get_channel_index_info(const ChannelTypeInfo channel_type);
 
 	virtual void _notification(int p_what);
 	static void _bind_methods();
@@ -255,5 +267,7 @@ private:
 _FORCE_INLINE_ bool operator==(const VoxelWorld::IntPos &a, const VoxelWorld::IntPos &b) {
 	return a.x == b.x && a.y == b.y && a.z == b.z;
 }
+
+VARIANT_ENUM_CAST(VoxelWorld::ChannelTypeInfo);
 
 #endif

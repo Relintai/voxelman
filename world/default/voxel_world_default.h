@@ -38,6 +38,7 @@ public:
 protected:
 	Ref<VoxelChunk> _create_chunk(int x, int y, int z, Ref<VoxelChunk> p_chunk);
 	virtual void _chunk_added(Ref<VoxelChunk> chunk);
+	int _get_channel_index_info(const ChannelTypeInfo channel_type);
 
 	static void _bind_methods();
 
