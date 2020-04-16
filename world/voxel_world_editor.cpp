@@ -103,81 +103,14 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 		int selected_voxel = 0;
 
 		if (_tool_mode == TOOL_MODE_ADD) {
-			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * res.normal)) / _world->get_voxel_scale();
+			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * res.normal));
 			selected_voxel = _seletced_type;
 		} else if (_tool_mode == TOOL_MODE_REMOVE) {
-			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * -res.normal)) / _world->get_voxel_scale();
+			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * -res.normal));
 			selected_voxel = 0;
 		}
 
-		//todo add these?:
-		//_world->set_voxel(pos, data[]);
-		//Ref<VoxelChunk> chunk = _world->get_or_spawn_chunk_at_world_pos(pos);
-
-		//Note: floor is needed to handle negative numbers proiberly
-		int x = static_cast<int>(Math::floor(pos.x / _world->get_chunk_size_x() / _world->get_voxel_scale()));
-		int y = static_cast<int>(Math::floor(pos.y / _world->get_chunk_size_y() / _world->get_voxel_scale()));
-		int z = static_cast<int>(Math::floor(pos.z / _world->get_chunk_size_z() / _world->get_voxel_scale()));
-
-		int bx = static_cast<int>(Math::floor(pos.x / _world->get_voxel_scale())) % _world->get_chunk_size_x();
-		int by = static_cast<int>(Math::floor(pos.y / _world->get_voxel_scale())) % _world->get_chunk_size_y();
-		int bz = static_cast<int>(Math::floor(pos.z / _world->get_voxel_scale())) % _world->get_chunk_size_z();
-
-		if (bx < 0) {
-			bx += _world->get_chunk_size_x();
-		}
-
-		if (by < 0) {
-			by += _world->get_chunk_size_y();
-		}
-
-		if (bz < 0) {
-			bz += _world->get_chunk_size_z();
-		}
-
-		if (_world->get_data_margin_end() > 0) {
-			if (bx == 0) {
-				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x - 1, y, z);
-				chunk->set_voxel(selected_voxel, _world->get_chunk_size_x(), by, bz, 0);
-				chunk->build();
-			}
-
-			if (by == 0) {
-				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y - 1, z);
-				chunk->set_voxel(selected_voxel, bx, _world->get_chunk_size_y(), bz, 0);
-				chunk->build();
-			}
-
-			if (bz == 0) {
-				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y, z - 1);
-				chunk->set_voxel(selected_voxel, bx, by, _world->get_chunk_size_z(), 0);
-				chunk->build();
-			}
-		}
-
-		if (_world->get_data_margin_start() > 0) {
-			if (bx == _world->get_chunk_size_x() - 1) {
-				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x + 1, y, z);
-				chunk->set_voxel(selected_voxel, -1, by, bz, 0);
-				chunk->build();
-			}
-
-			if (by == _world->get_chunk_size_y() - 1) {
-				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y + 1, z);
-				chunk->set_voxel(selected_voxel, bx, -1, bz, 0);
-				chunk->build();
-			}
-
-			if (bz == _world->get_chunk_size_z() - 1) {
-				Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y, z + 1);
-				chunk->set_voxel(selected_voxel, bx, by, -1, 0);
-				chunk->build();
-			}
-		}
-
-		Ref<VoxelChunk> chunk = _world->get_or_create_chunk(x, y, z);
-		chunk->set_voxel(selected_voxel, bx, by, bz, 0);
-		chunk->build();
+		_world->set_voxel_at_world_position(pos, selected_voxel, 0);
 
 		return true;
 	}

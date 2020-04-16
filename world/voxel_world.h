@@ -169,6 +169,9 @@ public:
 	Vector<Variant> get_lights();
 	void set_lights(const Vector<Variant> &chunks);
 
+	//Helpers
+	void set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index);
+
 	VoxelWorld();
 	~VoxelWorld();
 
