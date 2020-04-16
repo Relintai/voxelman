@@ -44,14 +44,14 @@ class EnvironmentData : public Resource {
 
 public:
 	Ref<Environment> get_environment();
-	void set_environment(Ref<Environment> value);
+	void set_environment(const Ref<Environment> &value);
 
-	Color get_color(int index);
-	void set_color(int index, Color value);
-	float get_energy(int index);
-	void set_energy(int index, float value);
-	float get_indirect_energy(int index);
-	void set_indirect_energy(int index, float value);
+	Color get_color(const int index);
+	void set_color(const int index, const Color &value);
+	float get_energy(const int index);
+	void set_energy(const int index, const float value);
+	float get_indirect_energy(const int index);
+	void set_indirect_energy(const int index, const float value);
 
 	void setup(WorldEnvironment *world_environment, DirectionalLight *primary_light, DirectionalLight *secondary_light);
 	void setup_bind(Node *world_environment, Node *primary_light, Node *secondary_light);

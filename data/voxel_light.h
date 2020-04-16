@@ -38,7 +38,7 @@ public:
 	void set_world_position(const int x, const int y, const int z);
 
 	Color get_color() const;
-	void set_color(const Color color);
+	void set_color(const Color &color);
 
 	float get_size() const;
 	void set_size(const float strength);

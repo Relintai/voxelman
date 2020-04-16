@@ -55,7 +55,7 @@ void VoxelmanLibraryMerger::set_keep_original_atlases(const bool value) {
 Color VoxelmanLibraryMerger::get_background_color() const {
 	return _packer->get_background_color();
 }
-void VoxelmanLibraryMerger::set_background_color(const Color color) {
+void VoxelmanLibraryMerger::set_background_color(const Color &color) {
 	_packer->set_background_color(color);
 }
 
@@ -252,7 +252,7 @@ void VoxelmanLibraryMerger::add_prop(Ref<PackedScene> value) {
 
 	////_props[value->get_id()] = value;
 }
-void VoxelmanLibraryMerger::set_prop(const int id, Ref<PackedScene> value) {
+void VoxelmanLibraryMerger::set_prop(const int id, const Ref<PackedScene> &value) {
 	//_props[value->get_id()] = value;
 }
 void VoxelmanLibraryMerger::remove_prop(const int id) {
@@ -335,7 +335,7 @@ void VoxelmanLibraryMerger::refresh_rects() {
 	}
 }
 
-void VoxelmanLibraryMerger::_setup_material_albedo(int material_index, Ref<Texture> texture) {
+void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, const Ref<Texture> &texture) {
 	Ref<SpatialMaterial> mat;
 
 	int count = 0;

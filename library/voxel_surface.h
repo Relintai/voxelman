@@ -74,13 +74,13 @@ public:
 	void set_transparent(const bool transparent);
 
 	Rect2 get_rect(const VoxelSurfaceSides side) const;
-	void set_rect(const VoxelSurfaceSides side, const Rect2 rect);
+	void set_rect(const VoxelSurfaceSides side, const Rect2 &rect);
 
 	Ref<VoxelmanLibrary> get_library() const;
 	void set_library(Ref<VoxelmanLibrary> library);
 
-	Vector2 transform_uv(const VoxelSurfaceSides p_side, const Vector2 p_uv) const;
-	Vector2 transform_uv_scaled(const VoxelSurfaceSides p_side, const Vector2 p_uv, int p_current_x, int p_current_y, int p_max) const;
+	Vector2 transform_uv(const VoxelSurfaceSides p_side, const Vector2 &p_uv) const;
+	Vector2 transform_uv_scaled(const VoxelSurfaceSides p_side, const Vector2 &p_uv, const int p_current_x, const int p_current_y, const int p_max) const;
 
 	virtual void refresh_rects();
 

@@ -32,21 +32,21 @@ void WorldArea::set_aabb(const AABB value) {
 Ref<Texture> WorldArea::get_map_texture() const {
 	return _map_texture;
 }
-void WorldArea::set_map_texture(const Ref<Texture> value) {
+void WorldArea::set_map_texture(const Ref<Texture> &value) {
 	_map_texture = value;
 }
 
 Ref<Texture> WorldArea::get_fov_texture() const {
 	return _fov_texture;
 }
-void WorldArea::set_fov_texture(const Ref<Texture> value) {
+void WorldArea::set_fov_texture(const Ref<Texture> &value) {
 	_fov_texture = value;
 }
 
 String WorldArea::get_name() const {
 	return _name;
 }
-void WorldArea::set_name(const String value) {
+void WorldArea::set_name(const String &value) {
 	_name = value;
 }
 

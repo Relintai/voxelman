@@ -31,36 +31,36 @@ SOFTWARE.
 Ref<Environment> EnvironmentData::get_environment() {
 	return _environment;
 }
-void EnvironmentData::set_environment(Ref<Environment> value) {
+void EnvironmentData::set_environment(const Ref<Environment> &value) {
 	_environment = value;
 }
 
-Color EnvironmentData::get_color(int index) {
+Color EnvironmentData::get_color(const int index) {
 	ERR_FAIL_INDEX_V(index, LIGHT_COUNT, Color());
 
 	return _colors[index];
 }
-void EnvironmentData::set_color(int index, Color value) {
+void EnvironmentData::set_color(const int index, const Color &value) {
 	ERR_FAIL_INDEX(index, LIGHT_COUNT);
 
 	_colors[index] = value;
 }
-float EnvironmentData::get_energy(int index) {
+float EnvironmentData::get_energy(const int index) {
 	ERR_FAIL_INDEX_V(index, LIGHT_COUNT, 0);
 
 	return _energies[index];
 }
-void EnvironmentData::set_energy(int index, float value) {
+void EnvironmentData::set_energy(const int index, const float value) {
 	ERR_FAIL_INDEX(index, LIGHT_COUNT);
 
 	_energies[index] = value;
 }
-float EnvironmentData::get_indirect_energy(int index) {
+float EnvironmentData::get_indirect_energy(const int index) {
 	ERR_FAIL_INDEX_V(index, LIGHT_COUNT, 0);
 
 	return _indirect_energies[index];
 }
-void EnvironmentData::set_indirect_energy(int index, float value) {
+void EnvironmentData::set_indirect_energy(const int index, const float value) {
 	ERR_FAIL_INDEX(index, LIGHT_COUNT);
 
 	_indirect_energies[index] = value;

@@ -37,13 +37,13 @@ public:
 	void set_aabb(const AABB value);
 
 	Ref<Texture> get_map_texture() const;
-	void set_map_texture(const Ref<Texture> value);
+	void set_map_texture(const Ref<Texture> &value);
 
 	Ref<Texture> get_fov_texture() const;
-	void set_fov_texture(const Ref<Texture> value);
+	void set_fov_texture(const Ref<Texture> &value);
 
 	String get_name() const;
-	void set_name(const String value);
+	void set_name(const String &value);
 
 	int get_level() const;
 	void set_level(const int value);

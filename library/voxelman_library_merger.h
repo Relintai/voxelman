@@ -50,7 +50,7 @@ public:
 	void set_keep_original_atlases(const bool value);
 
 	Color get_background_color() const;
-	void set_background_color(const Color color);
+	void set_background_color(const Color &color);
 
 	int get_margin() const;
 	void set_margin(const int margin);
@@ -77,7 +77,7 @@ public:
 
 	Ref<PackedScene> get_prop(const int id);
 	void add_prop(Ref<PackedScene> value);
-	void set_prop(const int id, Ref<PackedScene> value);
+	void set_prop(const int id, const Ref<PackedScene> &value);
 	void remove_prop(const int id);
 	int get_num_props() const;
 	void clear_props();
@@ -87,7 +87,7 @@ public:
 
 	void refresh_rects();
 
-	void _setup_material_albedo(int material_index, Ref<Texture> texture);
+	void _setup_material_albedo(const int material_index, const Ref<Texture> &texture);
 
 	VoxelmanLibraryMerger();
 	~VoxelmanLibraryMerger();

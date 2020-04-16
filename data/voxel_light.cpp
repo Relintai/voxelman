@@ -43,7 +43,7 @@ void VoxelLight::set_world_position(const int x, const int y, const int z) {
 _FORCE_INLINE_ Color VoxelLight::get_color() const {
 	return _color;
 }
-void VoxelLight::set_color(Color color) {
+void VoxelLight::set_color(const Color &color) {
 	_color = color;
 }
 

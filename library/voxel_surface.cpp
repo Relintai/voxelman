@@ -46,7 +46,7 @@ void VoxelSurface::set_transparent(const bool transparent) {
 Rect2 VoxelSurface::get_rect(const VoxelSurfaceSides side) const {
 	return _rects[side];
 }
-void VoxelSurface::set_rect(const VoxelSurfaceSides side, const Rect2 rect) {
+void VoxelSurface::set_rect(const VoxelSurfaceSides side, const Rect2 &rect) {
 	_rects[side] = rect;
 }
 
@@ -58,7 +58,7 @@ void VoxelSurface::set_library(Ref<VoxelmanLibrary> library) {
 	_library = (*library);
 }
 
-_FORCE_INLINE_ Vector2 VoxelSurface::transform_uv(const VoxelSurfaceSides p_side, const Vector2 p_uv) const {
+_FORCE_INLINE_ Vector2 VoxelSurface::transform_uv(const VoxelSurfaceSides p_side, const Vector2 &p_uv) const {
 	Vector2 uv = p_uv;
 
 	Rect2 r = _rects[p_side];
@@ -71,7 +71,7 @@ _FORCE_INLINE_ Vector2 VoxelSurface::transform_uv(const VoxelSurfaceSides p_side
 	return uv;
 }
 
-_FORCE_INLINE_ Vector2 VoxelSurface::transform_uv_scaled(const VoxelSurfaceSides p_side, const Vector2 p_uv, int p_current_x, int p_current_y, int p_max) const {
+_FORCE_INLINE_ Vector2 VoxelSurface::transform_uv_scaled(const VoxelSurfaceSides p_side, const Vector2 &p_uv, const int p_current_x, const int p_current_y, const int p_max) const {
 	Vector2 uv = p_uv;
 
 	Rect2 r = _rects[p_side];

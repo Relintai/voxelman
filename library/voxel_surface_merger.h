@@ -40,10 +40,10 @@ class VoxelSurfaceMerger : public VoxelSurface {
 
 public:
 	Ref<AtlasTexture> get_region(const VoxelSurfaceSides side);
-	void set_region(const VoxelSurfaceSides side, Ref<AtlasTexture> texture);
+	void set_region(const VoxelSurfaceSides side, const Ref<AtlasTexture> &texture);
 
 	Ref<Texture> get_texture(const VoxelSurfaceSides side);
-	void set_texture(const VoxelSurfaceSides side, Ref<Texture> texture);
+	void set_texture(const VoxelSurfaceSides side, const Ref<Texture> &texture);
 
 	void refresh_rects();
 

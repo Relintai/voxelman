@@ -35,14 +35,14 @@ typedef class StandardMaterial3D SpatialMaterial;
 Ref<AtlasTexture> VoxelSurfaceMerger::get_region(const VoxelSurfaceSides side) {
 	return _regions[side];
 }
-void VoxelSurfaceMerger::set_region(const VoxelSurfaceSides side, Ref<AtlasTexture> texture) {
+void VoxelSurfaceMerger::set_region(const VoxelSurfaceSides side, const Ref<AtlasTexture> &texture) {
 	_regions[side] = texture;
 }
 
 Ref<Texture> VoxelSurfaceMerger::get_texture(const VoxelSurfaceSides side) {
 	return _textures[side];
 }
-void VoxelSurfaceMerger::set_texture(const VoxelSurfaceSides side, Ref<Texture> texture) {
+void VoxelSurfaceMerger::set_texture(const VoxelSurfaceSides side, const Ref<Texture> &texture) {
 	_textures[side] = texture;
 }
 
