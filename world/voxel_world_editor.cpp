@@ -163,6 +163,9 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 	if (!library.is_valid())
 		return;
 
+	if (!library->get_initialized())
+		library->refresh_rects();
+
 	bool f = false;
 	for (int i = 0; i < library->get_num_surfaces(); ++i) {
 		Ref<VoxelSurface> surface = library->get_voxel_surface(i);

@@ -43,6 +43,9 @@ public:
 	};
 
 public:
+	bool get_initialized() const;
+	void set_initialized(const bool value);
+
 	Ref<Material> get_material(const int index);
 	void add_material(const Ref<Material> &value);
 	void set_material(const int index, const Ref<Material> &value);
@@ -95,6 +98,7 @@ protected:
 	static void _bind_methods();
 
 private:
+	bool _initialized;
 	Vector<Ref<Material> > _materials;
 	Vector<Ref<Material> > _liquid_materials;
 	Vector<Ref<Material> > _clutter_materials;

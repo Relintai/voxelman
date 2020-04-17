@@ -26,6 +26,13 @@ SOFTWARE.
 
 #include "core/version.h"
 
+bool VoxelmanLibrary::get_initialized() const {
+	return _initialized;
+}
+void VoxelmanLibrary::set_initialized(const bool value) {
+	_initialized = value;
+}
+
 //Materials
 Ref<Material> VoxelmanLibrary::get_material(const int index) {
 	ERR_FAIL_INDEX_V(index, _materials.size(), Ref<VoxelSurface>(NULL));
@@ -181,6 +188,7 @@ void VoxelmanLibrary::clear_props() {
 
 //Rects
 void VoxelmanLibrary::refresh_rects() {
+	_initialized = true;
 }
 
 void VoxelmanLibrary::setup_material_albedo(int material_index, Ref<Texture> texture) {
@@ -189,6 +197,7 @@ void VoxelmanLibrary::setup_material_albedo(int material_index, Ref<Texture> tex
 }
 
 VoxelmanLibrary::VoxelmanLibrary() {
+	_initialized = false;
 }
 
 VoxelmanLibrary::~VoxelmanLibrary() {
@@ -198,6 +207,10 @@ VoxelmanLibrary::~VoxelmanLibrary() {
 }
 
 void VoxelmanLibrary::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_initialized"), &VoxelmanLibrary::get_initialized);
+	ClassDB::bind_method(D_METHOD("set_initialized", "value"), &VoxelmanLibrary::set_initialized);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "initialized"), "set_initialized", "get_initialized");
+
 	BIND_VMETHOD(MethodInfo("_setup_material_albedo", PropertyInfo(Variant::INT, "material_index"), PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture")));
 
 	ClassDB::bind_method(D_METHOD("get_material", "index"), &VoxelmanLibrary::get_material);

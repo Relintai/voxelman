@@ -113,6 +113,8 @@ void VoxelmanLibrarySimple::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 
 		_voxel_surfaces.push_back(surface);
 	}
+
+	set_initialized(true);
 }
 
 //Liquids

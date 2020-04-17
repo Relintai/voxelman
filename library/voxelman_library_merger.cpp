@@ -333,6 +333,8 @@ void VoxelmanLibraryMerger::refresh_rects() {
 			surface->refresh_rects();
 		}
 	}
+
+	set_initialized(true);
 }
 
 void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, const Ref<Texture> &texture) {
