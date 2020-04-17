@@ -180,7 +180,11 @@ public:
 	void set_lights(const Vector<Variant> &chunks);
 
 	//Helpers
+	uint8_t get_voxel_at_world_position(const Vector3 &world_position, const int channel_index);
 	void set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index);
+	Ref<VoxelChunk> get_chunk_at_world_position(const Vector3 &world_position);
+	Ref<VoxelChunk> get_or_create_chunk_at_world_position(const Vector3 &world_position);
+
 	int get_channel_index_info(const ChannelTypeInfo channel_type);
 
 	VoxelWorld();

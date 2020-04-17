@@ -259,7 +259,7 @@ Ref<VoxelChunk> VoxelWorld::get_chunk(const int x, const int y, const int z) {
 	if (_chunks.has(pos))
 		return _chunks.get(pos);
 
-	return NULL;
+	return Ref<VoxelChunk>();
 }
 Ref<VoxelChunk> VoxelWorld::remove_chunk(const int x, const int y, const int z) {
 	IntPos pos(x, y, z);
@@ -562,6 +562,38 @@ void VoxelWorld::set_lights(const Vector<Variant> &chunks) {
 	}
 }
 
+uint8_t VoxelWorld::get_voxel_at_world_position(const Vector3 &world_position, const int channel_index) {
+	Vector3 pos = world_position / get_voxel_scale();
+
+	//Note: floor is needed to handle negative numbers proiberly
+	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x() / get_voxel_scale()));
+	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y() / get_voxel_scale()));
+	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z() / get_voxel_scale()));
+
+	int bx = static_cast<int>(Math::floor(pos.x / get_voxel_scale())) % get_chunk_size_x();
+	int by = static_cast<int>(Math::floor(pos.y / get_voxel_scale())) % get_chunk_size_y();
+	int bz = static_cast<int>(Math::floor(pos.z / get_voxel_scale())) % get_chunk_size_z();
+
+	if (bx < 0) {
+		bx += get_chunk_size_x();
+	}
+
+	if (by < 0) {
+		by += get_chunk_size_y();
+	}
+
+	if (bz < 0) {
+		bz += get_chunk_size_z();
+	}
+
+	Ref<VoxelChunk> chunk = get_chunk(x, y, z);
+
+	if (chunk.is_valid())
+		return chunk->get_voxel(bx, by, bz, channel_index);
+
+	return 0;
+}
+
 void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index) {
 	Vector3 pos = world_position / get_voxel_scale();
 
@@ -629,6 +661,27 @@ void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, cons
 	Ref<VoxelChunk> chunk = get_or_create_chunk(x, y, z);
 	chunk->set_voxel(data, bx, by, bz, channel_index);
 	chunk->build();
+}
+
+Ref<VoxelChunk> VoxelWorld::get_chunk_at_world_position(const Vector3 &world_position) {
+	Vector3 pos = world_position / get_voxel_scale();
+
+	//Note: floor is needed to handle negative numbers proiberly
+	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x() / get_voxel_scale()));
+	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y() / get_voxel_scale()));
+	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z() / get_voxel_scale()));
+
+	return get_chunk(x, y, z);
+}
+Ref<VoxelChunk> VoxelWorld::get_or_create_chunk_at_world_position(const Vector3 &world_position) {
+	Vector3 pos = world_position / get_voxel_scale();
+
+	//Note: floor is needed to handle negative numbers proiberly
+	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x() / get_voxel_scale()));
+	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y() / get_voxel_scale()));
+	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z() / get_voxel_scale()));
+
+	return get_or_create_chunk(x, y, z);
 }
 
 int VoxelWorld::get_channel_index_info(const VoxelWorld::ChannelTypeInfo channel_type) {
@@ -952,7 +1005,10 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_lights"), &VoxelWorld::get_lights);
 	ClassDB::bind_method(D_METHOD("set_lights", "chunks"), &VoxelWorld::set_lights);
 
+	ClassDB::bind_method(D_METHOD("get_voxel_at_world_position", "world_position", "channel_index"), &VoxelWorld::get_voxel_at_world_position);
 	ClassDB::bind_method(D_METHOD("set_voxel_at_world_position", "world_position", "data", "channel_index"), &VoxelWorld::set_voxel_at_world_position);
+	ClassDB::bind_method(D_METHOD("get_chunk_at_world_position", "world_position"), &VoxelWorld::get_chunk_at_world_position);
+	ClassDB::bind_method(D_METHOD("get_or_create_chunk_at_world_position", "world_position"), &VoxelWorld::get_or_create_chunk_at_world_position);
 
 	BIND_VMETHOD(MethodInfo("_get_channel_index_info", PropertyInfo(Variant::INT, "channel_type", PROPERTY_HINT_ENUM, BINDING_STRING_CHANNEL_TYPE_INFO)));
 
