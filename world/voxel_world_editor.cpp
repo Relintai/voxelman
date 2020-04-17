@@ -104,6 +104,16 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 	if (ss->intersect_ray(from, to, res)) {
 		Vector3 pos;
 		int selected_voxel = 0;
+		int channel = 0;
+
+		if (_current_tab == 0) {
+			channel = _channel_type;
+		} else {
+			channel = _channel_liquid_type;
+		}
+
+		if (channel == -1)
+			return false;
 
 		if (_tool_mode == TOOL_MODE_ADD) {
 			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * res.normal));
@@ -113,7 +123,7 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 			selected_voxel = 0;
 		}
 
-		_world->set_voxel_at_world_position(pos, selected_voxel, 0);
+		_world->set_voxel_at_world_position(pos, selected_voxel, channel);
 
 		return true;
 	}
@@ -126,6 +136,9 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 
 	if (!_world)
 		return;
+
+	_channel_type = _world->get_channel_index_info(VoxelWorld::CHANNEL_TYPE_INFO_TYPE);
+	_channel_liquid_type = _world->get_channel_index_info(VoxelWorld::CHANNEL_TYPE_INFO_LIQUID);
 
 	spatial_editor = Object::cast_to<SpatialEditorPlugin>(_editor->get_editor_plugin_screen());
 
@@ -203,15 +216,21 @@ VoxelWorldEditor::VoxelWorldEditor() {
 	_world = NULL;
 	_selected_type = 0;
 	_selected_liquid_type = 0;
+	_channel_type = -1;
+	_channel_liquid_type = -1;
 	_editor = NULL;
 	_tool_mode = TOOL_MODE_ADD;
+	_current_tab = 0;
 }
 VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	_world = NULL;
 	_selected_type = 0;
 	_selected_liquid_type = 0;
+	_channel_type = -1;
+	_channel_liquid_type = -1;
 	_editor = p_editor;
 	_tool_mode = TOOL_MODE_ADD;
+	_current_tab = 0;
 
 	spatial_editor_hb = memnew(HBoxContainer);
 	spatial_editor_hb->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -245,6 +264,7 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	tab_container->set_h_size_flags(SIZE_EXPAND_FILL);
 	tab_container->set_v_size_flags(SIZE_EXPAND_FILL);
 	tab_container->set_name("Surfaces");
+	tab_container->connect("tab_selected", this, "_tab_selected");
 	add_child(tab_container);
 
 	_surfaces_vbox_container = memnew(VBoxContainer);
@@ -298,10 +318,15 @@ void VoxelWorldEditor::_on_tool_button_pressed() {
 	}
 }
 
+void VoxelWorldEditor::_tab_selected(int tab) {
+	_current_tab = tab;
+}
+
 void VoxelWorldEditor::_bind_methods() {
 	ClassDB::bind_method("_node_removed", &VoxelWorldEditor::_node_removed);
 	ClassDB::bind_method("_on_surface_button_pressed", &VoxelWorldEditor::_on_surface_button_pressed);
 	ClassDB::bind_method("_on_tool_button_pressed", &VoxelWorldEditor::_on_tool_button_pressed);
+	ClassDB::bind_method("_tab_selected", &VoxelWorldEditor::_tab_selected);
 }
 
 void VoxelWorldEditorPlugin::_notification(int p_what) {

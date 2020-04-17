@@ -64,6 +64,7 @@ protected:
 	void _node_removed(Node *p_node);
 	void _on_surface_button_pressed();
 	void _on_tool_button_pressed();
+	void _tab_selected(int tab);
 
 private:
 	VBoxContainer *_surfaces_vbox_container;
@@ -81,6 +82,11 @@ private:
 
 	SpatialEditorPlugin *spatial_editor;
 	EditorNode *_editor;
+
+	int _channel_type;
+	int _channel_liquid_type;
+
+	int _current_tab;
 };
 
 class VoxelWorldEditorPlugin : public EditorPlugin {
