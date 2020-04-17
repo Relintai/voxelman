@@ -752,6 +752,8 @@ void VoxelWorld::_generate_chunk(Ref<VoxelChunk> chunk) {
 void VoxelWorld::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
+			set_player_bind(get_node_or_null(get_player_path()));
+
 			set_process_internal(true);
 			set_physics_process_internal(true);
 			set_notify_transform(true);
@@ -926,7 +928,7 @@ void VoxelWorld::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_player"), &VoxelWorld::get_player);
 	ClassDB::bind_method(D_METHOD("set_player", "player"), &VoxelWorld::set_player_bind);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "player", PROPERTY_HINT_RESOURCE_TYPE, "Spatial"), "set_player", "get_player");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "player", PROPERTY_HINT_RESOURCE_TYPE, "Spatial", 0), "set_player", "get_player");
 
 	ClassDB::bind_method(D_METHOD("get_chunks"), &VoxelWorld::get_chunks);
 	ClassDB::bind_method(D_METHOD("set_chunks"), &VoxelWorld::set_chunks);

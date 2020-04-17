@@ -31,6 +31,51 @@ _FORCE_INLINE_ void VoxelWorldDefault::set_build_flags(const int flags) {
 	_build_flags = flags;
 }
 
+float VoxelWorldDefault::get_lod_update_interval() const {
+	return _lod_update_interval;
+}
+void VoxelWorldDefault::set_lod_update_interval(const float value) {
+	_lod_update_interval = value;
+}
+
+void VoxelWorldDefault::update_lods() {
+	call("_update_lods");
+}
+
+void VoxelWorldDefault::_update_lods() {
+	if (!get_player() || !ObjectDB::instance_validate(get_player())) {
+		return;
+	}
+
+	Vector3 ppos = get_player()->get_transform().origin;
+
+	int ppx = int(ppos.x / (get_chunk_size_x() * get_voxel_scale()));
+	int ppy = int(ppos.y / (get_chunk_size_y() * get_voxel_scale()));
+	int ppz = int(ppos.z / (get_chunk_size_z() * get_voxel_scale()));
+
+	for (int i = 0; i < get_chunk_count(); ++i) {
+		Ref<VoxelChunkDefault> c = get_chunk_index(i);
+
+		if (!c.is_valid())
+			continue;
+
+		int dx = abs(ppx - c->get_position_x());
+		int dy = abs(ppy - c->get_position_y());
+		int dz = abs(ppz - c->get_position_z());
+
+		int mr = MAX(MAX(dx, dy), dz);
+
+		if (mr <= 1)
+			c->set_current_lod_level(0);
+		else if (mr == 2)
+			c->set_current_lod_level(1);
+		else if (mr == 3) // || mr == 4)
+			c->set_current_lod_level(2);
+		else
+			c->set_current_lod_level(3);
+	}
+}
+
 Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
 
 	if (!chunk.is_valid()) {
@@ -70,6 +115,8 @@ int VoxelWorldDefault::_get_channel_index_info(const VoxelWorld::ChannelTypeInfo
 }
 
 VoxelWorldDefault::VoxelWorldDefault() {
+	_lod_update_timer = 0;
+	_lod_update_interval = 0.5;
 	_build_flags = VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER | VoxelChunkDefault::BUILD_FLAG_CREATE_LODS;
 
 	set_data_margin_start(1);
@@ -79,10 +126,47 @@ VoxelWorldDefault::VoxelWorldDefault() {
 VoxelWorldDefault ::~VoxelWorldDefault() {
 }
 
+void VoxelWorldDefault::_notification(int p_what) {
+	VoxelWorld::_notification(p_what);
+
+	switch (p_what) {
+		case NOTIFICATION_INTERNAL_PROCESS: {
+			if ((get_build_flags() & VoxelChunkDefault::BUILD_FLAG_CREATE_LODS) == 0)
+				return;
+
+			if (!get_player()) {
+				return;
+			}
+
+			if (!ObjectDB::instance_validate(get_player())) {
+				set_player(NULL);
+				return;
+			}
+
+			_lod_update_timer += get_process_delta_time();
+
+			if (_lod_update_timer >= _lod_update_interval) {
+				_lod_update_timer = 0;
+
+				update_lods();
+			}
+
+		} break;
+	}
+}
+
 void VoxelWorldDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_chunk_added", "chunk"), &VoxelWorldDefault::_chunk_added);
 
 	ClassDB::bind_method(D_METHOD("get_build_flags"), &VoxelWorldDefault::get_build_flags);
 	ClassDB::bind_method(D_METHOD("set_build_flags", "value"), &VoxelWorldDefault::set_build_flags);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_flags", PROPERTY_HINT_FLAGS, VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS), "set_build_flags", "get_build_flags");
+
+	ClassDB::bind_method(D_METHOD("get_lod_update_interval"), &VoxelWorldDefault::get_lod_update_interval);
+	ClassDB::bind_method(D_METHOD("set_lod_update_interval", "value"), &VoxelWorldDefault::set_lod_update_interval);
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lod_update_interval"), "set_lod_update_interval", "get_lod_update_interval");
+
+	BIND_VMETHOD(MethodInfo("_update_lods"));
+	ClassDB::bind_method(D_METHOD("update_lods"), &VoxelWorldDefault::update_lods);
+	ClassDB::bind_method(D_METHOD("_update_lods"), &VoxelWorldDefault::_update_lods);
 }
