@@ -173,11 +173,12 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 		String text = String::num(i) + " - " + surface->get_name();
 
 		Button *button = memnew(Button);
-		button->set_h_size_flags(SIZE_EXPAND_FILL);
 		button->set_text(text);
+		button->set_text_align(Button::ALIGN_LEFT);
 		button->set_meta("index", i);
 		button->set_toggle_mode(true);
 		button->set_button_group(_surfaces_button_group);
+		button->set_h_size_flags(SIZE_EXPAND_FILL);
 		button->connect("button_up", this, "_on_surface_button_pressed");
 		_surfaces_vbox_container->add_child(button);
 
@@ -199,6 +200,7 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 		Button *button = memnew(Button);
 		button->set_h_size_flags(SIZE_EXPAND_FILL);
 		button->set_text(text);
+		button->set_text_align(Button::ALIGN_LEFT);
 		button->set_meta("index", i);
 		button->set_toggle_mode(true);
 		button->set_button_group(_liquid_surfaces_button_group);
@@ -263,21 +265,28 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	TabContainer *tab_container = memnew(TabContainer);
 	tab_container->set_h_size_flags(SIZE_EXPAND_FILL);
 	tab_container->set_v_size_flags(SIZE_EXPAND_FILL);
-	tab_container->set_name("Surfaces");
 	tab_container->connect("tab_selected", this, "_tab_selected");
 	add_child(tab_container);
 
+	ScrollContainer *scs = memnew(ScrollContainer);
+	scs->set_h_size_flags(SIZE_EXPAND_FILL);
+	scs->set_v_size_flags(SIZE_EXPAND_FILL);
+	scs->set_name("Surfaces");
+	tab_container->add_child(scs);
+
 	_surfaces_vbox_container = memnew(VBoxContainer);
+	scs->add_child(_surfaces_vbox_container);
 	_surfaces_vbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
-	_surfaces_vbox_container->set_v_size_flags(SIZE_EXPAND_FILL);
-	_surfaces_vbox_container->set_name("Surfaces");
-	tab_container->add_child(_surfaces_vbox_container);
+
+	ScrollContainer *scsl = memnew(ScrollContainer);
+	scsl->set_h_size_flags(SIZE_EXPAND_FILL);
+	scsl->set_v_size_flags(SIZE_EXPAND_FILL);
+	scsl->set_name("Liquids");
+	tab_container->add_child(scsl);
 
 	_liquid_surfaces_vbox_container = memnew(VBoxContainer);
+	scsl->add_child(_liquid_surfaces_vbox_container);
 	_liquid_surfaces_vbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
-	_liquid_surfaces_vbox_container->set_v_size_flags(SIZE_EXPAND_FILL);
-	_liquid_surfaces_vbox_container->set_name("Liquids");
-	tab_container->add_child(_liquid_surfaces_vbox_container);
 
 	_surfaces_button_group.instance();
 	_liquid_surfaces_button_group.instance();
