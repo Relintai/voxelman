@@ -209,7 +209,7 @@ VoxelmanLibrary::~VoxelmanLibrary() {
 void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_initialized"), &VoxelmanLibrary::get_initialized);
 	ClassDB::bind_method(D_METHOD("set_initialized", "value"), &VoxelmanLibrary::set_initialized);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "initialized"), "set_initialized", "get_initialized");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "initialized", PROPERTY_HINT_NONE, "", 0), "set_initialized", "get_initialized");
 
 	BIND_VMETHOD(MethodInfo("_setup_material_albedo", PropertyInfo(Variant::INT, "material_index"), PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture")));
 
