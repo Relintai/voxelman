@@ -170,8 +170,6 @@ public:
 	void generate_ao();
 
 	//Meshing
-	void build_deferred();
-	void build_prioritized();
 	static void _build_step_threaded(void *_userdata);
 
 	void build_step();

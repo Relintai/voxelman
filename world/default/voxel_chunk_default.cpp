@@ -193,44 +193,6 @@ void VoxelChunkDefault::generate_ao() {
 	}
 }
 
-void VoxelChunkDefault::build_deferred() {
-	if (_current_build_phase == BUILD_PHASE_DONE) {
-		_build_prioritized = true;
-
-		wait_and_finish_thread();
-
-		set_process(true);
-
-		_is_generating = true;
-
-		next_phase();
-
-		if (!_voxel_world->can_chunk_do_build_step())
-			return;
-
-		build_step();
-	}
-}
-
-void VoxelChunkDefault::build_prioritized() {
-	if (_current_build_phase == BUILD_PHASE_DONE) {
-		_build_prioritized = true;
-
-		wait_and_finish_thread();
-
-		set_process(true);
-
-		_is_generating = true;
-
-		next_phase();
-
-		if (!_voxel_world->can_chunk_do_build_step())
-			return;
-
-		build_step();
-	}
-}
-
 void VoxelChunkDefault::build_step() {
 	ERR_FAIL_COND(!has_next_phase());
 	ERR_FAIL_COND(_build_step_in_progress);
@@ -1372,7 +1334,22 @@ void VoxelChunkDefault::_create_meshers() {
 }
 
 void VoxelChunkDefault::_build(bool immediate) {
-	build_deferred();
+	if (_current_build_phase == BUILD_PHASE_DONE) {
+		_build_prioritized = true;
+
+		wait_and_finish_thread();
+
+		set_process(true);
+
+		_is_generating = true;
+
+		next_phase();
+
+		if (!_voxel_world->can_chunk_do_build_step())
+			return;
+
+		build_step();
+	}
 }
 
 void VoxelChunkDefault::wait_and_finish_thread() {
@@ -1427,9 +1404,6 @@ void VoxelChunkDefault::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_build_phase", PropertyInfo(Variant::INT, "phase")));
 	BIND_VMETHOD(MethodInfo("_build_phase_process", PropertyInfo(Variant::INT, "phase")));
 	BIND_VMETHOD(MethodInfo("_build_phase_physics_process", PropertyInfo(Variant::INT, "phase")));
-
-	ClassDB::bind_method(D_METHOD("build_deferred"), &VoxelChunkDefault::build_deferred);
-	ClassDB::bind_method(D_METHOD("build_prioritized"), &VoxelChunkDefault::build_prioritized);
 
 	ClassDB::bind_method(D_METHOD("build_phase"), &VoxelChunkDefault::build_phase);
 	ClassDB::bind_method(D_METHOD("build_phase_process"), &VoxelChunkDefault::build_phase_process);
