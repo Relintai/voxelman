@@ -64,6 +64,7 @@ protected:
 	void _node_removed(Node *p_node);
 	void _on_surface_button_pressed();
 	void _on_tool_button_pressed();
+	void _on_insert_block_at_camera_button_pressed();
 	void _tab_selected(int tab);
 
 private:

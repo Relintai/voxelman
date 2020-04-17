@@ -260,6 +260,12 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	remove_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/remove_mode", "Remove Mode", KEY_S));
 	spatial_editor_hb->add_child(remove_button);
 
+	ToolButton *insert_buton = memnew(ToolButton);
+	insert_buton->set_text("Insert");
+	insert_buton->connect("button_up", this, "_on_insert_block_at_camera_button_pressed");
+	insert_buton->set_shortcut(ED_SHORTCUT("voxelman_world_editor/instert_block_at_camera", "Insert at camera", KEY_B));
+	spatial_editor_hb->add_child(insert_buton);
+
 	set_custom_minimum_size(Size2(200 * EDSCALE, 0));
 
 	TabContainer *tab_container = memnew(TabContainer);
@@ -327,6 +333,35 @@ void VoxelWorldEditor::_on_tool_button_pressed() {
 	}
 }
 
+void VoxelWorldEditor::_on_insert_block_at_camera_button_pressed() {
+	int selected_voxel = 0;
+	int channel = 0;
+
+	if (_current_tab == 0) {
+		channel = _channel_type;
+	} else {
+		channel = _channel_liquid_type;
+	}
+
+	if (channel == -1)
+		return;
+
+	SpatialEditorViewport *vp = SpatialEditor::get_singleton()->get_editor_viewport(0);
+
+	if (!vp)
+		return;
+
+	Camera *cam = vp->get_camera();
+
+	if (!cam)
+		return;
+
+	Vector3 pos = cam->get_transform().origin;
+	selected_voxel = _selected_type + 1;
+
+	_world->set_voxel_at_world_position(pos, selected_voxel, channel);
+}
+
 void VoxelWorldEditor::_tab_selected(int tab) {
 	_current_tab = tab;
 }
@@ -336,6 +371,7 @@ void VoxelWorldEditor::_bind_methods() {
 	ClassDB::bind_method("_on_surface_button_pressed", &VoxelWorldEditor::_on_surface_button_pressed);
 	ClassDB::bind_method("_on_tool_button_pressed", &VoxelWorldEditor::_on_tool_button_pressed);
 	ClassDB::bind_method("_tab_selected", &VoxelWorldEditor::_tab_selected);
+	ClassDB::bind_method("_on_insert_block_at_camera_button_pressed", &VoxelWorldEditor::_on_insert_block_at_camera_button_pressed);
 }
 
 void VoxelWorldEditorPlugin::_notification(int p_what) {
