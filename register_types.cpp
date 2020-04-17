@@ -52,6 +52,7 @@ SOFTWARE.
 #include "meshers/cubic_mesher/voxel_mesher_cubic.h"
 
 #include "level_generator/voxelman_level_generator.h"
+#include "level_generator/voxelman_level_generator_flat.h"
 
 #include "areas/world_area.h"
 
@@ -97,6 +98,7 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelChunkBlocky>();
 
 	ClassDB::register_class<VoxelmanLevelGenerator>();
+	ClassDB::register_class<VoxelmanLevelGeneratorFlat>();
 
 	ClassDB::register_class<WorldArea>();
 

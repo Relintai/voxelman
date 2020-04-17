@@ -54,6 +54,7 @@ sources = [
     "meshers/cubic_mesher/voxel_cube_points.cpp",
 
     "level_generator/voxelman_level_generator.cpp",
+    "level_generator/voxelman_level_generator_flat.cpp",
 
     "areas/world_area.cpp",
 

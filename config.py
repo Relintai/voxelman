@@ -15,6 +15,7 @@ def get_doc_classes():
         "VoxelLight",
 
         "VoxelmanLevelGenerator",
+        "VoxelmanLevelGeneratorFlat",
 
         "VoxelSurfaceMerger",
         "VoxelSurfaceSimple",
@@ -39,8 +40,8 @@ def get_doc_classes():
         "VoxelWorld",
 
         "VoxelMesherBlocky",
-	    "VoxelWorldBlocky",
-	    "VoxelChunkBlocky",
+	      "VoxelWorldBlocky",
+	      "VoxelChunkBlocky",
     ]
 
 def get_doc_path():
