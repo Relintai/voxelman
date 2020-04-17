@@ -39,6 +39,10 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	float voxel_scale = get_voxel_scale();
 
 	uint8_t *channel_type = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+
+	if (!channel_type)
+		return;
+
 	uint8_t *channel_color_r = NULL;
 	uint8_t *channel_color_g = NULL;
 	uint8_t *channel_color_b = NULL;
