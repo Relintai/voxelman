@@ -135,9 +135,6 @@ public:
 	};
 
 public:
-	bool get_is_build_threaded() const;
-	void set_is_build_threaded(const bool value);
-
 	int get_build_flags() const;
 	void set_build_flags(const int flags);
 
@@ -266,7 +263,6 @@ protected:
 
 	int _build_flags;
 
-	bool _is_build_threaded;
 	bool _abort_build;
 
 	int _current_build_phase;

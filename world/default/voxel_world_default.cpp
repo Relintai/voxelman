@@ -29,6 +29,15 @@ _FORCE_INLINE_ int VoxelWorldDefault::get_build_flags() const {
 }
 _FORCE_INLINE_ void VoxelWorldDefault::set_build_flags(const int flags) {
 	_build_flags = flags;
+
+	for (int i = 0; i < get_chunk_count(); ++i) {
+		Ref<VoxelChunkDefault> c = get_chunk_index(i);
+
+		if (!c.is_valid())
+			continue;
+
+		c->set_build_flags(_build_flags);
+	}
 }
 
 float VoxelWorldDefault::get_lod_update_interval() const {
@@ -95,7 +104,7 @@ void VoxelWorldDefault::_chunk_added(Ref<VoxelChunk> chunk) {
 	Ref<VoxelChunkDefault> c = chunk;
 
 	if (c.is_valid()) {
-		c->set_build_flags(get_build_flags());
+		c->set_build_flags(_build_flags);
 	}
 }
 

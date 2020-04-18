@@ -87,7 +87,7 @@ bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<I
 
 bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click) {
 
-	if (!spatial_editor || !_world)
+	if (!spatial_editor || !_world || !_world->is_inside_world())
 		return false;
 
 	Camera *camera = p_camera;

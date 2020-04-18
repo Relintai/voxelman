@@ -46,13 +46,6 @@ typedef class StandardMaterial3D SpatialMaterial;
 const String VoxelChunkDefault::BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE = "Normal,Process,Physics Process";
 const String VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS = "Use Isolevel,Use Lighting,Use AO,Use RAO,Generate AO,Generate RAO,Bake Lights,Create Collider,Create Lods";
 
-_FORCE_INLINE_ bool VoxelChunkDefault::get_is_build_threaded() const {
-	return _is_build_threaded;
-}
-_FORCE_INLINE_ void VoxelChunkDefault::set_is_build_threaded(const bool value) {
-	_is_build_threaded = value;
-}
-
 _FORCE_INLINE_ int VoxelChunkDefault::get_build_flags() const {
 	return _build_flags;
 }
@@ -602,7 +595,9 @@ void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_m
 	PhysicsServer::get_singleton()->body_add_shape(body_rid, shape_rid);
 
 	PhysicsServer::get_singleton()->body_set_state(body_rid, PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
-	PhysicsServer::get_singleton()->body_set_space(body_rid, get_voxel_world()->get_world()->get_space());
+
+	if (get_voxel_world()->is_inside_world())
+		PhysicsServer::get_singleton()->body_set_space(body_rid, get_voxel_world()->get_world()->get_space());
 
 	m[MESH_TYPE_INDEX_BODY] = body_rid;
 	m[MESH_TYPE_INDEX_SHAPE] = shape_rid;
@@ -997,7 +992,7 @@ void VoxelChunkDefault::free_chunk() {
 VoxelChunkDefault::VoxelChunkDefault() {
 	_lights_dirty = false;
 	_is_generating = false;
-	_is_build_threaded = false;
+
 	_abort_build = false;
 	_dirty = false;
 	_state = VOXEL_CHUNK_STATE_OK;
@@ -1361,10 +1356,6 @@ void VoxelChunkDefault::wait_and_finish_thread() {
 }
 
 void VoxelChunkDefault::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_is_build_threaded"), &VoxelChunkDefault::get_is_build_threaded);
-	ClassDB::bind_method(D_METHOD("set_is_build_threaded", "value"), &VoxelChunkDefault::set_is_build_threaded);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_build_threaded"), "set_is_build_threaded", "get_is_build_threaded");
-
 	ClassDB::bind_method(D_METHOD("get_build_flags"), &VoxelChunkDefault::get_build_flags);
 	ClassDB::bind_method(D_METHOD("set_build_flags", "value"), &VoxelChunkDefault::set_build_flags);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_flags", PROPERTY_HINT_FLAGS, BINDING_STRING_BUILD_FLAGS), "set_build_flags", "get_build_flags");

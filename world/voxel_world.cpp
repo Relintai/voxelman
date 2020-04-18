@@ -88,6 +88,15 @@ bool VoxelWorld::get_use_threads() const {
 }
 void VoxelWorld::set_use_threads(const bool value) {
 	_use_threads = OS::get_singleton()->can_use_threads() ? value : false;
+
+	for (int i = 0; i < get_chunk_count(); ++i) {
+		Ref<VoxelChunk> c = get_chunk_index(i);
+
+		if (!c.is_valid())
+			continue;
+
+		c->set_is_build_threaded(_use_threads);
+	}
 }
 
 int VoxelWorld::get_max_concurrent_generations() const {
@@ -109,6 +118,15 @@ Ref<VoxelmanLibrary> VoxelWorld::get_library() {
 }
 void VoxelWorld::set_library(const Ref<VoxelmanLibrary> &library) {
 	_library = library;
+
+	for (int i = 0; i < get_chunk_count(); ++i) {
+		Ref<VoxelChunk> c = get_chunk_index(i);
+
+		if (!c.is_valid())
+			continue;
+
+		c->set_library(_library);
+	}
 }
 
 Ref<VoxelmanLevelGenerator> VoxelWorld::get_level_generator() const {
@@ -123,6 +141,15 @@ float VoxelWorld::get_voxel_scale() const {
 }
 void VoxelWorld::set_voxel_scale(const float value) {
 	_voxel_scale = value;
+
+	for (int i = 0; i < get_chunk_count(); ++i) {
+		Ref<VoxelChunk> c = get_chunk_index(i);
+
+		if (!c.is_valid())
+			continue;
+
+		c->set_voxel_scale(_voxel_scale);
+	}
 }
 
 int VoxelWorld::get_chunk_spawn_range() const {

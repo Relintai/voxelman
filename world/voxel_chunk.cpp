@@ -42,6 +42,13 @@ typedef PackedColorArray PoolColorArray;
 typedef PackedInt32Array PoolIntArray;
 #endif
 
+_FORCE_INLINE_ bool VoxelChunk::get_is_build_threaded() const {
+	return _is_build_threaded;
+}
+_FORCE_INLINE_ void VoxelChunk::set_is_build_threaded(const bool value) {
+	_is_build_threaded = value;
+}
+
 _FORCE_INLINE_ bool VoxelChunk::get_process() const {
 	return _is_processing;
 }
@@ -705,6 +712,7 @@ void VoxelChunk::set_transform(const Transform &transform) {
 }
 
 VoxelChunk::VoxelChunk() {
+	_is_build_threaded = false;
 	_is_processing = false;
 	_is_phisics_processing = false;
 
@@ -845,6 +853,10 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_physics_process"), &VoxelChunk::get_physics_process);
 	ClassDB::bind_method(D_METHOD("set_physics_process", "value"), &VoxelChunk::set_physics_process);
+
+	ClassDB::bind_method(D_METHOD("get_is_build_threaded"), &VoxelChunk::get_is_build_threaded);
+	ClassDB::bind_method(D_METHOD("set_is_build_threaded", "value"), &VoxelChunk::set_is_build_threaded);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_build_threaded"), "set_is_build_threaded", "get_is_build_threaded");
 
 	ClassDB::bind_method(D_METHOD("get_transform"), &VoxelChunk::get_transform);
 	ClassDB::bind_method(D_METHOD("set_transform", "value"), &VoxelChunk::set_transform);

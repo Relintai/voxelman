@@ -72,6 +72,9 @@ public:
 	};
 
 public:
+	bool get_is_build_threaded() const;
+	void set_is_build_threaded(const bool value);
+
 	bool get_process() const;
 	void set_process(const bool value);
 
@@ -212,6 +215,8 @@ protected:
 	void _get_property_list(List<PropertyInfo> *p_list) const;
 	*/
 	static void _bind_methods();
+
+	bool _is_build_threaded;
 
 	bool _is_processing;
 	bool _is_phisics_processing;
