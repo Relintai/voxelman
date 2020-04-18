@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelmanLevelGeneratorFlat" inherits="VoxelmanLevelGenerator" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="channel_map" type="Dictionary" setter="set_channel_map" getter="get_channel_map" default="{}">
+		</member>
+		<member name="floor_position" type="int" setter="set_floor_position" getter="get_floor_position" default="0">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

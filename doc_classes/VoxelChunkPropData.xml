@@ -37,6 +37,8 @@
 		</method>
 	</methods>
 	<members>
+		<member name="owner" type="VoxelChunk" setter="set_owner" getter="get_owner">
+		</member>
 		<member name="scene" type="PackedScene" setter="set_scene" getter="get_scene">
 		</member>
 		<member name="scene_id" type="int" setter="set_scene_id" getter="get_scene_id" default="0">

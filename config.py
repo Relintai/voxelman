@@ -28,7 +28,7 @@ def get_doc_classes():
         "VoxelMesherCubic",
         "TransvoxelCellData",
         "VoxelMeshData",
-        "VoxelMesherTransvoxel",
+        "VoxelMesherUVTransvoxel",
         "VoxelMesher",
 
         "EnvironmentData",
@@ -41,6 +41,10 @@ def get_doc_classes():
 
         "VoxelMesherBlocky",
 	      "VoxelWorldBlocky",
+	      "VoxelChunkBlocky",
+
+        "VoxelMesherDefault",
+	      "VoxelWorldDefault",
 	      "VoxelChunkBlocky",
     ]
 

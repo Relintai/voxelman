@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelWorldDefault" inherits="VoxelWorld" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_update_lods" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="update_lods">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="build_flags" type="int" setter="set_build_flags" getter="get_build_flags" default="384">
+		</member>
+		<member name="data_margin_end" type="int" setter="set_data_margin_end" getter="get_data_margin_end" override="true" default="1" />
+		<member name="data_margin_start" type="int" setter="set_data_margin_start" getter="get_data_margin_start" override="true" default="1" />
+		<member name="lod_update_interval" type="float" setter="set_lod_update_interval" getter="get_lod_update_interval" default="0.5">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

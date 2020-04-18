@@ -7,19 +7,23 @@
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="_add_light" qualifiers="virtual">
+		<method name="_bake_light" qualifiers="virtual">
 			<return type="void">
 			</return>
-			<argument index="0" name="local_x" type="int">
+			<argument index="0" name="light" type="VoxelLight">
 			</argument>
-			<argument index="1" name="local_y" type="int">
-			</argument>
-			<argument index="2" name="local_z" type="int">
-			</argument>
-			<argument index="3" name="size" type="int">
-			</argument>
-			<argument index="4" name="color" type="Color">
-			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_bake_lights" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="_clear_baked_lights" qualifiers="virtual">
+			<return type="void">
+			</return>
 			<description>
 			</description>
 		</method>
@@ -79,41 +83,25 @@
 			<description>
 			</description>
 		</method>
+		<method name="_world_light_added" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="light" type="VoxelLight">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="_world_light_removed" qualifiers="virtual">
+			<return type="void">
+			</return>
+			<argument index="0" name="light" type="VoxelLight">
+			</argument>
+			<description>
+			</description>
+		</method>
 		<method name="_world_transform_changed" qualifiers="virtual">
 			<return type="void">
 			</return>
-			<description>
-			</description>
-		</method>
-		<method name="add_light">
-			<return type="void">
-			</return>
-			<argument index="0" name="local_x" type="int">
-			</argument>
-			<argument index="1" name="local_y" type="int">
-			</argument>
-			<argument index="2" name="local_z" type="int">
-			</argument>
-			<argument index="3" name="size" type="int">
-			</argument>
-			<argument index="4" name="color" type="Color">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_lights">
-			<return type="void">
-			</return>
-			<argument index="0" name="lights" type="Array">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_lights_into">
-			<return type="void">
-			</return>
-			<argument index="0" name="lights" type="Array">
-			</argument>
 			<description>
 			</description>
 		</method>
@@ -129,30 +117,6 @@
 			<return type="void">
 			</return>
 			<argument index="0" name="prop" type="VoxelChunkPropData">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_prop_light">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_unique_lights_into">
-			<return type="void">
-			</return>
-			<argument index="0" name="lights" type="Array">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_voxel_light">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
 			</argument>
 			<description>
 			</description>
@@ -205,31 +169,9 @@
 			<description>
 			</description>
 		</method>
-		<method name="clear_voxel_lights">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
 		<method name="create_meshers">
 			<return type="void">
 			</return>
-			<description>
-			</description>
-		</method>
-		<method name="create_voxel_light">
-			<return type="void">
-			</return>
-			<argument index="0" name="color" type="Color">
-			</argument>
-			<argument index="1" name="size" type="int">
-			</argument>
-			<argument index="2" name="x" type="int">
-			</argument>
-			<argument index="3" name="y" type="int">
-			</argument>
-			<argument index="4" name="z" type="int">
-			</argument>
 			<description>
 			</description>
 		</method>
@@ -241,6 +183,18 @@
 			<description>
 			</description>
 		</method>
+		<method name="enter_tree">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="exit_tree">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
 		<method name="fill_channel">
 			<return type="void">
 			</return>
@@ -248,12 +202,6 @@
 			</argument>
 			<argument index="1" name="channel_index" type="int">
 			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="free_spawn_props">
-			<return type="void">
-			</return>
 			<description>
 			</description>
 		</method>
@@ -303,12 +251,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_lights">
-			<return type="Array">
-			</return>
-			<description>
-			</description>
-		</method>
 		<method name="get_mesher" qualifiers="const">
 			<return type="VoxelMesher">
 			</return>
@@ -317,7 +259,7 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_mesher_count">
+		<method name="get_mesher_count" qualifiers="const">
 			<return type="int">
 			</return>
 			<description>
@@ -349,7 +291,7 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_prop_count">
+		<method name="get_prop_count" qualifiers="const">
 			<return type="int">
 			</return>
 			<description>
@@ -377,6 +319,22 @@
 			<description>
 			</description>
 		</method>
+		<method name="physics_process">
+			<return type="void">
+			</return>
+			<argument index="0" name="delta" type="float">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="process">
+			<return type="void">
+			</return>
+			<argument index="0" name="delta" type="float">
+			</argument>
+			<description>
+			</description>
+		</method>
 		<method name="remove_mesher">
 			<return type="void">
 			</return>
@@ -389,14 +347,6 @@
 			<return type="void">
 			</return>
 			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="remove_voxel_light">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
 			</argument>
 			<description>
 			</description>
@@ -517,6 +467,28 @@
 			<description>
 			</description>
 		</method>
+		<method name="world_light_added">
+			<return type="void">
+			</return>
+			<argument index="0" name="light" type="VoxelLight">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="world_light_removed">
+			<return type="void">
+			</return>
+			<argument index="0" name="light" type="VoxelLight">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="world_transform_changed">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
 	</methods>
 	<members>
 		<member name="channel_count" type="int" setter="set_channel_count" getter="get_channel_count" default="0">
@@ -528,6 +500,8 @@
 		<member name="data_size_z" type="int" setter="set_data_size_z" getter="get_data_size_z" default="0">
 		</member>
 		<member name="dirty" type="bool" setter="set_dirty" getter="get_dirty" default="false">
+		</member>
+		<member name="is_build_threaded" type="bool" setter="set_is_build_threaded" getter="get_is_build_threaded" default="false">
 		</member>
 		<member name="is_generating" type="bool" setter="set_is_generating" getter="get_is_generating" default="false">
 		</member>

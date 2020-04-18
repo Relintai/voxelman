@@ -265,6 +265,8 @@
 		</method>
 	</methods>
 	<members>
+		<member name="initialized" type="bool" setter="set_initialized" getter="get_initialized">
+		</member>
 		<member name="liquid_materials" type="Array" setter="set_liquid_materials" getter="get_liquid_materials" default="[  ]">
 		</member>
 		<member name="materials" type="Array" setter="set_materials" getter="get_materials" default="[  ]">
