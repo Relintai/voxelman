@@ -23,6 +23,7 @@ SOFTWARE.
 #include "voxel_chunk_blocky.h"
 
 #include "../../meshers/blocky/voxel_mesher_blocky.h"
+#include "../../meshers/blocky/voxel_mesher_liquid_blocky.h"
 
 #include "core/version.h"
 
@@ -42,9 +43,25 @@ void VoxelChunkBlocky::_setup_channels() {
 
 void VoxelChunkBlocky::_create_meshers() {
 	add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky())));
+	add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidBlocky())));
 
 	for (int i = 0; i < _meshers.size(); ++i) {
 		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->set_lod_size(get_lod_size());
+		mesher->set_voxel_scale(get_voxel_scale());
+
+		Ref<VoxelMesherDefault> md = mesher;
+
+		if (md.is_valid()) {
+			md->set_build_flags(get_build_flags());
+		}
+	}
+
+	for (int i = 0; i < _liquid_meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
 
 		ERR_CONTINUE(!mesher.is_valid());
 

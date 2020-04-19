@@ -287,6 +287,7 @@ protected:
 
 	Array temp_array;
 	PoolVector<Vector3> temp_arr_collider;
+	PoolVector<Vector3> temp_arr_collider_liquid;
 
 	ActiveBuildPhaseType _active_build_phase_type;
 

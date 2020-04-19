@@ -239,6 +239,28 @@ int VoxelChunk::get_mesher_count() const {
 	return _meshers.size();
 }
 
+Ref<VoxelMesher> VoxelChunk::get_liquid_mesher(int index) const {
+	ERR_FAIL_INDEX_V(index, _liquid_meshers.size(), Ref<VoxelMesher>());
+
+	return _liquid_meshers.get(index);
+}
+void VoxelChunk::set_liquid_mesher(int index, const Ref<VoxelMesher> &mesher) {
+	ERR_FAIL_INDEX(index, _liquid_meshers.size());
+
+	_liquid_meshers.set(index, mesher);
+}
+void VoxelChunk::remove_liquid_mesher(const int index) {
+	ERR_FAIL_INDEX(index, _liquid_meshers.size());
+
+	_liquid_meshers.remove(index);
+}
+void VoxelChunk::add_liquid_mesher(const Ref<VoxelMesher> &mesher) {
+	_liquid_meshers.push_back(mesher);
+}
+int VoxelChunk::get_liquid_mesher_count() const {
+	return _liquid_meshers.size();
+}
+
 //Voxel Data
 void VoxelChunk::setup_channels() {
 	ERR_FAIL_COND_MSG(!has_method("_setup_channels"), "VoxelChunk: _setup_channels() is missing! Please implement it!");
