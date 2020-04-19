@@ -94,7 +94,6 @@ private:
 	bool _initialized;
 	Vector<Ref<Material> > _materials;
 	Vector<Ref<Material> > _liquid_materials;
-	Vector<Ref<Material> > _clutter_materials;
 };
 
 #endif // VOXEL_LIBRARY_H

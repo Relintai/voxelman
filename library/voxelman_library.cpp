@@ -187,7 +187,6 @@ VoxelmanLibrary::VoxelmanLibrary() {
 VoxelmanLibrary::~VoxelmanLibrary() {
 	_materials.clear();
 	_liquid_materials.clear();
-	_clutter_materials.clear();
 }
 
 void VoxelmanLibrary::_bind_methods() {
