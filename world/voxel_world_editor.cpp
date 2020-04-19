@@ -106,11 +106,7 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 		int selected_voxel = 0;
 		int channel = 0;
 
-		if (_current_tab == 0) {
-			channel = _channel_type;
-		} else {
-			channel = _channel_liquid_type;
-		}
+		channel = _channel_type;
 
 		if (channel == -1)
 			return false;
@@ -138,20 +134,11 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 		return;
 
 	_channel_type = _world->get_channel_index_info(VoxelWorld::CHANNEL_TYPE_INFO_TYPE);
-	_channel_liquid_type = _world->get_channel_index_info(VoxelWorld::CHANNEL_TYPE_INFO_LIQUID);
 
 	spatial_editor = Object::cast_to<SpatialEditorPlugin>(_editor->get_editor_plugin_screen());
 
 	for (int i = 0; i < _surfaces_vbox_container->get_child_count(); ++i) {
 		Node *child = _surfaces_vbox_container->get_child(i);
-
-		if (!child->is_queued_for_deletion()) {
-			child->queue_delete();
-		}
-	}
-
-	for (int i = 0; i < _liquid_surfaces_vbox_container->get_child_count(); ++i) {
-		Node *child = _liquid_surfaces_vbox_container->get_child(i);
 
 		if (!child->is_queued_for_deletion()) {
 			child->queue_delete();
@@ -190,52 +177,21 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 			f = true;
 		}
 	}
-
-	f = false;
-	for (int i = 0; i < library->get_num_liquid_surfaces(); ++i) {
-		Ref<VoxelSurface> surface = library->get_liquid_surface(i);
-
-		if (!surface.is_valid())
-			continue;
-
-		String text = String::num(i) + " - " + surface->get_name();
-
-		Button *button = memnew(Button);
-		button->set_h_size_flags(SIZE_EXPAND_FILL);
-		button->set_text(text);
-		button->set_text_align(Button::ALIGN_LEFT);
-		button->set_meta("index", i);
-		button->set_toggle_mode(true);
-		button->set_button_group(_liquid_surfaces_button_group);
-		button->connect("button_up", this, "_on_surface_button_pressed");
-		_liquid_surfaces_vbox_container->add_child(button);
-
-		if (!f) {
-			button->set_pressed(true);
-			f = true;
-		}
-	}
 }
 
 VoxelWorldEditor::VoxelWorldEditor() {
 	_world = NULL;
 	_selected_type = 0;
-	_selected_liquid_type = 0;
 	_channel_type = -1;
-	_channel_liquid_type = -1;
 	_editor = NULL;
 	_tool_mode = TOOL_MODE_ADD;
-	_current_tab = 0;
 }
 VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	_world = NULL;
 	_selected_type = 0;
-	_selected_liquid_type = 0;
 	_channel_type = -1;
-	_channel_liquid_type = -1;
 	_editor = p_editor;
 	_tool_mode = TOOL_MODE_ADD;
-	_current_tab = 0;
 
 	spatial_editor_hb = memnew(HBoxContainer);
 	spatial_editor_hb->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -271,40 +227,22 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 
 	set_custom_minimum_size(Size2(200 * EDSCALE, 0));
 
-	TabContainer *tab_container = memnew(TabContainer);
-	tab_container->set_h_size_flags(SIZE_EXPAND_FILL);
-	tab_container->set_v_size_flags(SIZE_EXPAND_FILL);
-	tab_container->connect("tab_selected", this, "_tab_selected");
-	add_child(tab_container);
-
 	ScrollContainer *scs = memnew(ScrollContainer);
 	scs->set_h_size_flags(SIZE_EXPAND_FILL);
 	scs->set_v_size_flags(SIZE_EXPAND_FILL);
 	scs->set_name("Surfaces");
-	tab_container->add_child(scs);
+	add_child(scs);
 
 	_surfaces_vbox_container = memnew(VBoxContainer);
 	scs->add_child(_surfaces_vbox_container);
 	_surfaces_vbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
 
-	ScrollContainer *scsl = memnew(ScrollContainer);
-	scsl->set_h_size_flags(SIZE_EXPAND_FILL);
-	scsl->set_v_size_flags(SIZE_EXPAND_FILL);
-	scsl->set_name("Liquids");
-	tab_container->add_child(scsl);
-
-	_liquid_surfaces_vbox_container = memnew(VBoxContainer);
-	scsl->add_child(_liquid_surfaces_vbox_container);
-	_liquid_surfaces_vbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
-
 	_surfaces_button_group.instance();
-	_liquid_surfaces_button_group.instance();
 }
 VoxelWorldEditor::~VoxelWorldEditor() {
 	_world = NULL;
 
 	_surfaces_button_group.unref();
-	_liquid_surfaces_button_group.unref();
 }
 
 void VoxelWorldEditor::_node_removed(Node *p_node) {
@@ -320,12 +258,6 @@ void VoxelWorldEditor::_on_surface_button_pressed() {
 	if (button) {
 		_selected_type = button->get_meta("index");
 	}
-
-	button = _liquid_surfaces_button_group->get_pressed_button();
-
-	if (button) {
-		_selected_liquid_type = button->get_meta("index");
-	}
 }
 
 void VoxelWorldEditor::_on_tool_button_pressed() {
@@ -340,11 +272,7 @@ void VoxelWorldEditor::_on_insert_block_at_camera_button_pressed() {
 	int selected_voxel = 0;
 	int channel = 0;
 
-	if (_current_tab == 0) {
-		channel = _channel_type;
-	} else {
-		channel = _channel_liquid_type;
-	}
+	channel = _channel_type;
 
 	if (channel == -1)
 		return;
@@ -365,15 +293,10 @@ void VoxelWorldEditor::_on_insert_block_at_camera_button_pressed() {
 	_world->set_voxel_at_world_position(pos, selected_voxel, channel);
 }
 
-void VoxelWorldEditor::_tab_selected(int tab) {
-	_current_tab = tab;
-}
-
 void VoxelWorldEditor::_bind_methods() {
 	ClassDB::bind_method("_node_removed", &VoxelWorldEditor::_node_removed);
 	ClassDB::bind_method("_on_surface_button_pressed", &VoxelWorldEditor::_on_surface_button_pressed);
 	ClassDB::bind_method("_on_tool_button_pressed", &VoxelWorldEditor::_on_tool_button_pressed);
-	ClassDB::bind_method("_tab_selected", &VoxelWorldEditor::_tab_selected);
 	ClassDB::bind_method("_on_insert_block_at_camera_button_pressed", &VoxelWorldEditor::_on_insert_block_at_camera_button_pressed);
 }
 

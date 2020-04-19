@@ -155,22 +155,6 @@ int VoxelmanLibrary::get_num_surfaces() const {
 void VoxelmanLibrary::clear_surfaces() {
 }
 
-//Liquids
-Ref<VoxelSurface> VoxelmanLibrary::get_liquid_surface(const int index) {
-	return Ref<VoxelSurface>();
-}
-void VoxelmanLibrary::add_liquid_surface(Ref<VoxelSurface> value) {
-}
-void VoxelmanLibrary::set_liquid_surface(int index, Ref<VoxelSurface> value) {
-}
-void VoxelmanLibrary::remove_liquid_surface(const int index) {
-}
-int VoxelmanLibrary::get_num_liquid_surfaces() const {
-	return 0;
-}
-void VoxelmanLibrary::clear_liquid_surfaces() {
-}
-
 Ref<PackedScene> VoxelmanLibrary::get_prop(const int id) {
 	return Ref<PackedScene>();
 }
@@ -241,13 +225,6 @@ void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_surface", "index"), &VoxelmanLibrary::remove_surface);
 	ClassDB::bind_method(D_METHOD("get_num_surfaces"), &VoxelmanLibrary::get_num_surfaces);
 	ClassDB::bind_method(D_METHOD("clear_surfaces"), &VoxelmanLibrary::clear_surfaces);
-
-	ClassDB::bind_method(D_METHOD("get_liquid_surface", "index"), &VoxelmanLibrary::get_liquid_surface);
-	ClassDB::bind_method(D_METHOD("add_liquid_surface", "value"), &VoxelmanLibrary::add_liquid_surface);
-	ClassDB::bind_method(D_METHOD("set_liquid_surface", "index", "surface"), &VoxelmanLibrary::set_liquid_surface);
-	ClassDB::bind_method(D_METHOD("remove_liquid_surface", "index"), &VoxelmanLibrary::remove_liquid_surface);
-	ClassDB::bind_method(D_METHOD("get_num_liquid_surfaces"), &VoxelmanLibrary::get_num_liquid_surfaces);
-	ClassDB::bind_method(D_METHOD("clear_liquid_surfaces"), &VoxelmanLibrary::clear_liquid_surfaces);
 
 	ClassDB::bind_method(D_METHOD("get_prop", "id"), &VoxelmanLibrary::get_prop);
 	ClassDB::bind_method(D_METHOD("add_prop", "value"), &VoxelmanLibrary::add_prop);

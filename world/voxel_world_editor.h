@@ -65,13 +65,10 @@ protected:
 	void _on_surface_button_pressed();
 	void _on_tool_button_pressed();
 	void _on_insert_block_at_camera_button_pressed();
-	void _tab_selected(int tab);
 
 private:
 	VBoxContainer *_surfaces_vbox_container;
-	VBoxContainer *_liquid_surfaces_vbox_container;
 	Ref<ButtonGroup> _surfaces_button_group;
-	Ref<ButtonGroup> _liquid_surfaces_button_group;
 
 	Ref<ButtonGroup> _tool_button_group;
 
@@ -79,15 +76,11 @@ private:
 	VoxelWorld *_world;
 
 	int _selected_type;
-	int _selected_liquid_type;
 
 	SpatialEditorPlugin *spatial_editor;
 	EditorNode *_editor;
 
 	int _channel_type;
-	int _channel_liquid_type;
-
-	int _current_tab;
 };
 
 class VoxelWorldEditorPlugin : public EditorPlugin {

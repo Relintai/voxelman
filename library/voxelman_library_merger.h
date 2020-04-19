@@ -65,16 +65,6 @@ public:
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
 
-	Ref<VoxelSurface> get_liquid_surface(const int index);
-	void add_liquid_surface(Ref<VoxelSurface> value);
-	void set_liquid_voxel_surface(const int index, Ref<VoxelSurface> value);
-	void remove_liquid_surface(const int index);
-	int get_num_liquid_surfaces() const;
-	void clear_liquid_surfaces();
-
-	Vector<Variant> get_liquid_voxel_surfaces();
-	void set_liquid_voxel_surfaces(const Vector<Variant> &surfaces);
-
 	Ref<PackedScene> get_prop(const int id);
 	void add_prop(Ref<PackedScene> value);
 	void set_prop(const int id, const Ref<PackedScene> &value);
@@ -97,7 +87,6 @@ protected:
 
 private:
 	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
-	Vector<Ref<VoxelSurfaceMerger> > _liquid_surfaces;
 	Map<int, Ref<PackedScene> > _props;
 
 	Ref<TexturePacker> _packer;

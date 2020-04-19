@@ -73,13 +73,6 @@ public:
 	virtual int get_num_surfaces() const;
 	virtual void clear_surfaces();
 
-	virtual Ref<VoxelSurface> get_liquid_surface(const int index);
-	virtual void add_liquid_surface(Ref<VoxelSurface> value);
-	virtual void set_liquid_surface(const int index, Ref<VoxelSurface> value);
-	virtual void remove_liquid_surface(const int index);
-	virtual int get_num_liquid_surfaces() const;
-	virtual void clear_liquid_surfaces();
-
 	virtual Ref<PackedScene> get_prop(const int id);
 	virtual void add_prop(Ref<PackedScene> value);
 	virtual void set_prop(const int id, Ref<PackedScene> value);

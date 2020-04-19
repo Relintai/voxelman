@@ -114,10 +114,8 @@ int VoxelWorldDefault::_get_channel_index_info(const VoxelWorld::ChannelTypeInfo
 			return VoxelChunkDefault::DEFAULT_CHANNEL_TYPE;
 		case CHANNEL_TYPE_INFO_ISOLEVEL:
 			return VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL;
-		case CHANNEL_TYPE_INFO_LIQUID:
-			return VoxelChunkDefault::DEFAULT_CHANNEL_LIQUID_TYPES;
-		case CHANNEL_TYPE_INFO_LIQUID_LEVEL:
-			return VoxelChunkDefault::DEFAULT_CHANNEL_LIQUID_FILL;
+		case CHANNEL_TYPE_INFO_LIQUID_FLOW:
+			return VoxelChunkDefault::DEFAULT_CHANNEL_LIQUID_FLOW;
 		default:
 			return -1;
 	}

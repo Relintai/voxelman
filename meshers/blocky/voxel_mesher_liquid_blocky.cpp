@@ -39,9 +39,8 @@ void VoxelMesherLiquidBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	float voxel_scale = get_voxel_scale();
 
 	uint8_t *channel_type = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
-	uint8_t *channel_liquid_type = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIQUID_TYPES);
 
-	if (!channel_type || !channel_liquid_type)
+	if (!channel_type)
 		return;
 
 	uint8_t *channel_color_r = NULL;
