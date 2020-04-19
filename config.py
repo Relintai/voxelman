@@ -42,6 +42,7 @@ def get_doc_classes():
         "VoxelMesherBlocky",
 	      "VoxelWorldBlocky",
 	      "VoxelChunkBlocky",
+        "VoxelMesherLiquidBlocky",
 
         "VoxelMesherDefault",
 	      "VoxelWorldDefault",

@@ -35,6 +35,7 @@ sources = [
     "meshers/transvoxel_uv_mesher/transvoxel_tables.cpp",
 
     "meshers/blocky/voxel_mesher_blocky.cpp",
+    "meshers/blocky/voxel_mesher_liquid_blocky.cpp",
     "meshers/default/voxel_mesher_default.cpp",
 
     "world/voxel_world.cpp",

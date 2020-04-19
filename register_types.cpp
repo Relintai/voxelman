@@ -59,6 +59,7 @@ SOFTWARE.
 #include "world/voxel_world_editor.h"
 
 #include "meshers/blocky/voxel_mesher_blocky.h"
+#include "meshers/blocky/voxel_mesher_liquid_blocky.h"
 #include "world/blocky/voxel_chunk_blocky.h"
 #include "world/blocky/voxel_world_blocky.h"
 
@@ -96,6 +97,7 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesherBlocky>();
 	ClassDB::register_class<VoxelWorldBlocky>();
 	ClassDB::register_class<VoxelChunkBlocky>();
+	ClassDB::register_class<VoxelMesherLiquidBlocky>();
 
 	ClassDB::register_class<VoxelmanLevelGenerator>();
 	ClassDB::register_class<VoxelmanLevelGeneratorFlat>();
