@@ -36,11 +36,18 @@ void VoxelSurface::set_mesher_index(const int value) {
 	_mesher_index = value;
 }
 
-bool VoxelSurface::is_transparent() const {
-	return _is_transparent;
+bool VoxelSurface::get_transparent() const {
+	return _transparent;
 }
 void VoxelSurface::set_transparent(const bool transparent) {
-	_is_transparent = transparent;
+	_transparent = transparent;
+}
+
+bool VoxelSurface::get_liquid() const {
+	return _liquid;
+}
+void VoxelSurface::set_liquid(const bool value) {
+	_liquid = value;
 }
 
 Rect2 VoxelSurface::get_rect(const VoxelSurfaceSides side) const {
@@ -94,7 +101,8 @@ void VoxelSurface::refresh_rects() {
 VoxelSurface::VoxelSurface() {
 	_id = 0;
 	_mesher_index = 0;
-	_is_transparent = false;
+	_transparent = false;
+	_liquid = false;
 	_library = NULL;
 }
 
@@ -113,9 +121,13 @@ void VoxelSurface::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "voxel_name"), "set_name", "get_name");
 
+	ClassDB::bind_method(D_METHOD("get_transparent"), &VoxelSurface::get_transparent);
 	ClassDB::bind_method(D_METHOD("set_transparent", "transparent"), &VoxelSurface::set_transparent);
-	ClassDB::bind_method(D_METHOD("is_transparent"), &VoxelSurface::is_transparent);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transparent"), "set_transparent", "is_transparent");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transparent"), "set_transparent", "get_transparent");
+
+	ClassDB::bind_method(D_METHOD("get_liquid"), &VoxelSurface::get_liquid);
+	ClassDB::bind_method(D_METHOD("set_liquid", "transparent"), &VoxelSurface::set_liquid);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "liquid"), "set_liquid", "get_liquid");
 
 	ClassDB::bind_method(D_METHOD("get_rect", "side"), &VoxelSurface::get_rect);
 	ClassDB::bind_method(D_METHOD("set_rect", "side", "rect"), &VoxelSurface::set_rect);

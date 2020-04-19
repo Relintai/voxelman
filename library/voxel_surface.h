@@ -70,8 +70,11 @@ public:
 	int get_mesher_index() const;
 	void set_mesher_index(const int value);
 
-	bool is_transparent() const;
-	void set_transparent(const bool transparent);
+	bool get_transparent() const;
+	void set_transparent(const bool value);
+
+	bool get_liquid() const;
+	void set_liquid(const bool value);
 
 	Rect2 get_rect(const VoxelSurfaceSides side) const;
 	void set_rect(const VoxelSurfaceSides side, const Rect2 &rect);
@@ -94,7 +97,8 @@ protected:
 
 	int _id;
 	int _mesher_index;
-	bool _is_transparent;
+	bool _transparent;
+	bool _liquid;
 	Rect2 _rects[VOXEL_SIDES_COUNT];
 };
 
