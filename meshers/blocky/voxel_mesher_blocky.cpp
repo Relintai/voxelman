@@ -67,6 +67,17 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 			channel_rao = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO);
 	}
 
+	Vector<uint8_t> liquids;
+	for (int i = 0; i < _library->get_num_surfaces(); ++i) {
+		Ref<VoxelSurface> surface = _library->get_voxel_surface(i);
+
+		if (!surface.is_valid())
+			continue;
+
+		if (surface->get_liquid())
+			liquids.push_back(static_cast<uint8_t>(i + 1));
+	}
+
 	for (int y = chunk->get_margin_start(); y < y_size + chunk->get_margin_start(); ++y) {
 		for (int z = chunk->get_margin_start(); z < z_size + chunk->get_margin_start(); ++z) {
 			for (int x = chunk->get_margin_start(); x < x_size + chunk->get_margin_start(); ++x) {
@@ -84,6 +95,9 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 				if (type == 0)
 					continue;
 
+				if (liquids.find(type) != -1)
+					continue;
+
 				Ref<VoxelSurface> surface = _library->get_voxel_surface(type - 1);
 
 				if (!surface.is_valid())
@@ -97,6 +111,12 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					channel_type[indexzp],
 					channel_type[indexzn],
 				};
+
+				for (int i = 0; i < 6; ++i) {
+					if (liquids.find(neighbours[i]) != -1) {
+						neighbours[i] = 0;
+					}
+				}
 
 				//x + 1
 				if (neighbours[0] == 0) {
