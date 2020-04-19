@@ -604,6 +604,33 @@ void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_m
 
 	_rids[mesh_index] = m;
 }
+void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int layer_mask) {
+	ERR_FAIL_COND(_voxel_world == Variant());
+
+	if (!_rids.has(mesh_index))
+		_rids[mesh_index] = Dictionary();
+
+	Dictionary m = _rids[mesh_index];
+
+	ERR_FAIL_COND(m.has(MESH_TYPE_INDEX_AREA));
+	ERR_FAIL_COND(m.has(MESH_TYPE_INDEX_SHAPE));
+
+	RID shape_rid = PhysicsServer::get_singleton()->shape_create(PhysicsServer::SHAPE_CONCAVE_POLYGON);
+	RID area_rid = PhysicsServer::get_singleton()->area_create();
+
+	PhysicsServer::get_singleton()->area_set_collision_layer(area_rid, layer_mask);
+	PhysicsServer::get_singleton()->area_set_collision_mask(area_rid, layer_mask);
+
+	PhysicsServer::get_singleton()->area_add_shape(area_rid, shape_rid, get_transform());
+
+	if (get_voxel_world()->is_inside_world())
+		PhysicsServer::get_singleton()->area_set_space(area_rid, get_voxel_world()->get_world()->get_space());
+
+	m[MESH_TYPE_INDEX_AREA] = area_rid;
+	m[MESH_TYPE_INDEX_SHAPE] = shape_rid;
+
+	_rids[mesh_index] = m;
+}
 void VoxelChunkDefault::free_colliders(const int mesh_index) {
 	if (!_rids.has(mesh_index))
 		return;
@@ -661,6 +688,13 @@ void VoxelChunkDefault::update_transforms() {
 
 			if (rid != empty_rid)
 				PhysicsServer::get_singleton()->body_set_state(rid, PhysicsServer::BODY_STATE_TRANSFORM, t);
+		}
+
+		if (d.has(MESH_TYPE_INDEX_AREA)) {
+			RID rid = d[MESH_TYPE_INDEX_AREA];
+
+			if (rid != empty_rid)
+				PhysicsServer::get_singleton()->area_set_shape_transform(rid, 0, t);
 		}
 	}
 }
@@ -800,6 +834,11 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 
 	for (int i = 0; i < _lod_num + 1; ++i) {
 		RID rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+
+		if (rid != RID())
+			VisualServer::get_singleton()->instance_set_visible(rid, false);
+
+		rid = get_mesh_rid_index(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, false);
@@ -1145,8 +1184,14 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			}
 
 			if (temp_arr_collider_liquid.size() != 0) {
-				if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_BODY)) {
-					create_colliders(MESH_INDEX_LIQUID);
+				if (Engine::get_singleton()->is_editor_hint()) {
+					if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_BODY)) {
+						create_colliders(MESH_INDEX_LIQUID);
+					}
+				} else {
+					if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_AREA)) {
+						create_colliders_area(MESH_INDEX_LIQUID);
+					}
 				}
 
 				PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_liquid);

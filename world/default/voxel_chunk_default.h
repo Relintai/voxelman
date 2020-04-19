@@ -116,7 +116,8 @@ public:
 		MESH_TYPE_INDEX_MESH = 0,
 		MESH_TYPE_INDEX_MESH_INSTANCE,
 		MESH_TYPE_INDEX_SHAPE,
-		MESH_TYPE_INDEX_BODY
+		MESH_TYPE_INDEX_BODY,
+		MESH_TYPE_INDEX_AREA,
 	};
 
 	enum BuildFlags {
@@ -197,6 +198,7 @@ public:
 	void free_meshes(const int mesh_index);
 
 	void create_colliders(const int mesh_index, const int layer_mask = 1);
+	void create_colliders_area(const int mesh_index, const int layer_mask = 1);
 	void free_colliders(const int mesh_index);
 
 	//Transform
