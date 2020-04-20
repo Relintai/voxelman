@@ -1174,12 +1174,14 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				temp_arr_collider.append_array(mesher->build_collider());
 			}
 
-			for (int i = 0; i < _liquid_meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
+			if (Engine::get_singleton()->is_editor_hint()) {
+				for (int i = 0; i < _liquid_meshers.size(); ++i) {
+					Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
 
-				ERR_CONTINUE(!mesher.is_valid());
+					ERR_CONTINUE(!mesher.is_valid());
 
-				temp_arr_collider_liquid.append_array(mesher->build_collider());
+					temp_arr_collider_liquid.append_array(mesher->build_collider());
+				}
 			}
 
 			if (temp_arr_collider.size() == 0 && temp_arr_collider_liquid.size() == 0) {
