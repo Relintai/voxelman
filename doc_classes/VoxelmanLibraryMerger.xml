@@ -13,8 +13,6 @@
 		</member>
 		<member name="keep_original_atlases" type="bool" setter="set_keep_original_atlases" getter="get_keep_original_atlases" default="false">
 		</member>
-		<member name="liquid_voxel_surfaces" type="Array" setter="set_liquid_voxel_surfaces" getter="get_liquid_voxel_surfaces" default="[  ]">
-		</member>
 		<member name="margin" type="int" setter="set_margin" getter="get_margin" default="0">
 		</member>
 		<member name="max_atlas_size" type="int" setter="set_max_atlas_size" getter="get_max_atlas_size" default="1024">

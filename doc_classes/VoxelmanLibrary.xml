@@ -25,14 +25,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="add_liquid_surface">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="VoxelSurface">
-			</argument>
-			<description>
-			</description>
-		</method>
 		<method name="add_material">
 			<return type="void">
 			</return>
@@ -58,12 +50,6 @@
 			</description>
 		</method>
 		<method name="clear_liquid_materials">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="clear_liquid_surfaces">
 			<return type="void">
 			</return>
 			<description>
@@ -95,14 +81,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="get_liquid_surface">
-			<return type="VoxelSurface">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
 		<method name="get_material">
 			<return type="Material">
 			</return>
@@ -112,12 +90,6 @@
 			</description>
 		</method>
 		<method name="get_num_liquid_materials" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_num_liquid_surfaces" qualifiers="const">
 			<return type="int">
 			</return>
 			<description>
@@ -171,14 +143,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="remove_liquid_surface">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
 		<method name="remove_material">
 			<return type="void">
 			</return>
@@ -209,16 +173,6 @@
 			<argument index="0" name="index" type="int">
 			</argument>
 			<argument index="1" name="value" type="Material">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="set_liquid_surface">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<argument index="1" name="surface" type="VoxelSurface">
 			</argument>
 			<description>
 			</description>

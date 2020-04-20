@@ -393,13 +393,9 @@
 		</constant>
 		<constant name="DEFAULT_CHANNEL_RANDOM_AO" value="6" enum="DefaultChannels">
 		</constant>
-		<constant name="DEFAULT_CHANNEL_LIQUID_TYPES" value="7" enum="DefaultChannels">
+		<constant name="DEFAULT_CHANNEL_LIQUID_FLOW" value="7" enum="DefaultChannels">
 		</constant>
-		<constant name="DEFAULT_CHANNEL_LIQUID_FILL" value="8" enum="DefaultChannels">
-		</constant>
-		<constant name="DEFAULT_CHANNEL_LIQUID_FLOW" value="9" enum="DefaultChannels">
-		</constant>
-		<constant name="MAX_DEFAULT_CHANNELS" value="10" enum="DefaultChannels">
+		<constant name="MAX_DEFAULT_CHANNELS" value="8" enum="DefaultChannels">
 		</constant>
 		<constant name="BUILD_PHASE_TYPE_NORMAL" value="0" enum="ActiveBuildPhaseType">
 		</constant>

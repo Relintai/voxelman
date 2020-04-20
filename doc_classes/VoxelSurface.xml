@@ -61,9 +61,11 @@
 	<members>
 		<member name="id" type="int" setter="set_id" getter="get_id" default="0">
 		</member>
+		<member name="liquid" type="bool" setter="set_liquid" getter="get_liquid" default="false">
+		</member>
 		<member name="mesher_index" type="int" setter="set_mesher_index" getter="get_mesher_index" default="0">
 		</member>
-		<member name="transparent" type="bool" setter="set_transparent" getter="is_transparent" default="false">
+		<member name="transparent" type="bool" setter="set_transparent" getter="get_transparent" default="false">
 		</member>
 		<member name="voxel_name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
 		</member>

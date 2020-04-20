@@ -13,8 +13,6 @@
 		</member>
 		<member name="atlas_rows" type="int" setter="set_atlas_rows" getter="get_atlas_rows" default="8">
 		</member>
-		<member name="liquid_voxel_surfaces" type="Array" setter="set_liquid_voxel_surfaces" getter="get_liquid_voxel_surfaces" default="[  ]">
-		</member>
 		<member name="voxel_surfaces" type="Array" setter="set_voxel_surfaces" getter="get_voxel_surfaces" default="[  ]">
 		</member>
 	</members>

@@ -501,9 +501,7 @@
 		</constant>
 		<constant name="CHANNEL_TYPE_INFO_ISOLEVEL" value="1" enum="ChannelTypeInfo">
 		</constant>
-		<constant name="CHANNEL_TYPE_INFO_LIQUID" value="2" enum="ChannelTypeInfo">
-		</constant>
-		<constant name="CHANNEL_TYPE_INFO_LIQUID_LEVEL" value="3" enum="ChannelTypeInfo">
+		<constant name="CHANNEL_TYPE_INFO_LIQUID_FLOW" value="2" enum="ChannelTypeInfo">
 		</constant>
 	</constants>
 </class>
