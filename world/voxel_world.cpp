@@ -200,7 +200,7 @@ int VoxelWorld::get_world_area_count() const {
 //Voxel Structures
 
 Ref<VoxelStructure> VoxelWorld::get_voxel_structure(const int index) const {
-	ERR_FAIL_INDEX_V(index, _voxel_structures.size(), Ref<WorldArea>());
+	ERR_FAIL_INDEX_V(index, _voxel_structures.size(), Ref<VoxelStructure>());
 
 	return _voxel_structures.get(index);
 }
