@@ -596,8 +596,12 @@ void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_m
 
 	PhysicsServer::get_singleton()->body_set_state(body_rid, PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
 
-	if (get_voxel_world()->is_inside_world())
-		PhysicsServer::get_singleton()->body_set_space(body_rid, get_voxel_world()->get_world()->get_space());
+	if (get_voxel_world()->is_inside_world()) {
+		Ref<World> world = get_voxel_world()->get_world();
+
+		if (world.is_valid() && world->get_space() != RID())
+			PhysicsServer::get_singleton()->body_set_space(body_rid, world->get_space());
+	}
 
 	m[MESH_TYPE_INDEX_BODY] = body_rid;
 	m[MESH_TYPE_INDEX_SHAPE] = shape_rid;
@@ -623,8 +627,12 @@ void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int la
 
 	PhysicsServer::get_singleton()->area_add_shape(area_rid, shape_rid, get_transform());
 
-	if (get_voxel_world()->is_inside_world())
-		PhysicsServer::get_singleton()->area_set_space(area_rid, get_voxel_world()->get_world()->get_space());
+	if (get_voxel_world()->is_inside_world()) {
+		Ref<World> world = get_voxel_world()->get_world();
+
+		if (world.is_valid() && world->get_space() != RID())
+			PhysicsServer::get_singleton()->area_set_space(area_rid, world->get_space());
+	}
 
 	m[MESH_TYPE_INDEX_AREA] = area_rid;
 	m[MESH_TYPE_INDEX_SHAPE] = shape_rid;
