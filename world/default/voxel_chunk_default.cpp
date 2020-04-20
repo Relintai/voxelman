@@ -576,7 +576,8 @@ void VoxelChunkDefault::free_meshes(const int mesh_index) {
 }
 
 void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_mask) {
-	ERR_FAIL_COND(_voxel_world == Variant());
+	ERR_FAIL_COND(_voxel_world == NULL);
+	ERR_FAIL_COND(PhysicsServer::get_singleton()->is_flushing_queries());
 
 	if (!_rids.has(mesh_index))
 		_rids[mesh_index] = Dictionary();
@@ -609,7 +610,8 @@ void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_m
 	_rids[mesh_index] = m;
 }
 void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int layer_mask) {
-	ERR_FAIL_COND(_voxel_world == Variant());
+	ERR_FAIL_COND(_voxel_world == NULL);
+	ERR_FAIL_COND(PhysicsServer::get_singleton()->is_flushing_queries());
 
 	if (!_rids.has(mesh_index))
 		_rids[mesh_index] = Dictionary();
@@ -622,10 +624,16 @@ void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int la
 	RID shape_rid = PhysicsServer::get_singleton()->shape_create(PhysicsServer::SHAPE_CONCAVE_POLYGON);
 	RID area_rid = PhysicsServer::get_singleton()->area_create();
 
+	PhysicsServer::get_singleton()->area_attach_object_instance_id(area_rid, _voxel_world->get_instance_id());
+	PhysicsServer::get_singleton()->area_set_param(area_rid, PhysicsServer::AREA_PARAM_GRAVITY, 9.8);
+	PhysicsServer::get_singleton()->area_set_param(area_rid, PhysicsServer::AREA_PARAM_GRAVITY_VECTOR, Vector3(0, -1, 0));
+
+	//PhysicsServer::get_singleton()->area_set_monitor_callback(area_rid, this, "_body_area_inout");
+	//PhysicsServer::get_singleton()->area_set_area_monitor_callback(area_rid, this, "_body_area_area_inout");
+	//PhysicsServer::get_singleton()->area_set_monitorable(area_rid, true);
+
 	PhysicsServer::get_singleton()->area_set_collision_layer(area_rid, layer_mask);
 	PhysicsServer::get_singleton()->area_set_collision_mask(area_rid, layer_mask);
-
-	PhysicsServer::get_singleton()->area_add_shape(area_rid, shape_rid, get_transform());
 
 	if (get_voxel_world()->is_inside_world()) {
 		Ref<World> world = get_voxel_world()->get_world();
@@ -634,11 +642,14 @@ void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int la
 			PhysicsServer::get_singleton()->area_set_space(area_rid, world->get_space());
 	}
 
+	PhysicsServer::get_singleton()->area_add_shape(area_rid, shape_rid, get_transform());
+
 	m[MESH_TYPE_INDEX_AREA] = area_rid;
 	m[MESH_TYPE_INDEX_SHAPE] = shape_rid;
 
 	_rids[mesh_index] = m;
 }
+
 void VoxelChunkDefault::free_colliders(const int mesh_index) {
 	if (!_rids.has(mesh_index))
 		return;
