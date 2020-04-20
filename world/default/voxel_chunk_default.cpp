@@ -1180,7 +1180,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 				PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
 
-				//temp_arr_collider.resize(0);
+				temp_arr_collider.resize(0);
 			}
 
 			if (temp_arr_collider_liquid.size() != 0) {
@@ -1196,7 +1196,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 				PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_liquid);
 
-				//temp_arr_collider_liquid.resize(0);
+				temp_arr_collider_liquid.resize(0);
 			}
 
 			next_phase();
@@ -1435,7 +1435,7 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 
 			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
 
-			//temp_arr_collider.resize(0);
+			temp_arr_collider.resize(0);
 		}
 
 		if (temp_arr_collider_liquid.size() != 0) {
@@ -1445,7 +1445,7 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 
 			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_liquid);
 
-			//temp_arr_collider_liquid.resize(0);
+			temp_arr_collider_liquid.resize(0);
 		}
 
 		set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
