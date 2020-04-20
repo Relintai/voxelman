@@ -1207,11 +1207,13 @@ void VoxelChunkDefault::_build_phase(int phase) {
 					if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_BODY)) {
 						create_colliders(MESH_INDEX_LIQUID);
 					}
-				} else {
+				}
+				/*
+				 else {
 					if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_AREA)) {
 						create_colliders_area(MESH_INDEX_LIQUID);
 					}
-				}
+				}*/
 
 				PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_liquid);
 
@@ -1462,11 +1464,13 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 				if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_BODY)) {
 					create_colliders(MESH_INDEX_LIQUID);
 				}
-			} else {
+			}
+			/*
+			else {
 				if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_AREA)) {
 					create_colliders_area(MESH_INDEX_LIQUID);
 				}
-			}
+			}*/
 
 			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_liquid);
 
