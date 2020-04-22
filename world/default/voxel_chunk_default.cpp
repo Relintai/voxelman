@@ -605,7 +605,7 @@ void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_m
 
 	PhysicsServer::get_singleton()->body_set_state(body_rid, PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
 
-	if (get_voxel_world()->is_inside_world()) {
+	if (get_voxel_world()->is_inside_tree() && get_voxel_world()->is_inside_world()) {
 		Ref<World> world = get_voxel_world()->get_world();
 
 		if (world.is_valid() && world->get_space() != RID())
@@ -643,7 +643,7 @@ void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int la
 	PhysicsServer::get_singleton()->area_set_collision_layer(area_rid, layer_mask);
 	PhysicsServer::get_singleton()->area_set_collision_mask(area_rid, layer_mask);
 
-	if (get_voxel_world()->is_inside_world()) {
+	if (get_voxel_world()->is_inside_tree() && get_voxel_world()->is_inside_world()) {
 		Ref<World> world = get_voxel_world()->get_world();
 
 		if (world.is_valid() && world->get_space() != RID())
