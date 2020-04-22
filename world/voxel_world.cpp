@@ -505,6 +505,9 @@ void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
 			continue;
 		}
 
+		if (chunk->get_voxel_world() != NULL && chunk->get_voxel_world() != this)
+			continue;
+
 		add_chunk(chunk, chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z());
 	}
 }
