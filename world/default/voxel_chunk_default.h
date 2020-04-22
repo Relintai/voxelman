@@ -263,6 +263,7 @@ protected:
 	int _build_flags;
 
 	bool _abort_build;
+	bool _queued_generation;
 
 	int _current_build_phase;
 	int _max_build_phases;

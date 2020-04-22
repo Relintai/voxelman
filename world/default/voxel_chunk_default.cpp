@@ -274,6 +274,14 @@ void VoxelChunkDefault::next_phase() {
 	++_current_build_phase;
 
 	if (_current_build_phase >= _max_build_phases) {
+		if (_queued_generation) {
+			_current_build_phase = BUILD_PHASE_DONE;
+			++_current_build_phase;
+
+			_queued_generation = false;
+			return;
+		}
+
 		_current_build_phase = BUILD_PHASE_DONE;
 		_is_generating = false;
 
@@ -1052,6 +1060,7 @@ VoxelChunkDefault::VoxelChunkDefault() {
 	_is_generating = false;
 
 	_abort_build = false;
+	_queued_generation = false;
 	_dirty = false;
 	_state = VOXEL_CHUNK_STATE_OK;
 
@@ -1503,6 +1512,7 @@ void VoxelChunkDefault::_create_meshers() {
 
 void VoxelChunkDefault::_build(bool immediate) {
 	if (_current_build_phase == BUILD_PHASE_DONE) {
+		_queued_generation = false;
 		_build_prioritized = true;
 
 		wait_and_finish_thread();
@@ -1517,6 +1527,8 @@ void VoxelChunkDefault::_build(bool immediate) {
 			return;
 
 		build_step();
+	} else {
+		_queued_generation = true;
 	}
 }
 
