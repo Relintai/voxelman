@@ -79,6 +79,10 @@ _FORCE_INLINE_ void VoxelChunk::set_is_generating(const bool value) {
 	_is_generating = value;
 }
 
+bool VoxelChunk::is_in_tree() const {
+	return _is_in_tree;
+}
+
 _FORCE_INLINE_ bool VoxelChunk::get_dirty() const {
 	return _dirty;
 }
@@ -542,6 +546,9 @@ void VoxelChunk::create_meshers() {
 }
 
 void VoxelChunk::build(const bool immediate) {
+	ERR_FAIL_COND(!ObjectDB::instance_validate(get_voxel_world()));
+	ERR_FAIL_COND(!get_voxel_world()->is_inside_tree());
+	ERR_FAIL_COND(!is_in_tree());
 	ERR_FAIL_COND_MSG(!has_method("_build"), "VoxelChunk: _build(immediate : bool) is missing! Please implement it!");
 
 	call("_build", immediate);
@@ -711,10 +718,14 @@ void VoxelChunk::clear_props() {
 }
 
 void VoxelChunk::enter_tree() {
+	_is_in_tree = true;
+
 	if (has_method("_enter_tree"))
 		call("_enter_tree");
 }
 void VoxelChunk::exit_tree() {
+	_is_in_tree = false;
+
 	if (has_method("_exit_tree"))
 		call("_exit_tree");
 }
@@ -753,6 +764,7 @@ VoxelChunk::VoxelChunk() {
 	_is_build_threaded = false;
 	_is_processing = false;
 	_is_phisics_processing = false;
+	_is_in_tree = false;
 
 	_is_visible = true;
 
@@ -891,6 +903,8 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_physics_process"), &VoxelChunk::get_physics_process);
 	ClassDB::bind_method(D_METHOD("set_physics_process", "value"), &VoxelChunk::set_physics_process);
+
+	ClassDB::bind_method(D_METHOD("is_in_tree"), &VoxelChunk::is_in_tree);
 
 	ClassDB::bind_method(D_METHOD("get_is_build_threaded"), &VoxelChunk::get_is_build_threaded);
 	ClassDB::bind_method(D_METHOD("set_is_build_threaded", "value"), &VoxelChunk::set_is_build_threaded);

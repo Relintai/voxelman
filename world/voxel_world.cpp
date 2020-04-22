@@ -272,7 +272,8 @@ void VoxelWorld::add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, cons
 	_chunks.set(pos, chunk);
 	_chunks_vector.push_back(chunk);
 
-	chunk->enter_tree();
+	if (is_inside_tree())
+		chunk->enter_tree();
 
 	if (has_method("_chunk_added"))
 		call("_chunk_added", chunk);

@@ -87,6 +87,8 @@ public:
 	bool get_is_generating() const;
 	void set_is_generating(const bool value);
 
+	bool is_in_tree() const;
+
 	bool get_dirty() const;
 	void set_dirty(const bool value);
 
@@ -233,6 +235,8 @@ protected:
 	bool _is_generating;
 	bool _dirty;
 	int _state;
+
+	bool _is_in_tree;
 
 	VoxelWorld *_voxel_world;
 

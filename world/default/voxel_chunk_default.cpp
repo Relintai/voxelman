@@ -586,6 +586,7 @@ void VoxelChunkDefault::free_meshes(const int mesh_index) {
 void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_mask) {
 	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(PhysicsServer::get_singleton()->is_flushing_queries());
+	//ERR_FAIL_COND(!get_voxel_world()->is_inside_tree());
 
 	if (!_rids.has(mesh_index))
 		_rids[mesh_index] = Dictionary();
