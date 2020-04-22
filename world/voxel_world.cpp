@@ -757,9 +757,9 @@ VoxelWorld ::~VoxelWorld() {
 
 void VoxelWorld::_generate_chunk(Ref<VoxelChunk> chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
-	ERR_FAIL_COND(!_level_generator.is_valid());
 
-	_level_generator->generate_chunk(chunk);
+	if (_level_generator.is_valid())
+		_level_generator->generate_chunk(chunk);
 
 	for (int i = 0; i < _voxel_structures.size(); ++i) {
 		Ref<VoxelStructure> structure = _voxel_structures.get(i);
