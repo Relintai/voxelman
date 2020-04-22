@@ -562,6 +562,10 @@ Array VoxelChunk::merge_mesh_array(Array arr) const {
 	PoolColorArray colors = arr[VisualServer::ARRAY_COLOR];
 	PoolIntArray indices = arr[VisualServer::ARRAY_INDEX];
 
+	bool has_normals = normals.size() > 0;
+	bool has_uvs = uvs.size() > 0;
+	bool has_colors = colors.size() > 0;
+
 	int i = 0;
 	while (i < verts.size()) {
 		Vector3 v = verts[i];
@@ -579,9 +583,13 @@ Array VoxelChunk::merge_mesh_array(Array arr) const {
 			int remk = rem - k;
 
 			verts.remove(remk);
-			normals.remove(remk);
-			uvs.remove(remk);
-			colors.remove(remk);
+
+			if (has_normals)
+				normals.remove(remk);
+			if (has_uvs)
+				uvs.remove(remk);
+			if (has_colors)
+				colors.remove(remk);
 
 			for (int j = 0; j < indices.size(); ++j) {
 				int indx = indices[j];
@@ -597,9 +605,14 @@ Array VoxelChunk::merge_mesh_array(Array arr) const {
 	}
 
 	arr[VisualServer::ARRAY_VERTEX] = verts;
-	arr[VisualServer::ARRAY_NORMAL] = normals;
-	arr[VisualServer::ARRAY_TEX_UV] = uvs;
-	arr[VisualServer::ARRAY_COLOR] = colors;
+
+	if (has_normals)
+		arr[VisualServer::ARRAY_NORMAL] = normals;
+	if (has_uvs)
+		arr[VisualServer::ARRAY_TEX_UV] = uvs;
+	if (has_colors)
+		arr[VisualServer::ARRAY_COLOR] = colors;
+
 	arr[VisualServer::ARRAY_INDEX] = indices;
 
 	return arr;
@@ -616,6 +629,9 @@ Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, const float mu
 
 	PoolVector2Array uvs = arr[VisualServer::ARRAY_TEX_UV];
 	PoolColorArray colors = arr[VisualServer::ARRAY_COLOR];
+
+	if (colors.size() < uvs.size())
+		colors.resize(uvs.size());
 
 #if VERSION_MAJOR < 4
 	img->lock();
