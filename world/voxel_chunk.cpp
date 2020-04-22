@@ -894,7 +894,7 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_is_build_threaded"), &VoxelChunk::get_is_build_threaded);
 	ClassDB::bind_method(D_METHOD("set_is_build_threaded", "value"), &VoxelChunk::set_is_build_threaded);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_build_threaded"), "set_is_build_threaded", "get_is_build_threaded");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_build_threaded", PROPERTY_HINT_NONE, "", 0), "set_is_build_threaded", "get_is_build_threaded");
 
 	ClassDB::bind_method(D_METHOD("get_transform"), &VoxelChunk::get_transform);
 	ClassDB::bind_method(D_METHOD("set_transform", "value"), &VoxelChunk::set_transform);
@@ -906,15 +906,15 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_is_generating"), &VoxelChunk::get_is_generating);
 	ClassDB::bind_method(D_METHOD("set_is_generating", "value"), &VoxelChunk::set_is_generating);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_generating"), "set_is_generating", "get_is_generating");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_generating", PROPERTY_HINT_NONE, "", 0), "set_is_generating", "get_is_generating");
 
 	ClassDB::bind_method(D_METHOD("get_dirty"), &VoxelChunk::get_dirty);
 	ClassDB::bind_method(D_METHOD("set_dirty", "value"), &VoxelChunk::set_dirty);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "dirty"), "set_dirty", "get_dirty");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "dirty", PROPERTY_HINT_NONE, "", 0), "set_dirty", "get_dirty");
 
 	ClassDB::bind_method(D_METHOD("get_state"), &VoxelChunk::get_state);
 	ClassDB::bind_method(D_METHOD("set_state", "value"), &VoxelChunk::set_state);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "state"), "set_state", "get_state");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "state", PROPERTY_HINT_NONE, "", 0), "set_state", "get_state");
 
 	ClassDB::bind_method(D_METHOD("get_position_x"), &VoxelChunk::get_position_x);
 	ClassDB::bind_method(D_METHOD("set_position_x", "value"), &VoxelChunk::set_position_x);

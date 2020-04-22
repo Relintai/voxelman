@@ -1543,31 +1543,31 @@ void VoxelChunkDefault::wait_and_finish_thread() {
 void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_build_flags"), &VoxelChunkDefault::get_build_flags);
 	ClassDB::bind_method(D_METHOD("set_build_flags", "value"), &VoxelChunkDefault::set_build_flags);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_flags", PROPERTY_HINT_FLAGS, BINDING_STRING_BUILD_FLAGS), "set_build_flags", "get_build_flags");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_flags", PROPERTY_HINT_FLAGS, BINDING_STRING_BUILD_FLAGS, 0), "set_build_flags", "get_build_flags");
 
 	ClassDB::bind_method(D_METHOD("get_active_build_phase_type"), &VoxelChunkDefault::get_active_build_phase_type);
 	ClassDB::bind_method(D_METHOD("set_active_build_phase_type", "value"), &VoxelChunkDefault::set_active_build_phase_type);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "active_build_phase_type", PROPERTY_HINT_ENUM, BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE), "set_active_build_phase_type", "get_active_build_phase_type");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "active_build_phase_type", PROPERTY_HINT_ENUM, BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE, 0), "set_active_build_phase_type", "get_active_build_phase_type");
 
 	ClassDB::bind_method(D_METHOD("get_lod_size"), &VoxelChunkDefault::get_lod_size);
 	ClassDB::bind_method(D_METHOD("set_lod_size", "value"), &VoxelChunkDefault::set_lod_size);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_size"), "set_lod_size", "get_lod_size");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_size", PROPERTY_HINT_NONE, "", 0), "set_lod_size", "get_lod_size");
 
 	ClassDB::bind_method(D_METHOD("get_current_build_phase"), &VoxelChunkDefault::get_current_build_phase);
 	ClassDB::bind_method(D_METHOD("set_current_build_phase", "value"), &VoxelChunkDefault::set_current_build_phase);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_build_phase"), "set_current_build_phase", "get_current_build_phase");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_build_phase", PROPERTY_HINT_NONE, "", 0), "set_current_build_phase", "get_current_build_phase");
 
 	ClassDB::bind_method(D_METHOD("get_max_build_phase"), &VoxelChunkDefault::get_max_build_phase);
 	ClassDB::bind_method(D_METHOD("set_max_build_phase", "value"), &VoxelChunkDefault::set_max_build_phase);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_build_phase"), "set_max_build_phase", "get_max_build_phase");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_build_phase", PROPERTY_HINT_NONE, "", 0), "set_max_build_phase", "get_max_build_phase");
 
 	ClassDB::bind_method(D_METHOD("get_lights_dirty"), &VoxelChunkDefault::get_lights_dirty);
 	ClassDB::bind_method(D_METHOD("set_lights_dirty", "value"), &VoxelChunkDefault::set_lights_dirty);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "lights_dirty", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_lights_dirty", "get_lights_dirty");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "lights_dirty", PROPERTY_HINT_NONE, "", 0), "set_lights_dirty", "get_lights_dirty");
 
 	ClassDB::bind_method(D_METHOD("get_lod_num"), &VoxelChunkDefault::get_lod_num);
 	ClassDB::bind_method(D_METHOD("set_lod_num"), &VoxelChunkDefault::set_lod_num);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_num"), "set_lod_num", "get_lod_num");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_num", PROPERTY_HINT_NONE, "", 0), "set_lod_num", "get_lod_num");
 
 	ClassDB::bind_method(D_METHOD("get_current_lod_level"), &VoxelChunkDefault::get_current_lod_level);
 	ClassDB::bind_method(D_METHOD("set_current_lod_level"), &VoxelChunkDefault::set_current_lod_level);
