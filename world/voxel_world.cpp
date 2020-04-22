@@ -260,6 +260,7 @@ void VoxelWorld::set_voxel_structures(const Vector<Variant> &structures) {
 
 void VoxelWorld::add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z) {
 	ERR_FAIL_COND(!chunk.is_valid());
+	ERR_FAIL_COND_MSG(chunk->get_voxel_world() != NULL && chunk->get_voxel_world() != this, "Chunk is already owned by an another world!");
 
 	IntPos pos(x, y, z);
 
@@ -484,31 +485,38 @@ Vector<Variant> VoxelWorld::get_chunks() {
 
 void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
 
-	for (int i = 0; i < _chunks_vector.size(); ++i) {
-		Ref<VoxelChunk> chunk = Ref<VoxelChunk>(_chunks_vector[i]);
+	if (is_inside_tree()) {
+		for (int i = 0; i < _chunks_vector.size(); ++i) {
+			Ref<VoxelChunk> chunk = Ref<VoxelChunk>(_chunks_vector[i]);
 
-		if (chunks.find(chunk) == -1) {
-			remove_chunk_index(i);
-			_generation_queue.erase(chunk);
-			_generating.erase(chunk);
-			--i;
-		}
-	}
-
-	for (int i = 0; i < chunks.size(); ++i) {
-		Ref<VoxelChunk> chunk = Ref<VoxelChunk>(chunks[i]);
-
-		if (!chunk.is_valid())
-			continue;
-
-		if (_chunks_vector.find(chunk) != -1) {
-			continue;
+			if (chunks.find(chunk) == -1) {
+				remove_chunk_index(i);
+				_generation_queue.erase(chunk);
+				_generating.erase(chunk);
+				--i;
+			}
 		}
 
-		if (chunk->get_voxel_world() != NULL && chunk->get_voxel_world() != this)
-			continue;
+		//add the difference
+		for (int i = 0; i < chunks.size(); ++i) {
+			Ref<VoxelChunk> chunk = Ref<VoxelChunk>(chunks[i]);
 
-		add_chunk(chunk, chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z());
+			if (!chunk.is_valid())
+				continue;
+
+			if (_chunks_vector.find(chunk) != -1)
+				continue;
+
+			add_chunk(chunk, chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z());
+		}
+	} else {
+		_chunks_vector.clear();
+
+		for (int i = 0; i < chunks.size(); ++i) {
+			Ref<VoxelChunk> chunk = Ref<VoxelChunk>(chunks[i]);
+
+			_chunks_vector.push_back(chunk);
+		}
 	}
 }
 
@@ -876,7 +884,10 @@ void VoxelWorld::_notification(int p_what) {
 				Ref<VoxelChunk> chunk = _chunks_vector[i];
 
 				if (chunk.is_valid()) {
-					chunk->exit_tree();
+					if (chunk->get_voxel_world() == this) {
+						chunk->exit_tree();
+						chunk->set_voxel_world(NULL);
+					}
 				}
 			}
 
