@@ -65,6 +65,7 @@ SOFTWARE.
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
+	ClassDB::register_class<VoxelMesherDefault>();
 	ClassDB::register_class<VoxelMesherUVTransvoxel>();
 	ClassDB::register_class<TransvoxelCellData>();
 
