@@ -68,9 +68,9 @@ void VoxelWorldDefault::_update_lods() {
 		if (!c.is_valid())
 			continue;
 
-		int dx = abs(ppx - c->get_position_x());
-		int dy = abs(ppy - c->get_position_y());
-		int dz = abs(ppz - c->get_position_z());
+		int dx = Math::abs(ppx - c->get_position_x());
+		int dy = Math::abs(ppy - c->get_position_y());
+		int dz = Math::abs(ppz - c->get_position_z());
 
 		int mr = MAX(MAX(dx, dy), dz);
 
