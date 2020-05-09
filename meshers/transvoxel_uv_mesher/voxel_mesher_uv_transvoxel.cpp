@@ -282,8 +282,13 @@ void VoxelMesherUVTransvoxel::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 				float surface_ratio = 1.0;
 
-				if (type_id1 != type_id2)
-					surface_ratio = static_cast<float>(type_id1c) / static_cast<float>(type_id2c) / 8.0;
+				if (type_id1 != type_id2) {
+					if (type_id1c > 0 && type_id2c > 0) {
+						surface_ratio = 0.5;
+					} else {
+						surface_ratio = 0;
+					}
+				}
 
 				Ref<VoxelSurface> surface1 = _library->get_voxel_surface(type_id1 - 1);
 				Ref<VoxelSurface> surface2 = _library->get_voxel_surface(type_id2 - 1);
