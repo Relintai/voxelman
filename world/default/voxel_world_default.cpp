@@ -24,6 +24,12 @@ SOFTWARE.
 
 #include "voxel_chunk_default.h"
 
+#include "core/version.h"
+
+#if VERSION_MAJOR >= 4
+#define REAL FLOAT
+#endif
+
 _FORCE_INLINE_ int VoxelWorldDefault::get_build_flags() const {
 	return _build_flags;
 }
@@ -52,7 +58,11 @@ void VoxelWorldDefault::update_lods() {
 }
 
 void VoxelWorldDefault::_update_lods() {
+#if VERSION_MAJOR < 4
 	if (!get_player() || !ObjectDB::instance_validate(get_player())) {
+#else
+	if (!get_player() || !get_player()) {
+#endif
 		return;
 	}
 
@@ -86,7 +96,6 @@ void VoxelWorldDefault::_update_lods() {
 }
 
 Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
-
 	if (!chunk.is_valid()) {
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkDefault));
 	}
@@ -145,7 +154,11 @@ void VoxelWorldDefault::_notification(int p_what) {
 				return;
 			}
 
+#if VERSION_MAJOR < 4
 			if (!ObjectDB::instance_validate(get_player())) {
+#else
+			if (!get_player()) {
+#endif
 				set_player(NULL);
 				return;
 			}
@@ -157,7 +170,6 @@ void VoxelWorldDefault::_notification(int p_what) {
 
 				update_lods();
 			}
-
 		} break;
 	}
 }

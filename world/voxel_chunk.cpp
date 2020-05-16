@@ -546,7 +546,11 @@ void VoxelChunk::create_meshers() {
 }
 
 void VoxelChunk::build(const bool immediate) {
+#if VERSION_MAJOR < 4
 	ERR_FAIL_COND(!ObjectDB::instance_validate(get_voxel_world()));
+#else
+	ERR_FAIL_COND(!get_voxel_world());
+#endif
 	ERR_FAIL_COND(!get_voxel_world()->is_inside_tree());
 	ERR_FAIL_COND(!is_in_tree());
 	ERR_FAIL_COND_MSG(!has_method("_build"), "VoxelChunk: _build(immediate : bool) is missing! Please implement it!");
