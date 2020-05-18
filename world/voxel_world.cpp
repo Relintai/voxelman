@@ -605,13 +605,13 @@ uint8_t VoxelWorld::get_voxel_at_world_position(const Vector3 &world_position, c
 	Vector3 pos = world_position / get_voxel_scale();
 
 	//Note: floor is needed to handle negative numbers proiberly
-	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x() / get_voxel_scale()));
-	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y() / get_voxel_scale()));
-	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z() / get_voxel_scale()));
+	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x()));
+	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y()));
+	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z()));
 
-	int bx = static_cast<int>(Math::floor(pos.x / get_voxel_scale())) % get_chunk_size_x();
-	int by = static_cast<int>(Math::floor(pos.y / get_voxel_scale())) % get_chunk_size_y();
-	int bz = static_cast<int>(Math::floor(pos.z / get_voxel_scale())) % get_chunk_size_z();
+	int bx = static_cast<int>(Math::floor(pos.x)) % get_chunk_size_x();
+	int by = static_cast<int>(Math::floor(pos.y)) % get_chunk_size_y();
+	int bz = static_cast<int>(Math::floor(pos.z)) % get_chunk_size_z();
 
 	if (bx < 0) {
 		bx += get_chunk_size_x();
@@ -637,13 +637,13 @@ void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, cons
 	Vector3 pos = world_position / get_voxel_scale();
 
 	//Note: floor is needed to handle negative numbers proiberly
-	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x() / get_voxel_scale()));
-	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y() / get_voxel_scale()));
-	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z() / get_voxel_scale()));
+	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x()));
+	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y()));
+	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z()));
 
-	int bx = static_cast<int>(Math::floor(pos.x / get_voxel_scale())) % get_chunk_size_x();
-	int by = static_cast<int>(Math::floor(pos.y / get_voxel_scale())) % get_chunk_size_y();
-	int bz = static_cast<int>(Math::floor(pos.z / get_voxel_scale())) % get_chunk_size_z();
+	int bx = static_cast<int>(Math::floor(pos.x)) % get_chunk_size_x();
+	int by = static_cast<int>(Math::floor(pos.y)) % get_chunk_size_y();
+	int bz = static_cast<int>(Math::floor(pos.z)) % get_chunk_size_z();
 
 	if (bx < 0) {
 		bx += get_chunk_size_x();
@@ -706,9 +706,9 @@ Ref<VoxelChunk> VoxelWorld::get_chunk_at_world_position(const Vector3 &world_pos
 	Vector3 pos = world_position / get_voxel_scale();
 
 	//Note: floor is needed to handle negative numbers proiberly
-	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x() / get_voxel_scale()));
-	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y() / get_voxel_scale()));
-	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z() / get_voxel_scale()));
+	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x()));
+	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y()));
+	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z()));
 
 	return get_chunk(x, y, z);
 }
@@ -716,9 +716,9 @@ Ref<VoxelChunk> VoxelWorld::get_or_create_chunk_at_world_position(const Vector3 
 	Vector3 pos = world_position / get_voxel_scale();
 
 	//Note: floor is needed to handle negative numbers proiberly
-	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x() / get_voxel_scale()));
-	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y() / get_voxel_scale()));
-	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z() / get_voxel_scale()));
+	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x()));
+	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y()));
+	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z()));
 
 	return get_or_create_chunk(x, y, z);
 }
