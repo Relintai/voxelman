@@ -24,18 +24,10 @@ SOFTWARE.
 
 #include "../../world/default/voxel_chunk_default.h"
 
-#if VERSION_MAJOR < 4
-#include "servers/visual_server.h"
+#include "../../defines.h"
 
-#include "scene/3d/mesh_instance.h"
-#else
-#include "servers/rendering_server.h"
-
-typedef class RenderingServer VisualServer;
-typedef class RenderingServer VS;
-
-#include "scene/3d/mesh_instance_3d.h"
-#endif
+#include visual_server_h
+#include mesh_instance_h
 
 _FORCE_INLINE_ int VoxelMesherDefault::get_build_flags() const {
 	return _build_flags;

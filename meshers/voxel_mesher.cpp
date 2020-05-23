@@ -22,22 +22,9 @@ SOFTWARE.
 
 #include "voxel_mesher.h"
 
-#include "core/version.h"
+#include "../defines.h"
 
-#if VERSION_MAJOR < 4
-#include "servers/visual_server.h"
-
-#include "scene/3d/mesh_instance.h"
-#else
-#include "servers/rendering_server.h"
-
-typedef class RenderingServer VisualServer;
-typedef class RenderingServer VS;
-
-#include "scene/3d/mesh_instance_3d.h"
-
-#define REAL FLOAT
-#endif
+#include mesh_instance_h
 
 #include "../world/default/voxel_chunk_default.h"
 #include "../world/voxel_chunk.h"
@@ -167,7 +154,7 @@ Array VoxelMesher::build_mesh() {
 	{
 		PoolVector<Vector3> array;
 		array.resize(_vertices.size());
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		PoolVector<Vector3>::Write w = array.write();
 #endif
 
@@ -175,7 +162,7 @@ Array VoxelMesher::build_mesh() {
 			array.set(i, _vertices[i].vertex);
 		}
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		w.release();
 #endif
 
@@ -189,7 +176,7 @@ Array VoxelMesher::build_mesh() {
 	{
 		PoolVector<Vector3> array;
 		array.resize(_vertices.size());
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		PoolVector<Vector3>::Write w = array.write();
 #endif
 
@@ -197,7 +184,7 @@ Array VoxelMesher::build_mesh() {
 			array.set(i, _vertices[i].normal);
 		}
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		w.release();
 #endif
 		a[VisualServer::ARRAY_NORMAL] = array;
@@ -206,7 +193,7 @@ Array VoxelMesher::build_mesh() {
 	if ((_format & VisualServer::ARRAY_FORMAT_COLOR) != 0) {
 		PoolVector<Color> array;
 		array.resize(_vertices.size());
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		PoolVector<Color>::Write w = array.write();
 #endif
 
@@ -214,7 +201,7 @@ Array VoxelMesher::build_mesh() {
 			array.set(i, _vertices[i].color);
 		}
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		w.release();
 #endif
 		a[VisualServer::ARRAY_COLOR] = array;
@@ -223,7 +210,7 @@ Array VoxelMesher::build_mesh() {
 	if ((_format & VisualServer::ARRAY_FORMAT_TEX_UV) != 0) {
 		PoolVector<Vector2> array;
 		array.resize(_vertices.size());
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		PoolVector<Vector2>::Write w = array.write();
 #endif
 
@@ -231,7 +218,7 @@ Array VoxelMesher::build_mesh() {
 			array.set(i, _vertices[i].uv);
 		}
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		w.release();
 #endif
 
@@ -241,7 +228,7 @@ Array VoxelMesher::build_mesh() {
 	if ((_format & VisualServer::ARRAY_FORMAT_TEX_UV2) != 0) {
 		PoolVector<Vector2> array;
 		array.resize(_vertices.size());
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		PoolVector<Vector2>::Write w = array.write();
 #endif
 
@@ -249,7 +236,7 @@ Array VoxelMesher::build_mesh() {
 			array.set(i, _vertices[i].uv2);
 		}
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		w.release();
 #endif
 		a[VisualServer::ARRAY_TEX_UV2] = array;
@@ -258,7 +245,7 @@ Array VoxelMesher::build_mesh() {
 	if (_indices.size() > 0) {
 		PoolVector<int> array;
 		array.resize(_indices.size());
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		PoolVector<int>::Write w = array.write();
 #endif
 
@@ -266,7 +253,7 @@ Array VoxelMesher::build_mesh() {
 			array.set(i, _indices[i]);
 		}
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 		w.release();
 #endif
 		a[VisualServer::ARRAY_INDEX] = array;

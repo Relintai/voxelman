@@ -25,11 +25,7 @@ SOFTWARE.
 #include "../../meshers/blocky/voxel_mesher_blocky.h"
 #include "../../meshers/blocky/voxel_mesher_liquid_blocky.h"
 
-#include "core/version.h"
-
-#if VERSION_MAJOR >= 4
-#define POOL_BYTE_ARRAY PACKED_BYTE_ARRAY
-#endif
+#include "../../defines.h"
 
 VoxelChunkBlocky::VoxelChunkBlocky() {
 }

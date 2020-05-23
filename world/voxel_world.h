@@ -23,18 +23,9 @@ SOFTWARE.
 #ifndef VOXEL_WORLD_H
 #define VOXEL_WORLD_H
 
-#include "core/version.h"
+#include "../defines.h"
 
-#if VERSION_MAJOR < 4
-#include "scene/3d/navigation.h"
-#include "scene/3d/spatial.h"
-#else
-#include "scene/3d/navigation_3d.h"
-#include "scene/3d/node_3d.h"
-
-typedef class Navigation3D Navigation;
-typedef class Node3D Spatial;
-#endif
+#include navigation_h
 
 #include "core/engine.h"
 #include "core/hash_map.h"
@@ -248,23 +239,23 @@ private:
 	int _chunk_spawn_range;
 
 	HashMap<IntPos, Ref<VoxelChunk>, IntPosHasher> _chunks;
-	Vector<Ref<VoxelChunk> > _chunks_vector;
+	Vector<Ref<VoxelChunk>> _chunks_vector;
 
-	Vector<Ref<WorldArea> > _world_areas;
+	Vector<Ref<WorldArea>> _world_areas;
 
-	Vector<Ref<VoxelStructure> > _voxel_structures;
+	Vector<Ref<VoxelStructure>> _voxel_structures;
 
 	NodePath _player_path;
 	Spatial *_player;
 
 	bool _use_threads;
 	int _max_concurrent_generations;
-	Vector<Ref<VoxelChunk> > _generation_queue;
-	Vector<Ref<VoxelChunk> > _generating;
+	Vector<Ref<VoxelChunk>> _generation_queue;
+	Vector<Ref<VoxelChunk>> _generating;
 	int _max_frame_chunk_build_steps;
 	int _num_frame_chunk_build_steps;
 
-	Vector<Ref<VoxelLight> > _lights;
+	Vector<Ref<VoxelLight>> _lights;
 };
 
 _FORCE_INLINE_ bool operator==(const VoxelWorld::IntPos &a, const VoxelWorld::IntPos &b) {

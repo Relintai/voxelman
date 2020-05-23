@@ -25,22 +25,12 @@ SOFTWARE.
 
 #include "core/reference.h"
 
-#include "core/version.h"
+#include "../defines.h"
 
-#if VERSION_MAJOR < 4
-#include "core/pool_vector.h"
-#include "scene/3d/mesh_instance.h"
-#else
-#include "core/vector.h"
+#include pool_vector_h
+include_pool_vector
 
-template <class N>
-using PoolVector = Vector<N>;
-
-typedef PackedByteArray PoolByteArray;
-
-class MeshInstance3D;
-typedef MeshInstance3D MeshInstance;
-#endif
+#include mesh_instance_h
 
 #include "core/color.h"
 #include "core/math/rect2.h"

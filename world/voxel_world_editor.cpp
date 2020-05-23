@@ -37,26 +37,11 @@ SOFTWARE.
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
 
-#include "core/version.h"
+#include "../defines.h"
 
-#if VERSION_MAJOR < 4
-
-#include "core/os/input.h"
-#include "editor/plugins/spatial_editor_plugin.h"
-#include "scene/3d/camera.h"
-
-#else
-
-#include "core/input/input_event.h"
-#include "editor/plugins/node_3d_editor_plugin.h"
-#include "scene/3d/camera_3d.h"
-
-#define PhysicsDirectSpaceState PhysicsDirectSpaceState3D
-#define SpatialEditor Node3DEditor
-#define SpatialEditorPlugin Node3DEditorPlugin
-#define SpatialEditorViewport Node3DEditorViewport
-
-#endif
+#include core_input_h
+#include spatial_editor_plugin_h
+#include camera_h
 
 bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event) {
 	if (!_world || !_world->get_editable()) {
@@ -97,11 +82,7 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 	from = local_xform.xform(from);
 	to = local_xform.xform(to);
 
-#if VERSION_MAJOR < 4
-	PhysicsDirectSpaceState *ss = _world->get_world()->get_direct_space_state();
-#else
-	PhysicsDirectSpaceState *ss = _world->get_world_3d()->get_direct_space_state();
-#endif
+	PhysicsDirectSpaceState *ss = _world->GET_WORLD()->get_direct_space_state();
 
 	PhysicsDirectSpaceState::RayResult res;
 
@@ -174,11 +155,8 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 		button->set_button_group(_surfaces_button_group);
 		button->set_h_size_flags(SIZE_EXPAND_FILL);
 
-#if VERSION_MAJOR < 4
-		button->connect("button_up", this, "_on_surface_button_pressed");
-#else
-		button->connect("button_up", callable_mp(this, &VoxelWorldEditor::_on_surface_button_pressed));
-#endif
+		button->CONNECT("button_up", this, VoxelWorldEditor, _on_surface_button_pressed);
+
 		_surfaces_vbox_container->add_child(button);
 
 		if (!f) {
@@ -216,11 +194,7 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	add_button->set_button_group(_tool_button_group);
 	add_button->set_meta("tool_mode", TOOL_MODE_ADD);
 
-#if VERSION_MAJOR < 4
-	add_button->connect("button_up", this, "_on_tool_button_pressed");
-#else
-	add_button->connect("button_up", callable_mp(this, &VoxelWorldEditor::_on_tool_button_pressed));
-#endif
+	add_button->CONNECT("button_up", this, VoxelWorldEditor, _on_tool_button_pressed);
 
 	add_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/add_mode", "Add Mode", KEY_A));
 	spatial_editor_hb->add_child(add_button);
@@ -231,11 +205,7 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	remove_button->set_button_group(_tool_button_group);
 	remove_button->set_meta("tool_mode", TOOL_MODE_REMOVE);
 
-#if VERSION_MAJOR < 4
-	remove_button->connect("button_up", this, "_on_tool_button_pressed");
-#else
-	remove_button->connect("button_up", callable_mp(this, &VoxelWorldEditor::_on_tool_button_pressed));
-#endif
+	remove_button->CONNECT("button_up", this, VoxelWorldEditor, _on_tool_button_pressed);
 
 	remove_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/remove_mode", "Remove Mode", KEY_S));
 	spatial_editor_hb->add_child(remove_button);
@@ -243,11 +213,7 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	ToolButton *insert_buton = memnew(ToolButton);
 	insert_buton->set_text("Insert");
 
-#if VERSION_MAJOR < 4
-	insert_buton->connect("button_up", this, "_on_insert_block_at_camera_button_pressed");
-#else
-	insert_buton->connect("button_up", callable_mp(this, &VoxelWorldEditor::_on_insert_block_at_camera_button_pressed));
-#endif
+	insert_buton->CONNECT("button_up", this, VoxelWorldEditor, _on_insert_block_at_camera_button_pressed);
 
 	insert_buton->set_shortcut(ED_SHORTCUT("voxelman_world_editor/instert_block_at_camera", "Insert at camera", KEY_B));
 	spatial_editor_hb->add_child(insert_buton);

@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "voxelman_library_simple.h"
 
-#include "core/version.h"
+#include "../defines.h"
 
 int VoxelmanLibrarySimple::get_atlas_columns() const {
 	return _atlas_columns;
@@ -89,15 +89,7 @@ void VoxelmanLibrarySimple::clear_surfaces() {
 }
 
 Vector<Variant> VoxelmanLibrarySimple::get_voxel_surfaces() {
-	Vector<Variant> r;
-	for (int i = 0; i < _voxel_surfaces.size(); i++) {
-#if VERSION_MAJOR < 4
-		r.push_back(_voxel_surfaces[i].get_ref_ptr());
-#else
-		r.push_back(_voxel_surfaces[i]);
-#endif
-	}
-	return r;
+	VARIANT_ARRAY_GET(_voxel_surfaces);
 }
 
 void VoxelmanLibrarySimple::set_voxel_surfaces(const Vector<Variant> &surfaces) {

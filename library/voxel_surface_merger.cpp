@@ -24,12 +24,10 @@ SOFTWARE.
 
 #include "voxelman_library_merger.h"
 
-#include "core/version.h"
+#include "../defines.h"
 
-#if VERSION_MAJOR >= 4
+#if GODOT4
 #define Texture Texture2D
-
-typedef class StandardMaterial3D SpatialMaterial;
 #endif
 
 Ref<AtlasTexture> VoxelSurfaceMerger::get_region(const VoxelSurfaceSides side) {

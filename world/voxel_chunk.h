@@ -25,13 +25,10 @@ SOFTWARE.
 
 #include "core/resource.h"
 
-#include "core/version.h"
+#include "../defines.h"
 
-#if VERSION_MAJOR < 4
-#include "core/pool_vector.h"
-#else
-#include "core/vector.h"
-#endif
+#include pool_vector_h
+include_pool_vector
 
 #include "core/engine.h"
 #include "core/os/mutex.h"
@@ -61,7 +58,7 @@ SOFTWARE.
 #define Texture Texture2D
 #endif
 
-class VoxelWorld;
+		class VoxelWorld;
 
 class VoxelChunk : public Resource {
 	GDCLASS(VoxelChunk, Resource);
@@ -260,11 +257,11 @@ protected:
 	float _voxel_scale;
 
 	Ref<VoxelmanLibrary> _library;
-	Vector<Ref<VoxelMesher> > _meshers;
-	Vector<Ref<VoxelMesher> > _liquid_meshers;
+	Vector<Ref<VoxelMesher>> _meshers;
+	Vector<Ref<VoxelMesher>> _liquid_meshers;
 
 	//mergeable props
-	Vector<Ref<VoxelChunkPropData> > _props;
+	Vector<Ref<VoxelChunkPropData>> _props;
 
 	Transform _transform;
 };

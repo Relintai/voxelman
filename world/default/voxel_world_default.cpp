@@ -24,11 +24,7 @@ SOFTWARE.
 
 #include "voxel_chunk_default.h"
 
-#include "core/version.h"
-
-#if VERSION_MAJOR >= 4
-#define REAL FLOAT
-#endif
+#include "../../defines.h"
 
 _FORCE_INLINE_ int VoxelWorldDefault::get_build_flags() const {
 	return _build_flags;
@@ -58,11 +54,7 @@ void VoxelWorldDefault::update_lods() {
 }
 
 void VoxelWorldDefault::_update_lods() {
-#if VERSION_MAJOR < 4
-	if (!get_player() || !ObjectDB::instance_validate(get_player())) {
-#else
-	if (!get_player() || !get_player()) {
-#endif
+	if (!get_player() || !INSTANCE_VALIDATE(get_player())) {
 		return;
 	}
 
@@ -154,11 +146,7 @@ void VoxelWorldDefault::_notification(int p_what) {
 				return;
 			}
 
-#if VERSION_MAJOR < 4
-			if (!ObjectDB::instance_validate(get_player())) {
-#else
-			if (!get_player()) {
-#endif
+			if (!INSTANCE_VALIDATE(get_player())) {
 				set_player(NULL);
 				return;
 			}

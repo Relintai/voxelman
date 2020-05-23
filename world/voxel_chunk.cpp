@@ -26,21 +26,7 @@ SOFTWARE.
 
 #include "../thirdparty/lz4/lz4.h"
 
-#if VERSION_MAJOR < 4
-#include "servers/visual_server.h"
-#else
-#include "servers/rendering_server.h"
-
-typedef class RenderingServer VisualServer;
-typedef class RenderingServer VS;
-
-#define REAL FLOAT
-
-typedef PackedVector3Array PoolVector3Array;
-typedef PackedVector2Array PoolVector2Array;
-typedef PackedColorArray PoolColorArray;
-typedef PackedInt32Array PoolIntArray;
-#endif
+#include "../defines.h"
 
 _FORCE_INLINE_ bool VoxelChunk::get_is_build_threaded() const {
 	return _is_build_threaded;
@@ -478,7 +464,7 @@ PoolByteArray VoxelChunk::get_channel_compressed(const int channel_index) const 
 	int bound = LZ4_compressBound(size);
 	arr.resize(bound);
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 	PoolByteArray::Write w = arr.write();
 
 	int ns = LZ4_compress_default(reinterpret_cast<char *>(ch), reinterpret_cast<char *>(w.ptr()), size, bound);
@@ -512,7 +498,7 @@ void VoxelChunk::set_channel_compressed(const int channel_index, const PoolByteA
 
 	int ds = data.size();
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 	PoolByteArray::Read r = data.read();
 
 	//We are not going to write to it
@@ -546,11 +532,7 @@ void VoxelChunk::create_meshers() {
 }
 
 void VoxelChunk::build(const bool immediate) {
-#if VERSION_MAJOR < 4
-	ERR_FAIL_COND(!ObjectDB::instance_validate(get_voxel_world()));
-#else
-	ERR_FAIL_COND(!get_voxel_world());
-#endif
+	ERR_FAIL_COND(!INSTANCE_VALIDATE(get_voxel_world()));
 	ERR_FAIL_COND(!get_voxel_world()->is_inside_tree());
 	ERR_FAIL_COND(!is_in_tree());
 	ERR_FAIL_COND_MSG(!has_method("_build"), "VoxelChunk: _build(immediate : bool) is missing! Please implement it!");
@@ -644,7 +626,7 @@ Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, const float mu
 	if (colors.size() < uvs.size())
 		colors.resize(uvs.size());
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 	img->lock();
 #endif
 
@@ -657,7 +639,7 @@ Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, const float mu
 		colors.set(i, colors[i] * c * mul_color);
 	}
 
-#if VERSION_MAJOR < 4
+#if !GODOT4
 	img->unlock();
 #endif
 

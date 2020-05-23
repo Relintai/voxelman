@@ -25,20 +25,14 @@ SOFTWARE.
 
 #include "voxel_structure.h"
 
-#include "core/version.h"
+#include "../defines.h"
 
-#if VERSION_MAJOR < 4
-#include "core/pool_vector.h"
-#else
-#include "core/vector.h"
-
-typedef PackedByteArray PoolByteArray;
-#endif
-
+#include pool_vector_h
+include_pool_vector
 #include "core/hash_map.h"
 #include "voxel_chunk.h"
 
-class BlockVoxelStructure : public VoxelStructure {
+		class BlockVoxelStructure : public VoxelStructure {
 	GDCLASS(BlockVoxelStructure, VoxelStructure);
 
 public:

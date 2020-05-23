@@ -25,15 +25,9 @@ SOFTWARE.
 
 #include "../voxel_chunk.h"
 
-#include "core/version.h"
+#include "../../defines.h"
 
-#if VERSION_MAJOR < 4
-#include "scene/3d/immediate_geometry.h"
-#else
-#include "scene/3d/immediate_geometry_3d.h"
-
-typedef class ImmediateGeometry3D ImmediateGeometry;
-#endif
+#include immediate_geometry_h
 
 #include "core/engine.h"
 #include "core/os/mutex.h"

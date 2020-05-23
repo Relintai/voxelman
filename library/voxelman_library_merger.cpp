@@ -25,11 +25,7 @@ SOFTWARE.
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/texture.h"
 
-#include "core/version.h"
-
-#if VERSION_MAJOR >= 4
-#define SpatialMaterial StandardMaterial3D
-#endif
+#include "../defines.h"
 
 int VoxelmanLibraryMerger::get_texture_flags() const {
 	return _packer->get_texture_flags();
@@ -123,15 +119,7 @@ void VoxelmanLibraryMerger::clear_surfaces() {
 }
 
 Vector<Variant> VoxelmanLibraryMerger::get_voxel_surfaces() {
-	Vector<Variant> r;
-	for (int i = 0; i < _voxel_surfaces.size(); i++) {
-#if VERSION_MAJOR < 4
-		r.push_back(_voxel_surfaces[i].get_ref_ptr());
-#else
-		r.push_back(_voxel_surfaces[i]);
-#endif
-	}
-	return r;
+	VARIANT_ARRAY_GET(_voxel_surfaces);
 }
 
 void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) {
@@ -270,10 +258,10 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
 	_packer.instance();
 
-#if VERSION_MAJOR < 4
-	_packer->set_texture_flags(Texture::FLAG_MIPMAPS | Texture::FLAG_FILTER);
+#if GODOT4
+	#warning implement
 #else
-//nyi
+	_packer->set_texture_flags(Texture::FLAG_MIPMAPS | Texture::FLAG_FILTER);
 #endif
 
 	_packer->set_max_atlas_size(1024);

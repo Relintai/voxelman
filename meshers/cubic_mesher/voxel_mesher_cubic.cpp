@@ -24,14 +24,9 @@ SOFTWARE.
 
 #include "../../world/default/voxel_chunk_default.h"
 
-#if VERSION_MAJOR < 4
-#include "servers/visual_server.h"
-#else
-#include "servers/rendering_server.h"
+#include "../../defines.h"
 
-typedef class RenderingServer VisualServer;
-typedef class RenderingServer VS;
-#endif
+#include visual_server_h
 
 void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	Ref<VoxelChunkDefault> chunk = p_chunk;

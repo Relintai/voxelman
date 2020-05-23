@@ -22,24 +22,10 @@ SOFTWARE.
 
 #include "voxel_chunk_default.h"
 
-#include "core/version.h"
+#include "../../defines.h"
 
-#if VERSION_MAJOR < 4
-#include "servers/visual_server.h"
-#else
-#include "servers/rendering_server.h"
-
-typedef class RenderingServer VisualServer;
-typedef class RenderingServer VS;
-
-#include "servers/physics_server_3d.h"
-
-typedef class PhysicsServer3D PhysicsServer;
-
-typedef class StandardMaterial3D SpatialMaterial;
-
-typedef class World3D World;
-#endif
+#include visual_server_h
+#include physics_server_h
 
 #include "../../../opensimplex/open_simplex_noise.h"
 #include "../../meshers/default/voxel_mesher_default.h"
@@ -526,13 +512,8 @@ void VoxelChunkDefault::create_meshes(const int mesh_index, const int mesh_count
 	for (int i = 0; i < mesh_count; ++i) {
 		RID mesh_instance_rid = VS::get_singleton()->instance_create();
 
-#if VERSION_MAJOR < 4
-		if (get_voxel_world()->get_world().is_valid())
-			VS::get_singleton()->instance_set_scenario(mesh_instance_rid, get_voxel_world()->get_world()->get_scenario());
-#else
-		if (get_voxel_world()->get_world_3d().is_valid())
-			VS::get_singleton()->instance_set_scenario(mesh_instance_rid, get_voxel_world()->get_world_3d()->get_scenario());
-#endif
+		if (get_voxel_world()->GET_WORLD().is_valid())
+			VS::get_singleton()->instance_set_scenario(mesh_instance_rid, get_voxel_world()->GET_WORLD()->get_scenario());
 
 		RID mesh_rid = VS::get_singleton()->mesh_create();
 
@@ -611,11 +592,7 @@ void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_m
 	PhysicsServer::get_singleton()->body_set_state(body_rid, PhysicsServer::BODY_STATE_TRANSFORM, get_transform());
 
 	if (get_voxel_world()->is_inside_tree() && get_voxel_world()->is_inside_world()) {
-#if VERSION_MAJOR < 4
-		Ref<World> world = get_voxel_world()->get_world();
-#else
-		Ref<World> world = get_voxel_world()->get_world_3d();
-#endif
+		Ref<World> world = get_voxel_world()->GET_WORLD();
 
 		if (world.is_valid() && world->get_space() != RID())
 			PhysicsServer::get_singleton()->body_set_space(body_rid, world->get_space());
@@ -653,11 +630,7 @@ void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int la
 	PhysicsServer::get_singleton()->area_set_collision_mask(area_rid, layer_mask);
 
 	if (get_voxel_world()->is_inside_tree() && get_voxel_world()->is_inside_world()) {
-#if VERSION_MAJOR < 4
-		Ref<World> world = get_voxel_world()->get_world();
-#else
-		Ref<World> world = get_voxel_world()->get_world_3d();
-#endif
+		Ref<World> world = get_voxel_world()->GET_WORLD();
 
 		if (world.is_valid() && world->get_space() != RID())
 			PhysicsServer::get_singleton()->area_set_space(area_rid, world->get_space());
@@ -1335,7 +1308,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				}
 
 				if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
-#if VERSION_MAJOR < 4
+#if !GODOT4
 					VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
 #else
 					VS::get_singleton()->mesh_clear(mesh_rid);
@@ -1425,7 +1398,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				}
 
 				if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
-#if VERSION_MAJOR < 4
+#if !GODOT4
 					VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
 #else
 					VS::get_singleton()->mesh_clear(mesh_rid);

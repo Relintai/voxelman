@@ -26,11 +26,7 @@ SOFTWARE.
 #include "voxel_chunk_prop_data.h"
 #include "voxel_structure.h"
 
-#include "core/version.h"
-
-#if VERSION_MAJOR >= 4
-#define REAL FLOAT
-#endif
+#include "../defines.h"
 
 const String VoxelWorld::BINDING_STRING_CHANNEL_TYPE_INFO = "Type,Isolevel,Liquid,Liquid Level";
 
@@ -238,15 +234,7 @@ void VoxelWorld::add_voxel_structure_at_position(Ref<VoxelStructure> structure, 
 }
 
 Vector<Variant> VoxelWorld::get_voxel_structures() {
-	Vector<Variant> r;
-	for (int i = 0; i < _voxel_structures.size(); i++) {
-#if VERSION_MAJOR < 4
-		r.push_back(_voxel_structures[i].get_ref_ptr());
-#else
-		r.push_back(_voxel_structures[i]);
-#endif
-	}
-	return r;
+	VARIANT_ARRAY_GET(_voxel_structures);
 }
 void VoxelWorld::set_voxel_structures(const Vector<Variant> &structures) {
 	clear_voxel_structures();
@@ -454,7 +442,6 @@ bool VoxelWorld::can_chunk_do_build_step() {
 }
 
 bool VoxelWorld::is_position_walkable(const Vector3 &p_pos) {
-
 	int x = static_cast<int>(Math::floor(p_pos.x / (_chunk_size_x * _voxel_scale)));
 	int y = static_cast<int>(Math::floor(p_pos.y / (_chunk_size_y * _voxel_scale)));
 	int z = static_cast<int>(Math::floor(p_pos.z / (_chunk_size_z * _voxel_scale)));
@@ -472,19 +459,10 @@ void VoxelWorld::on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk) {
 }
 
 Vector<Variant> VoxelWorld::get_chunks() {
-	Vector<Variant> r;
-	for (int i = 0; i < _chunks_vector.size(); i++) {
-#if VERSION_MAJOR < 4
-		r.push_back(_chunks_vector[i].get_ref_ptr());
-#else
-		r.push_back(_chunks_vector[i]);
-#endif
-	}
-	return r;
+	VARIANT_ARRAY_GET(_chunks_vector);
 }
 
 void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
-
 	if (is_inside_tree()) {
 		for (int i = 0; i < _chunks_vector.size(); ++i) {
 			Ref<VoxelChunk> chunk = Ref<VoxelChunk>(_chunks_vector[i]);
@@ -562,7 +540,6 @@ int VoxelWorld::get_light_count() const {
 }
 void VoxelWorld::clear_lights() {
 	for (int i = 0; i < _lights.size(); ++i) {
-
 		Ref<VoxelLight> light = _lights[i];
 
 		if (!light.is_valid())
@@ -581,15 +558,7 @@ void VoxelWorld::clear_lights() {
 }
 
 Vector<Variant> VoxelWorld::get_lights() {
-	Vector<Variant> r;
-	for (int i = 0; i < _lights.size(); i++) {
-#if VERSION_MAJOR < 4
-		r.push_back(_lights[i].get_ref_ptr());
-#else
-		r.push_back(_lights[i]);
-#endif
-	}
-	return r;
+	VARIANT_ARRAY_GET(_lights);
 }
 void VoxelWorld::set_lights(const Vector<Variant> &chunks) {
 	clear_lights();

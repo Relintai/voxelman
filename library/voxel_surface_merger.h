@@ -29,9 +29,9 @@ SOFTWARE.
 
 #include "../../texture_packer/texture_packer.h"
 
-#include "core/version.h"
+#include "../defines.h"
 
-#if VERSION_MAJOR >= 4
+#if GODOT4
 #define Texture Texture2D
 #endif
 
