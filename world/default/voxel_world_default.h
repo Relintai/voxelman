@@ -46,7 +46,7 @@ protected:
 	virtual void _chunk_added(Ref<VoxelChunk> chunk);
 	int _get_channel_index_info(const ChannelTypeInfo channel_type);
 
-	virtual void _notification(int p_what);
+	//virtual void _notification(int p_what);
 
 	static void _bind_methods();
 

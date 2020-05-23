@@ -134,6 +134,7 @@ VoxelWorldDefault::VoxelWorldDefault() {
 VoxelWorldDefault ::~VoxelWorldDefault() {
 }
 
+/*
 void VoxelWorldDefault::_notification(int p_what) {
 	VoxelWorld::_notification(p_what);
 
@@ -160,7 +161,7 @@ void VoxelWorldDefault::_notification(int p_what) {
 			}
 		} break;
 	}
-}
+}*/
 
 void VoxelWorldDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_chunk_added", "chunk"), &VoxelWorldDefault::_chunk_added);
