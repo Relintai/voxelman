@@ -38,7 +38,7 @@
 #define pool_vector_h "core/pool_vector.h"
 #define physics_server_h "servers/physics_server.h"
 #define immediate_geometry_h "scene/3d/immediate_geometry.h"
-#define include_pool_vector ""
+#define include_pool_vector
 #endif
 
 //Type Defines
