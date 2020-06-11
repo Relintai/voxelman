@@ -4,16 +4,24 @@ A voxel engine module for godot, focusing more on editor integration, gameplay-r
 
 This is an engine module! Which means that you will need to compile it into Godot! [See the compiling section here.](#compiling)
 
+## Optional Dependencies
+
+`https://github.com/Relintai/texture_packer`: you get access to [VoxelmanLibraryMerger](#voxelmanlibrarymerger) \
+`https://github.com/Relintai/mesh_data_resource`: you get access to a bunch of properties, and methods that can manipulate meshes.
+
+Note: My props module also gets detected, but it won't do anything at the moment.
+
 ## Usage
 
 First create a scene, and add a VoxelWorldBlocky node into it. Create a VoxelmanLibrary, and assign it to the Library property.
+Also, add a VoxelSurface into your library.
 
 (VoxelWorldBlocky is the only one that works properly for now, this will soon be fixed!)
 
-Tick the editable property, deselec, then select the world again, and click the insert button at the top toolbar, or press B to insert a
-voxel at the selected location.
+Tick the editable property, deselect, then select the world again, and click the insert button at the top toolbar, or press B to insert a
+voxel at the inspector's camera's location.
 
-Select the add button, and now you can just add voxels with the mouse.
+Select the add button, and now you can just add voxels with the mouse, by clicking on the newly added voxel.
 
 ## VoxelmanLibrary
 
@@ -126,11 +134,16 @@ First make sure that you can compile godot. See the official docs: https://docs.
 
 (the folder needs to be named voxelman!)
 
-4. Go up one folder
+4. If you want the optional dependencies:
+
+```git clone https://github.com/Relintai/texture_packer.git texture_packer```
+```git clone https://github.com/Relintai/mesh_data_resource.git mesh_data_resource```
+
+5. Go up one folder
 
 ```cd ..```
 
-5. Compile godot.
+6. Compile godot.
 
 For example:
 
