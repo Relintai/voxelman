@@ -4,6 +4,8 @@ A voxel engine module for godot, focusing more on editor integration, gameplay-r
 
 This is an engine module! Which means that you will need to compile it into Godot! [See the compiling section here.](#compiling)
 
+You can find a demonstration project here: https://github.com/Relintai/the_tower
+
 ## Optional Dependencies
 
 `https://github.com/Relintai/texture_packer`: you get access to [VoxelmanLibraryMerger](#voxelmanlibrarymerger) \
