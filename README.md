@@ -134,7 +134,7 @@ First make sure that you can compile godot. See the official docs: https://docs.
 
 (the folder needs to be named voxelman!)
 
-4. If you want the optional dependencies run these aswell:
+4. If you want the optional dependencies run these commands aswell:
 
 ```git clone https://github.com/Relintai/texture_packer.git texture_packer``` \
 ```git clone https://github.com/Relintai/mesh_data_resource.git mesh_data_resource```
