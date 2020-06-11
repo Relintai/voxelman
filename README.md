@@ -28,7 +28,7 @@ Select the add button, and now you can just add voxels with the mouse, by clicki
 This class stores the materials, and the VoxelSurfaces.
 
 Note: If you want lods, assign equal (or more) materials than your maximum lod level. If you only want one material just assign it 
-multiple times.
+multiple times. If you don't then your meshes won't have materials (They will be white).
 
 ### VoxelmanLibrarySimple
 
@@ -43,10 +43,10 @@ You can assign any texture to your surfaces with this, and it will merge them to
 
 ## Worlds
 
-the 2 base classes:
+The 2 base classes:
 
-VoxelWorld: Basic World, does not do anything until you implemnent the required virtual methods!\
-VoxelWorldDefault: This adds threading, and LoD storage support to VoxelWorld. WIll not create meshes for you!
+VoxelWorld: Basic world, does not do anything until you implemnent the required virtual methods!\
+VoxelWorldDefault: This adds threading, and LoD storage support to VoxelWorld. Will not create meshes for you!
 
 ### VoxelWorldBlocky
 
@@ -68,11 +68,11 @@ This is my own meshing algorithm, it's basicly a Minecraft style mesher that can
 
 ### Level generation
 
-Assign a VoxelManLevelGenerator to the Level Generator property.
+Assign a VoxelManLevelGenerator to the `World`'s `Level Generator` property.
 
 You can write your own algorithm by implementing the ``` void _generate_chunk(chunk: VoxelChunk) virtual ``` method.
 
-VoxelManLevelGeneratorFlat is also available, it will generate a floor for you, if you use it.
+`VoxelManLevelGeneratorFlat` is also available, it will generate a floor for you, if you use it.
 
 ### Internal workings
 
@@ -87,11 +87,11 @@ getting overridden. Like:
 ``` 
     func _create_chunk(x : int, y : int, z : int, chunk : VoxelChunk) -> VoxelChunk:
         if chunk == null:
-	        chunk = MyChunk.new()
+            chunk = MyChunk.new()
 
         #setup your chunk here
 
-	    return ._create_chunk(x, y, z, chunk)
+        return ._create_chunk(x, y, z, chunk)
 ```
 
 #### VoxelChunk
@@ -104,8 +104,8 @@ For example:
 
 ```
 func _create_meshers():
-	var mesher : MyMesher = MyMesher.new()
-	add_mesher(mesher)
+    var mesher : MyMesher = MyMesher.new()
+    add_mesher(mesher)
 ```
 
 #### VoxelMesher
@@ -134,7 +134,7 @@ First make sure that you can compile godot. See the official docs: https://docs.
 
 (the folder needs to be named voxelman!)
 
-4. If you want the optional dependencies:
+4. If you want the optional dependencies run these aswell:
 
 ```git clone https://github.com/Relintai/texture_packer.git texture_packer```
 ```git clone https://github.com/Relintai/mesh_data_resource.git mesh_data_resource```
