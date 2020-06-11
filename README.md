@@ -125,7 +125,7 @@ First make sure that you can compile godot. See the official docs: https://docs.
 
 2. go into the modules folder inside the engine's directory"
 
-```cd godot```
+```cd godot``` \
 ```cd modules```
 
 3. clone this repository
@@ -136,7 +136,7 @@ First make sure that you can compile godot. See the official docs: https://docs.
 
 4. If you want the optional dependencies run these aswell:
 
-```git clone https://github.com/Relintai/texture_packer.git texture_packer```
+```git clone https://github.com/Relintai/texture_packer.git texture_packer``` \
 ```git clone https://github.com/Relintai/mesh_data_resource.git mesh_data_resource```
 
 5. Go up one folder
