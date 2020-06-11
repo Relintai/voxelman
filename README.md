@@ -123,7 +123,7 @@ First make sure that you can compile godot. See the official docs: https://docs.
 
 ```git clone https://github.com/godotengine/godot.git godot```
 
-2. go into the modules folder inside the engine's directory"
+2. go into the modules folder inside the engine's directory:
 
 ```cd godot``` \
 ```cd modules```
