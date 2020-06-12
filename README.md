@@ -54,17 +54,11 @@ VoxelWorldDefault: This adds threading, and LoD storage support to VoxelWorld. W
 
 The most basic world. It is the Minecraft-style world.
 
-### VoxelWorldUVTransvoxel // VoxelVorldMarchingCubes
+### VoxelWorldMarchingCubes
 
-I just realized that I never got arount to adding this as a c++ class, will do very soon.
-If you need it in the meantime it's here: https://github.com/Relintai/broken_seals/tree/master/game/voxelman/world
-Actually except for the initializations and classes everything is c++ code.
-
-It will be renamed VoxelVorldMarchingCubes, because I don't use the transvoxel algorithm's lod generation.
+A marching cubes based Voxel World. Actually it uses a modified version of the Transvoxel tables. It is UV mapped.
 
 ### VoxelWorldCubic
-
-I never got around adding this as c++ classes aswell, will be done very soon.
 
 This is my own meshing algorithm, it's basicly a Minecraft style mesher that can take isolevel into account.
 
