@@ -29,6 +29,10 @@ def get_doc_classes():
         "TransvoxelCellData",
         "VoxelMeshData",
         "VoxelMesherUVTransvoxel",
+
+        "MarchingCubesCellData",
+        "VoxelMesherMarchingCubes",
+
         "VoxelMesher",
 
         "EnvironmentData",
