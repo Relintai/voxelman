@@ -29,10 +29,6 @@ sources = [
     "data/voxel_light.cpp",
 
     "meshers/voxel_mesher.cpp",
-    
-    "meshers/transvoxel_uv_mesher/transvoxel_cell_data.cpp",
-    "meshers/transvoxel_uv_mesher/voxel_mesher_uv_transvoxel.cpp",
-    "meshers/transvoxel_uv_mesher/transvoxel_tables.cpp",
 
     "meshers/marching_cubes/marching_cubes_cell_data.cpp",
     "meshers/marching_cubes/voxel_mesher_marching_cubes.cpp",

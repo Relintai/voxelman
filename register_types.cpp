@@ -34,8 +34,6 @@ SOFTWARE.
 #endif
 
 #include "data/voxel_light.h"
-#include "meshers/transvoxel_uv_mesher/transvoxel_cell_data.h"
-#include "meshers/transvoxel_uv_mesher/voxel_mesher_uv_transvoxel.h"
 #include "meshers/voxel_mesher.h"
 
 #include "meshers/marching_cubes/marching_cubes_cell_data.h"
@@ -69,8 +67,6 @@ SOFTWARE.
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherDefault>();
-	ClassDB::register_class<VoxelMesherUVTransvoxel>();
-	ClassDB::register_class<TransvoxelCellData>();
 
 	ClassDB::register_class<VoxelMesherMarchingCubes>();
 	ClassDB::register_class<MarchingCubesCellData>();

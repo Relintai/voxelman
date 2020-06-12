@@ -26,9 +26,7 @@ def get_doc_classes():
 
         "VoxelCubePoints",
         "VoxelMesherCubic",
-        "TransvoxelCellData",
         "VoxelMeshData",
-        "VoxelMesherUVTransvoxel",
 
         "MarchingCubesCellData",
         "VoxelMesherMarchingCubes",
