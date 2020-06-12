@@ -47,7 +47,7 @@ include_pool_vector
 
 #include "../library/voxelman_library.h"
 
-const double PI_2 = 3.141592653589793238463 / 2;
+		const double PI_2 = 3.141592653589793238463 / 2;
 const double PI = 3.141592653589793238463;
 
 class VoxelmanLibrary;
@@ -117,8 +117,6 @@ public:
 	void reset();
 
 	void add_chunk(Ref<VoxelChunk> chunk);
-
-	void add_chunk_liquid(Ref<VoxelChunk> chunk);
 
 #ifdef MESH_DATA_RESOURCE_PRESENT
 	void add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position = Vector3(0, 0, 0), const Vector3 rotation = Vector3(0, 0, 0), const Vector3 scale = Vector3(1.0, 1.0, 1.0), const Rect2 uv_rect = Rect2(0, 0, 1, 1));

@@ -431,13 +431,6 @@ void VoxelMesher::add_chunk(Ref<VoxelChunk> chunk) {
 	call("_add_chunk", chunk);
 }
 
-void VoxelMesher::add_chunk_liquid(Ref<VoxelChunk> chunk) {
-	ERR_FAIL_COND(!has_method("_add_chunk_liquid"));
-	ERR_FAIL_COND(!chunk.is_valid());
-
-	call("_add_chunk_liquid", chunk);
-}
-
 #ifdef MESH_DATA_RESOURCE_PRESENT
 void VoxelMesher::add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vector3 position, const Vector3 rotation, const Vector3 scale, const Rect2 uv_rect) {
 	Transform transform = Transform(Basis(rotation).scaled(scale), position);
@@ -953,7 +946,6 @@ VoxelMesher::~VoxelMesher() {
 
 void VoxelMesher::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_add_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
-	BIND_VMETHOD(MethodInfo("_add_chunk_liquid", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_bake_colors", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_bake_liquid_colors", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
@@ -994,7 +986,6 @@ void VoxelMesher::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::RECT2, "uv_margin"), "set_uv_margin", "get_uv_margin");
 
 	ClassDB::bind_method(D_METHOD("add_chunk", "chunk"), &VoxelMesher::add_chunk);
-	ClassDB::bind_method(D_METHOD("add_chunk_liquid", "chunk"), &VoxelMesher::add_chunk_liquid);
 
 #ifdef MESH_DATA_RESOURCE_PRESENT
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale", "uv_rect"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Rect2(0, 0, 1, 1)), DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
