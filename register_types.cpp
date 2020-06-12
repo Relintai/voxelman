@@ -61,8 +61,12 @@ SOFTWARE.
 
 #include "meshers/blocky/voxel_mesher_blocky.h"
 #include "meshers/blocky/voxel_mesher_liquid_blocky.h"
+
 #include "world/blocky/voxel_chunk_blocky.h"
 #include "world/blocky/voxel_world_blocky.h"
+
+#include "world/marching_cubes/voxel_chunk_marching_cubes.h"
+#include "world/marching_cubes/voxel_world_marching_cubes.h"
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
@@ -101,6 +105,9 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelWorldBlocky>();
 	ClassDB::register_class<VoxelChunkBlocky>();
 	ClassDB::register_class<VoxelMesherLiquidBlocky>();
+
+	ClassDB::register_class<VoxelWorldMarchingCubes>();
+	ClassDB::register_class<VoxelChunkMarchingCubes>();
 
 	ClassDB::register_class<VoxelmanLevelGenerator>();
 	ClassDB::register_class<VoxelmanLevelGeneratorFlat>();

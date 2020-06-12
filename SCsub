@@ -51,6 +51,9 @@ sources = [
     "world/default/voxel_world_default.cpp",
     "world/default/voxel_chunk_default.cpp",
 
+    "world/marching_cubes/voxel_chunk_marching_cubes.cpp",
+    "world/marching_cubes/voxel_world_marching_cubes.cpp",
+
     "meshers/cubic_mesher/voxel_mesher_cubic.cpp",
     "meshers/cubic_mesher/voxel_cube_points.cpp",
 
