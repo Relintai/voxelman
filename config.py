@@ -49,6 +49,9 @@ def get_doc_classes():
         "VoxelWorldMarchingCubes",
 	      "VoxelChunkMarchingCubes",
 
+        "VoxelMesherCubic",
+	      "VoxelWorldCubic",
+
         "VoxelMesherDefault",
 	      "VoxelWorldDefault",
 	      "VoxelChunkBlocky",

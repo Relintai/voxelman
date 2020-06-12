@@ -54,11 +54,15 @@ sources = [
     "world/marching_cubes/voxel_chunk_marching_cubes.cpp",
     "world/marching_cubes/voxel_world_marching_cubes.cpp",
 
-    "meshers/cubic_mesher/voxel_mesher_cubic.cpp",
-    "meshers/cubic_mesher/voxel_cube_points.cpp",
+    "meshers/cubic/voxel_mesher_cubic.cpp",
+    "meshers/cubic/voxel_cube_points.cpp",
 
     "level_generator/voxelman_level_generator.cpp",
     "level_generator/voxelman_level_generator_flat.cpp",
+
+    "world/cubic/voxel_chunk_cubic.cpp",
+    "world/cubic/voxel_world_cubic.cpp",
+
 
     "areas/world_area.cpp",
 

@@ -49,8 +49,8 @@ SOFTWARE.
 #include "world/default/voxel_chunk_default.h"
 #include "world/default/voxel_world_default.h"
 
-#include "meshers/cubic_mesher/voxel_cube_points.h"
-#include "meshers/cubic_mesher/voxel_mesher_cubic.h"
+#include "meshers/cubic/voxel_cube_points.h"
+#include "meshers/cubic/voxel_mesher_cubic.h"
 
 #include "level_generator/voxelman_level_generator.h"
 #include "level_generator/voxelman_level_generator_flat.h"
@@ -64,6 +64,9 @@ SOFTWARE.
 
 #include "world/blocky/voxel_chunk_blocky.h"
 #include "world/blocky/voxel_world_blocky.h"
+
+#include "world/cubic/voxel_chunk_cubic.h"
+#include "world/cubic/voxel_world_cubic.h"
 
 #include "world/marching_cubes/voxel_chunk_marching_cubes.h"
 #include "world/marching_cubes/voxel_world_marching_cubes.h"
@@ -108,6 +111,9 @@ void register_voxelman_types() {
 
 	ClassDB::register_class<VoxelWorldMarchingCubes>();
 	ClassDB::register_class<VoxelChunkMarchingCubes>();
+
+	ClassDB::register_class<VoxelWorldCubic>();
+	ClassDB::register_class<VoxelChunkCubic>();
 
 	ClassDB::register_class<VoxelmanLevelGenerator>();
 	ClassDB::register_class<VoxelmanLevelGeneratorFlat>();

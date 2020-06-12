@@ -43,7 +43,6 @@ SOFTWARE.
 
 #include "../../data/voxel_light.h"
 
-#include "../../meshers/cubic_mesher/voxel_mesher_cubic.h"
 #include "../../meshers/voxel_mesher.h"
 
 #include "../../library/voxel_surface.h"
@@ -288,7 +287,7 @@ protected:
 
 	ActiveBuildPhaseType _active_build_phase_type;
 
-	Vector<Ref<VoxelLight>> _lights;
+	Vector<Ref<VoxelLight> > _lights;
 };
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);

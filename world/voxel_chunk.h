@@ -44,7 +44,6 @@ include_pool_vector
 
 #include "../data/voxel_light.h"
 
-#include "../meshers/cubic_mesher/voxel_mesher_cubic.h"
 #include "../meshers/voxel_mesher.h"
 
 #include "../library/voxel_surface.h"
@@ -257,11 +256,11 @@ protected:
 	float _voxel_scale;
 
 	Ref<VoxelmanLibrary> _library;
-	Vector<Ref<VoxelMesher>> _meshers;
-	Vector<Ref<VoxelMesher>> _liquid_meshers;
+	Vector<Ref<VoxelMesher> > _meshers;
+	Vector<Ref<VoxelMesher> > _liquid_meshers;
 
 	//mergeable props
-	Vector<Ref<VoxelChunkPropData>> _props;
+	Vector<Ref<VoxelChunkPropData> > _props;
 
 	Transform _transform;
 };
