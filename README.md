@@ -6,6 +6,9 @@ This is an engine module! Which means that you will need to compile it into Godo
 
 You can find a demonstration project here: https://github.com/Relintai/the_tower
 
+It supports both godot 3.2 and 4.0 (master). Note that since 4.0 is still in very early stages I only 
+check whether it works from time to time.
+
 ## Optional Dependencies
 
 `https://github.com/Relintai/texture_packer`: you get access to [VoxelmanLibraryMerger](#voxelmanlibrarymerger) \
@@ -117,7 +120,12 @@ First make sure that you can compile godot. See the official docs: https://docs.
 
 1. Clone the engine if you haven't already:
 
+If you want Godot 3.2:
+```git clone -b 3.2 https://github.com/godotengine/godot.git godot```
+
+If you want Godot 4.0:
 ```git clone https://github.com/godotengine/godot.git godot```
+
 
 2. go into the modules folder inside the engine's directory:
 
