@@ -29,7 +29,6 @@ SOFTWARE.
 
 #include "voxel_world.h"
 
-#include "core/math/geometry.h"
 #include "core/os/keyboard.h"
 
 #include "voxel_chunk.h"
