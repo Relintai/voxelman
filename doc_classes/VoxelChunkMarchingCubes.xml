@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelChunkMarchingCubes" inherits="VoxelChunkDefault" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="data_channel" type="PoolByteArray" setter="set_channel_compressed" getter="get_channel_compressed" default="PoolByteArray(  )">
+		</member>
+		<member name="isolevel_channel" type="PoolByteArray" setter="set_channel_compressed" getter="get_channel_compressed" default="PoolByteArray(  )">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

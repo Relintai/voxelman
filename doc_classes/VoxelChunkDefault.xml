@@ -335,21 +335,21 @@
 		</method>
 	</methods>
 	<members>
-		<member name="active_build_phase_type" type="int" setter="set_active_build_phase_type" getter="get_active_build_phase_type" enum="VoxelChunkDefault.ActiveBuildPhaseType" default="0">
+		<member name="active_build_phase_type" type="int" setter="set_active_build_phase_type" getter="get_active_build_phase_type" enum="VoxelChunkDefault.ActiveBuildPhaseType">
 		</member>
-		<member name="build_flags" type="int" setter="set_build_flags" getter="get_build_flags" default="384">
+		<member name="build_flags" type="int" setter="set_build_flags" getter="get_build_flags">
 		</member>
-		<member name="current_build_phase" type="int" setter="set_current_build_phase" getter="get_current_build_phase" default="0">
+		<member name="current_build_phase" type="int" setter="set_current_build_phase" getter="get_current_build_phase">
 		</member>
 		<member name="current_lod_level" type="int" setter="set_current_lod_level" getter="get_current_lod_level" default="0">
 		</member>
-		<member name="lights_dirty" type="bool" setter="set_lights_dirty" getter="get_lights_dirty" default="false">
+		<member name="lights_dirty" type="bool" setter="set_lights_dirty" getter="get_lights_dirty">
 		</member>
-		<member name="lod_num" type="int" setter="set_lod_num" getter="get_lod_num" default="3">
+		<member name="lod_num" type="int" setter="set_lod_num" getter="get_lod_num">
 		</member>
-		<member name="lod_size" type="int" setter="set_lod_size" getter="get_lod_size" default="1">
+		<member name="lod_size" type="int" setter="set_lod_size" getter="get_lod_size">
 		</member>
-		<member name="max_build_phase" type="int" setter="set_max_build_phase" getter="get_max_build_phase" default="7">
+		<member name="max_build_phase" type="int" setter="set_max_build_phase" getter="get_max_build_phase">
 		</member>
 	</members>
 	<constants>

@@ -311,6 +311,12 @@
 			<description>
 			</description>
 		</method>
+		<method name="is_in_tree" qualifiers="const">
+			<return type="bool">
+			</return>
+			<description>
+			</description>
+		</method>
 		<method name="merge_mesh_array" qualifiers="const">
 			<return type="Array">
 			</return>
@@ -499,11 +505,11 @@
 		</member>
 		<member name="data_size_z" type="int" setter="set_data_size_z" getter="get_data_size_z" default="0">
 		</member>
-		<member name="dirty" type="bool" setter="set_dirty" getter="get_dirty" default="false">
+		<member name="dirty" type="bool" setter="set_dirty" getter="get_dirty">
 		</member>
-		<member name="is_build_threaded" type="bool" setter="set_is_build_threaded" getter="get_is_build_threaded" default="false">
+		<member name="is_build_threaded" type="bool" setter="set_is_build_threaded" getter="get_is_build_threaded">
 		</member>
-		<member name="is_generating" type="bool" setter="set_is_generating" getter="get_is_generating" default="false">
+		<member name="is_generating" type="bool" setter="set_is_generating" getter="get_is_generating">
 		</member>
 		<member name="library" type="VoxelmanLibrary" setter="set_library" getter="get_library">
 		</member>
@@ -523,7 +529,7 @@
 		</member>
 		<member name="size_z" type="int" setter="set_size_z" getter="get_size_z" default="0">
 		</member>
-		<member name="state" type="int" setter="set_state" getter="get_state" default="0">
+		<member name="state" type="int" setter="set_state" getter="get_state">
 		</member>
 		<member name="transform" type="Transform" setter="set_transform" getter="get_transform" default="Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )">
 		</member>

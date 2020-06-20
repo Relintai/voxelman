@@ -15,14 +15,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="_add_chunk_liquid" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
-			<description>
-			</description>
-		</method>
 		<method name="_add_mesher" qualifiers="virtual">
 			<return type="void">
 			</return>
@@ -48,14 +40,6 @@
 			</description>
 		</method>
 		<method name="add_chunk">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_chunk_liquid">
 			<return type="void">
 			</return>
 			<argument index="0" name="chunk" type="VoxelChunk">

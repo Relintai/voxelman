@@ -51,6 +51,7 @@ def get_doc_classes():
 
         "VoxelMesherCubic",
 	      "VoxelWorldCubic",
+        "VoxelChunkCubic",
 
         "VoxelMesherDefault",
 	      "VoxelWorldDefault",

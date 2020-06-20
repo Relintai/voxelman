@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelMesherMarchingCubes" inherits="VoxelMesherDefault" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="corner_id_to_vertex" qualifiers="const">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="index1" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_regular_cell_class" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_regular_cell_data" qualifiers="const">
+			<return type="MarchingCubesCellData">
+			</return>
+			<argument index="0" name="index" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_regular_vertex_data" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="index1" type="int">
+			</argument>
+			<argument index="1" name="index2" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_regular_vertex_data_first_vertex" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="index1" type="int">
+			</argument>
+			<argument index="1" name="index2" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_regular_vertex_data_second_vertex" qualifiers="const">
+			<return type="int">
+			</return>
+			<argument index="0" name="index1" type="int">
+			</argument>
+			<argument index="1" name="index2" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_regular_vertex_direction" qualifiers="const">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="index1" type="int">
+			</argument>
+			<argument index="1" name="index2" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_regular_vertex_first_position" qualifiers="const">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="index1" type="int">
+			</argument>
+			<argument index="1" name="index2" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="get_regular_vertex_second_position" qualifiers="const">
+			<return type="Vector3">
+			</return>
+			<argument index="0" name="index1" type="int">
+			</argument>
+			<argument index="1" name="index2" type="int">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="format" type="int" setter="set_format" getter="get_format" override="true" default="58" />
+		<member name="texture_scale" type="int" setter="set_texture_scale" getter="get_texture_scale" default="4">
+		</member>
+	</members>
+	<constants>
+		<constant name="VOXEL_ENTRY_INDEX_000" value="0" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRY_INDEX_100" value="1" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRY_INDEX_010" value="4" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRY_INDEX_110" value="5" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRY_INDEX_001" value="2" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRY_INDEX_101" value="3" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRY_INDEX_011" value="6" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRY_INDEX_111" value="7" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRIES_SIZE" value="8" enum="VoxelEntryIndices">
+		</constant>
+		<constant name="VOXEL_ENTRY_MASK_000" value="1" enum="VoxelEntryMask">
+		</constant>
+		<constant name="VOXEL_ENTRY_MASK_100" value="2" enum="VoxelEntryMask">
+		</constant>
+		<constant name="VOXEL_ENTRY_MASK_010" value="16" enum="VoxelEntryMask">
+		</constant>
+		<constant name="VOXEL_ENTRY_MASK_110" value="32" enum="VoxelEntryMask">
+		</constant>
+		<constant name="VOXEL_ENTRY_MASK_001" value="4" enum="VoxelEntryMask">
+		</constant>
+		<constant name="VOXEL_ENTRY_MASK_101" value="8" enum="VoxelEntryMask">
+		</constant>
+		<constant name="VOXEL_ENTRY_MASK_011" value="64" enum="VoxelEntryMask">
+		</constant>
+		<constant name="VOXEL_ENTRY_MASK_111" value="128" enum="VoxelEntryMask">
+		</constant>
+	</constants>
+</class>
