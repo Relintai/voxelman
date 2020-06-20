@@ -61,6 +61,7 @@
 #define PoolByteArray PackedByteArray
 #define MeshInstance MeshInstance3D
 #define Camera Camera3D
+#define ToolButton Button
 
 typedef class World3D World;
 
