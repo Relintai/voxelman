@@ -62,7 +62,7 @@ void VoxelChunkPropData::set_scale(const Vector3 &value) {
 bool VoxelChunkPropData::get_snap_to_mesh() const {
 	return _snap_to_mesh;
 }
-void VoxelChunkPropData::set_snap_to_mesh(const bool &value) {
+void VoxelChunkPropData::set_snap_to_mesh(const bool value) {
 	_snap_to_mesh = value;
 }
 
