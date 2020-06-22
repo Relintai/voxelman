@@ -25,6 +25,10 @@ SOFTWARE.
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/texture.h"
 
+#include "../props/prop_data.h"
+#include "../props/prop_data_mesh.h"
+#include "../props/prop_data_prop.h"
+
 #include "../defines.h"
 
 int VoxelmanLibraryMerger::get_texture_flags() const {
@@ -32,6 +36,7 @@ int VoxelmanLibraryMerger::get_texture_flags() const {
 }
 void VoxelmanLibraryMerger::set_texture_flags(const int flags) {
 	_packer->set_texture_flags(flags);
+	_prop_packer->set_texture_flags(flags);
 }
 
 int VoxelmanLibraryMerger::get_max_atlas_size() const {
@@ -39,6 +44,7 @@ int VoxelmanLibraryMerger::get_max_atlas_size() const {
 }
 void VoxelmanLibraryMerger::set_max_atlas_size(const int size) {
 	_packer->set_max_atlas_size(size);
+	_prop_packer->set_max_atlas_size(size);
 }
 
 bool VoxelmanLibraryMerger::get_keep_original_atlases() const {
@@ -46,6 +52,7 @@ bool VoxelmanLibraryMerger::get_keep_original_atlases() const {
 }
 void VoxelmanLibraryMerger::set_keep_original_atlases(const bool value) {
 	_packer->set_keep_original_atlases(value);
+	_prop_packer->set_keep_original_atlases(value);
 }
 
 Color VoxelmanLibraryMerger::get_background_color() const {
@@ -53,6 +60,7 @@ Color VoxelmanLibraryMerger::get_background_color() const {
 }
 void VoxelmanLibraryMerger::set_background_color(const Color &color) {
 	_packer->set_background_color(color);
+	_prop_packer->set_background_color(color);
 }
 
 int VoxelmanLibraryMerger::get_margin() const {
@@ -60,6 +68,7 @@ int VoxelmanLibraryMerger::get_margin() const {
 }
 void VoxelmanLibraryMerger::set_margin(const int margin) {
 	_packer->set_margin(margin);
+	_prop_packer->set_margin(margin);
 }
 
 //Surfaces
@@ -136,31 +145,56 @@ void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 	}
 }
 
-Ref<PackedScene> VoxelmanLibraryMerger::get_prop(const int id) {
-	//if (_props.has(id))
-	//	return _props[id];
+Ref<PropData> VoxelmanLibraryMerger::get_prop(const int id) {
+	if (_props.has(id))
+		return _props[id];
 
-	return Ref<PackedScene>();
+	return Ref<PropData>();
 }
-void VoxelmanLibraryMerger::add_prop(Ref<PackedScene> value) {
-	//if (!value.is_valid() || _props.has(value->get_id()))
-	//	return;
+void VoxelmanLibraryMerger::add_prop(Ref<PropData> value) {
+	if (!value.is_valid() || _props.has(value->get_id()))
+		return;
 
-	////_props[value->get_id()] = value;
+	_props[value->get_id()] = value;
 }
-void VoxelmanLibraryMerger::set_prop(const int id, const Ref<PackedScene> &value) {
-	//_props[value->get_id()] = value;
+void VoxelmanLibraryMerger::set_prop(const int id, const Ref<PropData> &value) {
+	_props[value->get_id()] = value;
 }
 void VoxelmanLibraryMerger::remove_prop(const int id) {
-	//if (_props.has(id))
-	//	_props.erase(id);
+	if (_props.has(id))
+		_props.erase(id);
 }
 int VoxelmanLibraryMerger::get_num_props() const {
 	return _props.size();
 }
 void VoxelmanLibraryMerger::clear_props() {
-	//_props.clear();
+	_props.clear();
 }
+/*
+Vector<Variant> VoxelmanLibraryMerger::get_props() {
+	Vector<Variant> r;
+
+	for (Map<int, Ref<PropData> >::Element *I = _props.front(); I; I = I->next()) {
+		r.push_back(I->value().get_ref_ptr());
+	}
+
+	return r;
+}
+
+void VoxelmanLibraryMerger::set_props(const Vector<Variant> &props) {
+	_props.clear();
+
+	for (int i = 0; i < props.size(); i++) {
+		Ref<VoxelSurfaceMerger> surface = Ref<VoxelSurfaceMerger>(props[i]);
+
+		if (surface.is_valid()) {
+			surface->set_library(this);
+		}
+
+		_props.push_back(surface);
+	}
+	//_props.clear();
+}*/
 
 void VoxelmanLibraryMerger::refresh_rects() {
 	bool texture_added = false;
@@ -195,6 +229,26 @@ void VoxelmanLibraryMerger::refresh_rects() {
 		setup_material_albedo(MATERIAL_INDEX_LIQUID, tex);
 	}
 
+	texture_added = false;
+	for (Map<int, Ref<PropData> >::Element *I = _props.front(); I; I = I->next()) {
+		Ref<PropData> prop = Ref<PropData>(I->value());
+
+		if (prop.is_valid()) {
+			if (process_prop_textures(prop))
+				texture_added = true;
+		}
+	}
+
+	if (texture_added) {
+		_prop_packer->merge();
+
+		ERR_FAIL_COND(_prop_packer->get_texture_count() == 0);
+
+		Ref<Texture> tex = _prop_packer->get_generated_texture(0);
+
+		setup_material_albedo(MATERIAL_INDEX_PROP, tex);
+	}
+
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
 		Ref<VoxelSurfaceMerger> surface = _voxel_surfaces[i];
 
@@ -218,6 +272,9 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 		case MATERIAL_INDEX_LIQUID:
 			count = get_num_liquid_materials();
 			break;
+		case MATERIAL_INDEX_PROP:
+			count = get_num_prop_materials();
+			break;
 	}
 
 	for (int i = 0; i < count; ++i) {
@@ -228,6 +285,9 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 				break;
 			case MATERIAL_INDEX_LIQUID:
 				mat = get_liquid_material(i);
+				break;
+			case MATERIAL_INDEX_PROP:
+				mat = get_prop_material(i);
 				break;
 		}
 
@@ -259,7 +319,7 @@ VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
 	_packer.instance();
 
 #if GODOT4
-	#warning implement
+#warning implement
 #else
 	_packer->set_texture_flags(Texture::FLAG_MIPMAPS | Texture::FLAG_FILTER);
 #endif
@@ -267,6 +327,18 @@ VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
 	_packer->set_max_atlas_size(1024);
 	_packer->set_keep_original_atlases(false);
 	_packer->set_margin(0);
+
+	_prop_packer.instance();
+
+#if GODOT4
+#warning implement
+#else
+	_prop_packer->set_texture_flags(Texture::FLAG_MIPMAPS | Texture::FLAG_FILTER);
+#endif
+
+	_prop_packer->set_max_atlas_size(1024);
+	_prop_packer->set_keep_original_atlases(false);
+	_prop_packer->set_margin(0);
 }
 
 VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
@@ -282,6 +354,42 @@ VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
 
 	_packer->clear();
 	_packer.unref();
+
+	_prop_packer->clear();
+	_prop_packer.unref();
+}
+
+bool VoxelmanLibraryMerger::process_prop_textures(Ref<PropData> prop) {
+	if (!prop.is_valid()) {
+		return false;
+	}
+
+	bool texture_added = false;
+
+	for (int i = 0; i < prop->get_prop_count(); ++i) {
+		Ref<PropDataMesh> pdm = prop->get_prop(i);
+
+		if (pdm.is_valid()) {
+			Ref<Texture> tex = pdm->get_texture();
+
+			if (!tex.is_valid())
+				continue;
+
+			if (!_prop_packer->contains_texture(tex)) {
+				_prop_packer->add_texture(tex);
+				texture_added = true;
+			}
+		}
+
+		Ref<PropDataProp> pdp = prop->get_prop(i);
+
+		if (pdp.is_valid()) {
+			if (process_prop_textures(pdp))
+				texture_added = true;
+		}
+	}
+
+	return texture_added;
 }
 
 void VoxelmanLibraryMerger::_bind_methods() {
@@ -308,6 +416,11 @@ void VoxelmanLibraryMerger::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_voxel_surfaces"), &VoxelmanLibraryMerger::get_voxel_surfaces);
 	ClassDB::bind_method(D_METHOD("set_voxel_surfaces"), &VoxelmanLibraryMerger::set_voxel_surfaces);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurfaceMerger", PROPERTY_USAGE_DEFAULT, "VoxelSurfaceMerger"), "set_voxel_surfaces", "get_voxel_surfaces");
+
+	//ClassDB::bind_method(D_METHOD("get_props"), &VoxelmanLibraryMerger::get_props);
+	//ClassDB::bind_method(D_METHOD("set_props"), &VoxelmanLibraryMerger::set_props);
+	//ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PropData", PROPERTY_USAGE_DEFAULT, "PropData"), "set_props", "get_props");
+	//ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PackedScene", PROPERTY_USAGE_DEFAULT, "PackedScene"), "set_props", "get_props");
 
 	ClassDB::bind_method(D_METHOD("_setup_material_albedo", "material_index", "texture"), &VoxelmanLibraryMerger::_setup_material_albedo);
 }

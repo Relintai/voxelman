@@ -65,9 +65,9 @@ public:
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
 
-	Ref<PackedScene> get_prop(const int id);
-	void add_prop(Ref<PackedScene> value);
-	void set_prop(const int id, const Ref<PackedScene> &value);
+	Ref<PropData> get_prop(const int id);
+	void add_prop(Ref<PropData> value);
+	void set_prop(const int id, const Ref<PropData> &value);
 	void remove_prop(const int id);
 	int get_num_props() const;
 	void clear_props();
@@ -83,13 +83,16 @@ public:
 	~VoxelmanLibraryMerger();
 
 protected:
+	bool process_prop_textures(Ref<PropData> prop);
+
 	static void _bind_methods();
 
 private:
 	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
-	Map<int, Ref<PackedScene> > _props;
+	Map<int, Ref<PropData> > _props;
 
 	Ref<TexturePacker> _packer;
+	Ref<TexturePacker> _prop_packer;
 };
 
 #endif

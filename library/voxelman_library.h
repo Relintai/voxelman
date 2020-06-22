@@ -32,6 +32,7 @@ SOFTWARE.
 class VoxelSurface;
 class VoxelMesher;
 class PackedScene;
+class PropData;
 
 class VoxelmanLibrary : public Resource {
 	GDCLASS(VoxelmanLibrary, Resource)
@@ -40,6 +41,7 @@ public:
 	enum {
 		MATERIAL_INDEX_VOXELS = 0,
 		MATERIAL_INDEX_LIQUID = 1,
+		MATERIAL_INDEX_PROP = 2,
 	};
 
 public:
@@ -66,6 +68,16 @@ public:
 	Vector<Variant> get_liquid_materials();
 	void set_liquid_materials(const Vector<Variant> &materials);
 
+	Ref<Material> get_prop_material(const int index);
+	void add_prop_material(const Ref<Material> &value);
+	void set_prop_material(const int index, const Ref<Material> &value);
+	void remove_prop_material(const int index);
+	int get_num_prop_materials() const;
+	void clear_prop_materials();
+
+	Vector<Variant> get_prop_materials();
+	void set_prop_materials(const Vector<Variant> &materials);
+
 	virtual Ref<VoxelSurface> get_voxel_surface(const int index);
 	virtual void add_voxel_surface(Ref<VoxelSurface> value);
 	virtual void set_voxel_surface(const int index, Ref<VoxelSurface> value);
@@ -73,9 +85,16 @@ public:
 	virtual int get_num_surfaces() const;
 	virtual void clear_surfaces();
 
-	virtual Ref<PackedScene> get_prop(const int id);
-	virtual void add_prop(Ref<PackedScene> value);
-	virtual void set_prop(const int id, Ref<PackedScene> value);
+	virtual Ref<PackedScene> get_scene(const int id);
+	virtual void add_scene(Ref<PackedScene> value);
+	virtual void set_scene(const int id, Ref<PackedScene> value);
+	virtual void remove_scene(const int id);
+	virtual int get_num_scenes() const;
+	virtual void clear_scenes();
+
+	virtual Ref<PropData> get_prop(const int id);
+	virtual void add_prop(Ref<PropData> value);
+	virtual void set_prop(const int id, Ref<PropData> value);
 	virtual void remove_prop(const int id);
 	virtual int get_num_props() const;
 	virtual void clear_props();
@@ -94,6 +113,7 @@ private:
 	bool _initialized;
 	Vector<Ref<Material> > _materials;
 	Vector<Ref<Material> > _liquid_materials;
+	Vector<Ref<Material> > _prop_materials;
 };
 
 #endif // VOXEL_LIBRARY_H

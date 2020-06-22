@@ -10,6 +10,7 @@ if os.path.isdir('../texture_packer'):
     has_texture_packer = True
 
 if os.path.isdir('../mesh_data_resource'):
+    print("adadadadadadadadadadada")
     module_env.Append(CPPDEFINES=['MESH_DATA_RESOURCE_PRESENT'])
 
 if os.path.isdir('../props'):
@@ -18,6 +19,21 @@ if os.path.isdir('../props'):
 sources = [
 
     "register_types.cpp",
+
+    "props/prop_data.cpp",
+    "props/prop_data_entry.cpp",
+    "props/prop_data_scene.cpp",
+    "props/prop_data_mesh.cpp",
+    "props/prop_data_light.cpp",
+    "props/prop_data_prop.cpp",
+    "props/prop_data_entity.cpp",
+
+    "prop_tool/prop_tool.cpp",
+    "prop_tool/prop_tool_entity.cpp",
+    "prop_tool/prop_tool_prop.cpp",
+    "prop_tool/prop_tool_scene.cpp",
+    "prop_tool/prop_tool_light.cpp",
+    "prop_tool/prop_tool_mesh.cpp",
 
     "library/voxelman_library.cpp",
     "library/voxelman_library_simple.cpp",
@@ -75,6 +91,8 @@ if has_texture_packer:
     sources.append("library/voxelman_library_merger.cpp")
     sources.append("library/voxel_surface_merger.cpp")
 
+if env['tools']:
+    sources.append("prop_tool/prop_tool_editor_plugin.cpp")
 
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
     # Shared lib compilation

@@ -24,6 +24,55 @@ SOFTWARE.
 
 #include "voxel_chunk.h"
 
+int VoxelChunkPropData::get_x() {
+	return _x;
+}
+void VoxelChunkPropData::set_x(int value) {
+	_x = value;
+}
+
+int VoxelChunkPropData::get_y() {
+	return _y;
+}
+void VoxelChunkPropData::set_y(int value) {
+	_y = value;
+}
+
+int VoxelChunkPropData::get_z() {
+	return _z;
+}
+void VoxelChunkPropData::set_z(int value) {
+	_z = value;
+}
+
+Vector3 VoxelChunkPropData::get_rotation() {
+	return _rotation;
+}
+void VoxelChunkPropData::set_rotation(Vector3 value) {
+	_rotation = value;
+}
+
+Vector3 VoxelChunkPropData::get_scale() {
+	return _scale;
+}
+void VoxelChunkPropData::set_scale(Vector3 value) {
+	_scale = value;
+}
+
+bool VoxelChunkPropData::get_snap_to_mesh() {
+	return _snap_to_mesh;
+}
+void VoxelChunkPropData::set_snap_to_mesh(bool value) {
+	_snap_to_mesh = value;
+}
+
+Vector3 VoxelChunkPropData::get_snap_axis() {
+	return _snap_axis;
+}
+void VoxelChunkPropData::set_snap_axis(Vector3 value) {
+	_snap_axis = value;
+}
+
 Ref<VoxelChunk> VoxelChunkPropData::get_owner() {
 	return _owner;
 }
@@ -52,6 +101,34 @@ void VoxelChunkPropData::set_scene(const Ref<PackedScene> &value) {
 	_scene = value;
 }
 
+Ref<MeshDataResource> VoxelChunkPropData::get_mesh() {
+	return _mesh;
+}
+void VoxelChunkPropData::set_mesh(const Ref<MeshDataResource> &value) {
+	_mesh = value;
+}
+
+Ref<Texture> VoxelChunkPropData::get_mesh_texture() {
+	return _texture;
+}
+void VoxelChunkPropData::set_mesh_texture(const Ref<Texture> &value) {
+	_texture = value;
+}
+
+Ref<PropDataLight> VoxelChunkPropData::get_light() {
+	return _light;
+}
+void VoxelChunkPropData::set_light(const Ref<PropDataLight> &value) {
+	_light = value;
+}
+
+Ref<PropData> VoxelChunkPropData::get_prop() {
+	return _prop;
+}
+void VoxelChunkPropData::set_prop(const Ref<PropData> &value) {
+	_prop = value;
+}
+
 Node *VoxelChunkPropData::get_spawned_prop() const {
 	return _spawned_prop;
 }
@@ -69,15 +146,55 @@ void VoxelChunkPropData::set_translation_for_chunk(const Ref<VoxelChunk> &chunk,
 }
 
 VoxelChunkPropData::VoxelChunkPropData() {
+	_x = 0;
+	_y = 0;
+	_z = 0;
+	_scale = Vector3(1, 1, 1);
+	_snap_to_mesh = false;
+	_snap_axis = Vector3(0, -1, 0);
+
 	_spawned_prop = NULL;
 	_scene_id = 0;
 }
 VoxelChunkPropData::~VoxelChunkPropData() {
-	_owner.unref();
+	_mesh.unref();
+	_texture.unref();
+	_light.unref();
+	_prop.unref();
 	_scene.unref();
+
+	_owner.unref();
 }
 
 void VoxelChunkPropData::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_x"), &VoxelChunkPropData::get_x);
+	ClassDB::bind_method(D_METHOD("set_x", "value"), &VoxelChunkPropData::set_x);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "x"), "set_x", "get_x");
+
+	ClassDB::bind_method(D_METHOD("get_y"), &VoxelChunkPropData::get_y);
+	ClassDB::bind_method(D_METHOD("set_y", "value"), &VoxelChunkPropData::set_y);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "y"), "set_y", "get_y");
+
+	ClassDB::bind_method(D_METHOD("get_z"), &VoxelChunkPropData::get_z);
+	ClassDB::bind_method(D_METHOD("set_z", "value"), &VoxelChunkPropData::set_z);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "z"), "set_z", "get_z");
+
+	ClassDB::bind_method(D_METHOD("get_rotation"), &VoxelChunkPropData::get_rotation);
+	ClassDB::bind_method(D_METHOD("set_rotation", "value"), &VoxelChunkPropData::set_rotation);
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "rotation"), "set_rotation", "get_rotation");
+
+	ClassDB::bind_method(D_METHOD("get_scale"), &VoxelChunkPropData::get_scale);
+	ClassDB::bind_method(D_METHOD("set_scale", "value"), &VoxelChunkPropData::set_scale);
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "scale"), "set_scale", "get_scale");
+
+	ClassDB::bind_method(D_METHOD("get_snap_to_mesh"), &VoxelChunkPropData::get_snap_to_mesh);
+	ClassDB::bind_method(D_METHOD("set_snap_to_mesh", "value"), &VoxelChunkPropData::set_snap_to_mesh);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_to_mesh"), "set_snap_to_mesh", "get_snap_to_mesh");
+
+	ClassDB::bind_method(D_METHOD("get_snap_axis"), &VoxelChunkPropData::get_snap_axis);
+	ClassDB::bind_method(D_METHOD("set_snap_axis", "value"), &VoxelChunkPropData::set_snap_axis);
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "snap_axis"), "set_snap_axis", "get_snap_axis");
+
 	ClassDB::bind_method(D_METHOD("get_owner"), &VoxelChunkPropData::get_owner);
 	ClassDB::bind_method(D_METHOD("set_owner", "value"), &VoxelChunkPropData::set_owner);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "owner", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), "set_owner", "get_owner");
@@ -90,10 +207,6 @@ void VoxelChunkPropData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_transform", "value"), &VoxelChunkPropData::set_transform);
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM, "transform"), "set_transform", "get_transform");
 
-	ClassDB::bind_method(D_METHOD("get_scene"), &VoxelChunkPropData::get_scene);
-	ClassDB::bind_method(D_METHOD("set_scene", "value"), &VoxelChunkPropData::set_scene);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "scene", PROPERTY_HINT_RESOURCE_TYPE, "PackedScene"), "set_scene", "get_scene");
-
 	ClassDB::bind_method(D_METHOD("get_spawned_prop"), &VoxelChunkPropData::get_spawned_prop);
 	ClassDB::bind_method(D_METHOD("set_spawned_prop", "value"), &VoxelChunkPropData::set_spawned_prop);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "spawned_prop", PROPERTY_HINT_RESOURCE_TYPE, "Node"), "set_spawned_prop", "get_spawned_prop");
@@ -102,4 +215,24 @@ void VoxelChunkPropData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("free_prop"), &VoxelChunkPropData::free_prop);
 
 	ClassDB::bind_method(D_METHOD("set_translation_for_chunk", "chunk", "local_x", "local_y", "local_z"), &VoxelChunkPropData::set_translation_for_chunk);
+
+	ClassDB::bind_method(D_METHOD("get_mesh"), &VoxelChunkPropData::get_mesh);
+	ClassDB::bind_method(D_METHOD("set_mesh", "value"), &VoxelChunkPropData::set_mesh);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesh", PROPERTY_HINT_RESOURCE_TYPE, "MeshDataResource"), "set_mesh", "get_mesh");
+
+	ClassDB::bind_method(D_METHOD("get_mesh_texture"), &VoxelChunkPropData::get_mesh_texture);
+	ClassDB::bind_method(D_METHOD("set_mesh_texture", "value"), &VoxelChunkPropData::set_mesh_texture);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesh_texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_mesh_texture", "get_mesh_texture");
+
+	ClassDB::bind_method(D_METHOD("get_light"), &VoxelChunkPropData::get_light);
+	ClassDB::bind_method(D_METHOD("set_light", "value"), &VoxelChunkPropData::set_light);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "PropDataLight"), "set_light", "get_light");
+
+	ClassDB::bind_method(D_METHOD("get_prop"), &VoxelChunkPropData::get_prop);
+	ClassDB::bind_method(D_METHOD("set_prop", "value"), &VoxelChunkPropData::set_prop);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "PropData"), "set_prop", "get_prop");
+
+	ClassDB::bind_method(D_METHOD("get_scene"), &VoxelChunkPropData::get_scene);
+	ClassDB::bind_method(D_METHOD("set_scene", "value"), &VoxelChunkPropData::set_scene);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "scene", PROPERTY_HINT_RESOURCE_TYPE, "PackedScene"), "set_scene", "get_scene");
 }
