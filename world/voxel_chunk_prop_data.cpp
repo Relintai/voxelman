@@ -24,52 +24,52 @@ SOFTWARE.
 
 #include "voxel_chunk.h"
 
-int VoxelChunkPropData::get_x() {
+int VoxelChunkPropData::get_x() const {
 	return _x;
 }
-void VoxelChunkPropData::set_x(int value) {
+void VoxelChunkPropData::set_x(const int value) {
 	_x = value;
 }
 
-int VoxelChunkPropData::get_y() {
+int VoxelChunkPropData::get_y() const {
 	return _y;
 }
-void VoxelChunkPropData::set_y(int value) {
+void VoxelChunkPropData::set_y(const int value) {
 	_y = value;
 }
 
-int VoxelChunkPropData::get_z() {
+int VoxelChunkPropData::get_z() const {
 	return _z;
 }
-void VoxelChunkPropData::set_z(int value) {
+void VoxelChunkPropData::set_z(const int value) {
 	_z = value;
 }
 
-Vector3 VoxelChunkPropData::get_rotation() {
+Vector3 VoxelChunkPropData::get_rotation() const {
 	return _rotation;
 }
-void VoxelChunkPropData::set_rotation(Vector3 value) {
+void VoxelChunkPropData::set_rotation(const Vector3 &value) {
 	_rotation = value;
 }
 
-Vector3 VoxelChunkPropData::get_scale() {
+Vector3 VoxelChunkPropData::get_scale() const {
 	return _scale;
 }
-void VoxelChunkPropData::set_scale(Vector3 value) {
+void VoxelChunkPropData::set_scale(const Vector3 &value) {
 	_scale = value;
 }
 
-bool VoxelChunkPropData::get_snap_to_mesh() {
+bool VoxelChunkPropData::get_snap_to_mesh() const {
 	return _snap_to_mesh;
 }
-void VoxelChunkPropData::set_snap_to_mesh(bool value) {
+void VoxelChunkPropData::set_snap_to_mesh(const bool &value) {
 	_snap_to_mesh = value;
 }
 
-Vector3 VoxelChunkPropData::get_snap_axis() {
+Vector3 VoxelChunkPropData::get_snap_axis() const {
 	return _snap_axis;
 }
-void VoxelChunkPropData::set_snap_axis(Vector3 value) {
+void VoxelChunkPropData::set_snap_axis(const Vector3 &value) {
 	_snap_axis = value;
 }
 

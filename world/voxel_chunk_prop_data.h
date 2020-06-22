@@ -39,26 +39,26 @@ class VoxelChunkPropData : public Resource {
 	GDCLASS(VoxelChunkPropData, Resource);
 
 public:
-	int get_x();
-	void set_x(int value);
+	int get_x() const;
+	void set_x(const int value);
 
-	int get_y();
-	void set_y(int value);
+	int get_y() const;
+	void set_y(const int value);
 
-	int get_z();
-	void set_z(int value);
+	int get_z() const;
+	void set_z(const int value);
 
-	Vector3 get_rotation();
-	void set_rotation(Vector3 value);
+	Vector3 get_rotation() const;
+	void set_rotation(const Vector3 &value);
 
-	Vector3 get_scale();
-	void set_scale(Vector3 value);
+	Vector3 get_scale() const;
+	void set_scale(const Vector3 &value);
 
-	bool get_snap_to_mesh();
-	void set_snap_to_mesh(bool value);
+	bool get_snap_to_mesh() const;
+	void set_snap_to_mesh(const bool value);
 
-	Vector3 get_snap_axis();
-	void set_snap_axis(Vector3 value);
+	Vector3 get_snap_axis() const;
+	void set_snap_axis(const Vector3 &value);
 
 	Ref<MeshDataResource> get_mesh();
 	void set_mesh(const Ref<MeshDataResource> &value);
@@ -99,6 +99,8 @@ protected:
 	static void _bind_methods();
 
 private:
+	int _id;
+
 	int _x;
 	int _y;
 	int _z;
