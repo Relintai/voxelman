@@ -145,24 +145,23 @@ void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 	}
 }
 
-Ref<PropData> VoxelmanLibraryMerger::get_prop(const int id) {
-	if (_props.has(id))
-		return _props[id];
+Ref<PropData> VoxelmanLibraryMerger::get_prop(const int index) {
+	ERR_FAIL_INDEX_V(index, _props.size(), Ref<PropData>());
 
-	return Ref<PropData>();
+	return _props[index];
 }
 void VoxelmanLibraryMerger::add_prop(Ref<PropData> value) {
-	if (!value.is_valid() || _props.has(value->get_id()))
-		return;
+	_props.push_back(value);
+}
+void VoxelmanLibraryMerger::set_prop(const int index, const Ref<PropData> &value) {
+	ERR_FAIL_INDEX(index, _props.size());
 
-	_props[value->get_id()] = value;
+	_props.write[index] = value;
 }
-void VoxelmanLibraryMerger::set_prop(const int id, const Ref<PropData> &value) {
-	_props[value->get_id()] = value;
-}
-void VoxelmanLibraryMerger::remove_prop(const int id) {
-	if (_props.has(id))
-		_props.erase(id);
+void VoxelmanLibraryMerger::remove_prop(const int index) {
+	ERR_FAIL_INDEX(index, _props.size());
+
+	_props.remove(index);
 }
 int VoxelmanLibraryMerger::get_num_props() const {
 	return _props.size();
@@ -170,31 +169,14 @@ int VoxelmanLibraryMerger::get_num_props() const {
 void VoxelmanLibraryMerger::clear_props() {
 	_props.clear();
 }
-/*
+
 Vector<Variant> VoxelmanLibraryMerger::get_props() {
-	Vector<Variant> r;
-
-	for (Map<int, Ref<PropData> >::Element *I = _props.front(); I; I = I->next()) {
-		r.push_back(I->value().get_ref_ptr());
-	}
-
-	return r;
+	VARIANT_ARRAY_GET(_props);
 }
 
 void VoxelmanLibraryMerger::set_props(const Vector<Variant> &props) {
-	_props.clear();
-
-	for (int i = 0; i < props.size(); i++) {
-		Ref<VoxelSurfaceMerger> surface = Ref<VoxelSurfaceMerger>(props[i]);
-
-		if (surface.is_valid()) {
-			surface->set_library(this);
-		}
-
-		_props.push_back(surface);
-	}
-	//_props.clear();
-}*/
+	VARIANT_ARRAY_SET(props, _props, PropData);
+}
 
 void VoxelmanLibraryMerger::refresh_rects() {
 	bool texture_added = false;
@@ -230,8 +212,8 @@ void VoxelmanLibraryMerger::refresh_rects() {
 	}
 
 	texture_added = false;
-	for (Map<int, Ref<PropData> >::Element *I = _props.front(); I; I = I->next()) {
-		Ref<PropData> prop = Ref<PropData>(I->value());
+	for (int i = 0; i < _props.size(); i++) {
+		Ref<PropData> prop = _props.get(i);
 
 		if (prop.is_valid()) {
 			if (process_prop_textures(prop))
@@ -417,10 +399,9 @@ void VoxelmanLibraryMerger::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_voxel_surfaces"), &VoxelmanLibraryMerger::set_voxel_surfaces);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurfaceMerger", PROPERTY_USAGE_DEFAULT, "VoxelSurfaceMerger"), "set_voxel_surfaces", "get_voxel_surfaces");
 
-	//ClassDB::bind_method(D_METHOD("get_props"), &VoxelmanLibraryMerger::get_props);
-	//ClassDB::bind_method(D_METHOD("set_props"), &VoxelmanLibraryMerger::set_props);
-	//ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PropData", PROPERTY_USAGE_DEFAULT, "PropData"), "set_props", "get_props");
-	//ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PackedScene", PROPERTY_USAGE_DEFAULT, "PackedScene"), "set_props", "get_props");
+	ClassDB::bind_method(D_METHOD("get_props"), &VoxelmanLibraryMerger::get_props);
+	ClassDB::bind_method(D_METHOD("set_props"), &VoxelmanLibraryMerger::set_props);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PropData", PROPERTY_USAGE_DEFAULT, "PropData"), "set_props", "get_props");
 
 	ClassDB::bind_method(D_METHOD("_setup_material_albedo", "material_index", "texture"), &VoxelmanLibraryMerger::_setup_material_albedo);
 }

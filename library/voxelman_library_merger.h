@@ -65,15 +65,15 @@ public:
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
 
-	Ref<PropData> get_prop(const int id);
+	Ref<PropData> get_prop(const int index);
 	void add_prop(Ref<PropData> value);
-	void set_prop(const int id, const Ref<PropData> &value);
-	void remove_prop(const int id);
+	void set_prop(const int index, const Ref<PropData> &value);
+	void remove_prop(const int index);
 	int get_num_props() const;
 	void clear_props();
 
-	//Vector<Variant> get_props();
-	//void set_props(const Vector<Variant> &props);
+	Vector<Variant> get_props();
+	void set_props(const Vector<Variant> &props);
 
 	void refresh_rects();
 
@@ -89,7 +89,7 @@ protected:
 
 private:
 	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
-	Map<int, Ref<PropData> > _props;
+	Vector<Ref<PropData> > _props;
 
 	Ref<TexturePacker> _packer;
 	Ref<TexturePacker> _prop_packer;
