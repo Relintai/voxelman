@@ -138,6 +138,11 @@ void VoxelChunkDefault::set_current_lod_level(const int value) {
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, vis);
+
+		rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+
+		if (rid != RID())
+			VisualServer::get_singleton()->instance_set_visible(rid, vis);
 	}
 }
 
@@ -854,6 +859,11 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, false);
+
+		rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+
+		if (rid != RID())
+			VisualServer::get_singleton()->instance_set_visible(rid, false);
 	}
 }
 
@@ -1138,7 +1148,10 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			}
 
 			next_phase();
-
+			return;
+		}
+		case BUILD_PHASE_PROP_SETUP: {
+			next_phase();
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_SETUP: {
@@ -1470,20 +1483,6 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			for (int i = 0; i < _prop_meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _prop_meshers.get(i);
-
-				ERR_CONTINUE(!mesher.is_valid());
-				//add all
-				//mesher->add_chunk(this);
-
-				for (int i = 0; i < _props.size(); ++i) {
-					Ref<VoxelChunkPropData> d = _props.get(i);
-
-					//add to mesher
-				}
-			}
-
 			Ref<VoxelMesher> mesher;
 			for (int i = 0; i < _meshers.size(); ++i) {
 				Ref<VoxelMesher> m = _meshers.get(i);
@@ -1492,11 +1491,11 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 				if (!mesher.is_valid()) {
 					mesher = m;
-					mesher->set_material(get_library()->get_material(0));
+					//	mesher->set_material(get_library()->get_material(0));
 					continue;
 				}
 
-				mesher->set_material(get_library()->get_material(0));
+				//	mesher->set_material(get_library()->get_material(0));
 				mesher->add_mesher(m);
 			}
 
@@ -1836,6 +1835,7 @@ void VoxelChunkDefault::_bind_methods() {
 
 	BIND_CONSTANT(BUILD_PHASE_DONE);
 	BIND_CONSTANT(BUILD_PHASE_SETUP);
+	BIND_CONSTANT(BUILD_PHASE_PROP_SETUP);
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH_SETUP);
 	BIND_CONSTANT(BUILD_PHASE_COLLIDER);
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH);
