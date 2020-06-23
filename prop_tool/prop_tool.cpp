@@ -38,6 +38,8 @@ void PropTool::save() {
 	_target_prop->set_snap_axis(_snap_axis);
 
 	ResourceSaver::save(_target_prop->get_path(), _target_prop);
+
+	print_error("save");
 }
 
 void PropTool::save_node(Node *node, Transform parent_transform) {
@@ -147,6 +149,10 @@ void PropTool::refresh_set(bool value) {
 		rebuild_hierarchy();
 }
 
+Ref<PropData> PropTool::get_target_prop() {
+	return _target_prop;
+}
+
 void PropTool::set_target_prop(const Ref<PropData> &prop) {
 	_target_prop = prop;
 
@@ -208,6 +214,9 @@ PropTool::~PropTool() {
 }
 
 void PropTool::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_target_prop"), &PropTool::get_target_prop);
+	ClassDB::bind_method(D_METHOD("set_target_prop", "value"), &PropTool::set_target_prop);
+	//ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "target_prop", PROPERTY_HINT_RESOURCE_TYPE, "PropData"), "set_target_prop", "get_target_prop");
 }
 
 #endif

@@ -45,7 +45,10 @@ public:
 	void save_node(Node *node, Transform parent_transform);
 	void rebuild_hierarchy();
 	void refresh_set(bool value);
+
+	Ref<PropData> get_target_prop();
 	void set_target_prop(const Ref<PropData> &prop);
+
 	void target_prop_set(const Ref<PropData> &prop);
 	void load_scene_for(PropTool *t, const Ref<PropData> &prop);
 
