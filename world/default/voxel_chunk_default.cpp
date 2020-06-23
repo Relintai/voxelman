@@ -1128,6 +1128,15 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				mesher->reset();
 			}
 
+			for (int i = 0; i < _prop_meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _prop_meshers.get(i);
+
+				ERR_CONTINUE(!mesher.is_valid());
+
+				mesher->reset();
+				mesher->set_library(_library);
+			}
+
 			next_phase();
 
 			return;
@@ -1153,7 +1162,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 			return;
 		}
-		case BUILD_PHASE_TERRARIN_MESH_COLLIDER: {
+		case BUILD_PHASE_COLLIDER: {
 			if ((_build_flags & BUILD_FLAG_CREATE_COLLIDER) == 0) {
 				next_phase();
 				return;
@@ -1177,7 +1186,15 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				}
 			}
 
-			if (temp_arr_collider.size() == 0 && temp_arr_collider_liquid.size() == 0) {
+			for (int i = 0; i < _prop_meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _prop_meshers.get(i);
+
+				ERR_CONTINUE(!mesher.is_valid());
+
+				temp_arr_collider.append_array(mesher->build_collider());
+			}
+
+			if (temp_arr_collider.size() == 0 && temp_arr_collider_liquid.size() == 0 && temp_arr_collider_prop.size() == 0) {
 				next_phase();
 				return;
 			}
@@ -1214,6 +1231,39 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 				temp_arr_collider_liquid.resize(0);
 			}
+
+			if (temp_arr_collider_prop.size() != 0) {
+				if (!has_meshes(MESH_INDEX_PROP, MESH_TYPE_INDEX_BODY)) {
+					create_colliders(MESH_INDEX_PROP);
+				}
+
+				PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_prop);
+
+				temp_arr_collider_prop.resize(0);
+			}
+
+			next_phase();
+
+			return;
+		}
+		case BUILD_PHASE_LIGHTS: {
+			bool gr = (_build_flags & BUILD_FLAG_AUTO_GENERATE_RAO) != 0;
+
+			if (!gr && (_build_flags & BUILD_FLAG_USE_LIGHTING) == 0) {
+				next_phase();
+				return;
+			}
+
+			bool bl = (_build_flags & BUILD_FLAG_BAKE_LIGHTS) != 0;
+
+			if (bl)
+				clear_baked_lights();
+
+			if (gr)
+				generate_random_ao(_voxel_world->get_current_seed());
+
+			if (bl)
+				bake_lights();
 
 			next_phase();
 
@@ -1414,114 +1464,145 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 			return;
 		}
-		case BUILD_PHASE_LIGHTS: {
-			bool gr = (_build_flags & BUILD_FLAG_AUTO_GENERATE_RAO) != 0;
-
-			if (!gr && (_build_flags & BUILD_FLAG_USE_LIGHTING) == 0) {
+		case BUILD_PHASE_PROP_MESH: {
+			if (_props.size() == 0) {
 				next_phase();
 				return;
 			}
 
-			bool bl = (_build_flags & BUILD_FLAG_BAKE_LIGHTS) != 0;
-
-			if (bl)
-				clear_baked_lights();
-
-			if (gr)
-				generate_random_ao(_voxel_world->get_current_seed());
-
-			if (bl)
-				bake_lights();
-
-			next_phase();
-
-			return;
-		}
-		case BUILD_PHASE_PROP_MESH: {
-			for (int i = 0; i < _meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _meshers.get(i);
+			for (int i = 0; i < _prop_meshers.size(); ++i) {
+				Ref<VoxelMesher> mesher = _prop_meshers.get(i);
 
 				ERR_CONTINUE(!mesher.is_valid());
+				//add all
+				//mesher->add_chunk(this);
 
-				mesher->reset();
+				for (int i = 0; i < _props.size(); ++i) {
+					Ref<VoxelChunkPropData> d = _props.get(i);
+
+					//add to mesher
+				}
 			}
 
-			if (_props.size() > 0) {
-				if (!has_meshes(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH)) {
-					create_meshes(MESH_INDEX_PROP, 1); //TODO LOD
+			Ref<VoxelMesher> mesher;
+			for (int i = 0; i < _meshers.size(); ++i) {
+				Ref<VoxelMesher> m = _meshers.get(i);
+
+				ERR_CONTINUE(!m.is_valid());
+
+				if (!mesher.is_valid()) {
+					mesher = m;
+					mesher->set_material(get_library()->get_material(0));
+					continue;
 				}
 
-				for (int i = 0; i < _meshers.size(); ++i) {
-					Ref<VoxelMesher> mesher = _meshers.get(i);
+				mesher->set_material(get_library()->get_material(0));
+				mesher->add_mesher(m);
+			}
 
-					ERR_CONTINUE(!mesher.is_valid());
+			ERR_FAIL_COND(!mesher.is_valid());
 
-					mesher->bake_colors(this);
-					mesher->set_material(get_library()->get_material(0));
+			if (mesher->get_vertex_count() == 0) {
+				next_phase();
+				return;
+			}
 
-					RID prop_mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
+			if ((_build_flags & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
+				mesher->bake_colors(this);
+			}
 
-					ERR_FAIL_COND(prop_mesh_rid == RID());
+			if (mesher->get_vertex_count() != 0) {
+				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 0);
 
-					VS::get_singleton()->mesh_clear(prop_mesh_rid);
+				Array temp_mesh_arr = mesher->build_mesh();
 
-					if (mesher->get_vertex_count() == 0) {
-						next_phase();
-						return;
+				if (mesh_rid == RID()) {
+					if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0)
+						create_meshes(MESH_INDEX_PROP, _lod_num + 1);
+					else
+						create_meshes(MESH_INDEX_PROP, 1);
+
+					mesh_rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 0);
+				}
+
+				if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
+#if !GODOT4
+					VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
+#else
+					VS::get_singleton()->mesh_clear(mesh_rid);
+#endif
+
+				VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+				if (_library->get_material(0).is_valid())
+					VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_material(0)->get_rid());
+
+				if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0) {
+					if (_lod_num >= 1) {
+						//for lod 1 just remove uv2
+						temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
+
+						VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+						if (get_library()->get_material(1).is_valid())
+							VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 1), 0, get_library()->get_material(1)->get_rid());
 					}
 
-					Array arr = mesher->build_mesh();
+					if (_lod_num >= 2) {
+						Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
 
-					VS::get_singleton()->mesh_add_surface_from_arrays(prop_mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, arr);
+						VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
 
-					if (_library->get_material(0).is_valid())
-						VS::get_singleton()->mesh_surface_set_material(prop_mesh_rid, 0, _library->get_material(0)->get_rid());
+						if (get_library()->get_material(2).is_valid())
+							VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 2), 0, get_library()->get_material(2)->get_rid());
+					}
+
+					if (_lod_num >= 3) {
+						Ref<ShaderMaterial> mat = get_library()->get_material(0);
+						Ref<SpatialMaterial> spmat = get_library()->get_material(0);
+						Ref<Texture> tex;
+
+						if (mat.is_valid()) {
+							tex = mat->get_shader_param("texture_albedo");
+						} else if (spmat.is_valid()) {
+							tex = spmat->get_texture(SpatialMaterial::TEXTURE_ALBEDO);
+						}
+
+						if (tex.is_valid()) {
+							temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
+							temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
+
+							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+							if (get_library()->get_material(3).is_valid())
+								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 3), 0, get_library()->get_material(3)->get_rid());
+						}
+					}
+
+					/*
+					if (_lod_num > 4) {
+						Ref<FastQuadraticMeshSimplifier> fqms;
+						fqms.instance();
+						fqms->initialize(temp_mesh_arr);
+
+						Array arr_merged_simplified;
+
+						for (int i = 4; i < _lod_num; ++i) {
+							fqms->simplify_mesh(arr_merged_simplified[0].size() * 0.8, 7);
+							arr_merged_simplified = fqms->get_arrays();
+
+							if (arr_merged_simplified[0].size() == 0)
+								break;
+
+							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, i), VisualServer::PRIMITIVE_TRIANGLES, arr_merged_simplified);
+
+							if (get_library()->get_material(i).is_valid())
+								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, i), 0, get_library()->get_material(i)->get_rid());
+						}
+					}
+					*/
 				}
 			}
-
-			next_phase();
-
-			return;
-		}
-		case BUILD_PHASE_PROP_COLLIDER: {
-			if ((_build_flags & BUILD_FLAG_CREATE_COLLIDER) == 0) {
-				next_phase();
-				return;
-			}
-
-			for (int i = 0; i < _meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _meshers.get(i);
-
-				ERR_CONTINUE(!mesher.is_valid());
-
-				temp_arr_collider.append_array(mesher->build_collider());
-			}
-
-			for (int i = 0; i < _meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _meshers.get(i);
-
-				ERR_CONTINUE(!mesher.is_valid());
-
-				mesher->reset();
-			}
-
-			if (temp_arr_collider.size() == 0) {
-				next_phase();
-				return;
-			}
-
-			if (_is_build_threaded) {
-				set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
-				return;
-			}
-
-			if (!has_meshes(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE)) {
-				create_colliders(MESH_INDEX_PROP);
-			}
-
-			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
-
-			//temp_arr_collider.resize(0);
 
 			next_phase();
 
@@ -1541,7 +1622,7 @@ void VoxelChunkDefault::_build_phase_process(int phase) {
 }
 
 void VoxelChunkDefault::_build_phase_physics_process(int phase) {
-	if (phase == BUILD_PHASE_TERRARIN_MESH_COLLIDER) {
+	if (phase == BUILD_PHASE_COLLIDER) {
 		if (temp_arr_collider.size() != 0) {
 			if (!has_meshes(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_BODY)) {
 				create_colliders(MESH_INDEX_TERRARIN);
@@ -1568,17 +1649,16 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_liquid);
 
 			temp_arr_collider_liquid.resize(0);
-		} else if (phase == BUILD_PHASE_PROP_COLLIDER) {
+		}
 
-			if (!has_meshes(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE)) {
+		if (temp_arr_collider_prop.size() != 0) {
+			if (!has_meshes(MESH_INDEX_PROP, MESH_TYPE_INDEX_BODY)) {
 				create_colliders(MESH_INDEX_PROP);
 			}
 
-			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
-			//temp_arr_collider.resize(0);
+			PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_PROP, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_prop);
 
-			set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
-			next_phase();
+			temp_arr_collider_prop.resize(0);
 		}
 
 		set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
@@ -1757,10 +1837,9 @@ void VoxelChunkDefault::_bind_methods() {
 	BIND_CONSTANT(BUILD_PHASE_DONE);
 	BIND_CONSTANT(BUILD_PHASE_SETUP);
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH_SETUP);
-	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH_COLLIDER);
+	BIND_CONSTANT(BUILD_PHASE_COLLIDER);
 	BIND_CONSTANT(BUILD_PHASE_TERRARIN_MESH);
 	BIND_CONSTANT(BUILD_PHASE_PROP_MESH);
-	BIND_CONSTANT(BUILD_PHASE_PROP_COLLIDER);
 	BIND_CONSTANT(BUILD_PHASE_LIGHTS);
 	BIND_CONSTANT(BUILD_PHASE_FINALIZE);
 	BIND_CONSTANT(BUILD_PHASE_MAX);

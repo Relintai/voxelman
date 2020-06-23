@@ -73,11 +73,10 @@ public:
 		BUILD_PHASE_DONE = 0,
 		BUILD_PHASE_SETUP,
 		BUILD_PHASE_TERRARIN_MESH_SETUP,
-		BUILD_PHASE_TERRARIN_MESH_COLLIDER,
+		BUILD_PHASE_COLLIDER,
 		BUILD_PHASE_LIGHTS,
 		BUILD_PHASE_TERRARIN_MESH,
 		BUILD_PHASE_PROP_MESH,
-		BUILD_PHASE_PROP_COLLIDER,
 		BUILD_PHASE_FINALIZE,
 		BUILD_PHASE_MAX
 	};
@@ -286,6 +285,7 @@ protected:
 	Array temp_array;
 	PoolVector<Vector3> temp_arr_collider;
 	PoolVector<Vector3> temp_arr_collider_liquid;
+	PoolVector<Vector3> temp_arr_collider_prop;
 
 	ActiveBuildPhaseType _active_build_phase_type;
 

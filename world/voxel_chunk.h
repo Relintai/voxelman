@@ -151,6 +151,13 @@ public:
 	void add_liquid_mesher(const Ref<VoxelMesher> &mesher);
 	int get_liquid_mesher_count() const;
 
+	//Prop Meshers
+	Ref<VoxelMesher> get_prop_mesher(const int index) const;
+	void set_prop_mesher(const int index, const Ref<VoxelMesher> &mesher);
+	void remove_prop_mesher(const int index);
+	void add_prop_mesher(const Ref<VoxelMesher> &mesher);
+	int get_prop_mesher_count() const;
+
 	//Channels
 	void setup_channels();
 
@@ -264,6 +271,7 @@ protected:
 	Ref<VoxelmanLibrary> _library;
 	Vector<Ref<VoxelMesher> > _meshers;
 	Vector<Ref<VoxelMesher> > _liquid_meshers;
+	Vector<Ref<VoxelMesher> > _prop_meshers;
 
 	//mergeable props
 	Vector<Ref<VoxelChunkPropData> > _props;
