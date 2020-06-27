@@ -53,12 +53,6 @@ include_pool_vector
 
 #include "core/version.h"
 
-#include "../props/prop_data.h"
-#include "../props/prop_data_entry.h"
-#include "../props/prop_data_light.h"
-#include "../props/prop_data_mesh.h"
-#include "../props/prop_data_scene.h"
-
 #if VERSION_MAJOR >= 4
 #define Texture Texture2D
 #endif

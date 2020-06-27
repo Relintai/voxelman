@@ -29,8 +29,8 @@ SOFTWARE.
 #include "scene/resources/packed_scene.h"
 
 #include "../../mesh_data_resource/mesh_data_resource.h"
-#include "../props/prop_data.h"
-#include "../props/prop_data_light.h"
+#include "../../props/props/prop_data.h"
+#include "../../props/props/prop_data_light.h"
 #include "scene/resources/texture.h"
 
 class VoxelChunk;

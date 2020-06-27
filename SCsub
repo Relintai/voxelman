@@ -20,14 +20,6 @@ sources = [
 
     "register_types.cpp",
 
-    "props/prop_data.cpp",
-    "props/prop_data_entry.cpp",
-    "props/prop_data_scene.cpp",
-    "props/prop_data_mesh.cpp",
-    "props/prop_data_light.cpp",
-    "props/prop_data_prop.cpp",
-    "props/prop_data_entity.cpp",
-
     "library/voxelman_library.cpp",
     "library/voxelman_library_simple.cpp",
     

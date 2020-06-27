@@ -25,9 +25,9 @@ SOFTWARE.
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/texture.h"
 
-#include "../props/prop_data.h"
-#include "../props/prop_data_mesh.h"
-#include "../props/prop_data_prop.h"
+#include "../../props/props/prop_data.h"
+#include "../../props/props/prop_data_mesh.h"
+#include "../../props/props/prop_data_prop.h"
 
 #include "../defines.h"
 

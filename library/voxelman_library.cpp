@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "voxelman_library.h"
 
-#include "../props/prop_data.h"
+#include "../../props/props/prop_data.h"
 #include "scene/resources/packed_scene.h"
 
 #include "../defines.h"

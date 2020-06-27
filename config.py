@@ -10,21 +10,6 @@ def configure(env):
 
 def get_doc_classes():
     return [
-        "PropDataEntity",
-        "PropDataEntry",
-        "PropDataLight",
-        "PropDataMesh",
-        "PropDataProp",
-        "PropDataScene",
-        "PropData",
-      
-        "PropTool",
-        "PropToolEntity",
-        "PropToolLight",
-        "PropToolMesh",
-        "PropToolProp",
-        "PropToolScene",
-
         "WorldArea",
 
         "VoxelLight",
