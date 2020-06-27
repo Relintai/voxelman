@@ -29,8 +29,12 @@ SOFTWARE.
 #include "scene/resources/packed_scene.h"
 
 #include "../../mesh_data_resource/mesh_data_resource.h"
+
+#ifdef PROPS_PRESENT
 #include "../../props/props/prop_data.h"
 #include "../../props/props/prop_data_light.h"
+#endif
+
 #include "scene/resources/texture.h"
 
 class VoxelChunk;
@@ -66,11 +70,13 @@ public:
 	Ref<Texture> get_mesh_texture();
 	void set_mesh_texture(const Ref<Texture> &value);
 
+#ifdef PROPS_PRESENT
 	Ref<PropDataLight> get_light();
 	void set_light(const Ref<PropDataLight> &value);
 
 	Ref<PropData> get_prop();
 	void set_prop(const Ref<PropData> &value);
+#endif
 
 	Ref<PackedScene> get_scene();
 	void set_scene(const Ref<PackedScene> &value);
@@ -118,8 +124,11 @@ private:
 
 	Ref<MeshDataResource> _mesh;
 	Ref<Texture> _texture;
+
+#ifdef PROPS_PRESENT
 	Ref<PropDataLight> _light;
 	Ref<PropData> _prop;
+#endif
 };
 
 #endif

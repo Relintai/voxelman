@@ -32,7 +32,9 @@ SOFTWARE.
 class VoxelSurface;
 class VoxelMesher;
 class PackedScene;
+#ifdef PROPS_PRESENT
 class PropData;
+#endif
 
 class VoxelmanLibrary : public Resource {
 	GDCLASS(VoxelmanLibrary, Resource)
@@ -92,12 +94,14 @@ public:
 	virtual int get_num_scenes() const;
 	virtual void clear_scenes();
 
+#ifdef PROPS_PRESENT
 	virtual Ref<PropData> get_prop(const int id);
 	virtual void add_prop(Ref<PropData> value);
 	virtual void set_prop(const int id, Ref<PropData> value);
 	virtual void remove_prop(const int id);
 	virtual int get_num_props() const;
 	virtual void clear_props();
+#endif
 
 	virtual void refresh_rects();
 

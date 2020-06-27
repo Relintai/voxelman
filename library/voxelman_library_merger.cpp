@@ -25,9 +25,11 @@ SOFTWARE.
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/texture.h"
 
+#ifdef PROPS_PRESENT
 #include "../../props/props/prop_data.h"
 #include "../../props/props/prop_data_mesh.h"
 #include "../../props/props/prop_data_prop.h"
+#endif
 
 #include "../defines.h"
 
@@ -145,6 +147,7 @@ void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 	}
 }
 
+#ifdef PROPS_PRESENT
 Ref<PropData> VoxelmanLibraryMerger::get_prop(const int index) {
 	ERR_FAIL_INDEX_V(index, _props.size(), Ref<PropData>());
 
@@ -177,6 +180,7 @@ Vector<Variant> VoxelmanLibraryMerger::get_props() {
 void VoxelmanLibraryMerger::set_props(const Vector<Variant> &props) {
 	VARIANT_ARRAY_SET(props, _props, PropData);
 }
+#endif
 
 void VoxelmanLibraryMerger::refresh_rects() {
 	bool texture_added = false;
@@ -211,6 +215,7 @@ void VoxelmanLibraryMerger::refresh_rects() {
 		setup_material_albedo(MATERIAL_INDEX_LIQUID, tex);
 	}
 
+#ifdef PROPS_PRESENT
 	texture_added = false;
 	for (int i = 0; i < _props.size(); i++) {
 		Ref<PropData> prop = _props.get(i);
@@ -230,6 +235,7 @@ void VoxelmanLibraryMerger::refresh_rects() {
 
 		setup_material_albedo(MATERIAL_INDEX_PROP, tex);
 	}
+#endif
 
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
 		Ref<VoxelSurfaceMerger> surface = _voxel_surfaces[i];
@@ -341,6 +347,7 @@ VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
 	_prop_packer.unref();
 }
 
+#ifdef PROPS_PRESENT
 bool VoxelmanLibraryMerger::process_prop_textures(Ref<PropData> prop) {
 	if (!prop.is_valid()) {
 		return false;
@@ -373,6 +380,7 @@ bool VoxelmanLibraryMerger::process_prop_textures(Ref<PropData> prop) {
 
 	return texture_added;
 }
+#endif
 
 void VoxelmanLibraryMerger::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_texture_flags"), &VoxelmanLibraryMerger::get_texture_flags);
@@ -399,9 +407,11 @@ void VoxelmanLibraryMerger::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_voxel_surfaces"), &VoxelmanLibraryMerger::set_voxel_surfaces);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurfaceMerger", PROPERTY_USAGE_DEFAULT, "VoxelSurfaceMerger"), "set_voxel_surfaces", "get_voxel_surfaces");
 
+#ifdef PROPS_PRESENT
 	ClassDB::bind_method(D_METHOD("get_props"), &VoxelmanLibraryMerger::get_props);
 	ClassDB::bind_method(D_METHOD("set_props"), &VoxelmanLibraryMerger::set_props);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PropData", PROPERTY_USAGE_DEFAULT, "PropData"), "set_props", "get_props");
+#endif
 
 	ClassDB::bind_method(D_METHOD("_setup_material_albedo", "material_index", "texture"), &VoxelmanLibraryMerger::_setup_material_albedo);
 }

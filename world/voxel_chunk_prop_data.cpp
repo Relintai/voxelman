@@ -115,6 +115,7 @@ void VoxelChunkPropData::set_mesh_texture(const Ref<Texture> &value) {
 	_texture = value;
 }
 
+#ifdef PROPS_PRESENT
 Ref<PropDataLight> VoxelChunkPropData::get_light() {
 	return _light;
 }
@@ -128,6 +129,7 @@ Ref<PropData> VoxelChunkPropData::get_prop() {
 void VoxelChunkPropData::set_prop(const Ref<PropData> &value) {
 	_prop = value;
 }
+#endif
 
 Node *VoxelChunkPropData::get_spawned_prop() const {
 	return _spawned_prop;
@@ -159,8 +161,10 @@ VoxelChunkPropData::VoxelChunkPropData() {
 VoxelChunkPropData::~VoxelChunkPropData() {
 	_mesh.unref();
 	_texture.unref();
+#ifdef PROPS_PRESENT
 	_light.unref();
 	_prop.unref();
+#endif
 	_scene.unref();
 
 	_owner.unref();
@@ -224,6 +228,7 @@ void VoxelChunkPropData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_mesh_texture", "value"), &VoxelChunkPropData::set_mesh_texture);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mesh_texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_mesh_texture", "get_mesh_texture");
 
+#ifdef PROPS_PRESENT
 	ClassDB::bind_method(D_METHOD("get_light"), &VoxelChunkPropData::get_light);
 	ClassDB::bind_method(D_METHOD("set_light", "value"), &VoxelChunkPropData::set_light);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "PropDataLight"), "set_light", "get_light");
@@ -231,6 +236,7 @@ void VoxelChunkPropData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_prop"), &VoxelChunkPropData::get_prop);
 	ClassDB::bind_method(D_METHOD("set_prop", "value"), &VoxelChunkPropData::set_prop);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "PropData"), "set_prop", "get_prop");
+#endif
 
 	ClassDB::bind_method(D_METHOD("get_scene"), &VoxelChunkPropData::get_scene);
 	ClassDB::bind_method(D_METHOD("set_scene", "value"), &VoxelChunkPropData::set_scene);

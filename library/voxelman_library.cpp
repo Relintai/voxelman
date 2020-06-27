@@ -22,7 +22,10 @@ SOFTWARE.
 
 #include "voxelman_library.h"
 
+#ifdef PROPS_PRESENT
 #include "../../props/props/prop_data.h"
+#endif
+
 #include "scene/resources/packed_scene.h"
 
 #include "../defines.h"
@@ -204,6 +207,7 @@ int VoxelmanLibrary::get_num_scenes() const {
 void VoxelmanLibrary::clear_scenes() {
 }
 
+#ifdef PROPS_PRESENT
 Ref<PropData> VoxelmanLibrary::get_prop(const int id) {
 	return Ref<PropData>();
 }
@@ -218,6 +222,7 @@ int VoxelmanLibrary::get_num_props() const {
 }
 void VoxelmanLibrary::clear_props() {
 }
+#endif
 
 //Rects
 void VoxelmanLibrary::refresh_rects() {
@@ -286,12 +291,14 @@ void VoxelmanLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_num_surfaces"), &VoxelmanLibrary::get_num_surfaces);
 	ClassDB::bind_method(D_METHOD("clear_surfaces"), &VoxelmanLibrary::clear_surfaces);
 
+#ifdef PROPS_PRESENT
 	ClassDB::bind_method(D_METHOD("get_prop", "id"), &VoxelmanLibrary::get_prop);
 	ClassDB::bind_method(D_METHOD("add_prop", "value"), &VoxelmanLibrary::add_prop);
 	ClassDB::bind_method(D_METHOD("set_prop", "id", "surface"), &VoxelmanLibrary::set_prop);
 	ClassDB::bind_method(D_METHOD("remove_prop", "id"), &VoxelmanLibrary::remove_prop);
 	ClassDB::bind_method(D_METHOD("get_num_props"), &VoxelmanLibrary::get_num_props);
 	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelmanLibrary::clear_props);
+#endif
 
 	ClassDB::bind_method(D_METHOD("refresh_rects"), &VoxelmanLibrary::refresh_rects);
 
