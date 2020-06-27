@@ -10,7 +10,6 @@ if os.path.isdir('../texture_packer'):
     has_texture_packer = True
 
 if os.path.isdir('../mesh_data_resource'):
-    print("adadadadadadadadadadada")
     module_env.Append(CPPDEFINES=['MESH_DATA_RESOURCE_PRESENT'])
 
 if os.path.isdir('../props'):
