@@ -28,13 +28,6 @@ sources = [
     "props/prop_data_prop.cpp",
     "props/prop_data_entity.cpp",
 
-    "prop_tool/prop_tool.cpp",
-    "prop_tool/prop_tool_entity.cpp",
-    "prop_tool/prop_tool_prop.cpp",
-    "prop_tool/prop_tool_scene.cpp",
-    "prop_tool/prop_tool_light.cpp",
-    "prop_tool/prop_tool_mesh.cpp",
-
     "library/voxelman_library.cpp",
     "library/voxelman_library_simple.cpp",
     
@@ -90,9 +83,6 @@ sources = [
 if has_texture_packer:
     sources.append("library/voxelman_library_merger.cpp")
     sources.append("library/voxel_surface_merger.cpp")
-
-if env['tools']:
-    sources.append("prop_tool/prop_tool_editor_plugin.cpp")
 
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
     # Shared lib compilation

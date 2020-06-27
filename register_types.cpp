@@ -30,17 +30,6 @@ SOFTWARE.
 #include "props/prop_data_prop.h"
 #include "props/prop_data_scene.h"
 
-#include "prop_tool/prop_tool.h"
-#include "prop_tool/prop_tool_entity.h"
-#include "prop_tool/prop_tool_light.h"
-#include "prop_tool/prop_tool_mesh.h"
-#include "prop_tool/prop_tool_prop.h"
-#include "prop_tool/prop_tool_scene.h"
-
-#ifdef TOOLS_ENABLED
-#include "prop_tool/prop_tool_editor_plugin.h"
-#endif
-
 #include "library/voxel_surface.h"
 #include "library/voxel_surface_simple.h"
 
@@ -99,13 +88,6 @@ void register_voxelman_types() {
 	ClassDB::register_class<PropDataProp>();
 	ClassDB::register_class<PropDataEntity>();
 
-	ClassDB::register_class<PropTool>();
-	ClassDB::register_class<PropToolEntity>();
-	ClassDB::register_class<PropToolProp>();
-	ClassDB::register_class<PropToolMesh>();
-	ClassDB::register_class<PropToolLight>();
-	ClassDB::register_class<PropToolScene>();
-
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherDefault>();
 
@@ -156,7 +138,6 @@ void register_voxelman_types() {
 
 #ifdef TOOLS_ENABLED
 	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
-	EditorPlugins::add_by_type<PropToolEditorPlugin>();
 #endif
 }
 
