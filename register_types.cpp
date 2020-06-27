@@ -71,6 +71,8 @@ SOFTWARE.
 #include "world/marching_cubes/voxel_chunk_marching_cubes.h"
 #include "world/marching_cubes/voxel_world_marching_cubes.h"
 
+#include "nodes/voxelman_light.h"
+
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherDefault>();
@@ -90,6 +92,7 @@ void register_voxelman_types() {
 #endif
 
 	ClassDB::register_class<VoxelLight>();
+	ClassDB::register_class<VoxelmanLight>();
 
 	ClassDB::register_class<VoxelWorld>();
 	ClassDB::register_class<VoxelChunk>();

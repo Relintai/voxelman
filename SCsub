@@ -22,6 +22,7 @@ sources = [
     "library/voxelman_library.cpp",
     "library/voxelman_library_simple.cpp",
     
+    "nodes/voxelman_light.cpp",
 
     "library/voxel_surface.cpp",
     "library/voxel_surface_simple.cpp",
