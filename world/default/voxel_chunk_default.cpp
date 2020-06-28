@@ -1639,7 +1639,7 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 		for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
 			Ref<MeshDataResource> mdr = get_mesh_data_resource(i);
 
-			for (int j = 0; j < mdr->get_collision_shape_count(); ++i) {
+			for (int j = 0; j < mdr->get_collision_shape_count(); ++j) {
 				Ref<Shape> shape = mdr->get_collision_shape(j);
 
 				if (!shape.is_valid()) {
@@ -1647,7 +1647,7 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 				}
 
 				RID body = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
-				PhysicsServer::get_singleton()->body_add_shape(body, shape->get_rid(), get_mesh_data_resource_transform(j));
+				PhysicsServer::get_singleton()->body_add_shape(body, shape->get_rid(), get_mesh_data_resource_transform(i));
 
 				_collider_bodies.push_back(body);
 			}
