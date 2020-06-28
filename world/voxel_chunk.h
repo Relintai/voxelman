@@ -200,7 +200,7 @@ public:
 	void clear_props();
 
 #if MESH_DATA_RESOURCE_PRESENT
-	int add_mesh_data_resource(const Transform &transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Rect2 &uv_rect = Rect2(0, 0, 1, 1), const Color &color = Color(1, 1, 1, 1));
+	int add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1));
 
 	Ref<MeshDataResource> get_mesh_data_resource(const int index);
 	void set_mesh_data_resource(const int index, const Ref<MeshDataResource> &mesh);

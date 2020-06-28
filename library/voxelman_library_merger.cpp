@@ -180,6 +180,18 @@ Vector<Variant> VoxelmanLibraryMerger::get_props() {
 void VoxelmanLibraryMerger::set_props(const Vector<Variant> &props) {
 	VARIANT_ARRAY_SET(props, _props, PropData);
 }
+
+Rect2 VoxelmanLibraryMerger::get_prop_uv_rect(const Ref<Texture> &texture) {
+	if (!texture.is_valid())
+		return Rect2(0, 0, 1, 1);
+
+	Ref<AtlasTexture> at = _prop_packer->get_texture(texture);
+
+	if (!at.is_valid())
+		return Rect2(0, 0, 1, 1);
+
+	return at->get_region();
+}
 #endif
 
 void VoxelmanLibraryMerger::refresh_rects() {

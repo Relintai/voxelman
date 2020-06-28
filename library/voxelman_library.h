@@ -101,6 +101,8 @@ public:
 	virtual void remove_prop(const int id);
 	virtual int get_num_props() const;
 	virtual void clear_props();
+
+	virtual Rect2 get_prop_uv_rect(const Ref<Texture> &texture);
 #endif
 
 	virtual void refresh_rects();

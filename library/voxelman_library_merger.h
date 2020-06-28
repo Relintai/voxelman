@@ -75,6 +75,8 @@ public:
 
 	Vector<Variant> get_props();
 	void set_props(const Vector<Variant> &props);
+
+	Rect2 get_prop_uv_rect(const Ref<Texture> &texture);
 #endif
 
 	void refresh_rects();

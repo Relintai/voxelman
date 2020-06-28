@@ -222,6 +222,10 @@ int VoxelmanLibrary::get_num_props() const {
 }
 void VoxelmanLibrary::clear_props() {
 }
+
+Rect2 VoxelmanLibrary::get_prop_uv_rect(const Ref<Texture> &texture) {
+	return Rect2(0, 0, 1, 1);
+}
 #endif
 
 //Rects

@@ -711,17 +711,21 @@ void VoxelChunk::clear_props() {
 }
 
 #if MESH_DATA_RESOURCE_PRESENT
-int VoxelChunk::add_mesh_data_resource(const Transform &transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Rect2 &uv_rect, const Color &color) {
+int VoxelChunk::add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color) {
 	ERR_FAIL_COND_V(!mesh.is_valid(), 0);
 
 	int index = _mesh_data_resources.size();
 
 	MeshDataResourceEntry e;
-	e.transform = transform;
+	e.transform = local_transform;
 	e.mesh = mesh;
 	e.texture = texture;
 	e.color = color;
-	e.uv_rect = uv_rect;
+
+	if (get_library().is_valid() && texture.is_valid())
+		e.uv_rect = get_library()->get_prop_uv_rect(texture);
+	else
+		e.uv_rect = Rect2(0, 0, 1, 1);
 
 	_mesh_data_resources.push_back(e);
 
@@ -1133,7 +1137,7 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
 
 #if MESH_DATA_RESOURCE_PRESENT
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "transform", "mesh", "texture", "uv_rect", "color"), &VoxelChunk::add_mesh_data_resource, DEFVAL(Ref<Texture>()), DEFVAL(Rect2(0, 0, 1, 1)), DEFVAL(Color(1, 1, 1, 1)));
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "local_transform", "mesh", "texture", "color"), &VoxelChunk::add_mesh_data_resource, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)));
 
 	ClassDB::bind_method(D_METHOD("get_mesh_data_resource", "index"), &VoxelChunk::get_mesh_data_resource);
 	ClassDB::bind_method(D_METHOD("set_mesh_data_resource", "index", "mesh"), &VoxelChunk::set_mesh_data_resource);
