@@ -72,12 +72,13 @@ public:
 	enum {
 		BUILD_PHASE_DONE = 0,
 		BUILD_PHASE_SETUP,
-		BUILD_PHASE_PROP_SETUP,
 		BUILD_PHASE_TERRARIN_MESH_SETUP,
 		BUILD_PHASE_COLLIDER,
 		BUILD_PHASE_LIGHTS,
 		BUILD_PHASE_TERRARIN_MESH,
-		BUILD_PHASE_PROP_MESH,
+#ifdef MESH_DATA_RESOURCE_PRESENT
+		BUILD_PHASE_MESH_DATA_RESOURCES,
+#endif
 		BUILD_PHASE_FINALIZE,
 		BUILD_PHASE_MAX
 	};
@@ -286,11 +287,13 @@ protected:
 	Array temp_array;
 	PoolVector<Vector3> temp_arr_collider;
 	PoolVector<Vector3> temp_arr_collider_liquid;
-	PoolVector<Vector3> temp_arr_collider_prop;
 
 	ActiveBuildPhaseType _active_build_phase_type;
 
 	Vector<Ref<VoxelLight> > _lights;
+#if MESH_DATA_RESOURCE_PRESENT
+	Vector<RID> _collider_bodies;
+#endif
 };
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);

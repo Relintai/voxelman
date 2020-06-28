@@ -439,125 +439,46 @@ void VoxelMesher::add_mesh_data_resource(Ref<MeshDataResource> mesh, const Vecto
 }
 
 void VoxelMesher::add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, const Transform transform, const Rect2 uv_rect) {
-	ERR_FAIL_COND(mesh->get_array().size() == 0);
+	if (mesh->get_array().size() == 0)
+		return;
 
-	Array verts = mesh->get_array().get(Mesh::ARRAY_VERTEX);
+	const Array &arr = mesh->get_array();
 
-	for (int i = 0; i < verts.size(); ++i) {
-		Vector3 vert = verts[i];
+	PoolVector3Array vertices = arr[Mesh::ARRAY_VERTEX];
+	PoolVector3Array normals = arr[Mesh::ARRAY_NORMAL];
+	PoolVector2Array uvs = arr[Mesh::ARRAY_TEX_UV];
+	PoolColorArray colors = arr[Mesh::ARRAY_COLOR];
+	PoolIntArray indices = arr[Mesh::ARRAY_INDEX];
 
-		vert = transform.xform(vert);
+	if (vertices.size() == 0)
+		return;
 
-		add_vertex(vert);
+	int orig_vert_size = _vertices.size();
+
+	for (int i = 0; i < vertices.size(); ++i) {
+		if (normals.size() > 0)
+			add_normal(transform.basis.xform(normals[i]));
+
+		if (normals.size() > 0) {
+			Vector2 uv = uvs[i];
+
+			uv.x = uv_rect.size.width * uv.x + uv_rect.position.x;
+			uv.y = uv_rect.size.height * uv.y + uv_rect.position.y;
+
+			add_uv(uv);
+		}
+
+		if (colors.size() > 0)
+			add_color(colors[i]);
+
+		add_vertex(transform.xform(vertices[i]));
 	}
 
-	if (mesh->get_array().size() <= Mesh::ARRAY_NORMAL)
-		return;
-
-	Array normals = mesh->get_array().get(Mesh::ARRAY_NORMAL);
-
-	for (int i = 0; i < normals.size(); ++i) {
-		Vector3 normal = normals[i];
-
-		normal = transform.basis.xform(normal);
-
-		add_normal(normal);
-	}
-
-	/*
-	if (mesh->get_array().size() <= Mesh::ARRAY_TANGENT)
-		return;
-
-	Array tangents = mesh->get_array().get(Mesh::ARRAY_TANGENT);
-
-	for (int i = 0; i < verts.size(); ++i) {
-
-		Plane p(tangents[i * 4 + 0], tangents[i * 4 + 1], tangents[i * 4 + 2], tangents[i * 4 + 3]);
-
-		Vector3 tangent = p.normal;
-		Vector3 binormal = p.normal.cross(tangent).normalized() * p.d;
-
-		tangent = local_transform.basis.xform(tangent);
-		binormal = local_transform.basis.xform(binormal);
-
-		add_t(normal);
-		add_binorm
-	}*/
-
-	if (mesh->get_array().size() <= Mesh::ARRAY_COLOR)
-		return;
-
-	Array colors = mesh->get_array().get(Mesh::ARRAY_COLOR);
-
-	for (int i = 0; i < colors.size(); ++i) {
-		Color color = colors[i];
-
-		add_color(color);
-	}
-
-	if (mesh->get_array().size() <= Mesh::ARRAY_TEX_UV)
-		return;
-
-	Array tex_uv = mesh->get_array().get(Mesh::ARRAY_TEX_UV);
-
-	for (int i = 0; i < tex_uv.size(); ++i) {
-		Vector2 uv = tex_uv[i];
-
-		uv.x *= uv_rect.size.x;
-		uv.y *= uv_rect.size.y;
-
-		uv.x += uv_rect.position.x;
-		uv.y += uv_rect.position.y;
-
-		add_uv(uv);
-	}
-
-	/*
-	if (mesh->get_array().size() <= Mesh::ARRAY_TEX_UV2)
-		return;
-
-	Array tex_uv2 = mesh->get_array().get(Mesh::ARRAY_TEX_UV2);
-
-	for (int i = 0; i < tex_uv.size(); ++i) {
-		Vector2 uv = tex_uv2[i];
-
-		add_uv2(uv);
-	}*/
-
-	/*
-	if (mesh->get_array().size() <= Mesh::ARRAY_BONES)
-		return;
-
-	Array bones = mesh->get_array().get(Mesh::ARRAY_BONES);
-
-	for (int i = 0; i < bones.size(); ++i) {
-		int bone = bones[i];
-
-		add_bone(bone);
-	}*/
-
-	/*
-	if (mesh->get_array().size() <= Mesh::ARRAY_WEIGHTS)
-		return;
-
-	Array weights = mesh->get_array().get(Mesh::ARRAY_WEIGHTS);
-
-	for (int i = 0; i < weights.size(); ++i) {
-		float weight = weights[i];
-
-		add_weight(weight);
-	}*/
-
-	if (mesh->get_array().size() <= Mesh::ARRAY_INDEX)
-		return;
-
-	Array indices = mesh->get_array().get(Mesh::ARRAY_INDEX);
-	int ic = get_vertex_count() - verts.size();
+	int orig_indices_count = _indices.size();
+	_indices.resize(_indices.size() + indices.size());
 
 	for (int i = 0; i < indices.size(); ++i) {
-		int index = indices[i];
-
-		add_indices(ic + index);
+		_indices.set(orig_indices_count + i, orig_vert_size + indices[i]);
 	}
 }
 #endif
