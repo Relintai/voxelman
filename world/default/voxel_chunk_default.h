@@ -227,6 +227,14 @@ public:
 	VoxelChunkDefault();
 	~VoxelChunkDefault();
 
+#if MESH_DATA_RESOURCE_PRESENT
+protected:
+	struct MDRColliders {
+		Transform transform;
+		RID body;
+	};
+#endif
+
 protected:
 	virtual void _setup_channels();
 	virtual void _build_phase(int phase);
@@ -291,7 +299,7 @@ protected:
 
 	Vector<Ref<VoxelLight> > _lights;
 #if MESH_DATA_RESOURCE_PRESENT
-	Vector<RID> _collider_bodies;
+	Vector<MDRColliders> _collider_bodies;
 #endif
 };
 

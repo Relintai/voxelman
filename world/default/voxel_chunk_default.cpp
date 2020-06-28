@@ -715,6 +715,12 @@ void VoxelChunkDefault::update_transforms() {
 				PhysicsServer::get_singleton()->area_set_shape_transform(rid, 0, t);
 		}
 	}
+
+	for (int i = 0; i < _collider_bodies.size(); ++i) {
+		const MDRColliders &c = _collider_bodies[i];
+
+		PhysicsServer::get_singleton()->body_set_state(c.body, PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * c.transform);
+	}
 }
 
 //Lights
@@ -1106,7 +1112,7 @@ VoxelChunkDefault::~VoxelChunkDefault() {
 
 #if MESH_DATA_RESOURCE_PRESENT
 	for (int i = 0; i < _collider_bodies.size(); ++i) {
-		PhysicsServer::get_singleton()->free(_collider_bodies[i]);
+		PhysicsServer::get_singleton()->free(_collider_bodies[i].body);
 	}
 
 	_collider_bodies.clear();
@@ -1587,7 +1593,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 		}
 #endif
 		case BUILD_PHASE_FINALIZE: {
-			update_transforms();
+			call_deferred("update_transforms");
 
 			next_phase();
 
@@ -1630,8 +1636,9 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 		}
 
 #if MESH_DATA_RESOURCE_PRESENT
+		//TODO this should only update the differences
 		for (int i = 0; i < _collider_bodies.size(); ++i) {
-			PhysicsServer::get_singleton()->free(_collider_bodies[i]);
+			PhysicsServer::get_singleton()->free(_collider_bodies[i].body);
 		}
 
 		_collider_bodies.clear();
@@ -1646,10 +1653,27 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 					continue;
 				}
 
-				RID body = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
-				PhysicsServer::get_singleton()->body_add_shape(body, shape->get_rid(), get_mesh_data_resource_transform(i));
+				MDRColliders c;
 
-				_collider_bodies.push_back(body);
+				RID body = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
+
+				c.body = body;
+				c.transform = get_mesh_data_resource_transform(i);
+
+				PhysicsServer::get_singleton()->body_add_shape(body, shape->get_rid());
+
+				//TODO store the layer mask somewhere
+				PhysicsServer::get_singleton()->body_set_collision_layer(body, 1);
+				PhysicsServer::get_singleton()->body_set_collision_mask(body, 1);
+
+				if (get_voxel_world()->is_inside_tree() && get_voxel_world()->is_inside_world()) {
+					Ref<World> world = get_voxel_world()->GET_WORLD();
+
+					if (world.is_valid() && world->get_space() != RID())
+						PhysicsServer::get_singleton()->body_set_space(body, world->get_space());
+				}
+
+				_collider_bodies.push_back(c);
 			}
 		}
 #endif
