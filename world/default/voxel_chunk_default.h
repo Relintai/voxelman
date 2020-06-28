@@ -284,7 +284,6 @@ protected:
 	Thread *_build_thread;
 	bool _build_step_in_progress;
 
-	Array temp_array;
 	PoolVector<Vector3> temp_arr_collider;
 	PoolVector<Vector3> temp_arr_collider_liquid;
 
