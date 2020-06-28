@@ -37,6 +37,7 @@ void VoxelChunkCubic::_setup_channels() {
 }
 
 void VoxelChunkCubic::_create_meshers() {
+	set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic)));
 	add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic())));
 	//add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquiCubic())));
 

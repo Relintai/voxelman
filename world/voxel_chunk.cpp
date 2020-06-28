@@ -251,26 +251,11 @@ int VoxelChunk::get_liquid_mesher_count() const {
 	return _liquid_meshers.size();
 }
 
-Ref<VoxelMesher> VoxelChunk::get_prop_mesher(int index) const {
-	ERR_FAIL_INDEX_V(index, _prop_meshers.size(), Ref<VoxelMesher>());
-
-	return _prop_meshers.get(index);
+Ref<VoxelMesher> VoxelChunk::get_prop_mesher() const {
+	return _prop_mesher;
 }
-void VoxelChunk::set_prop_mesher(int index, const Ref<VoxelMesher> &mesher) {
-	ERR_FAIL_INDEX(index, _prop_meshers.size());
-
-	_prop_meshers.set(index, mesher);
-}
-void VoxelChunk::remove_prop_mesher(const int index) {
-	ERR_FAIL_INDEX(index, _prop_meshers.size());
-
-	_prop_meshers.remove(index);
-}
-void VoxelChunk::add_prop_mesher(const Ref<VoxelMesher> &mesher) {
-	_prop_meshers.push_back(mesher);
-}
-int VoxelChunk::get_prop_mesher_count() const {
-	return _prop_meshers.size();
+void VoxelChunk::set_prop_mesher(const Ref<VoxelMesher> &mesher) {
+	_prop_mesher = mesher;
 }
 
 //Voxel Data
@@ -1100,11 +1085,9 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_liquid_mesher", "mesher"), &VoxelChunk::add_liquid_mesher);
 	ClassDB::bind_method(D_METHOD("get_liquid_mesher_count"), &VoxelChunk::get_liquid_mesher_count);
 
-	ClassDB::bind_method(D_METHOD("get_prop_mesher", "index"), &VoxelChunk::get_prop_mesher);
-	ClassDB::bind_method(D_METHOD("set_prop_mesher", "index", "mesher"), &VoxelChunk::set_prop_mesher);
-	ClassDB::bind_method(D_METHOD("remove_prop_mesher", "index"), &VoxelChunk::remove_prop_mesher);
-	ClassDB::bind_method(D_METHOD("add_prop_mesher", "mesher"), &VoxelChunk::add_prop_mesher);
-	ClassDB::bind_method(D_METHOD("get_prop_mesher_count"), &VoxelChunk::get_prop_mesher_count);
+	ClassDB::bind_method(D_METHOD("get_prop_mesher"), &VoxelChunk::get_prop_mesher);
+	ClassDB::bind_method(D_METHOD("set_prop_mesher", "mesher"), &VoxelChunk::set_prop_mesher);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop_mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher", 0), "set_prop_mesher", "get_prop_mesher");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_world"), &VoxelChunk::get_voxel_world);
 	ClassDB::bind_method(D_METHOD("set_voxel_world", "world"), &VoxelChunk::set_voxel_world_bind);

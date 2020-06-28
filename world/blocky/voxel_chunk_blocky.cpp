@@ -38,6 +38,7 @@ void VoxelChunkBlocky::_setup_channels() {
 }
 
 void VoxelChunkBlocky::_create_meshers() {
+	set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky)));
 	add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky())));
 	add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidBlocky())));
 

@@ -1146,13 +1146,9 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				mesher->reset();
 			}
 
-			for (int i = 0; i < _prop_meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _prop_meshers.get(i);
-
-				ERR_CONTINUE(!mesher.is_valid());
-
-				mesher->reset();
-				mesher->set_library(_library);
+			if (get_prop_mesher().is_valid()) {
+				get_prop_mesher()->reset();
+				get_prop_mesher()->set_library(_library);
 			}
 
 			next_phase();
@@ -1469,50 +1465,33 @@ void VoxelChunkDefault::_build_phase(int phase) {
 		}
 #ifdef MESH_DATA_RESOURCE_PRESENT
 		case BUILD_PHASE_MESH_DATA_RESOURCES: {
+			if (!get_prop_mesher().is_valid()) {
+				next_phase();
+				return;
+			}
+
 			if (get_mesh_data_resource_count() == 0) {
 				next_phase();
 				return;
 			}
 
-			for (int i = 0; i < _meshers.size(); ++i) {
-				Ref<VoxelMesher> m = _meshers.get(i);
-
-				ERR_CONTINUE(!m.is_valid());
-
-				m->add_mesh_data_resource_transform(get_mesh_data_resource(i), get_mesh_data_resource_transform(i), get_mesh_data_resource_uv_rect(i));
+			for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
+				get_prop_mesher()->add_mesh_data_resource_transform(get_mesh_data_resource(i), get_mesh_data_resource_transform(i), get_mesh_data_resource_uv_rect(i));
 			}
 
-			Ref<VoxelMesher> mesher;
-			for (int i = 0; i < _meshers.size(); ++i) {
-				Ref<VoxelMesher> m = _meshers.get(i);
-
-				ERR_CONTINUE(!m.is_valid());
-
-				if (!mesher.is_valid()) {
-					mesher = m;
-					//	mesher->set_material(get_library()->get_material(0));
-					continue;
-				}
-
-				//	mesher->set_material(get_library()->get_material(0));
-				mesher->add_mesher(m);
-			}
-
-			ERR_FAIL_COND(!mesher.is_valid());
-
-			if (mesher->get_vertex_count() == 0) {
+			if (get_prop_mesher()->get_vertex_count() == 0) {
 				next_phase();
 				return;
 			}
 
 			if ((_build_flags & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
-				mesher->bake_colors(this);
+				get_prop_mesher()->bake_colors(this);
 			}
 
-			if (mesher->get_vertex_count() != 0) {
+			if (get_prop_mesher()->get_vertex_count() != 0) {
 				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 0);
 
-				Array temp_mesh_arr = mesher->build_mesh();
+				Array temp_mesh_arr = get_prop_mesher()->build_mesh();
 
 				if (mesh_rid == RID()) {
 					if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0)
@@ -1681,6 +1660,10 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 }
 
 void VoxelChunkDefault::_create_meshers() {
+	if (!_prop_mesher.is_valid()) {
+		_prop_mesher = Ref<VoxelMesher>(memnew(VoxelMesherDefault));
+	}
+
 	for (int i = 0; i < _meshers.size(); ++i) {
 		Ref<VoxelMesher> mesher = _meshers.get(i);
 
