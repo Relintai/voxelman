@@ -725,6 +725,95 @@ void VoxelChunk::clear_props() {
 	_props.clear();
 }
 
+#if MESH_DATA_RESOURCE_PRESENT
+int VoxelChunk::add_mesh_data_resource(const Transform &transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Rect2 &uv_rect, const Color &color) {
+	ERR_FAIL_COND_V(!mesh.is_valid(), 0);
+
+	int index = _mesh_data_resources.size();
+
+	MeshDataResourceEntry e;
+	e.transform = transform;
+	e.mesh = mesh;
+	e.texture = texture;
+	e.color = color;
+	e.uv_rect = uv_rect;
+
+	_mesh_data_resources.push_back(e);
+
+	if (has_method("_mesh_data_resource_added"))
+		call("_mesh_data_resource_added", index);
+
+	return index;
+}
+
+Ref<MeshDataResource> VoxelChunk::get_mesh_data_resource(const int index) {
+	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Ref<MeshDataResource>());
+
+	return _mesh_data_resources[index].mesh;
+}
+
+void VoxelChunk::set_mesh_data_resource(const int index, const Ref<MeshDataResource> &mesh) {
+	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
+}
+
+Ref<Texture> VoxelChunk::get_mesh_data_resource_texture(const int index) {
+	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Ref<Texture>());
+
+	return _mesh_data_resources[index].texture;
+}
+void VoxelChunk::set_mesh_data_resource_texture(const int index, const Ref<Texture> &texture) {
+	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
+
+	_mesh_data_resources.write[index].texture = texture;
+}
+
+Color VoxelChunk::get_mesh_data_resource_color(const int index) {
+	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Color());
+
+	return _mesh_data_resources[index].color;
+}
+void VoxelChunk::set_mesh_data_resource_color(const int index, const Color &color) {
+	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
+
+	_mesh_data_resources.write[index].color = color;
+}
+
+Rect2 VoxelChunk::get_mesh_data_resource_uv_rect(const int index) {
+	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Rect2());
+
+	return _mesh_data_resources[index].uv_rect;
+}
+void VoxelChunk::set_mesh_data_resource_uv_rect(const int index, const Rect2 &uv_rect) {
+	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
+
+	_mesh_data_resources.write[index].uv_rect = uv_rect;
+}
+
+Transform VoxelChunk::get_mesh_data_resource_transform(const int index) {
+	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Transform());
+
+	return _mesh_data_resources[index].transform;
+}
+void VoxelChunk::set_mesh_data_resource_transform(const int index, const Transform &transform) {
+	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
+
+	_mesh_data_resources.write[index].transform = transform;
+}
+
+int VoxelChunk::get_mesh_data_resource_count() const {
+	return _mesh_data_resources.size();
+}
+void VoxelChunk::remove_mesh_data_resource(const int index) {
+	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
+
+	_mesh_data_resources.remove(index);
+}
+void VoxelChunk::clear_mesh_data_resources() {
+	_mesh_data_resources.clear();
+}
+
+#endif
+
 void VoxelChunk::enter_tree() {
 	_is_in_tree = true;
 
@@ -808,6 +897,9 @@ VoxelChunk::~VoxelChunk() {
 	}
 
 	clear_props();
+#if MESH_DATA_RESOURCE_PRESENT
+	clear_mesh_data_resources();
+#endif
 
 	for (int i = 0; i < _channels.size(); ++i) {
 		uint8_t *ch = _channels[i];
@@ -877,6 +969,9 @@ void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
 	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
+
+	BIND_VMETHOD(MethodInfo("_mesh_data_resource_added", PropertyInfo(Variant::INT, "index")));
+
 	BIND_VMETHOD(MethodInfo("_create_meshers"));
 	BIND_VMETHOD(MethodInfo("_setup_channels"));
 
@@ -1053,6 +1148,29 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_prop_count"), &VoxelChunk::get_prop_count);
 	ClassDB::bind_method(D_METHOD("remove_prop", "index"), &VoxelChunk::remove_prop);
 	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
+
+#if MESH_DATA_RESOURCE_PRESENT
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "transform", "mesh", "texture", "uv_rect", "color"), &VoxelChunk::add_mesh_data_resource, DEFVAL(Ref<Texture>()), DEFVAL(Rect2(0, 0, 1, 1)), DEFVAL(Color(1, 1, 1, 1)));
+
+	ClassDB::bind_method(D_METHOD("get_mesh_data_resource", "index"), &VoxelChunk::get_mesh_data_resource);
+	ClassDB::bind_method(D_METHOD("set_mesh_data_resource", "index", "mesh"), &VoxelChunk::set_mesh_data_resource);
+
+	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_texture", "index"), &VoxelChunk::get_mesh_data_resource_texture);
+	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_texture", "index", "texture"), &VoxelChunk::set_mesh_data_resource_texture);
+
+	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_color", "index"), &VoxelChunk::get_mesh_data_resource_color);
+	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_color", "index", "color"), &VoxelChunk::set_mesh_data_resource_color);
+
+	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_uv_rect", "index"), &VoxelChunk::get_mesh_data_resource_uv_rect);
+	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_uv_rect", "index", "uv_rect"), &VoxelChunk::set_mesh_data_resource_uv_rect);
+
+	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_transform", "index"), &VoxelChunk::get_mesh_data_resource_transform);
+	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_transform", "index", "transform"), &VoxelChunk::set_mesh_data_resource_transform);
+
+	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_count"), &VoxelChunk::get_mesh_data_resource_count);
+	ClassDB::bind_method(D_METHOD("remove_mesh_data_resource", "index"), &VoxelChunk::remove_mesh_data_resource);
+	ClassDB::bind_method(D_METHOD("clear_mesh_data_resources"), &VoxelChunk::clear_mesh_data_resources);
+#endif
 
 	ClassDB::bind_method(D_METHOD("create_meshers"), &VoxelChunk::create_meshers);
 

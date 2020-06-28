@@ -202,6 +202,29 @@ public:
 	void remove_prop(const int index);
 	void clear_props();
 
+#if MESH_DATA_RESOURCE_PRESENT
+	int add_mesh_data_resource(const Transform &transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Rect2 &uv_rect = Rect2(0, 0, 1, 1), const Color &color = Color(1, 1, 1, 1));
+
+	Ref<MeshDataResource> get_mesh_data_resource(const int index);
+	void set_mesh_data_resource(const int index, const Ref<MeshDataResource> &mesh);
+
+	Ref<Texture> get_mesh_data_resource_texture(const int index);
+	void set_mesh_data_resource_texture(const int index, const Ref<Texture> &texture);
+
+	Color get_mesh_data_resource_color(const int index);
+	void set_mesh_data_resource_color(const int index, const Color &color);
+
+	Rect2 get_mesh_data_resource_uv_rect(const int index);
+	void set_mesh_data_resource_uv_rect(const int index, const Rect2 &uv_rect);
+
+	Transform get_mesh_data_resource_transform(const int index);
+	void set_mesh_data_resource_transform(const int index, const Transform &transform);
+
+	int get_mesh_data_resource_count() const;
+	void remove_mesh_data_resource(const int index);
+	void clear_mesh_data_resources();
+#endif
+
 	//handlers
 	void enter_tree();
 	void exit_tree();
@@ -217,6 +240,17 @@ public:
 
 	VoxelChunk();
 	~VoxelChunk();
+
+#if MESH_DATA_RESOURCE_PRESENT
+protected:
+	struct MeshDataResourceEntry {
+		Ref<MeshDataResource> mesh;
+		Ref<Texture> texture;
+		Color color;
+		Rect2 uv_rect;
+		Transform transform;
+	};
+#endif
 
 protected:
 	virtual void _world_transform_changed();
@@ -269,6 +303,9 @@ protected:
 
 	//mergeable props
 	Vector<Ref<VoxelChunkPropData> > _props;
+#if MESH_DATA_RESOURCE_PRESENT
+	Vector<MeshDataResourceEntry> _mesh_data_resources;
+#endif
 
 	Transform _transform;
 };
