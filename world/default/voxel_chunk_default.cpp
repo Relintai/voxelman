@@ -721,6 +721,10 @@ void VoxelChunkDefault::update_transforms() {
 
 		PhysicsServer::get_singleton()->body_set_state(c.body, PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * c.transform);
 	}
+
+	if (_debug_mesh_instance != RID()) {
+		VS::get_singleton()->instance_set_transform(_debug_mesh_instance, get_transform());
+	}
 }
 
 //Lights
@@ -733,65 +737,105 @@ int VoxelChunkDefault::get_light_count() const {
 	return _lights.size();
 }
 
-void VoxelChunkDefault::create_debug_immediate_geometry() {
-	ERR_FAIL_COND(_voxel_world == NULL);
-	ERR_FAIL_COND(_debug_drawer != NULL);
+void VoxelChunkDefault::debug_mesh_allocate() {
+	if (_debug_mesh_rid == RID()) {
+		_debug_mesh_rid = VisualServer::get_singleton()->mesh_create();
+	}
 
-	_debug_drawer = memnew(ImmediateGeometry());
+	if (_debug_mesh_instance == RID()) {
+		_debug_mesh_instance = VisualServer::get_singleton()->instance_create();
 
-	_voxel_world->add_child(_debug_drawer);
+		if (get_voxel_world()->GET_WORLD().is_valid())
+			VS::get_singleton()->instance_set_scenario(_debug_mesh_instance, get_voxel_world()->GET_WORLD()->get_scenario());
 
-	if (Engine::get_singleton()->is_editor_hint())
-		_debug_drawer->set_owner(_voxel_world->get_tree()->get_edited_scene_root());
-
-	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_position.x * _size.x * _voxel_scale, _position.y * _size.y * _voxel_scale, _position.z * _size.z * _voxel_scale)));
-	//_debug_drawer->set_transform(Transform(Basis(), Vector3(_position.x * _size.x * _voxel_scale, _position.y * _size.y * _voxel_scale, _position.z * _size.z * _voxel_scale)));
+		VS::get_singleton()->instance_set_base(_debug_mesh_instance, _debug_mesh_rid);
+		VS::get_singleton()->instance_set_transform(_debug_mesh_instance, get_transform());
+		VS::get_singleton()->instance_set_visible(_debug_mesh_instance, true);
+	}
 }
+void VoxelChunkDefault::debug_mesh_free() {
+	if (_debug_mesh_instance != RID()) {
+		VisualServer::get_singleton()->free(_debug_mesh_instance);
+	}
 
-void VoxelChunkDefault::free_debug_immediate_geometry() {
-	if (_debug_drawer != NULL) {
-		_debug_drawer->queue_delete();
+	if (_debug_mesh_rid != RID()) {
+		VisualServer::get_singleton()->free(_debug_mesh_rid);
+	}
+}
+bool VoxelChunkDefault::debug_mesh_has() {
+	return _debug_mesh_rid != RID();
+}
+void VoxelChunkDefault::debug_mesh_clear() {
+	if (_debug_mesh_rid != RID()) {
+		VisualServer::get_singleton()->mesh_clear(_debug_mesh_rid);
+	}
+}
+void VoxelChunkDefault::debug_mesh_array_clear() {
+	_debug_mesh_array.resize(0);
+}
+void VoxelChunkDefault::debug_mesh_add_vertices_to(const PoolVector3Array &arr) {
+	_debug_mesh_array.append_array(arr);
+}
+void VoxelChunkDefault::debug_mesh_send() {
+	debug_mesh_allocate();
+	debug_mesh_clear();
 
-		_debug_drawer = NULL;
+	if (_debug_mesh_array.size() == 0)
+		return;
+
+	SceneTree *st = SceneTree::get_singleton();
+
+	Array arr;
+	arr.resize(VisualServer::ARRAY_MAX);
+	arr[VisualServer::ARRAY_VERTEX] = _debug_mesh_array;
+
+	VisualServer::get_singleton()->mesh_add_surface_from_arrays(_debug_mesh_rid, VisualServer::PRIMITIVE_LINES, arr);
+
+	if (st) {
+		VisualServer::get_singleton()->mesh_surface_set_material(_debug_mesh_rid, 0, SceneTree::get_singleton()->get_debug_collision_material()->get_rid());
 	}
 }
 
 void VoxelChunkDefault::draw_cross_voxels(Vector3 pos) {
 	pos *= _voxel_scale;
 
-	_debug_drawer->add_vertex(pos + Vector3(0, 0, -0.2));
-	_debug_drawer->add_vertex(pos + Vector3(0, 0, 0.2));
+	int size = _debug_mesh_array.size();
+	_debug_mesh_array.resize(_debug_mesh_array.size() + 6);
 
-	_debug_drawer->add_vertex(pos + Vector3(0, -0.2, 0));
-	_debug_drawer->add_vertex(pos + Vector3(0, 0.2, 0));
+	_debug_mesh_array.set(size, pos + Vector3(0, 0, -0.2));
+	_debug_mesh_array.set(size + 1, pos + Vector3(0, 0, 0.2));
 
-	_debug_drawer->add_vertex(pos + Vector3(-0.2, 0, 0));
-	_debug_drawer->add_vertex(pos + Vector3(0.2, 0, 0));
+	_debug_mesh_array.set(size + 2, pos + Vector3(0, -0.2, 0));
+	_debug_mesh_array.set(size + 3, pos + Vector3(0, 0.2, 0));
+
+	_debug_mesh_array.set(size + 4, pos + Vector3(-0.2, 0, 0));
+	_debug_mesh_array.set(size + 5, pos + Vector3(0.2, 0, 0));
 }
 
 void VoxelChunkDefault::draw_cross_voxels_fill(Vector3 pos, float fill) {
 	pos *= _voxel_scale;
 
-	_debug_drawer->add_vertex(pos + Vector3(0, 0, -0.5 * fill));
-	_debug_drawer->add_vertex(pos + Vector3(0, 0, 0.5 * fill));
+	int size = _debug_mesh_array.size();
+	_debug_mesh_array.resize(_debug_mesh_array.size() + 6);
 
-	_debug_drawer->add_vertex(pos + Vector3(0, -0.5 * fill, 0));
-	_debug_drawer->add_vertex(pos + Vector3(0, 0.5 * fill, 0));
+	_debug_mesh_array.set(size, pos + Vector3(0, 0, -0.2 * fill));
+	_debug_mesh_array.set(size + 1, pos + Vector3(0, 0, 0.2 * fill));
 
-	_debug_drawer->add_vertex(pos + Vector3(-0.5 * fill, 0, 0));
-	_debug_drawer->add_vertex(pos + Vector3(0.5 * fill, 0, 0));
+	_debug_mesh_array.set(size + 2, pos + Vector3(0, -0.2 * fill, 0));
+	_debug_mesh_array.set(size + 3, pos + Vector3(0, 0.2 * fill, 0));
+
+	_debug_mesh_array.set(size + 4, pos + Vector3(-0.2 * fill, 0, 0));
+	_debug_mesh_array.set(size + 5, pos + Vector3(0.2 * fill, 0, 0));
 }
 
 void VoxelChunkDefault::draw_debug_voxels(int max, Color color) {
-	if (_debug_drawer == NULL) {
-		create_debug_immediate_geometry();
+	if (!debug_mesh_has()) {
+		debug_mesh_allocate();
 	}
 
-	ERR_FAIL_COND(_debug_drawer == NULL);
+	//debug_mesh_array_clear();
 
-	_debug_drawer->clear();
-	_debug_drawer->begin(Mesh::PRIMITIVE_LINES);
-	_debug_drawer->set_color(color);
+	//_debug_drawer->begin(Mesh::PRIMITIVE_LINES);
 
 	int a = 0;
 
@@ -819,19 +863,17 @@ void VoxelChunkDefault::draw_debug_voxels(int max, Color color) {
 		}
 	}
 
-	_debug_drawer->end();
+	debug_mesh_send();
 }
 
 void VoxelChunkDefault::draw_debug_voxel_lights() {
-	if (_debug_drawer == NULL) {
-		create_debug_immediate_geometry();
+	if (!debug_mesh_has()) {
+		debug_mesh_allocate();
 	}
 
-	ERR_FAIL_COND(_debug_drawer == NULL);
+	//debug_mesh_array_clear();
 
-	_debug_drawer->clear();
-	_debug_drawer->begin(Mesh::PrimitiveType::PRIMITIVE_LINES);
-	_debug_drawer->set_color(Color(1, 1, 1));
+	//_debug_drawer->begin(Mesh::PrimitiveType::PRIMITIVE_LINES);
 
 	for (int i = 0; i < _lights.size(); ++i) {
 		Ref<VoxelLight> v = _lights[i];
@@ -843,11 +885,34 @@ void VoxelChunkDefault::draw_debug_voxel_lights() {
 		draw_cross_voxels_fill(Vector3(pos_x, pos_y, pos_z), 1.0);
 	}
 
-	if (has_method("_draw_debug_voxel_lights"))
-		call("_draw_debug_voxel_lights", _debug_drawer);
-
-	_debug_drawer->end();
+	debug_mesh_send();
 }
+
+#ifdef MESH_DATA_RESOURCE_PRESENT
+void VoxelChunkDefault::draw_debug_mdr_colliders() {
+	if (!debug_mesh_has()) {
+		debug_mesh_allocate();
+	}
+
+	for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
+		Ref<MeshDataResource> mdr = get_mesh_data_resource(i);
+
+		if (!mdr.is_valid())
+			continue;
+
+		Transform t = get_mesh_data_resource_transform(i);
+
+		for (int j = 0; j < mdr->get_collision_shape_count(); ++j) {
+			Ref<Shape> shape = mdr->get_collision_shape(j);
+
+			if (!shape.is_valid())
+				continue;
+
+			shape->add_vertices_to_array(_debug_mesh_array, t);
+		}
+	}
+}
+#endif
 
 void VoxelChunkDefault::_visibility_changed(bool visible) {
 	if (visible) {
@@ -1071,7 +1136,6 @@ VoxelChunkDefault::VoxelChunkDefault() {
 	_voxel_scale = 1;
 	_lod_size = 1;
 
-	_debug_drawer = NULL;
 	_voxel_world = NULL;
 
 	_position_x = 0;
@@ -1676,6 +1740,14 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 				_collider_bodies.push_back(c);
 			}
 		}
+
+#if TOOLS_ENABLED
+		if (SceneTree::get_singleton()->is_debugging_collisions_hint() && _collider_bodies.size() > 0) {
+			draw_debug_mdr_colliders();
+			debug_mesh_send();
+		}
+#endif
+
 #endif
 
 		set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
@@ -1811,16 +1883,23 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_light_count"), &VoxelChunkDefault::get_light_count);
 
 	//Debug
-	ClassDB::bind_method(D_METHOD("create_debug_immediate_geometry"), &VoxelChunkDefault::create_debug_immediate_geometry);
-	ClassDB::bind_method(D_METHOD("free_debug_immediate_geometry"), &VoxelChunkDefault::free_debug_immediate_geometry);
+	ClassDB::bind_method(D_METHOD("debug_mesh_allocate"), &VoxelChunkDefault::debug_mesh_allocate);
+	ClassDB::bind_method(D_METHOD("debug_mesh_free"), &VoxelChunkDefault::debug_mesh_free);
 
-	BIND_VMETHOD(MethodInfo("_draw_debug_voxel_lights", PropertyInfo(Variant::OBJECT, "debug_drawer", PROPERTY_HINT_RESOURCE_TYPE, "ImmediateGeometry")));
+	ClassDB::bind_method(D_METHOD("debug_mesh_has"), &VoxelChunkDefault::debug_mesh_has);
+	ClassDB::bind_method(D_METHOD("debug_mesh_clear"), &VoxelChunkDefault::debug_mesh_clear);
+	ClassDB::bind_method(D_METHOD("debug_mesh_array_clear"), &VoxelChunkDefault::debug_mesh_array_clear);
+	ClassDB::bind_method(D_METHOD("debug_mesh_add_vertices_to", "arr"), &VoxelChunkDefault::debug_mesh_add_vertices_to);
+	ClassDB::bind_method(D_METHOD("debug_mesh_send"), &VoxelChunkDefault::debug_mesh_send);
 
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels", "max"), &VoxelChunkDefault::draw_cross_voxels);
 	ClassDB::bind_method(D_METHOD("draw_cross_voxels_fill", "max", "fill"), &VoxelChunkDefault::draw_cross_voxels_fill);
 	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "max", "color"), &VoxelChunkDefault::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunkDefault::draw_debug_voxel_lights);
+#ifdef MESH_DATA_RESOURCE_PRESENT
+	ClassDB::bind_method(D_METHOD("draw_debug_mdr_colliders"), &VoxelChunkDefault::draw_debug_mdr_colliders);
+#endif
 
 	//Free
 	ClassDB::bind_method(D_METHOD("free_chunk"), &VoxelChunkDefault::free_chunk);

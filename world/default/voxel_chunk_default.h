@@ -27,8 +27,6 @@ SOFTWARE.
 
 #include "../../defines.h"
 
-#include immediate_geometry_h
-
 #include "core/engine.h"
 #include "core/os/mutex.h"
 #include "core/os/thread.h"
@@ -205,13 +203,21 @@ public:
 	int get_light_count() const;
 
 	//Debug
-	void create_debug_immediate_geometry();
-	void free_debug_immediate_geometry();
+	void debug_mesh_allocate();
+	void debug_mesh_free();
+	bool debug_mesh_has();
+	void debug_mesh_clear();
+	void debug_mesh_array_clear();
+	void debug_mesh_add_vertices_to(const PoolVector3Array &arr);
+	void debug_mesh_send();
 
 	void draw_cross_voxels(Vector3 pos);
 	void draw_cross_voxels_fill(Vector3 pos, float fill);
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
+#ifdef MESH_DATA_RESOURCE_PRESENT
+	void draw_debug_mdr_colliders();
+#endif
 
 	//Visibility
 	void visibility_changed(bool visible);
@@ -285,7 +291,9 @@ protected:
 	Dictionary _rids;
 
 	//debug
-	ImmediateGeometry *_debug_drawer;
+	RID _debug_mesh_rid;
+	RID _debug_mesh_instance;
+	PoolVector3Array _debug_mesh_array;
 
 	bool _build_prioritized;
 	bool _build_phase_done;
