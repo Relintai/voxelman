@@ -775,6 +775,10 @@ void VoxelChunkDefault::debug_mesh_array_clear() {
 }
 void VoxelChunkDefault::debug_mesh_add_vertices_to(const PoolVector3Array &arr) {
 	_debug_mesh_array.append_array(arr);
+
+	if (_debug_mesh_array.size() % 2 == 1) {
+		_debug_mesh_array.append(_debug_mesh_array[_debug_mesh_array.size() - 1]);
+	}
 }
 void VoxelChunkDefault::debug_mesh_send() {
 	debug_mesh_allocate();
@@ -794,6 +798,8 @@ void VoxelChunkDefault::debug_mesh_send() {
 	if (st) {
 		VisualServer::get_singleton()->mesh_surface_set_material(_debug_mesh_rid, 0, SceneTree::get_singleton()->get_debug_collision_material()->get_rid());
 	}
+
+	debug_mesh_array_clear();
 }
 
 void VoxelChunkDefault::draw_cross_voxels(Vector3 pos) {
@@ -1174,6 +1180,8 @@ VoxelChunkDefault::~VoxelChunkDefault() {
 
 	_lights.clear();
 
+	debug_mesh_free();
+
 #if MESH_DATA_RESOURCE_PRESENT
 	for (int i = 0; i < _collider_bodies.size(); ++i) {
 		PhysicsServer::get_singleton()->free(_collider_bodies[i].body);
@@ -1259,6 +1267,17 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				temp_arr_collider.append_array(mesher->build_collider());
 			}
 
+			/*
+#if TOOLS_ENABLED
+			if (SceneTree::get_singleton()->is_debugging_collisions_hint()) {
+				SceneTree *st = SceneTree::get_singleton();
+				if (st && temp_arr_collider.size() > 0) {
+					debug_mesh_add_vertices_to(temp_arr_collider);
+				}
+			}
+#endif
+*/
+
 			if (Engine::get_singleton()->is_editor_hint()) {
 				for (int i = 0; i < _liquid_meshers.size(); ++i) {
 					Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
@@ -1267,6 +1286,17 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 					temp_arr_collider_liquid.append_array(mesher->build_collider());
 				}
+
+				/*
+#if TOOLS_ENABLED
+				if (SceneTree::get_singleton()->is_debugging_collisions_hint()) {
+					SceneTree *st = SceneTree::get_singleton();
+					if (st && temp_arr_collider_liquid.size() > 0) {
+						debug_mesh_add_vertices_to(temp_arr_collider_liquid);
+					}
+				}
+#endif
+*/
 			}
 
 			if (temp_arr_collider.size() == 0 && temp_arr_collider_liquid.size() == 0
@@ -1657,6 +1687,12 @@ void VoxelChunkDefault::_build_phase(int phase) {
 		}
 #endif
 		case BUILD_PHASE_FINALIZE: {
+#if TOOLS_ENABLED
+			if (_debug_mesh_array.size() > 0) {
+				debug_mesh_send();
+			}
+#endif
+
 			call_deferred("update_transforms");
 
 			next_phase();
@@ -1744,7 +1780,6 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 #if TOOLS_ENABLED
 		if (SceneTree::get_singleton()->is_debugging_collisions_hint() && _collider_bodies.size() > 0) {
 			draw_debug_mdr_colliders();
-			debug_mesh_send();
 		}
 #endif
 
