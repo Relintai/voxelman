@@ -215,9 +215,7 @@ public:
 	void draw_cross_voxels_fill(Vector3 pos, float fill);
 	void draw_debug_voxels(int max, Color color = Color(1, 1, 1));
 	void draw_debug_voxel_lights();
-#ifdef MESH_DATA_RESOURCE_PRESENT
 	void draw_debug_mdr_colliders();
-#endif
 
 	//Visibility
 	void visibility_changed(bool visible);
@@ -232,14 +230,6 @@ public:
 
 	VoxelChunkDefault();
 	~VoxelChunkDefault();
-
-#if MESH_DATA_RESOURCE_PRESENT
-protected:
-	struct MDRColliders {
-		Transform transform;
-		RID body;
-	};
-#endif
 
 protected:
 	virtual void _setup_channels();
@@ -306,9 +296,6 @@ protected:
 	ActiveBuildPhaseType _active_build_phase_type;
 
 	Vector<Ref<VoxelLight> > _lights;
-#if MESH_DATA_RESOURCE_PRESENT
-	Vector<MDRColliders> _collider_bodies;
-#endif
 };
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);

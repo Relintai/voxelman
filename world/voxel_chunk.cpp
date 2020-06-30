@@ -803,6 +803,79 @@ void VoxelChunk::clear_mesh_data_resources() {
 
 #endif
 
+int VoxelChunk::add_collider(const Transform &local_transform, const Ref<Shape> &shape, const RID &shape_rid, const RID &body) {
+	ERR_FAIL_COND_V(!shape.is_valid() && shape_rid == RID(), 0);
+
+	int index = _colliders.size();
+
+	ColliderBody e;
+	e.transform = local_transform;
+	e.body = body;
+	e.shape = shape;
+	e.shape_rid = shape_rid;
+
+	_colliders.push_back(e);
+
+	return index;
+}
+
+Transform VoxelChunk::get_collider_transform(const int index) {
+	ERR_FAIL_INDEX_V(index, _colliders.size(), Transform());
+
+	return _colliders[index].transform;
+}
+void VoxelChunk::set_collider_transform(const int index, const Transform &transform) {
+	ERR_FAIL_INDEX(index, _colliders.size());
+
+	_colliders.write[index].transform = transform;
+}
+
+Ref<Shape> VoxelChunk::get_collider_shape(const int index) {
+	ERR_FAIL_INDEX_V(index, _colliders.size(), Ref<MeshDataResource>());
+
+	return _colliders[index].shape;
+}
+
+void VoxelChunk::set_collider_shape(const int index, const Ref<Shape> &shape) {
+	ERR_FAIL_INDEX(index, _colliders.size());
+
+	_colliders.write[index].shape = shape;
+}
+
+RID VoxelChunk::get_collider_shape_rid(const int index) {
+	ERR_FAIL_INDEX_V(index, _colliders.size(), RID());
+
+	return _colliders[index].shape_rid;
+}
+void VoxelChunk::set_collider_shape_rid(const int index, const RID &rid) {
+	ERR_FAIL_INDEX(index, _colliders.size());
+
+	_colliders.write[index].shape_rid = rid;
+}
+
+RID VoxelChunk::get_collider_body(const int index) {
+	ERR_FAIL_INDEX_V(index, _colliders.size(), RID());
+
+	return _colliders[index].body;
+}
+void VoxelChunk::set_collider_body(const int index, const RID &rid) {
+	ERR_FAIL_INDEX(index, _colliders.size());
+
+	_colliders.write[index].body = rid;
+}
+
+int VoxelChunk::get_collider_count() const {
+	return _colliders.size();
+}
+void VoxelChunk::remove_collider(const int index) {
+	ERR_FAIL_INDEX(index, _colliders.size());
+
+	_colliders.remove(index);
+}
+void VoxelChunk::clear_colliders() {
+	_colliders.clear();
+}
+
 void VoxelChunk::enter_tree() {
 	_is_in_tree = true;
 
@@ -897,6 +970,12 @@ VoxelChunk::~VoxelChunk() {
 			memdelete_arr(ch);
 		}
 	}
+
+	for (int i = 0; i < _colliders.size(); ++i) {
+		PhysicsServer::get_singleton()->free(_colliders[i].body);
+	}
+
+	_colliders.clear();
 }
 
 void VoxelChunk::_world_transform_changed() {
@@ -1158,6 +1237,24 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_mesh_data_resource", "index"), &VoxelChunk::remove_mesh_data_resource);
 	ClassDB::bind_method(D_METHOD("clear_mesh_data_resources"), &VoxelChunk::clear_mesh_data_resources);
 #endif
+
+	ClassDB::bind_method(D_METHOD("add_collider", "local_transform", "shape", "shape_rid", "body"), &VoxelChunk::add_collider, DEFVAL(RID()), DEFVAL(RID()));
+
+	ClassDB::bind_method(D_METHOD("get_collider_transform", "index"), &VoxelChunk::get_collider_transform);
+	ClassDB::bind_method(D_METHOD("set_collider_transform", "index", "transform"), &VoxelChunk::set_collider_transform);
+
+	ClassDB::bind_method(D_METHOD("get_collider_shape", "index"), &VoxelChunk::get_collider_shape);
+	ClassDB::bind_method(D_METHOD("set_collider_shape", "index", "shape"), &VoxelChunk::set_collider_shape);
+
+	ClassDB::bind_method(D_METHOD("get_collider_shape_rid", "index"), &VoxelChunk::get_collider_shape_rid);
+	ClassDB::bind_method(D_METHOD("set_collider_shape_rid", "index", "rid"), &VoxelChunk::set_collider_shape_rid);
+
+	ClassDB::bind_method(D_METHOD("get_collider_body", "index"), &VoxelChunk::get_collider_body);
+	ClassDB::bind_method(D_METHOD("set_collider_body", "index", "rid"), &VoxelChunk::set_collider_body);
+
+	ClassDB::bind_method(D_METHOD("get_collider_count"), &VoxelChunk::get_collider_count);
+	ClassDB::bind_method(D_METHOD("remove_collider", "index"), &VoxelChunk::remove_collider);
+	ClassDB::bind_method(D_METHOD("clear_colliders"), &VoxelChunk::clear_colliders);
 
 	ClassDB::bind_method(D_METHOD("create_meshers"), &VoxelChunk::create_meshers);
 

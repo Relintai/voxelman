@@ -222,6 +222,25 @@ public:
 	void clear_mesh_data_resources();
 #endif
 
+	//Colliders
+	int add_collider(const Transform &local_transform, const Ref<Shape> &shape, const RID &shape_rid = RID(), const RID &body = RID());
+
+	Transform get_collider_transform(const int index);
+	void set_collider_transform(const int index, const Transform &transform);
+
+	Ref<Shape> get_collider_shape(const int index);
+	void set_collider_shape(const int index, const Ref<Shape> &shape);
+
+	RID get_collider_shape_rid(const int index);
+	void set_collider_shape_rid(const int index, const RID &rid);
+
+	RID get_collider_body(const int index);
+	void set_collider_body(const int index, const RID &rid);
+
+	int get_collider_count() const;
+	void remove_collider(const int index);
+	void clear_colliders();
+
 	//handlers
 	void enter_tree();
 	void exit_tree();
@@ -238,8 +257,8 @@ public:
 	VoxelChunk();
 	~VoxelChunk();
 
-#if MESH_DATA_RESOURCE_PRESENT
 protected:
+#if MESH_DATA_RESOURCE_PRESENT
 	struct MeshDataResourceEntry {
 		Ref<MeshDataResource> mesh;
 		Ref<Texture> texture;
@@ -248,6 +267,13 @@ protected:
 		Transform transform;
 	};
 #endif
+
+	struct ColliderBody {
+		Transform transform;
+		RID body;
+		Ref<Shape> shape;
+		RID shape_rid;
+	};
 
 protected:
 	virtual void _world_transform_changed();
@@ -303,6 +329,8 @@ protected:
 #if MESH_DATA_RESOURCE_PRESENT
 	Vector<MeshDataResourceEntry> _mesh_data_resources;
 #endif
+
+	Vector<ColliderBody> _colliders;
 
 	Transform _transform;
 };

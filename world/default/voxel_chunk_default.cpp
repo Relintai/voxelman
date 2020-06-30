@@ -716,10 +716,8 @@ void VoxelChunkDefault::update_transforms() {
 		}
 	}
 
-	for (int i = 0; i < _collider_bodies.size(); ++i) {
-		const MDRColliders &c = _collider_bodies[i];
-
-		PhysicsServer::get_singleton()->body_set_state(c.body, PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * c.transform);
+	for (int i = 0; i < get_collider_count(); ++i) {
+		PhysicsServer::get_singleton()->body_set_state(get_collider_body(i), PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * get_collider_transform(i));
 	}
 
 	if (_debug_mesh_instance != RID()) {
@@ -894,7 +892,6 @@ void VoxelChunkDefault::draw_debug_voxel_lights() {
 	debug_mesh_send();
 }
 
-#ifdef MESH_DATA_RESOURCE_PRESENT
 void VoxelChunkDefault::draw_debug_mdr_colliders() {
 	if (!debug_mesh_has()) {
 		debug_mesh_allocate();
@@ -919,7 +916,6 @@ void VoxelChunkDefault::draw_debug_mdr_colliders() {
 		}
 	}
 }
-#endif
 
 void VoxelChunkDefault::_visibility_changed(bool visible) {
 	if (visible) {
@@ -1182,14 +1178,6 @@ VoxelChunkDefault::~VoxelChunkDefault() {
 	_lights.clear();
 
 	debug_mesh_free();
-
-#if MESH_DATA_RESOURCE_PRESENT
-	for (int i = 0; i < _collider_bodies.size(); ++i) {
-		PhysicsServer::get_singleton()->free(_collider_bodies[i].body);
-	}
-
-	_collider_bodies.clear();
-#endif
 }
 
 void VoxelChunkDefault::_setup_channels() {
@@ -1736,13 +1724,12 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 			temp_arr_collider_liquid.resize(0);
 		}
 
-#if MESH_DATA_RESOURCE_PRESENT
 		//TODO this should only update the differences
-		for (int i = 0; i < _collider_bodies.size(); ++i) {
-			PhysicsServer::get_singleton()->free(_collider_bodies[i].body);
+		for (int i = 0; i < get_collider_count(); ++i) {
+			PhysicsServer::get_singleton()->free(get_collider_body(i));
 		}
 
-		_collider_bodies.clear();
+		clear_colliders();
 
 		for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
 			Ref<MeshDataResource> mdr = get_mesh_data_resource(i);
@@ -1755,13 +1742,10 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 					continue;
 				}
 
-				MDRColliders c;
-
 				RID body = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
 
-				c.body = body;
-				c.transform = get_mesh_data_resource_transform(i);
-				c.transform *= offset;
+				Transform transform = get_mesh_data_resource_transform(i);
+				transform *= offset;
 
 				PhysicsServer::get_singleton()->body_add_shape(body, shape->get_rid());
 
@@ -1777,18 +1761,16 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 					}
 				}
 
-				PhysicsServer::get_singleton()->body_set_state(body, PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * c.transform);
+				PhysicsServer::get_singleton()->body_set_state(body, PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * transform);
 
-				_collider_bodies.push_back(c);
+				add_collider(transform, shape, shape->get_rid(), body);
 			}
 		}
 
 #if TOOLS_ENABLED
-		if (SceneTree::get_singleton()->is_debugging_collisions_hint() && _collider_bodies.size() > 0) {
+		if (SceneTree::get_singleton()->is_debugging_collisions_hint() && get_collider_count() > 0) {
 			draw_debug_mdr_colliders();
 		}
-#endif
-
 #endif
 
 		set_active_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
@@ -1938,9 +1920,7 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("draw_debug_voxels", "max", "color"), &VoxelChunkDefault::draw_debug_voxels, DEFVAL(Color(1, 1, 1)));
 
 	ClassDB::bind_method(D_METHOD("draw_debug_voxel_lights"), &VoxelChunkDefault::draw_debug_voxel_lights);
-#ifdef MESH_DATA_RESOURCE_PRESENT
 	ClassDB::bind_method(D_METHOD("draw_debug_mdr_colliders"), &VoxelChunkDefault::draw_debug_mdr_colliders);
-#endif
 
 	//Free
 	ClassDB::bind_method(D_METHOD("free_chunk"), &VoxelChunkDefault::free_chunk);
