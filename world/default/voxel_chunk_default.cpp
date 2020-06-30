@@ -1769,9 +1769,12 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 				if (get_voxel_world()->is_inside_tree() && get_voxel_world()->is_inside_world()) {
 					Ref<World> world = get_voxel_world()->GET_WORLD();
 
-					if (world.is_valid() && world->get_space() != RID())
+					if (world.is_valid() && world->get_space() != RID()) {
 						PhysicsServer::get_singleton()->body_set_space(body, world->get_space());
+					}
 				}
+
+				PhysicsServer::get_singleton()->body_set_state(body, PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * c.transform);
 
 				_collider_bodies.push_back(c);
 			}
