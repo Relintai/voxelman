@@ -907,6 +907,8 @@ void VoxelChunkDefault::draw_debug_mdr_colliders() {
 			continue;
 
 		Transform t = get_mesh_data_resource_transform(i);
+		Vector3 offset = mdr->get_collision_shape_offset(i);
+		t.origin += offset;
 
 		for (int j = 0; j < mdr->get_collision_shape_count(); ++j) {
 			Ref<Shape> shape = mdr->get_collision_shape(j);
@@ -1745,6 +1747,7 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 
 		for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
 			Ref<MeshDataResource> mdr = get_mesh_data_resource(i);
+			Vector3 offset = mdr->get_collision_shape_offset(i);
 
 			for (int j = 0; j < mdr->get_collision_shape_count(); ++j) {
 				Ref<Shape> shape = mdr->get_collision_shape(j);
@@ -1759,6 +1762,7 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 
 				c.body = body;
 				c.transform = get_mesh_data_resource_transform(i);
+				c.transform.origin += offset;
 
 				PhysicsServer::get_singleton()->body_add_shape(body, shape->get_rid());
 
