@@ -897,23 +897,15 @@ void VoxelChunkDefault::draw_debug_mdr_colliders() {
 		debug_mesh_allocate();
 	}
 
-	for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
-		Ref<MeshDataResource> mdr = get_mesh_data_resource(i);
+	for (int i = 0; i < get_collider_count(); ++i) {
+		Ref<Shape> shape = get_collider_shape(i);
 
-		if (!mdr.is_valid())
+		if (!shape.is_valid())
 			continue;
 
-		Transform t = get_mesh_data_resource_transform(i);
-		Transform offset = mdr->get_collision_shape_offset(i);
+		Transform t = get_collider_transform(i);
 
-		for (int j = 0; j < mdr->get_collision_shape_count(); ++j) {
-			Ref<Shape> shape = mdr->get_collision_shape(j);
-
-			if (!shape.is_valid())
-				continue;
-
-			shape->add_vertices_to_array(_debug_mesh_array, t * offset);
-		}
+		shape->add_vertices_to_array(_debug_mesh_array, t);
 	}
 }
 
@@ -1733,10 +1725,10 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 
 		for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
 			Ref<MeshDataResource> mdr = get_mesh_data_resource(i);
-			Transform offset = mdr->get_collision_shape_offset(i);
 
 			for (int j = 0; j < mdr->get_collision_shape_count(); ++j) {
 				Ref<Shape> shape = mdr->get_collision_shape(j);
+				Transform offset = mdr->get_collision_shape_offset(j);
 
 				if (!shape.is_valid()) {
 					continue;
