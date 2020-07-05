@@ -32,7 +32,7 @@ SOFTWARE.
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT
-#include "../../mesh_data_resource/props/prop_data_mesh.h"
+#include "../../mesh_data_resource/props/prop_data_mesh_data.h"
 #endif
 
 #include "../defines.h"
@@ -372,7 +372,7 @@ bool VoxelmanLibraryMerger::process_prop_textures(Ref<PropData> prop) {
 	bool texture_added = false;
 
 	for (int i = 0; i < prop->get_prop_count(); ++i) {
-		Ref<PropDataMesh> pdm = prop->get_prop(i);
+		Ref<PropDataMeshData> pdm = prop->get_prop(i);
 
 		if (pdm.is_valid()) {
 			Ref<Texture> tex = pdm->get_texture();
