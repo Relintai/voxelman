@@ -27,8 +27,12 @@ SOFTWARE.
 
 #ifdef PROPS_PRESENT
 #include "../../props/props/prop_data.h"
-#include "../../props/props/prop_data_mesh.h"
+
 #include "../../props/props/prop_data_prop.h"
+#endif
+
+#if MESH_DATA_RESOURCE_PRESENT
+#include "../../mesh_data_resource/props/prop_data_mesh.h"
 #endif
 
 #include "../defines.h"
