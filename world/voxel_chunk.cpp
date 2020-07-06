@@ -671,20 +671,25 @@ void VoxelChunk::clear_baked_lights() {
 		call("_clear_baked_lights");
 }
 
-void VoxelChunk::add_prop(Ref<VoxelChunkPropData> prop) {
+#if PROPS_PRESENT
+void VoxelChunk::add_prop(const Transform &tarnsform, const Ref<PropData> &prop) {
 	ERR_FAIL_COND(!prop.is_valid());
-	ERR_FAIL_COND(prop->get_owner().is_valid());
 
-	prop->set_owner(Ref<VoxelChunk>(this));
-	_props.push_back(prop);
+	PropDataStore s;
+	s.transform = tarnsform;
+	s.prop = prop;
 
-	if (has_method("_prop_added"))
-		call("_prop_added", prop);
+	_props.push_back(s);
 }
-Ref<VoxelChunkPropData> VoxelChunk::get_prop(int index) {
-	ERR_FAIL_INDEX_V(index, _props.size(), Ref<VoxelChunkPropData>());
+Ref<PropData> VoxelChunk::get_prop(int index) {
+	ERR_FAIL_INDEX_V(index, _props.size(), Ref<PropData>());
 
-	return _props.get(index);
+	return _props.get(index).prop;
+}
+Transform VoxelChunk::get_prop_tarnsform(const int index) {
+	ERR_FAIL_INDEX_V(index, _props.size(), Transform());
+
+	return _props.get(index).transform;
 }
 int VoxelChunk::get_prop_count() const {
 	return _props.size();
@@ -692,23 +697,12 @@ int VoxelChunk::get_prop_count() const {
 void VoxelChunk::remove_prop(const int index) {
 	ERR_FAIL_INDEX(index, _props.size());
 
-	Ref<VoxelChunkPropData> prop = _props.get(index);
-
-	if (prop.is_valid())
-		prop->set_owner(Ref<VoxelChunk>());
-
 	_props.remove(index);
 }
 void VoxelChunk::clear_props() {
-	for (int i = 0; i < _props.size(); ++i) {
-		Ref<VoxelChunkPropData> prop = _props.get(i);
-
-		if (prop.is_valid())
-			prop->set_owner(Ref<VoxelChunk>());
-	}
-
 	_props.clear();
 }
+#endif
 
 #if MESH_DATA_RESOURCE_PRESENT
 int VoxelChunk::add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color) {
@@ -1035,8 +1029,6 @@ void VoxelChunk::_get_property_list(List<PropertyInfo> *p_list) const {
 
 void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
-
-	BIND_VMETHOD(MethodInfo("_prop_added", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
 
 	BIND_VMETHOD(MethodInfo("_mesh_data_resource_added", PropertyInfo(Variant::INT, "index")));
 

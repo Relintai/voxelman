@@ -42,7 +42,6 @@ SOFTWARE.
 #include "world/block_voxel_structure.h"
 #include "world/environment_data.h"
 #include "world/voxel_chunk.h"
-#include "world/voxel_chunk_prop_data.h"
 #include "world/voxel_structure.h"
 #include "world/voxel_world.h"
 
@@ -99,7 +98,6 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelStructure>();
 	ClassDB::register_class<BlockVoxelStructure>();
 	ClassDB::register_class<EnvironmentData>();
-	ClassDB::register_class<VoxelChunkPropData>();
 
 	ClassDB::register_class<VoxelChunkDefault>();
 	ClassDB::register_class<VoxelWorldDefault>();

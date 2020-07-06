@@ -35,7 +35,6 @@ def get_doc_classes():
         "VoxelMesher",
 
         "EnvironmentData",
-        "VoxelChunkPropData",
         "VoxelChunk",
         "VoxelChunkDefault",
         "VoxelStructure",

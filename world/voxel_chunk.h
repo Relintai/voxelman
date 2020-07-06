@@ -49,7 +49,9 @@ include_pool_vector
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
 
-#include "voxel_chunk_prop_data.h"
+#if PROPS_PRESENT
+#include "../../props/props/prop_data.h"
+#endif
 
 #include "core/version.h"
 
@@ -192,12 +194,14 @@ public:
 	void bake_light(Ref<VoxelLight> light);
 	void clear_baked_lights();
 
-	//props
-	void add_prop(Ref<VoxelChunkPropData> prop);
-	Ref<VoxelChunkPropData> get_prop(const int index);
+#if PROPS_PRESENT
+	void add_prop(const Transform &tarnsform, const Ref<PropData> &prop);
+	Ref<PropData> get_prop(const int index);
+	Transform get_prop_tarnsform(const int index);
 	int get_prop_count() const;
 	void remove_prop(const int index);
 	void clear_props();
+#endif
 
 #if MESH_DATA_RESOURCE_PRESENT
 	int add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1));
@@ -258,6 +262,13 @@ public:
 	~VoxelChunk();
 
 protected:
+#if PROPS_PRESENT
+	struct PropDataStore {
+		Transform transform;
+		Ref<PropData> prop;
+	};
+#endif
+
 #if MESH_DATA_RESOURCE_PRESENT
 	struct MeshDataResourceEntry {
 		Ref<MeshDataResource> mesh;
@@ -324,8 +335,10 @@ protected:
 	Vector<Ref<VoxelMesher> > _liquid_meshers;
 	Ref<VoxelMesher> _prop_mesher;
 
-	//mergeable props
-	Vector<Ref<VoxelChunkPropData> > _props;
+#if PROPS_PRESENT
+	Vector<PropDataStore> _props;
+#endif
+
 #if MESH_DATA_RESOURCE_PRESENT
 	Vector<MeshDataResourceEntry> _mesh_data_resources;
 #endif

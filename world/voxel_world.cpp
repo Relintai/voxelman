@@ -23,7 +23,6 @@ SOFTWARE.
 #include "voxel_world.h"
 
 #include "voxel_chunk.h"
-#include "voxel_chunk_prop_data.h"
 #include "voxel_structure.h"
 
 #include "../defines.h"
@@ -498,12 +497,10 @@ void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
 	}
 }
 
-//Props
-void VoxelWorld::add_prop(Ref<VoxelChunkPropData> prop) {
-	ERR_FAIL_COND(!has_method("_add_prop"));
-
-	call("_add_prop", prop);
+#if PROPS_PRESENT
+void VoxelWorld::add_prop(const Transform &tarnsform, const Ref<PropData> &prop) {
 }
+#endif
 
 //Lights
 void VoxelWorld::add_light(const Ref<VoxelLight> &light) {
@@ -1004,8 +1001,6 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_chunk_mesh_generation_finished", "chunk"), &VoxelWorld::on_chunk_mesh_generation_finished);
 
 	//Props
-	BIND_VMETHOD(MethodInfo("_add_prop", PropertyInfo(Variant::OBJECT, "prop", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunkPropData")));
-
 	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelWorld::add_prop);
 
 	//Lights

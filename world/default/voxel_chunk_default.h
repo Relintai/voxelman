@@ -46,8 +46,6 @@ SOFTWARE.
 #include "../../library/voxel_surface.h"
 #include "../../library/voxelman_library.h"
 
-#include "../voxel_chunk_prop_data.h"
-
 class VoxelWorld;
 
 class VoxelChunkDefault : public VoxelChunk {
@@ -245,9 +243,6 @@ protected:
 	virtual void _process(float delta);
 	virtual void _physics_process(float delta);
 	virtual void _world_transform_changed();
-
-	//Props
-	virtual void _add_prop(Ref<VoxelChunkPropData> prop);
 
 	//lights
 	virtual void _bake_lights();
