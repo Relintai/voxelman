@@ -1031,14 +1031,15 @@ void VoxelChunkDefault::_bake_light(Ref<VoxelLight> light) {
 
 	ERR_FAIL_COND(size < 0);
 
-	//float sizef = static_cast<float>(size);
-	//float rf = (color.r / sizef);
-	//float gf = (color.g / sizef);
-	//float bf = (color.b / sizef);
-
 	int64_t dsx = static_cast<int64_t>(_data_size_x);
 	int64_t dsy = static_cast<int64_t>(_data_size_y);
 	int64_t dsz = static_cast<int64_t>(_data_size_z);
+
+	uint8_t *channel_color_r = get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R);
+	uint8_t *channel_color_g = get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G);
+	uint8_t *channel_color_b = get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B);
+
+	ERR_FAIL_COND(channel_color_r == NULL || channel_color_g == NULL || channel_color_b == NULL);
 
 	for (int y = local_y - size; y <= local_y + size; ++y) {
 		if (y < 0 || y >= dsy)
@@ -1062,13 +1063,15 @@ void VoxelChunkDefault::_bake_light(Ref<VoxelLight> light) {
 				if (str < 0)
 					continue;
 
+				int index = get_data_index(x, y, z);
+
 				int r = color.r * str * 255.0;
 				int g = color.g * str * 255.0;
 				int b = color.b * str * 255.0;
 
-				r += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_R);
-				g += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_G);
-				b += get_voxel(x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_B);
+				r += channel_color_r[index];
+				g += channel_color_g[index];
+				b += channel_color_b[index];
 
 				if (r > 255)
 					r = 255;
@@ -1079,9 +1082,9 @@ void VoxelChunkDefault::_bake_light(Ref<VoxelLight> light) {
 				if (b > 255)
 					b = 255;
 
-				set_voxel(r, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_R);
-				set_voxel(g, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_G);
-				set_voxel(b, x, y, z, DEFAULT_CHANNEL_LIGHT_COLOR_B);
+				channel_color_r[index] = r;
+				channel_color_g[index] = g;
+				channel_color_b[index] = b;
 			}
 		}
 	}
@@ -1111,37 +1114,14 @@ void VoxelChunkDefault::free_chunk() {
 }
 
 VoxelChunkDefault::VoxelChunkDefault() {
-	_lights_dirty = false;
-	_is_generating = false;
-
 	_abort_build = false;
 	_queued_generation = false;
-	_dirty = false;
-	_state = VOXEL_CHUNK_STATE_OK;
 
 	_enabled = true;
 	_current_build_phase = BUILD_PHASE_DONE;
 	_max_build_phases = BUILD_PHASE_MAX;
 
-	_voxel_scale = 1;
 	_lod_size = 1;
-
-	_voxel_world = NULL;
-
-	_position_x = 0;
-	_position_y = 0;
-	_position_z = 0;
-
-	_size_x = 0;
-	_size_y = 0;
-	_size_z = 0;
-
-	_data_size_x = 0;
-	_data_size_y = 0;
-	_data_size_z = 0;
-
-	_margin_start = 0;
-	_margin_end = 0;
 
 	_build_prioritized = false;
 	_build_phase_done = false;
