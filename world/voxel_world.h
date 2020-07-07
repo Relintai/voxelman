@@ -161,7 +161,7 @@ public:
 	void set_chunks(const Vector<Variant> &chunks);
 
 #if PROPS_PRESENT
-	void add_prop(const Transform &tarnsform, const Ref<PropData> &prop);
+	void add_prop(Transform tarnsform, const Ref<PropData> &prop, const bool apply_voxel_scael = true);
 #endif
 
 	//Lights

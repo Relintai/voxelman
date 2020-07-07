@@ -509,8 +509,12 @@ void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
 }
 
 #if PROPS_PRESENT
-void VoxelWorld::add_prop(const Transform &tarnsform, const Ref<PropData> &prop) {
+void VoxelWorld::add_prop(Transform tarnsform, const Ref<PropData> &prop, const bool apply_voxel_scael) {
 	ERR_FAIL_COND(!prop.is_valid());
+
+	if (apply_voxel_scael) {
+		tarnsform = tarnsform.scaled(Vector3(get_voxel_scale(), get_voxel_scale(), get_voxel_scale()));
+	}
 
 	Vector3 wp;
 	wp = tarnsform.xform(wp);
@@ -527,7 +531,7 @@ void VoxelWorld::add_prop(const Transform &tarnsform, const Ref<PropData> &prop)
 
 		Transform t = tarnsform * entry->get_transform();
 
-		wp = t.xform(wp);
+		wp = t.xform(Vector3());
 		chunk = get_or_create_chunk_at_world_position(wp);
 
 		Ref<PropDataProp> prop_entry_data = entry;
@@ -538,7 +542,7 @@ void VoxelWorld::add_prop(const Transform &tarnsform, const Ref<PropData> &prop)
 			if (!p.is_valid())
 				continue;
 
-			add_prop(t, p);
+			add_prop(t, p, false);
 
 			continue;
 		}
@@ -1096,7 +1100,7 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_chunk_mesh_generation_finished", "chunk"), &VoxelWorld::on_chunk_mesh_generation_finished);
 
 #if PROPS_PRESENT
-	ClassDB::bind_method(D_METHOD("add_prop", "transform", "prop"), &VoxelWorld::add_prop);
+	ClassDB::bind_method(D_METHOD("add_prop", "transform", "prop", "apply_voxel_scael"), &VoxelWorld::add_prop, DEFVAL(true));
 #endif
 
 	//Lights
