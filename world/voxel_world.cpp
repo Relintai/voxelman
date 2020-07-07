@@ -27,6 +27,17 @@ SOFTWARE.
 
 #include "../defines.h"
 
+#if PROPS_PRESENT
+#include "../../props/props/prop_data_entry.h"
+#include "../../props/props/prop_data_light.h"
+#include "../../props/props/prop_data_prop.h"
+#include "../../props/props/prop_data_scene.h"
+#endif
+
+#if MESH_DATA_RESOURCE_PRESENT
+#include "../../mesh_data_resource/props/prop_data_mesh_data.h"
+#endif
+
 const String VoxelWorld::BINDING_STRING_CHANNEL_TYPE_INFO = "Type,Isolevel,Liquid,Liquid Level";
 
 bool VoxelWorld::get_editable() const {
@@ -499,6 +510,90 @@ void VoxelWorld::set_chunks(const Vector<Variant> &chunks) {
 
 #if PROPS_PRESENT
 void VoxelWorld::add_prop(const Transform &tarnsform, const Ref<PropData> &prop) {
+	ERR_FAIL_COND(!prop.is_valid());
+
+	Vector3 wp;
+	wp = tarnsform.xform(wp);
+	Ref<VoxelChunk> chunk = get_or_create_chunk_at_world_position(wp);
+
+	chunk->add_prop(tarnsform, prop);
+
+	int count = prop->get_prop_count();
+	for (int i = 0; i < count; ++i) {
+		Ref<PropDataEntry> entry = prop->get_prop(i);
+
+		if (!entry.is_valid())
+			continue;
+
+		Transform t = tarnsform * entry->get_transform();
+
+		wp = t.xform(wp);
+		chunk = get_or_create_chunk_at_world_position(wp);
+
+		Ref<PropDataProp> prop_entry_data = entry;
+
+		if (prop_entry_data.is_valid()) {
+			Ref<PropData> p = prop_entry_data->get_prop();
+
+			if (!p.is_valid())
+				continue;
+
+			add_prop(t, p);
+
+			continue;
+		}
+
+		Ref<PropDataScene> scene_data = entry;
+
+		if (scene_data.is_valid()) {
+			Ref<PackedScene> sc = scene_data->get_scene();
+
+			if (!sc.is_valid())
+				continue;
+
+			Node *n = sc->instance();
+			add_child(n);
+			n->set_owner(this);
+
+			Spatial *sp = Object::cast_to<Spatial>(n);
+
+			if (sp) {
+				sp->set_transform(t);
+			}
+
+			continue;
+		}
+
+		Ref<PropDataLight> light_data = entry;
+
+		if (light_data.is_valid()) {
+			Ref<VoxelLight> light;
+			light.instance();
+
+			light->set_world_position(wp.x, wp.y, wp.z);
+			light->set_color(light_data->get_light_color());
+			light->set_size(light_data->get_light_size());
+
+			add_light(light);
+
+			continue;
+		}
+
+#if MESH_DATA_RESOURCE_PRESENT
+		Ref<PropDataMeshData> mesh_data = entry;
+
+		if (mesh_data.is_valid()) {
+			Ref<MeshDataResource> mdr = mesh_data->get_mesh();
+
+			if (!mdr.is_valid())
+				continue;
+
+			chunk->add_mesh_data_resource(t, mdr, mesh_data->get_texture());
+
+			continue;
+		}
+#endif
+	}
 }
 #endif
 
@@ -1000,8 +1095,9 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_position_walkable", "position"), &VoxelWorld::is_position_walkable);
 	ClassDB::bind_method(D_METHOD("on_chunk_mesh_generation_finished", "chunk"), &VoxelWorld::on_chunk_mesh_generation_finished);
 
-	//Props
-	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelWorld::add_prop);
+#if PROPS_PRESENT
+	ClassDB::bind_method(D_METHOD("add_prop", "transform", "prop"), &VoxelWorld::add_prop);
+#endif
 
 	//Lights
 	ClassDB::bind_method(D_METHOD("add_light", "light"), &VoxelWorld::add_light);
