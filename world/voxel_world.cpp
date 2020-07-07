@@ -574,7 +574,7 @@ void VoxelWorld::add_prop(Transform tarnsform, const Ref<PropData> &prop, const 
 			Ref<VoxelLight> light;
 			light.instance();
 
-			light->set_world_position(wp.x, wp.y, wp.z);
+			light->set_world_position(wp.x / get_voxel_scale(), wp.y / get_voxel_scale(), wp.z / get_voxel_scale());
 			light->set_color(light_data->get_light_color());
 			light->set_size(light_data->get_light_size());
 
