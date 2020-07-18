@@ -1694,6 +1694,7 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 
 		clear_colliders();
 
+#ifdef MESH_DATA_RESOURCE_PRESENT
 		for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
 			Ref<MeshDataResource> mdr = get_mesh_data_resource(i);
 
@@ -1729,6 +1730,7 @@ void VoxelChunkDefault::_build_phase_physics_process(int phase) {
 				add_collider(transform, shape, shape->get_rid(), body);
 			}
 		}
+#endif
 
 #if TOOLS_ENABLED
 		if (SceneTree::get_singleton()->is_debugging_collisions_hint() && get_collider_count() > 0) {
