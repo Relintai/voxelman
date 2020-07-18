@@ -1158,10 +1158,6 @@ void VoxelChunkDefault::_build_phase(int phase) {
 		case BUILD_PHASE_DONE:
 			return;
 		case BUILD_PHASE_SETUP: {
-			if (_meshers.size() == 0) {
-				create_meshers();
-			}
-
 			for (int i = 0; i < _meshers.size(); ++i) {
 				Ref<VoxelMesher> mesher = _meshers.get(i);
 
@@ -1768,6 +1764,10 @@ void VoxelChunkDefault::_create_meshers() {
 
 void VoxelChunkDefault::_build(bool immediate) {
 	if (_current_build_phase == BUILD_PHASE_DONE) {
+		if (_meshers.size() == 0) {
+			create_meshers();
+		}
+
 		_queued_generation = false;
 		_build_prioritized = true;
 
