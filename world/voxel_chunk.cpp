@@ -705,13 +705,51 @@ void VoxelChunk::clear_props() {
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT
-int VoxelChunk::add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color) {
+int VoxelChunk::add_mesh_data_resourcev(const Vector3 &local_data_pos, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color, const bool apply_voxel_scale) {
 	ERR_FAIL_COND_V(!mesh.is_valid(), 0);
 
 	int index = _mesh_data_resources.size();
 
 	MeshDataResourceEntry e;
+
+	if (apply_voxel_scale) {
+		e.transform = Transform(Basis().scaled(Vector3(_voxel_scale, _voxel_scale, _voxel_scale)));
+		e.transform.origin = local_data_pos * _voxel_scale;
+	} else {
+		e.transform.origin = local_data_pos;
+	}
+
+	e.mesh = mesh;
+	e.texture = texture;
+	e.color = color;
+
+	if (get_library().is_valid() && texture.is_valid())
+		e.uv_rect = get_library()->get_prop_uv_rect(texture);
+	else
+		e.uv_rect = Rect2(0, 0, 1, 1);
+
+	_mesh_data_resources.push_back(e);
+
+	if (has_method("_mesh_data_resource_added"))
+		call("_mesh_data_resource_added", index);
+
+	return index;
+}
+
+int VoxelChunk::add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color, const bool apply_voxel_scale) {
+	ERR_FAIL_COND_V(!mesh.is_valid(), 0);
+
+	int index = _mesh_data_resources.size();
+
+	MeshDataResourceEntry e;
+
 	e.transform = local_transform;
+
+	if (apply_voxel_scale) {
+		e.transform.basis = e.transform.basis.scaled(Vector3(_voxel_scale, _voxel_scale, _voxel_scale));
+		e.transform.origin = e.transform.origin * _voxel_scale;
+	}
+
 	e.mesh = mesh;
 	e.texture = texture;
 	e.color = color;
@@ -911,6 +949,23 @@ Transform VoxelChunk::get_transform() const {
 }
 void VoxelChunk::set_transform(const Transform &transform) {
 	_transform = transform;
+}
+
+Transform VoxelChunk::get_global_transform() const {
+
+	ERR_FAIL_COND_V(!get_voxel_world(), Transform());
+
+	return get_voxel_world()->get_global_transform() * _transform;
+}
+
+Vector3 VoxelChunk::to_local(Vector3 p_global) const {
+
+	return get_global_transform().affine_inverse().xform(p_global);
+}
+
+Vector3 VoxelChunk::to_global(Vector3 p_local) const {
+
+	return get_global_transform().xform(p_local);
 }
 
 VoxelChunk::VoxelChunk() {
@@ -1208,7 +1263,8 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
 
 #if MESH_DATA_RESOURCE_PRESENT
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "local_transform", "mesh", "texture", "color"), &VoxelChunk::add_mesh_data_resource, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)));
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resourcev", "local_data_pos", "mesh", "texture", "color", "apply_voxel_scale"), &VoxelChunk::add_mesh_data_resourcev, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)), DEFVAL(true));
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "local_transform", "mesh", "texture", "color", "apply_voxel_scale"), &VoxelChunk::add_mesh_data_resource, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)), DEFVAL(true));
 
 	ClassDB::bind_method(D_METHOD("get_mesh_data_resource", "index"), &VoxelChunk::get_mesh_data_resource);
 	ClassDB::bind_method(D_METHOD("set_mesh_data_resource", "index", "mesh"), &VoxelChunk::set_mesh_data_resource);
@@ -1249,6 +1305,10 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_colliders"), &VoxelChunk::clear_colliders);
 
 	ClassDB::bind_method(D_METHOD("create_meshers"), &VoxelChunk::create_meshers);
+
+	ClassDB::bind_method(D_METHOD("get_global_transform"), &VoxelChunk::get_global_transform);
+	ClassDB::bind_method(D_METHOD("to_local", "global"), &VoxelChunk::to_local);
+	ClassDB::bind_method(D_METHOD("to_global", "local"), &VoxelChunk::to_global);
 
 	ClassDB::bind_method(D_METHOD("_world_transform_changed"), &VoxelChunk::_world_transform_changed);
 }

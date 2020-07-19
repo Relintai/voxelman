@@ -204,7 +204,8 @@ public:
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT
-	int add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1));
+	int add_mesh_data_resourcev(const Vector3 &local_data_pos, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1), const bool apply_voxel_scale = true);
+	int add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1), const bool apply_voxel_scale = true);
 
 	Ref<MeshDataResource> get_mesh_data_resource(const int index);
 	void set_mesh_data_resource(const int index, const Ref<MeshDataResource> &mesh);
@@ -257,6 +258,10 @@ public:
 
 	Transform get_transform() const;
 	void set_transform(const Transform &transform);
+
+	Transform get_global_transform() const;
+	Vector3 to_local(Vector3 p_global) const;
+	Vector3 to_global(Vector3 p_local) const;
 
 	VoxelChunk();
 	~VoxelChunk();
