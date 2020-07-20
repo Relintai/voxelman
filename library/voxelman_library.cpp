@@ -213,6 +213,9 @@ Ref<PropData> VoxelmanLibrary::get_prop(const int id) {
 }
 void VoxelmanLibrary::add_prop(Ref<PropData> value) {
 }
+bool VoxelmanLibrary::has_prop(const Ref<PropData> &value) const {
+	return false;
+}
 void VoxelmanLibrary::set_prop(int id, Ref<PropData> value) {
 }
 void VoxelmanLibrary::remove_prop(const int id) {
@@ -298,6 +301,7 @@ void VoxelmanLibrary::_bind_methods() {
 #ifdef PROPS_PRESENT
 	ClassDB::bind_method(D_METHOD("get_prop", "id"), &VoxelmanLibrary::get_prop);
 	ClassDB::bind_method(D_METHOD("add_prop", "value"), &VoxelmanLibrary::add_prop);
+	ClassDB::bind_method(D_METHOD("has_prop", "prop"), &VoxelmanLibrary::has_prop);
 	ClassDB::bind_method(D_METHOD("set_prop", "id", "surface"), &VoxelmanLibrary::set_prop);
 	ClassDB::bind_method(D_METHOD("remove_prop", "id"), &VoxelmanLibrary::remove_prop);
 	ClassDB::bind_method(D_METHOD("get_num_props"), &VoxelmanLibrary::get_num_props);

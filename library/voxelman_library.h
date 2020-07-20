@@ -97,6 +97,7 @@ public:
 #ifdef PROPS_PRESENT
 	virtual Ref<PropData> get_prop(const int id);
 	virtual void add_prop(Ref<PropData> value);
+	virtual bool has_prop(const Ref<PropData> &value) const;
 	virtual void set_prop(const int id, Ref<PropData> value);
 	virtual void remove_prop(const int id);
 	virtual int get_num_props() const;
