@@ -641,7 +641,10 @@ Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, const float mu
 		Vector2 uv = uvs[i];
 		uv *= imgsize;
 
-		Color c = img->get_pixelv(uv);
+		int ux = static_cast<int>(CLAMP(uv.x, 0, imgsize.x - 1));
+		int uy = static_cast<int>(CLAMP(uv.y, 0, imgsize.y - 1));
+
+		Color c = img->get_pixel(ux, uy);
 
 		colors.set(i, colors[i] * c * mul_color);
 	}
@@ -723,10 +726,11 @@ int VoxelChunk::add_mesh_data_resourcev(const Vector3 &local_data_pos, const Ref
 	e.texture = texture;
 	e.color = color;
 
-	if (get_library().is_valid() && texture.is_valid())
+	if (get_library().is_valid() && texture.is_valid()) {
 		e.uv_rect = get_library()->get_prop_uv_rect(texture);
-	else
+	} else {
 		e.uv_rect = Rect2(0, 0, 1, 1);
+	}
 
 	_mesh_data_resources.push_back(e);
 
