@@ -68,6 +68,7 @@ public:
 #ifdef PROPS_PRESENT
 	Ref<PropData> get_prop(const int index);
 	void add_prop(Ref<PropData> value);
+	bool has_prop(const Ref<PropData> &value) const;
 	void set_prop(const int index, const Ref<PropData> &value);
 	void remove_prop(const int index);
 	int get_num_props() const;
@@ -77,6 +78,8 @@ public:
 	void set_props(const Vector<Variant> &props);
 
 	Rect2 get_prop_uv_rect(const Ref<Texture> &texture);
+
+	Ref<TexturePacker> get_prop_packer();
 #endif
 
 	void refresh_rects();

@@ -160,6 +160,9 @@ Ref<PropData> VoxelmanLibraryMerger::get_prop(const int index) {
 void VoxelmanLibraryMerger::add_prop(Ref<PropData> value) {
 	_props.push_back(value);
 }
+bool VoxelmanLibraryMerger::has_prop(const Ref<PropData> &value) const {
+	return _props.find(value) != -1;
+}
 void VoxelmanLibraryMerger::set_prop(const int index, const Ref<PropData> &value) {
 	ERR_FAIL_INDEX(index, _props.size());
 
@@ -186,15 +189,41 @@ void VoxelmanLibraryMerger::set_props(const Vector<Variant> &props) {
 }
 
 Rect2 VoxelmanLibraryMerger::get_prop_uv_rect(const Ref<Texture> &texture) {
-	if (!texture.is_valid())
+	if (!texture.is_valid()) {
 		return Rect2(0, 0, 1, 1);
+	}
 
 	Ref<AtlasTexture> at = _prop_packer->get_texture(texture);
 
-	if (!at.is_valid())
+	if (!at.is_valid()) {
 		return Rect2(0, 0, 1, 1);
+	}
 
-	return at->get_region();
+	Rect2 region = at->get_region();
+
+	Ref<Texture> tex = at->get_atlas();
+
+	if (!tex.is_valid()) {
+		return Rect2(0, 0, 1, 1);
+	}
+
+	Ref<Image> image = tex->get_data();
+
+	if (!image.is_valid()) {
+		return Rect2(0, 0, 1, 1);
+	}
+
+	float w = image->get_width();
+	float h = image->get_height();
+
+	region.position = Size2(region.position.x / w, region.position.y / h);
+	region.size = Size2(region.size.x / w, region.size.y / h);
+
+	return region;
+}
+
+Ref<TexturePacker> VoxelmanLibraryMerger::get_prop_packer() {
+	return _prop_packer;
 }
 #endif
 
@@ -232,7 +261,8 @@ void VoxelmanLibraryMerger::refresh_rects() {
 	}
 
 #ifdef PROPS_PRESENT
-	texture_added = false;
+	//todo add this back
+	//texture_added = false;
 	for (int i = 0; i < _props.size(); i++) {
 		Ref<PropData> prop = _props.get(i);
 
@@ -242,10 +272,11 @@ void VoxelmanLibraryMerger::refresh_rects() {
 		}
 	}
 
-	if (texture_added) {
+	//if (texture_added) {
+	if (_prop_packer->get_texture_count() > 0) {
 		_prop_packer->merge();
 
-		ERR_FAIL_COND(_prop_packer->get_texture_count() == 0);
+		//ERR_FAIL_COND(_prop_packer->get_texture_count() == 0);
 
 		Ref<Texture> tex = _prop_packer->get_generated_texture(0);
 
@@ -310,6 +341,9 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 				break;
 			case MATERIAL_INDEX_LIQUID:
 				shmat = get_liquid_material(i);
+				break;
+			case MATERIAL_INDEX_PROP:
+				shmat = get_prop_material(i);
 				break;
 		}
 
@@ -427,6 +461,10 @@ void VoxelmanLibraryMerger::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_props"), &VoxelmanLibraryMerger::get_props);
 	ClassDB::bind_method(D_METHOD("set_props"), &VoxelmanLibraryMerger::set_props);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PropData", PROPERTY_USAGE_DEFAULT, "PropData"), "set_props", "get_props");
+
+	ClassDB::bind_method(D_METHOD("get_prop_uv_rect", "texture"), &VoxelmanLibraryMerger::get_prop_uv_rect);
+
+	ClassDB::bind_method(D_METHOD("get_prop_packer"), &VoxelmanLibraryMerger::get_prop_packer);
 #endif
 
 	ClassDB::bind_method(D_METHOD("_setup_material_albedo", "material_index", "texture"), &VoxelmanLibraryMerger::_setup_material_albedo);
