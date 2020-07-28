@@ -12,7 +12,7 @@ check whether it works from time to time.
 ## Optional Dependencies
 
 `https://github.com/Relintai/texture_packer`: you get access to [VoxelmanLibraryMerger](#voxelmanlibrarymerger) \
-`https://github.com/Relintai/mesh_data_resource`: you get access to a bunch of properties, and methods that can manipulate meshes.
+`https://github.com/Relintai/mesh_data_resource`: you get access to a bunch of properties, and methods that can manipulate meshes.\
 `https://github.com/Relintai/props`: you get access to a bunch of properties, and methods that can manipulate, and use props.
 
 # Pre-built binaries
