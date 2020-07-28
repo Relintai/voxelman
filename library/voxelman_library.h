@@ -23,11 +23,18 @@ SOFTWARE.
 #ifndef VOXELMAN_LIBRARY_H
 #define VOXELMAN_LIBRARY_H
 
+#include "core/math/rect2.h"
 #include "core/resource.h"
 #include "scene/resources/material.h"
 
 #include "../data/voxel_light.h"
 #include "voxel_surface.h"
+
+#include "../defines.h"
+
+#if GODOT4
+#define Texture Texture2D
+#endif
 
 class VoxelSurface;
 class VoxelMesher;
@@ -118,9 +125,9 @@ protected:
 
 private:
 	bool _initialized;
-	Vector<Ref<Material> > _materials;
-	Vector<Ref<Material> > _liquid_materials;
-	Vector<Ref<Material> > _prop_materials;
+	Vector<Ref<Material>> _materials;
+	Vector<Ref<Material>> _liquid_materials;
+	Vector<Ref<Material>> _prop_materials;
 };
 
 #endif // VOXEL_LIBRARY_H

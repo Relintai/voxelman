@@ -290,7 +290,7 @@ protected:
 
 	ActiveBuildPhaseType _active_build_phase_type;
 
-	Vector<Ref<VoxelLight> > _lights;
+	Vector<Ref<VoxelLight>> _lights;
 };
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);

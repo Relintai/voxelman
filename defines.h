@@ -62,6 +62,7 @@
 #define MeshInstance MeshInstance3D
 #define Camera Camera3D
 #define ToolButton Button
+#define Shape Shape3D
 
 typedef class World3D World;
 

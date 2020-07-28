@@ -159,21 +159,11 @@ void VoxelmanLibrary::clear_prop_materials() {
 }
 
 Vector<Variant> VoxelmanLibrary::get_prop_materials() {
-	Vector<Variant> r;
-	for (int i = 0; i < _prop_materials.size(); i++) {
-		r.push_back(_prop_materials[i].get_ref_ptr());
-	}
-	return r;
+	VARIANT_ARRAY_GET(_prop_materials);
 }
 
 void VoxelmanLibrary::set_prop_materials(const Vector<Variant> &materials) {
-	_prop_materials.clear();
-
-	for (int i = 0; i < materials.size(); i++) {
-		Ref<Material> material = Ref<Material>(materials[i]);
-
-		_prop_materials.push_back(material);
-	}
+	VARIANT_ARRAY_SET(materials, _prop_materials, Material);
 }
 
 //Surfaces
