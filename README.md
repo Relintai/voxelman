@@ -13,8 +13,12 @@ check whether it works from time to time.
 
 `https://github.com/Relintai/texture_packer`: you get access to [VoxelmanLibraryMerger](#voxelmanlibrarymerger) \
 `https://github.com/Relintai/mesh_data_resource`: you get access to a bunch of properties, and methods that can manipulate meshes.
+`https://github.com/Relintai/props`: you get access to a bunch of properties, and methods that can manipulate, and use props.
 
-Note: My props module also gets detected, but it won't do anything at the moment.
+# Pre-built binaries
+
+You can grab a pre-built editor binary from the [Broken Seals](https://github.com/Relintai/broken_seals/releases) 
+repo, should you want to. It contains all my modules.
 
 ## Usage
 
