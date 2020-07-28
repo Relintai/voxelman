@@ -15,7 +15,7 @@ check whether it works from time to time.
 `https://github.com/Relintai/mesh_data_resource`: you get access to a bunch of properties, and methods that can manipulate meshes.\
 `https://github.com/Relintai/props`: you get access to a bunch of properties, and methods that can manipulate, and use props.
 
-# Pre-built binaries
+## Pre-built binaries
 
 You can grab a pre-built editor binary from the [Broken Seals](https://github.com/Relintai/broken_seals/releases) 
 repo, should you want to. It contains all my modules.
