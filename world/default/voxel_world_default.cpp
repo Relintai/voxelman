@@ -53,6 +53,13 @@ void VoxelWorldDefault::update_lods() {
 	call("_update_lods");
 }
 
+int VoxelWorldDefault::get_chunk_lod_falloff() const {
+	return _chunk_lod_falloff;
+}
+void VoxelWorldDefault::set_chunk_lod_falloff(const int value) {
+	_chunk_lod_falloff = value;
+}
+
 void VoxelWorldDefault::_update_lods() {
 	if (!get_player() || !INSTANCE_VALIDATE(get_player())) {
 		return;
@@ -60,9 +67,9 @@ void VoxelWorldDefault::_update_lods() {
 
 	Vector3 ppos = get_player()->get_transform().origin;
 
-	int ppx = int(ppos.x / (get_chunk_size_x() * get_voxel_scale()));
-	int ppy = int(ppos.y / (get_chunk_size_y() * get_voxel_scale()));
-	int ppz = int(ppos.z / (get_chunk_size_z() * get_voxel_scale()));
+	int ppx = int(ppos.x / get_chunk_size_x() / get_voxel_scale());
+	int ppy = int(ppos.y / get_chunk_size_y() / get_voxel_scale());
+	int ppz = int(ppos.z / get_chunk_size_z() / get_voxel_scale());
 
 	for (int i = 0; i < get_chunk_count(); ++i) {
 		Ref<VoxelChunkDefault> c = get_chunk_index(i);
@@ -76,14 +83,13 @@ void VoxelWorldDefault::_update_lods() {
 
 		int mr = MAX(MAX(dx, dy), dz);
 
-		if (mr <= 1)
-			c->set_current_lod_level(0);
-		else if (mr == 2)
-			c->set_current_lod_level(1);
-		else if (mr == 3) // || mr == 4)
-			c->set_current_lod_level(2);
-		else
-			c->set_current_lod_level(3);
+		mr -= _chunk_lod_falloff;
+
+		//Todo 3 should be _num_lod, but it's NYI, because chunk can only handle 3 lod levels for now -> FQMS needs to be fixed
+		mr = CLAMP(mr, 0, 3);
+
+		if (c->get_current_lod_level() != mr)
+			c->set_current_lod_level(mr);
 	}
 }
 
@@ -123,6 +129,7 @@ int VoxelWorldDefault::_get_channel_index_info(const VoxelWorld::ChannelTypeInfo
 }
 
 VoxelWorldDefault::VoxelWorldDefault() {
+	_chunk_lod_falloff = 2;
 	_lod_update_timer = 0;
 	_lod_update_interval = 0.5;
 	_build_flags = VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER | VoxelChunkDefault::BUILD_FLAG_CREATE_LODS;
@@ -173,6 +180,10 @@ void VoxelWorldDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_lod_update_interval"), &VoxelWorldDefault::get_lod_update_interval);
 	ClassDB::bind_method(D_METHOD("set_lod_update_interval", "value"), &VoxelWorldDefault::set_lod_update_interval);
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lod_update_interval"), "set_lod_update_interval", "get_lod_update_interval");
+
+	ClassDB::bind_method(D_METHOD("get_chunk_lod_falloff"), &VoxelWorldDefault::get_chunk_lod_falloff);
+	ClassDB::bind_method(D_METHOD("set_chunk_lod_falloff", "value"), &VoxelWorldDefault::set_chunk_lod_falloff);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_lod_falloff"), "set_chunk_lod_falloff", "get_chunk_lod_falloff");
 
 	BIND_VMETHOD(MethodInfo("_update_lods"));
 	ClassDB::bind_method(D_METHOD("update_lods"), &VoxelWorldDefault::update_lods);

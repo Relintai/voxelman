@@ -1645,6 +1645,8 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			}
 #endif
 
+			set_current_lod_level(get_current_lod_level());
+
 			call_deferred("update_transforms");
 
 			next_phase();

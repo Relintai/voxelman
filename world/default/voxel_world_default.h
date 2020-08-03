@@ -35,6 +35,9 @@ public:
 	float get_lod_update_interval() const;
 	void set_lod_update_interval(const float value);
 
+	int get_chunk_lod_falloff() const;
+	void set_chunk_lod_falloff(const int value);
+
 	void update_lods();
 
 	VoxelWorldDefault();
@@ -54,6 +57,7 @@ private:
 	int _build_flags;
 	float _lod_update_timer;
 	float _lod_update_interval;
+	int _chunk_lod_falloff;
 };
 
 #endif
