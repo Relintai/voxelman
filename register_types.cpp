@@ -72,6 +72,8 @@ SOFTWARE.
 
 #include "nodes/voxelman_light.h"
 
+#include "world/default/voxel_job.h"
+
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
 	ClassDB::register_class<VoxelMesherDefault>();
@@ -120,6 +122,8 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelmanLevelGeneratorFlat>();
 
 	ClassDB::register_class<WorldArea>();
+
+	ClassDB::register_class<VoxelJob>();
 
 #ifdef TOOLS_ENABLED
 	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();

@@ -47,6 +47,7 @@ SOFTWARE.
 #include "../../library/voxelman_library.h"
 
 class VoxelWorld;
+class VoxelJob;
 
 class VoxelChunkDefault : public VoxelChunk {
 	GDCLASS(VoxelChunkDefault, VoxelChunk);
@@ -226,6 +227,11 @@ public:
 
 	void generate_random_ao(const int seed, const int octaves = 4, const int period = 30, const float persistence = 0.3, const float scale_factor = 0.6);
 
+	bool get_build_step_in_progress() const;
+	void set_build_step_in_progress(const bool value);
+
+	Ref<VoxelJob> get_job();
+
 	VoxelChunkDefault();
 	~VoxelChunkDefault();
 
@@ -239,6 +245,7 @@ protected:
 	virtual void _build(bool immediate);
 	virtual void _visibility_changed(bool visible);
 
+	virtual void _enter_tree();
 	virtual void _exit_tree();
 	virtual void _process(float delta);
 	virtual void _physics_process(float delta);
@@ -290,7 +297,9 @@ protected:
 
 	ActiveBuildPhaseType _active_build_phase_type;
 
-	Vector<Ref<VoxelLight>> _lights;
+	Vector<Ref<VoxelLight> > _lights;
+
+	Ref<VoxelJob> _job;
 };
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);

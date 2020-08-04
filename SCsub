@@ -9,6 +9,9 @@ if os.path.isdir('../texture_packer'):
     module_env.Append(CPPDEFINES=['TEXTURE_PACKER_PRESENT'])
     has_texture_packer = True
 
+if os.path.isdir('../thread_pool'):
+    module_env.Append(CPPDEFINES=['THREAD_POOL_PRESENT'])
+
 if os.path.isdir('../mesh_data_resource'):
     module_env.Append(CPPDEFINES=['MESH_DATA_RESOURCE_PRESENT'])
 
@@ -63,12 +66,13 @@ sources = [
     "world/cubic/voxel_chunk_cubic.cpp",
     "world/cubic/voxel_world_cubic.cpp",
 
-
     "areas/world_area.cpp",
 
     "world/voxel_world_editor.cpp",
     
-    "thirdparty/lz4/lz4.c"
+    "thirdparty/lz4/lz4.c",
+
+    "world/default/voxel_job.cpp",
 ]
 
 if has_texture_packer:

@@ -46,9 +46,6 @@ include_pool_vector
 
 #include "../meshers/voxel_mesher.h"
 
-#include "../library/voxel_surface.h"
-#include "../library/voxelman_library.h"
-
 #if PROPS_PRESENT
 #include "../../props/props/prop_data.h"
 #endif
@@ -58,6 +55,9 @@ include_pool_vector
 #if VERSION_MAJOR >= 4
 #define Texture Texture2D
 #endif
+
+#include "../library/voxel_surface.h"
+#include "../library/voxelman_library.h"
 
 		class VoxelWorld;
 

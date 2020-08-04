@@ -55,7 +55,8 @@ def get_doc_classes():
 
         "VoxelMesherDefault",
 	      "VoxelWorldDefault",
-	      "VoxelChunkBlocky",
+
+        "VoxelJob",
     ]
 
 def get_doc_path():

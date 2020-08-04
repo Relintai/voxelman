@@ -31,6 +31,9 @@ SOFTWARE.
 #include "../../meshers/default/voxel_mesher_default.h"
 #include "../voxel_world.h"
 
+#include "../../../thread_pool/thread_pool.h"
+#include "voxel_job.h"
+
 const String VoxelChunkDefault::BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE = "Normal,Process,Physics Process";
 const String VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS = "Use Isolevel,Use Lighting,Use AO,Use RAO,Generate AO,Generate RAO,Bake Lights,Create Collider,Create Lods";
 
@@ -185,6 +188,9 @@ void VoxelChunkDefault::build_step() {
 
 	_build_step_in_progress = true;
 
+	ThreadPool::get_singleton()->add_job(_job);
+
+	/*
 	if (get_is_build_threaded()) {
 		if (_build_thread) {
 			wait_and_finish_thread();
@@ -202,6 +208,7 @@ void VoxelChunkDefault::build_step() {
 	}
 
 	_build_step_in_progress = false;
+	*/
 }
 
 void VoxelChunkDefault::_build_step_threaded(void *_userdata) {
@@ -933,6 +940,10 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 	}
 }
 
+void VoxelChunkDefault::_enter_tree() {
+	_job->set_chunk(Ref<VoxelChunkDefault>(this));
+}
+
 void VoxelChunkDefault::_exit_tree() {
 	if (_build_thread) {
 		_abort_build = true;
@@ -941,6 +952,8 @@ void VoxelChunkDefault::_exit_tree() {
 	}
 
 	free_rids();
+
+	_job->chunk_exit_tree();
 }
 void VoxelChunkDefault::_process(float delta) {
 	if (!get_is_generating()) {
@@ -1113,6 +1126,17 @@ void VoxelChunkDefault::free_chunk() {
 	free_rids();
 }
 
+bool VoxelChunkDefault::get_build_step_in_progress() const {
+	return _build_step_in_progress;
+}
+void VoxelChunkDefault::set_build_step_in_progress(const bool value) {
+	_build_step_in_progress = value;
+}
+
+Ref<VoxelJob> VoxelChunkDefault::get_job() {
+	return _job;
+}
+
 VoxelChunkDefault::VoxelChunkDefault() {
 	_abort_build = false;
 	_queued_generation = false;
@@ -1134,6 +1158,8 @@ VoxelChunkDefault::VoxelChunkDefault() {
 	_current_lod_level = 0;
 
 	_build_flags = BUILD_FLAG_CREATE_COLLIDER | BUILD_FLAG_CREATE_LODS;
+
+	_job.instance();
 }
 
 VoxelChunkDefault::~VoxelChunkDefault() {
@@ -1145,6 +1171,8 @@ VoxelChunkDefault::~VoxelChunkDefault() {
 	_lights.clear();
 
 	debug_mesh_free();
+
+	_job.unref();
 }
 
 void VoxelChunkDefault::_setup_channels() {
@@ -1911,6 +1939,7 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_build", "immediate"), &VoxelChunkDefault::_build);
 	ClassDB::bind_method(D_METHOD("_visibility_changed", "visible"), &VoxelChunkDefault::_visibility_changed);
 
+	ClassDB::bind_method(D_METHOD("_enter_tree"), &VoxelChunkDefault::_enter_tree);
 	ClassDB::bind_method(D_METHOD("_exit_tree"), &VoxelChunkDefault::_exit_tree);
 	ClassDB::bind_method(D_METHOD("_process", "delta"), &VoxelChunkDefault::_process);
 	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &VoxelChunkDefault::_physics_process);
@@ -1922,6 +1951,8 @@ void VoxelChunkDefault::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("_world_light_added", "light"), &VoxelChunkDefault::_world_light_added);
 	ClassDB::bind_method(D_METHOD("_world_light_removed", "light"), &VoxelChunkDefault::_world_light_removed);
+
+	ClassDB::bind_method(D_METHOD("get_job"), &VoxelChunkDefault::get_job);
 
 	BIND_CONSTANT(BUILD_PHASE_DONE);
 	BIND_CONSTANT(BUILD_PHASE_SETUP);
