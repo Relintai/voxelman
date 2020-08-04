@@ -1355,24 +1355,39 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH: {
-			for (int i = 0; i < _meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _meshers.get(i);
+			if (_job->should_do()) {
+				for (int i = 0; i < _meshers.size(); ++i) {
+					Ref<VoxelMesher> mesher = _meshers.get(i);
 
-				ERR_CONTINUE(!mesher.is_valid());
+					ERR_CONTINUE(!mesher.is_valid());
 
-				mesher->set_library(_library);
-			}
+					mesher->set_library(_library);
+				}
 
-			for (int i = 0; i < _liquid_meshers.size(); ++i) {
-				Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
+				for (int i = 0; i < _liquid_meshers.size(); ++i) {
+					Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
 
-				ERR_CONTINUE(!mesher.is_valid());
+					ERR_CONTINUE(!mesher.is_valid());
 
-				mesher->set_library(_library);
+					mesher->set_library(_library);
+				}
+
+				if (_job->should_return())
+					return;
 			}
 
 			if ((_build_flags & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
-				for (int i = 0; i < _meshers.size(); ++i) {
+				int starti = 0;
+
+				if (_job->has_meta("bptm_ulm")) {
+					starti = _job->get_meta("bptm_ulm");
+				}
+
+				for (int i = starti; i < _meshers.size(); ++i) {
+					if (_job->should_return()) {
+						_job->set_meta("bptm_ulm", i);
+					}
+
 					Ref<VoxelMesher> mesher = _meshers.get(i);
 
 					ERR_CONTINUE(!mesher.is_valid());
@@ -1380,7 +1395,17 @@ void VoxelChunkDefault::_build_phase(int phase) {
 					mesher->bake_colors(this);
 				}
 
-				for (int i = 0; i < _liquid_meshers.size(); ++i) {
+				starti = 0;
+
+				if (_job->has_meta("bptm_ullm")) {
+					starti = _job->get_meta("bptm_ullm");
+				}
+
+				for (int i = starti; i < _liquid_meshers.size(); ++i) {
+					if (_job->should_return()) {
+						_job->set_meta("bptm_ullm", i);
+					}
+
 					Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
 
 					ERR_CONTINUE(!mesher.is_valid());
@@ -1389,8 +1414,18 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				}
 			}
 
+			int starti = 0;
+
+			if (_job->has_meta("bptm_mm")) {
+				starti = _job->get_meta("bptm_mm");
+			}
+
 			Ref<VoxelMesher> mesher;
-			for (int i = 0; i < _meshers.size(); ++i) {
+			for (int i = starti; i < _meshers.size(); ++i) {
+				if (_job->should_return()) {
+					_job->set_meta("bptm_mm", i);
+				}
+
 				Ref<VoxelMesher> m = _meshers.get(i);
 
 				ERR_CONTINUE(!m.is_valid());
@@ -1407,8 +1442,18 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 			ERR_FAIL_COND(!mesher.is_valid());
 
+			starti = 0;
+
+			if (_job->has_meta("bptm_lmm")) {
+				starti = _job->get_meta("bptm_lmm");
+			}
+
 			Ref<VoxelMesher> liquid_mesher;
-			for (int i = 0; i < _liquid_meshers.size(); ++i) {
+			for (int i = starti; i < _liquid_meshers.size(); ++i) {
+				if (_job->should_return()) {
+					_job->set_meta("bptm_lmm", i);
+				}
+
 				Ref<VoxelMesher> m = _liquid_meshers.get(i);
 
 				ERR_CONTINUE(!m.is_valid());
@@ -1424,97 +1469,159 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			}
 
 			if (mesher->get_vertex_count() == 0 && liquid_mesher.is_valid() && liquid_mesher->get_vertex_count() == 0) {
+
+				if (_job->has_meta("bptm_ulm")) {
+					_job->remove_meta("bptm_ulm");
+				}
+
+				if (_job->has_meta("bptm_ullm")) {
+					_job->remove_meta("bptm_ullm");
+				}
+
+				if (_job->has_meta("bptm_mm")) {
+					_job->remove_meta("bptm_mm");
+				}
+
+				if (_job->has_meta("bptm_lmm")) {
+					_job->remove_meta("bptm_lmm");
+				}
+
+				_job->reset_stages();
+
 				next_phase();
 				return;
 			}
 
 			if (mesher->get_vertex_count() != 0) {
-				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
 
-				Array temp_mesh_arr = mesher->build_mesh();
+				if (_job->should_do()) {
+					temp_mesh_arr = mesher->build_mesh();
 
-				if (mesh_rid == RID()) {
-					if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0)
-						create_meshes(MESH_INDEX_TERRARIN, _lod_num + 1);
-					else
-						create_meshes(MESH_INDEX_TERRARIN, 1);
-
-					mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
+					if (_job->should_return()) {
+						return;
+					}
 				}
 
-				if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
+				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
+
+				if (_job->should_do()) {
+					if (mesh_rid == RID()) {
+						if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0)
+							create_meshes(MESH_INDEX_TERRARIN, _lod_num + 1);
+						else
+							create_meshes(MESH_INDEX_TERRARIN, 1);
+
+						mesh_rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 0);
+					}
+
+					if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
 #if !GODOT4
-					VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
+						VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
 #else
-					VS::get_singleton()->mesh_clear(mesh_rid);
+						VS::get_singleton()->mesh_clear(mesh_rid);
 #endif
 
-				VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+					if (_job->should_return()) {
+						return;
+					}
+				}
 
-				if (_library->get_material(0).is_valid())
-					VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_material(0)->get_rid());
+				if (_job->should_do()) {
+					VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+					if (_library->get_material(0).is_valid())
+						VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_material(0)->get_rid());
+
+					if (_job->should_return()) {
+						return;
+					}
+				}
 
 				if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0) {
-					if (_lod_num >= 1) {
-						//for lod 1 just remove uv2
-						temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
+					if (_job->should_do()) {
+						if (_lod_num >= 1) {
+							//for lod 1 just remove uv2
+							temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
 
-						VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-						if (get_library()->get_material(1).is_valid())
-							VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 1), 0, get_library()->get_material(1)->get_rid());
+							if (get_library()->get_material(1).is_valid())
+								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 1), 0, get_library()->get_material(1)->get_rid());
+						}
+						if (_job->should_return()) {
+							return;
+						}
 					}
 
-					if (_lod_num >= 2) {
-						Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
+					if (_job->should_do()) {
+						if (_lod_num >= 2) {
+							Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
+							temp_mesh_arr = temp_mesh_arr2;
 
-						VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
+							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
 
-						if (get_library()->get_material(2).is_valid())
-							VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 2), 0, get_library()->get_material(2)->get_rid());
-					}
-
-					if (_lod_num >= 3) {
-						Ref<ShaderMaterial> mat = get_library()->get_material(0);
-						Ref<SpatialMaterial> spmat = get_library()->get_material(0);
-						Ref<Texture> tex;
-
-						if (mat.is_valid()) {
-							tex = mat->get_shader_param("texture_albedo");
-						} else if (spmat.is_valid()) {
-							tex = spmat->get_texture(SpatialMaterial::TEXTURE_ALBEDO);
+							if (get_library()->get_material(2).is_valid())
+								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 2), 0, get_library()->get_material(2)->get_rid());
 						}
 
-						if (tex.is_valid()) {
-							temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
-							temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
+						if (_job->should_return()) {
+							return;
+						}
+					}
 
-							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+					if (_job->should_do()) {
+						if (_lod_num >= 3) {
+							Ref<ShaderMaterial> mat = get_library()->get_material(0);
+							Ref<SpatialMaterial> spmat = get_library()->get_material(0);
+							Ref<Texture> tex;
 
-							if (get_library()->get_material(3).is_valid())
-								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), 0, get_library()->get_material(3)->get_rid());
+							if (mat.is_valid()) {
+								tex = mat->get_shader_param("texture_albedo");
+							} else if (spmat.is_valid()) {
+								tex = spmat->get_texture(SpatialMaterial::TEXTURE_ALBEDO);
+							}
+
+							if (tex.is_valid()) {
+								temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
+								temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
+
+								VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+								if (get_library()->get_material(3).is_valid())
+									VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, 3), 0, get_library()->get_material(3)->get_rid());
+							}
+						}
+
+						if (_job->should_return()) {
+							return;
 						}
 					}
 
 					/*
-					if (_lod_num > 4) {
-						Ref<FastQuadraticMeshSimplifier> fqms;
-						fqms.instance();
-						fqms->initialize(temp_mesh_arr);
+					if (_job->should_do()) {
+						if (_lod_num > 4) {
+							Ref<FastQuadraticMeshSimplifier> fqms;
+							fqms.instance();
+							fqms->initialize(temp_mesh_arr);
 
-						Array arr_merged_simplified;
+							Array arr_merged_simplified;
 
-						for (int i = 4; i < _lod_num; ++i) {
-							fqms->simplify_mesh(arr_merged_simplified[0].size() * 0.8, 7);
-							arr_merged_simplified = fqms->get_arrays();
+							for (int i = 4; i < _lod_num; ++i) {
+								fqms->simplify_mesh(arr_merged_simplified[0].size() * 0.8, 7);
+								arr_merged_simplified = fqms->get_arrays();
 
-							if (arr_merged_simplified[0].size() == 0)
-								break;
+								if (arr_merged_simplified[0].size() == 0)
+									break;
 
-							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, i), VisualServer::PRIMITIVE_TRIANGLES, arr_merged_simplified);
+								VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, i), VisualServer::PRIMITIVE_TRIANGLES, arr_merged_simplified);
 
-							if (get_library()->get_material(i).is_valid())
-								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, i), 0, get_library()->get_material(i)->get_rid());
+								if (get_library()->get_material(i).is_valid())
+									VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, i), 0, get_library()->get_material(i)->get_rid());
+							}
+						}
+
+						if (_job->should_return()) {
+							return;
 						}
 					}
 					*/
@@ -1522,28 +1629,64 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			}
 
 			if (liquid_mesher.is_valid() && liquid_mesher->get_vertex_count() != 0) {
-				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_MESH, 0);
+				if (_job->should_do()) {
+					temp_mesh_arr = liquid_mesher->build_mesh();
 
-				Array temp_mesh_arr = liquid_mesher->build_mesh();
-
-				if (mesh_rid == RID()) {
-					create_meshes(MESH_INDEX_LIQUID, 1);
-
-					mesh_rid = get_mesh_rid_index(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_MESH, 0);
+					if (_job->should_return()) {
+						return;
+					}
 				}
 
-				if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
+				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_MESH, 0);
+
+				if (_job->should_do()) {
+					if (mesh_rid == RID()) {
+						create_meshes(MESH_INDEX_LIQUID, 1);
+
+						mesh_rid = get_mesh_rid_index(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_MESH, 0);
+					}
+
+					if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
 #if !GODOT4
-					VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
+						VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
 #else
-					VS::get_singleton()->mesh_clear(mesh_rid);
+						VS::get_singleton()->mesh_clear(mesh_rid);
 #endif
 
-				VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+					if (_job->should_return()) {
+						return;
+					}
+				}
 
-				if (_library->get_liquid_material(0).is_valid())
-					VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_liquid_material(0)->get_rid());
+				if (_job->should_do()) {
+					VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+					if (_library->get_liquid_material(0).is_valid())
+						VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_liquid_material(0)->get_rid());
+
+					if (_job->should_return()) {
+						return;
+					}
+				}
 			}
+
+			if (_job->has_meta("bptm_ulm")) {
+				_job->remove_meta("bptm_ulm");
+			}
+
+			if (_job->has_meta("bptm_ullm")) {
+				_job->remove_meta("bptm_ullm");
+			}
+
+			if (_job->has_meta("bptm_mm")) {
+				_job->remove_meta("bptm_mm");
+			}
+
+			if (_job->has_meta("bptm_lmm")) {
+				_job->remove_meta("bptm_lmm");
+			}
+
+			_job->reset_stages();
 
 			next_phase();
 
@@ -1577,7 +1720,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			if (get_prop_mesher()->get_vertex_count() != 0) {
 				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 0);
 
-				Array temp_mesh_arr = get_prop_mesher()->build_mesh();
+				temp_mesh_arr = get_prop_mesher()->build_mesh();
 
 				if (mesh_rid == RID()) {
 					if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0)

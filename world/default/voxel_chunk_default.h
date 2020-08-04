@@ -296,6 +296,8 @@ protected:
 	Vector<Ref<VoxelLight> > _lights;
 
 	Ref<VoxelJob> _job;
+
+	Array temp_mesh_arr;
 };
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);
