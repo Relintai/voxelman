@@ -56,7 +56,11 @@ void VoxelJob::_execute() {
 		if (should_return())
 			return;
 
+		//int phase = _chunk->get_current_build_phase();
+
 		_chunk->build_phase();
+
+		//print_error(String::num(get_current_execution_time()) + " phase: " + String::num(phase));
 
 		if (!_chunk->get_build_phase_done())
 			break;
@@ -213,6 +217,12 @@ bool VoxelJob::should_return() {
 
 void VoxelJob::execute() {
 	ERR_FAIL_COND(!has_method("_execute"));
+
+#if VERSION_MAJOR < 4
+	_start_time = OS::get_singleton()->get_system_time_msecs();
+#else
+	_start_time = OS::get_singleton()->get_ticks_msec();
+#endif
 
 	call("_execute");
 }
