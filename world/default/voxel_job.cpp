@@ -31,10 +31,13 @@ void VoxelJob::set_chunk(const Ref<VoxelChunkDefault> &chunk) {
 }
 
 void VoxelJob::chunk_exit_tree() {
+
 	_in_tree = false;
 
 	if (get_complete()) {
 		_chunk.unref();
+	} else {
+		set_cancelled(true);
 	}
 }
 
