@@ -189,39 +189,6 @@ void VoxelChunkDefault::build_step() {
 	_build_step_in_progress = true;
 
 	ThreadPool::get_singleton()->add_job(_job);
-
-	/*
-	if (get_is_build_threaded()) {
-		if (_build_thread) {
-			wait_and_finish_thread();
-		}
-
-		_build_thread = Thread::create(_build_step_threaded, this);
-		return;
-	}
-
-	while (has_next_phase() && _active_build_phase_type == BUILD_PHASE_TYPE_NORMAL) {
-		build_phase();
-
-		if (!get_build_phase_done())
-			break;
-	}
-
-	_build_step_in_progress = false;
-	*/
-}
-
-void VoxelChunkDefault::_build_step_threaded(void *_userdata) {
-	VoxelChunkDefault *vc = (VoxelChunkDefault *)_userdata;
-
-	while (vc->has_next_phase() && vc->_active_build_phase_type == BUILD_PHASE_TYPE_NORMAL) {
-		vc->build_phase();
-
-		if (!vc->get_build_phase_done())
-			break;
-	}
-
-	vc->_build_step_in_progress = false;
 }
 
 void VoxelChunkDefault::build_phase() {
@@ -945,11 +912,7 @@ void VoxelChunkDefault::_enter_tree() {
 }
 
 void VoxelChunkDefault::_exit_tree() {
-	if (_build_thread) {
-		_abort_build = true;
-
-		wait_and_finish_thread();
-	}
+	_abort_build = true;
 
 	free_rids();
 
@@ -1149,7 +1112,6 @@ VoxelChunkDefault::VoxelChunkDefault() {
 
 	_build_prioritized = false;
 	_build_phase_done = false;
-	_build_thread = NULL;
 	_build_step_in_progress = false;
 
 	_active_build_phase_type = BUILD_PHASE_TYPE_NORMAL;
@@ -1163,10 +1125,7 @@ VoxelChunkDefault::VoxelChunkDefault() {
 }
 
 VoxelChunkDefault::~VoxelChunkDefault() {
-	if (_build_thread) {
-		_abort_build = true;
-		wait_and_finish_thread();
-	}
+	_abort_build = true;
 
 	_lights.clear();
 
@@ -1288,41 +1247,7 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			if (_is_build_threaded) { //&& Engine::get_singleton()->is_editor_hint()?
-				set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
-				return;
-			}
-
-			if (temp_arr_collider.size() != 0) {
-				if (!has_meshes(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_BODY)) {
-					create_colliders(MESH_INDEX_TERRARIN);
-				}
-
-				PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
-
-				temp_arr_collider.resize(0);
-			}
-
-			if (temp_arr_collider_liquid.size() != 0) {
-				if (Engine::get_singleton()->is_editor_hint()) {
-					if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_BODY)) {
-						create_colliders(MESH_INDEX_LIQUID);
-					}
-				}
-				/*
-				 else {
-					if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_AREA)) {
-						create_colliders_area(MESH_INDEX_LIQUID);
-					}
-				}*/
-
-				PhysicsServer::get_singleton()->shape_set_data(get_mesh_rid(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_SHAPE), temp_arr_collider_liquid);
-
-				temp_arr_collider_liquid.resize(0);
-			}
-
-			next_phase();
-
+			set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
 			return;
 		}
 		case BUILD_PHASE_LIGHTS: {
@@ -1821,11 +1746,6 @@ void VoxelChunkDefault::_build(bool immediate) {
 }
 
 void VoxelChunkDefault::wait_and_finish_thread() {
-	if (_build_thread) {
-		Thread::wait_to_finish(_build_thread);
-		memdelete(_build_thread);
-		_build_thread = NULL;
-	}
 }
 
 void VoxelChunkDefault::_bind_methods() {

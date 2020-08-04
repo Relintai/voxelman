@@ -157,9 +157,6 @@ public:
 	//Data Management functions
 	void generate_ao();
 
-	//Meshing
-	static void _build_step_threaded(void *_userdata);
-
 	void build_step();
 
 	void build_phase();
@@ -289,7 +286,6 @@ protected:
 
 	bool _build_prioritized;
 	bool _build_phase_done;
-	Thread *_build_thread;
 	bool _build_step_in_progress;
 
 	PoolVector<Vector3> temp_arr_collider;
