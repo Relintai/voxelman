@@ -1658,16 +1658,16 @@ void VoxelChunkDefault::_build_phase(int phase) {
 					}
 				}
 
-				if (_job->should_do()) {
-					VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+				//	if (_job->should_do()) {
+				VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-					if (_library->get_liquid_material(0).is_valid())
-						VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_liquid_material(0)->get_rid());
+				if (_library->get_liquid_material(0).is_valid())
+					VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_liquid_material(0)->get_rid());
 
-					if (_job->should_return()) {
-						return;
-					}
-				}
+				//	if (_job->should_return()) {
+				//		return;
+				//	}
+				//}
 			}
 
 			if (_job->has_meta("bptm_ulm")) {
@@ -1699,70 +1699,117 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			if (get_mesh_data_resource_count() == 0) {
-				next_phase();
-				return;
+			if (_job->should_do()) {
+				if (get_mesh_data_resource_count() == 0) {
+					next_phase();
+					return;
+				}
+
+				for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
+					get_prop_mesher()->add_mesh_data_resource_transform(get_mesh_data_resource(i), get_mesh_data_resource_transform(i), get_mesh_data_resource_uv_rect(i));
+				}
+
+				if (get_prop_mesher()->get_vertex_count() == 0) {
+					_job->reset_stages();
+
+					next_phase();
+					return;
+				}
+
+				if (_job->should_return()) {
+					return;
+				}
 			}
 
-			for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
-				get_prop_mesher()->add_mesh_data_resource_transform(get_mesh_data_resource(i), get_mesh_data_resource_transform(i), get_mesh_data_resource_uv_rect(i));
-			}
+			if (_job->should_do()) {
+				if ((_build_flags & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
+					get_prop_mesher()->bake_colors(this);
+				}
 
-			if (get_prop_mesher()->get_vertex_count() == 0) {
-				next_phase();
-				return;
-			}
-
-			if ((_build_flags & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
-				get_prop_mesher()->bake_colors(this);
+				if (_job->should_return()) {
+					return;
+				}
 			}
 
 			if (get_prop_mesher()->get_vertex_count() != 0) {
-				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 0);
+				if (_job->should_do()) {
+					temp_mesh_arr = get_prop_mesher()->build_mesh();
 
-				temp_mesh_arr = get_prop_mesher()->build_mesh();
-
-				if (mesh_rid == RID()) {
-					if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0)
-						create_meshes(MESH_INDEX_PROP, _lod_num + 1);
-					else
-						create_meshes(MESH_INDEX_PROP, 1);
-
-					mesh_rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 0);
+					if (_job->should_return()) {
+						return;
+					}
 				}
 
-				if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
+				RID mesh_rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 0);
+
+				if (_job->should_do()) {
+					if (mesh_rid == RID()) {
+						if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0)
+							create_meshes(MESH_INDEX_PROP, _lod_num + 1);
+						else
+							create_meshes(MESH_INDEX_PROP, 1);
+
+						mesh_rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 0);
+					}
+
+					if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
 #if !GODOT4
-					VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
+						VS::get_singleton()->mesh_remove_surface(mesh_rid, 0);
 #else
-					VS::get_singleton()->mesh_clear(mesh_rid);
+						VS::get_singleton()->mesh_clear(mesh_rid);
 #endif
 
-				VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+					if (_job->should_return()) {
+						return;
+					}
+				}
 
-				if (_library->get_prop_material(0).is_valid())
-					VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_prop_material(0)->get_rid());
+				if (_job->should_do()) {
+
+					VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+					if (_library->get_prop_material(0).is_valid())
+						VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, _library->get_prop_material(0)->get_rid());
+
+					if (_job->should_return()) {
+						return;
+					}
+				}
 
 				if ((_build_flags & BUILD_FLAG_CREATE_LODS) != 0) {
-					if (_lod_num >= 1) {
-						//for lod 1 just remove uv2
-						temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
+					if (_job->should_do()) {
 
-						VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+						if (_lod_num >= 1) {
+							//for lod 1 just remove uv2
+							temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
 
-						if (get_library()->get_prop_material(1).is_valid())
-							VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 1), 0, get_library()->get_prop_material(1)->get_rid());
+							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+
+							if (get_library()->get_prop_material(1).is_valid())
+								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 1), 0, get_library()->get_prop_material(1)->get_rid());
+						}
+
+						if (_job->should_return()) {
+							return;
+						}
 					}
 
-					if (_lod_num >= 2) {
-						Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
+					if (_job->should_do()) {
+						if (_lod_num >= 2) {
+							Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
+							temp_mesh_arr = temp_mesh_arr2;
 
-						VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
+							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
 
-						if (get_library()->get_prop_material(2).is_valid())
-							VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 2), 0, get_library()->get_prop_material(2)->get_rid());
+							if (get_library()->get_prop_material(2).is_valid())
+								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, 2), 0, get_library()->get_prop_material(2)->get_rid());
+						}
+						if (_job->should_return()) {
+							return;
+						}
 					}
 
+					//	if (_job->should_do()) {
 					if (_lod_num >= 3) {
 						Ref<ShaderMaterial> mat = get_library()->get_prop_material(0);
 						Ref<SpatialMaterial> spmat = get_library()->get_prop_material(0);
@@ -1785,25 +1832,35 @@ void VoxelChunkDefault::_build_phase(int phase) {
 						}
 					}
 
+					//	if (_job->should_return()) {
+					//		return;
+					//	}
+					//	}
+
 					/*
-					if (_lod_num > 4) {
-						Ref<FastQuadraticMeshSimplifier> fqms;
-						fqms.instance();
-						fqms->initialize(temp_mesh_arr);
+					if (_job->should_do()) {
+						if (_lod_num > 4) {
+							Ref<FastQuadraticMeshSimplifier> fqms;
+							fqms.instance();
+							fqms->initialize(temp_mesh_arr);
 
-						Array arr_merged_simplified;
+							Array arr_merged_simplified;
 
-						for (int i = 4; i < _lod_num; ++i) {
-							fqms->simplify_mesh(arr_merged_simplified[0].size() * 0.8, 7);
-							arr_merged_simplified = fqms->get_arrays();
+							for (int i = 4; i < _lod_num; ++i) {
+								fqms->simplify_mesh(arr_merged_simplified[0].size() * 0.8, 7);
+								arr_merged_simplified = fqms->get_arrays();
 
-							if (arr_merged_simplified[0].size() == 0)
-								break;
+								if (arr_merged_simplified[0].size() == 0)
+									break;
 
-							VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, i), VisualServer::PRIMITIVE_TRIANGLES, arr_merged_simplified);
+								VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, i), VisualServer::PRIMITIVE_TRIANGLES, arr_merged_simplified);
 
-							if (get_library()->get_material(i).is_valid())
-								VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, i), 0, get_library()->get_material(i)->get_rid());
+								if (get_library()->get_material(i).is_valid())
+									VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH, i), 0, get_library()->get_material(i)->get_rid());
+							}
+						}
+						if (_job->should_return()) {
+							return;
 						}
 					}
 					*/
