@@ -43,6 +43,17 @@ void VoxelJob::chunk_exit_tree() {
 
 void VoxelJob::_execute() {
 	ERR_FAIL_COND(!_chunk.is_valid());
+
+	if (!_chunk->has_next_phase()) {
+		//_chunk->set_build_step_in_progress(false);
+
+		//if (!_in_tree) {
+		//	_chunk.unref();
+		//}
+
+		set_complete(true);
+	}
+
 	ERR_FAIL_COND(!_chunk->has_next_phase());
 	//ERR_FAIL_COND(_build_step_in_progress);
 
@@ -50,13 +61,13 @@ void VoxelJob::_execute() {
 
 	while (!get_cancelled() && _in_tree && _chunk->has_next_phase() && _chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL) {
 
-		int phase = _chunk->get_current_build_phase();
+		//int phase = _chunk->get_current_build_phase();
 
 		_chunk->build_phase();
 
-		print_error(String::num(get_current_execution_time()) + " phase: " + String::num(phase));
+		//print_error(String::num(get_current_execution_time()) + " phase: " + String::num(phase));
 
-		if (should_return())
+		if (_chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL && should_return())
 			return;
 
 		if (!_chunk->get_build_phase_done())
@@ -73,7 +84,6 @@ void VoxelJob::_execute() {
 }
 
 VoxelJob::VoxelJob() {
-	_build_step_in_progress = false;
 	_in_tree = false;
 
 #if !THREAD_POOL_PRESENT

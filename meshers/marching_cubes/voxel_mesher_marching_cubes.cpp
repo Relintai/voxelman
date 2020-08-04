@@ -27,6 +27,8 @@ SOFTWARE.
 #include "core/array.h"
 #include "core/dictionary.h"
 
+#include "../../world/default/voxel_job.h"
+
 #include "core/version.h"
 
 #if VERSION_MAJOR < 4
@@ -187,7 +189,18 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	chunk->generate_ao();
+	Ref<VoxelJob> job = chunk->get_job();
+
+	if (!job->has_meta("ao_done")) {
+		job->set_meta("ao_done", true);
+		chunk->generate_ao();
+	}
+
+	job->remove_meta("ao_done");
+
+	if (job->should_return()) {
+		return;
+	}
 
 	int type_arr[8];
 
@@ -197,7 +210,18 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	int lod_size = get_lod_size();
 
-	for (int y = 0; y < y_size; y += lod_size) {
+	int start_y = 0;
+
+	if (job->has_meta("mc_start_y")) {
+		start_y = job->get_meta("mc_start_y");
+	}
+
+	for (int y = start_y; y < y_size; y += lod_size) {
+		if (job->should_return()) {
+			job->set_meta("mc_start_y", y);
+			return;
+		}
+
 		for (int z = 0; z < z_size; z += lod_size) {
 			for (int x = 0; x < x_size; x += lod_size) {
 
@@ -437,7 +461,21 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 		}
 	}
 
+	job->set_meta("mc_start_y", y_size);
+
+	if (job->should_return()) {
+		return;
+	}
+
 	remove_doubles_hashed();
+
+	if (job->has_meta("mc_start_y")) {
+		job->remove_meta("mc_start_y");
+	}
+
+	if (job->has_meta("ao_done")) {
+		job->remove_meta("ao_done");
+	}
 }
 
 Vector3 VoxelMesherMarchingCubes::corner_id_to_vertex(int corner_id) const {

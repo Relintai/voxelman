@@ -49,8 +49,6 @@ public:
 	VoxelJob();
 	~VoxelJob();
 
-	bool _build_step_in_progress;
-
 protected:
 	static void _bind_methods();
 

@@ -188,6 +188,8 @@ void VoxelChunkDefault::build_step() {
 
 	_build_step_in_progress = true;
 
+	_job->set_complete(false);
+
 #if THREAD_POOL_PRESENT
 	ThreadPool::get_singleton()->add_job(_job);
 #else
@@ -1176,7 +1178,18 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			return;
 		}
 		case BUILD_PHASE_TERRARIN_MESH_SETUP: {
-			for (int i = 0; i < _meshers.size(); ++i) {
+			int starti = 0;
+
+			if (_job->has_meta("tms_m")) {
+				starti = _job->get_meta("tms_m");
+			}
+
+			for (int i = starti; i < _meshers.size(); ++i) {
+				if (_job->should_return()) {
+					_job->set_meta("tms_m", i);
+					return;
+				}
+
 				Ref<VoxelMesher> mesher = _meshers.get(i);
 
 				ERR_CONTINUE(!mesher.is_valid());
@@ -1184,7 +1197,18 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				mesher->add_chunk(this);
 			}
 
-			for (int i = 0; i < _liquid_meshers.size(); ++i) {
+			starti = 0;
+
+			if (_job->has_meta("tms_lm")) {
+				starti = _job->get_meta("tms_lm");
+			}
+
+			for (int i = starti; i < _liquid_meshers.size(); ++i) {
+				if (_job->should_return()) {
+					_job->set_meta("tms_lm", i);
+					return;
+				}
+
 				Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
 
 				ERR_CONTINUE(!mesher.is_valid());
@@ -1193,6 +1217,14 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			}
 
 			next_phase();
+
+			if (_job->has_meta("tms_m")) {
+				_job->remove_meta("tms_m");
+			}
+
+			if (_job->has_meta("tms_lm")) {
+				_job->remove_meta("tms_lm");
+			}
 
 			return;
 		}
@@ -1611,6 +1643,8 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			return;
 		}
 	}
+
+	next_phase();
 }
 
 void VoxelChunkDefault::_build_phase_process(int phase) {
