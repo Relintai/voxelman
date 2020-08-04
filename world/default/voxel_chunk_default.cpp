@@ -1234,7 +1234,18 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				return;
 			}
 
-			for (int i = 0; i < _meshers.size(); ++i) {
+			int starti = 0;
+
+			if (_job->has_meta("bpc_aa")) {
+				starti = _job->get_meta("bpc_aa");
+			}
+
+			for (int i = starti; i < _meshers.size(); ++i) {
+				if (_job->should_return()) {
+					_job->set_meta("bpc_aa", i);
+					return;
+				}
+
 				Ref<VoxelMesher> mesher = _meshers.get(i);
 
 				ERR_CONTINUE(!mesher.is_valid());
@@ -1254,7 +1265,19 @@ void VoxelChunkDefault::_build_phase(int phase) {
 */
 
 			if (Engine::get_singleton()->is_editor_hint()) {
+
+				starti = 0;
+
+				if (_job->has_meta("bpc_laa")) {
+					starti = _job->get_meta("bpc_laa");
+				}
+
 				for (int i = 0; i < _liquid_meshers.size(); ++i) {
+					if (_job->should_return()) {
+						_job->set_meta("bpc_laa", i);
+						return;
+					}
+
 					Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
 
 					ERR_CONTINUE(!mesher.is_valid());
@@ -1272,6 +1295,14 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				}
 #endif
 */
+			}
+
+			if (_job->has_meta("bpc_aa")) {
+				_job->remove_meta("bpc_aa");
+			}
+
+			if (_job->has_meta("bpc_laa")) {
+				_job->remove_meta("bpc_laa");
 			}
 
 			if (temp_arr_collider.size() == 0 && temp_arr_collider_liquid.size() == 0
@@ -1296,14 +1327,28 @@ void VoxelChunkDefault::_build_phase(int phase) {
 
 			bool bl = (_build_flags & BUILD_FLAG_BAKE_LIGHTS) != 0;
 
-			if (bl)
+			if (bl && _job->should_do()) {
 				clear_baked_lights();
 
-			if (gr)
+				if (_job->should_return())
+					return;
+			}
+
+			if (gr && _job->should_do()) {
 				generate_random_ao(_voxel_world->get_current_seed());
 
-			if (bl)
+				if (_job->should_return())
+					return;
+			}
+
+			if (bl && _job->should_do()) {
 				bake_lights();
+
+				if (_job->should_return())
+					return;
+			}
+
+			_job->reset_stages();
 
 			next_phase();
 
