@@ -23,12 +23,21 @@ SOFTWARE.
 #ifndef VOXEL_JOB_H
 #define VOXEL_JOB_H
 
+#if THREAD_POOL_PRESENT
 #include "../../../thread_pool/thread_pool_job.h"
+#else
+#include "core/resource.h"
+#endif
 
 class VoxelChunkDefault;
 
+#if THREAD_POOL_PRESENT
 class VoxelJob : public ThreadPoolJob {
 	GDCLASS(VoxelJob, ThreadPoolJob);
+#else
+class VoxelJob : public Resource {
+	GDCLASS(VoxelJob, Resource);
+#endif
 
 public:
 	void set_chunk(const Ref<VoxelChunkDefault> &chunk);
@@ -49,6 +58,48 @@ private:
 	bool _in_tree;
 
 	Ref<VoxelChunkDefault> _chunk;
+
+public:
+#if !THREAD_POOL_PRESENT
+	bool get_complete() const;
+	void set_complete(const bool value);
+
+	bool get_cancelled() const;
+	void set_cancelled(const bool value);
+
+	bool get_limit_execution_time() const;
+	void set_limit_execution_time(const bool value);
+
+	float get_max_allocated_time() const;
+	void set_max_allocated_time(const float value);
+
+	int get_start_time() const;
+	void set_start_time(const int value);
+
+	int get_current_run_stage() const;
+	void set_current_run_stage(const int value);
+
+	int get_stage() const;
+	void set_stage(const int value);
+
+	float get_current_execution_time();
+
+	bool should_do(const bool just_check = false);
+	bool should_return();
+
+	void execute();
+
+private:
+	bool _complete;
+	bool _cancelled;
+
+	bool _limit_execution_time;
+	float _max_allocated_time;
+	uint64_t _start_time;
+
+	int _current_run_stage;
+	int _stage;
+#endif
 };
 
 #endif

@@ -188,7 +188,11 @@ void VoxelChunkDefault::build_step() {
 
 	_build_step_in_progress = true;
 
+#if THREAD_POOL_PRESENT
 	ThreadPool::get_singleton()->add_job(_job);
+#else
+	_job->execute();
+#endif
 }
 
 void VoxelChunkDefault::build_phase() {
