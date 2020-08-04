@@ -67,9 +67,6 @@ public:
 	bool get_cancelled() const;
 	void set_cancelled(const bool value);
 
-	bool get_limit_execution_time() const;
-	void set_limit_execution_time(const bool value);
-
 	float get_max_allocated_time() const;
 	void set_max_allocated_time(const float value);
 
@@ -93,7 +90,6 @@ private:
 	bool _complete;
 	bool _cancelled;
 
-	bool _limit_execution_time;
 	float _max_allocated_time;
 	uint64_t _start_time;
 
