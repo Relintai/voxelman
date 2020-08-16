@@ -60,6 +60,70 @@ void VoxelWorldDefault::set_chunk_lod_falloff(const int value) {
 	_chunk_lod_falloff = value;
 }
 
+PoolColorArray VoxelWorldDefault::get_vertex_colors(const Transform &transform, const PoolVector3Array &vertices, const float base_light_value, const float ao_strength) {
+	PoolColorArray arr;
+	arr.resize(vertices.size());
+
+	for (int i = 0; i < vertices.size(); ++i) {
+		Vector3 v = transform.xform(vertices[i]);
+
+		Vector3 pos = v / get_voxel_scale();
+
+		//Note: floor is needed to handle negative numbers proiberly
+		int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x()));
+		int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y()));
+		int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z()));
+
+		int bx = static_cast<int>(Math::floor(pos.x)) % get_chunk_size_x();
+		int by = static_cast<int>(Math::floor(pos.y)) % get_chunk_size_y();
+		int bz = static_cast<int>(Math::floor(pos.z)) % get_chunk_size_z();
+
+		if (bx < 0) {
+			bx += get_chunk_size_x();
+		}
+
+		if (by < 0) {
+			by += get_chunk_size_y();
+		}
+
+		if (bz < 0) {
+			bz += get_chunk_size_z();
+		}
+
+		Ref<VoxelChunk> chunk = get_chunk(x, y, z);
+
+		if (chunk.is_valid()) {
+			Color light = Color(
+					chunk->get_voxel(bx, by, bz, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R) / 255.0,
+					chunk->get_voxel(bx, by, bz, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G) / 255.0,
+					chunk->get_voxel(bx, by, bz, VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B) / 255.0);
+
+			float ao = (chunk->get_voxel(bx, by, bz, VoxelChunkDefault::DEFAULT_CHANNEL_AO) / 255.0) * ao_strength;
+			float rao = chunk->get_voxel(bx, by, bz, VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO) / 255.0;
+
+			ao += rao;
+
+			light.r += base_light_value;
+			light.g += base_light_value;
+			light.b += base_light_value;
+
+			light.r -= ao;
+			light.g -= ao;
+			light.b -= ao;
+
+			light.r = CLAMP(light.r, 0, 1.0);
+			light.g = CLAMP(light.g, 0, 1.0);
+			light.b = CLAMP(light.b, 0, 1.0);
+
+			arr.set(i, light);
+		} else {
+			arr.set(i, Color(base_light_value, base_light_value, base_light_value));
+		}
+	}
+
+	return arr;
+}
+
 void VoxelWorldDefault::_update_lods() {
 	if (!get_player() || !INSTANCE_VALIDATE(get_player())) {
 		return;
@@ -188,4 +252,6 @@ void VoxelWorldDefault::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_update_lods"));
 	ClassDB::bind_method(D_METHOD("update_lods"), &VoxelWorldDefault::update_lods);
 	ClassDB::bind_method(D_METHOD("_update_lods"), &VoxelWorldDefault::_update_lods);
+
+	ClassDB::bind_method(D_METHOD("get_vertex_colors", "transform", "vertices", "base_light_value", "ao_strength"), &VoxelWorldDefault::get_vertex_colors, DEFVAL(0.45), DEFVAL(0.2));
 }

@@ -105,6 +105,17 @@ void VoxelChunk::set_position_z(const int value) {
 _FORCE_INLINE_ Vector3 VoxelChunk::get_position() const {
 	return Vector3(_position_x, _position_y, _position_z);
 }
+_FORCE_INLINE_ Vector3 VoxelChunk::get_world_position() const {
+	return Vector3(_position_x * _size_x * _voxel_scale, _position_y * _size_y * _voxel_scale, _position_z * _size_z * _voxel_scale);
+}
+
+_FORCE_INLINE_ Vector3 VoxelChunk::get_world_size() const {
+	return Vector3(_size_x * _voxel_scale, _size_y * _voxel_scale, _size_z * _voxel_scale);
+}
+
+_FORCE_INLINE_ AABB VoxelChunk::get_world_aabb() const {
+	return AABB(get_world_position(), get_world_size());
+}
 
 _FORCE_INLINE_ int VoxelChunk::get_size_x() const {
 	return _size_x;
@@ -726,6 +737,10 @@ int VoxelChunk::add_mesh_data_resourcev(const Vector3 &local_data_pos, const Ref
 	e.texture = texture;
 	e.color = color;
 
+	AABB aabb = AABB(Vector3(), get_world_size());
+	AABB mesh_aabb = e.transform.xform(mesh->get_aabb());
+	e.is_inside = aabb.encloses(mesh_aabb);
+
 	if (get_library().is_valid() && texture.is_valid()) {
 		e.uv_rect = get_library()->get_prop_uv_rect(texture);
 	} else {
@@ -757,6 +772,10 @@ int VoxelChunk::add_mesh_data_resource(const Transform &local_transform, const R
 	e.mesh = mesh;
 	e.texture = texture;
 	e.color = color;
+
+	AABB aabb = AABB(Vector3(), get_world_size());
+	AABB mesh_aabb = e.transform.xform(mesh->get_aabb());
+	e.is_inside = aabb.encloses(mesh_aabb);
 
 	if (get_library().is_valid() && texture.is_valid())
 		e.uv_rect = get_library()->get_prop_uv_rect(texture);
@@ -823,6 +842,17 @@ void VoxelChunk::set_mesh_data_resource_transform(const int index, const Transfo
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 
 	_mesh_data_resources.write[index].transform = transform;
+}
+
+bool VoxelChunk::get_mesh_data_resource_is_inside(const int index) {
+	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), true);
+
+	return _mesh_data_resources[index].is_inside;
+}
+void VoxelChunk::set_mesh_data_resource_is_inside(const int index, const bool &inside) {
+	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
+
+	_mesh_data_resources.write[index].is_inside = inside;
 }
 
 int VoxelChunk::get_mesh_data_resource_count() const {
@@ -1191,6 +1221,10 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_position"), &VoxelChunk::get_position);
 	ClassDB::bind_method(D_METHOD("set_position", "x", "y", "z"), &VoxelChunk::set_position);
 
+	ClassDB::bind_method(D_METHOD("get_world_position"), &VoxelChunk::get_world_position);
+	ClassDB::bind_method(D_METHOD("get_world_size"), &VoxelChunk::get_world_size);
+	ClassDB::bind_method(D_METHOD("get_world_aabb"), &VoxelChunk::get_world_aabb);
+
 	ClassDB::bind_method(D_METHOD("get_margin_start"), &VoxelChunk::get_margin_start);
 	ClassDB::bind_method(D_METHOD("set_margin_start"), &VoxelChunk::set_margin_start);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "margin_start"), "set_margin_start", "get_margin_start");
@@ -1284,6 +1318,9 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_transform", "index"), &VoxelChunk::get_mesh_data_resource_transform);
 	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_transform", "index", "transform"), &VoxelChunk::set_mesh_data_resource_transform);
+
+	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_is_inside", "index"), &VoxelChunk::get_mesh_data_resource_is_inside);
+	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_is_inside", "index", "inside"), &VoxelChunk::set_mesh_data_resource_is_inside);
 
 	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_count"), &VoxelChunk::get_mesh_data_resource_count);
 	ClassDB::bind_method(D_METHOD("remove_mesh_data_resource", "index"), &VoxelChunk::remove_mesh_data_resource);

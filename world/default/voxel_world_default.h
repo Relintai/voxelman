@@ -40,6 +40,8 @@ public:
 
 	void update_lods();
 
+	PoolColorArray get_vertex_colors(const Transform &transform, const PoolVector3Array &vertices, const float base_light_value = 0.45, const float ao_strength = 0.2);
+
 	VoxelWorldDefault();
 	~VoxelWorldDefault();
 

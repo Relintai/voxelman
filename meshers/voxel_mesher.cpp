@@ -481,6 +481,49 @@ void VoxelMesher::add_mesh_data_resource_transform(Ref<MeshDataResource> mesh, c
 		_indices.set(orig_indices_count + i, orig_vert_size + indices[i]);
 	}
 }
+
+void VoxelMesher::add_mesh_data_resource_transform_colored(Ref<MeshDataResource> mesh, const Transform transform, const PoolColorArray &colors, const Rect2 uv_rect) {
+	if (mesh->get_array().size() == 0)
+		return;
+
+	const Array &arr = mesh->get_array();
+
+	PoolVector3Array vertices = arr[Mesh::ARRAY_VERTEX];
+	PoolVector3Array normals = arr[Mesh::ARRAY_NORMAL];
+	PoolVector2Array uvs = arr[Mesh::ARRAY_TEX_UV];
+	PoolIntArray indices = arr[Mesh::ARRAY_INDEX];
+
+	if (vertices.size() == 0)
+		return;
+
+	int orig_vert_size = _vertices.size();
+
+	for (int i = 0; i < vertices.size(); ++i) {
+		if (normals.size() > 0)
+			add_normal(transform.basis.xform(normals[i]));
+
+		if (normals.size() > 0) {
+			Vector2 uv = uvs[i];
+
+			uv.x = uv_rect.size.width * uv.x + uv_rect.position.x;
+			uv.y = uv_rect.size.height * uv.y + uv_rect.position.y;
+
+			add_uv(uv);
+		}
+
+		if (colors.size() > 0)
+			add_color(colors[i]);
+
+		add_vertex(transform.xform(vertices[i]));
+	}
+
+	int orig_indices_count = _indices.size();
+	_indices.resize(_indices.size() + indices.size());
+
+	for (int i = 0; i < indices.size(); ++i) {
+		_indices.set(orig_indices_count + i, orig_vert_size + indices[i]);
+	}
+}
 #endif
 
 void VoxelMesher::add_mesher(const Ref<VoxelMesher> &mesher) {
@@ -911,6 +954,7 @@ void VoxelMesher::_bind_methods() {
 #ifdef MESH_DATA_RESOURCE_PRESENT
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "mesh", "position", "rotation", "scale", "uv_rect"), &VoxelMesher::add_mesh_data_resource, DEFVAL(Rect2(0, 0, 1, 1)), DEFVAL(Vector3(1.0, 1.0, 1.0)), DEFVAL(Vector3()), DEFVAL(Vector3()));
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform", "mesh", "transform", "uv_rect"), &VoxelMesher::add_mesh_data_resource_transform, DEFVAL(Rect2(0, 0, 1, 1)));
+	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform_colored", "mesh", "transform", "colors", "uv_rect"), &VoxelMesher::add_mesh_data_resource_transform_colored, DEFVAL(Rect2(0, 0, 1, 1)));
 #endif
 
 	BIND_VMETHOD(MethodInfo("_add_mesher", PropertyInfo(Variant::OBJECT, "mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher")));

@@ -116,6 +116,11 @@ public:
 
 	Vector3 get_position() const;
 	Vector3 get_size() const;
+
+	Vector3 get_world_position() const;
+	Vector3 get_world_size() const;
+	AABB get_world_aabb() const;
+
 	void set_position(const int x, const int y, const int z);
 
 	int get_margin_start() const;
@@ -222,6 +227,9 @@ public:
 	Transform get_mesh_data_resource_transform(const int index);
 	void set_mesh_data_resource_transform(const int index, const Transform &transform);
 
+	bool get_mesh_data_resource_is_inside(const int index);
+	void set_mesh_data_resource_is_inside(const int index, const bool &inside);
+
 	int get_mesh_data_resource_count() const;
 	void remove_mesh_data_resource(const int index);
 	void clear_mesh_data_resources();
@@ -281,6 +289,7 @@ protected:
 		Color color;
 		Rect2 uv_rect;
 		Transform transform;
+		bool is_inside;
 	};
 #endif
 

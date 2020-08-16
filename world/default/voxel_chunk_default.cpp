@@ -34,6 +34,8 @@ SOFTWARE.
 #include "../../../thread_pool/thread_pool.h"
 #include "voxel_job.h"
 
+#include "voxel_world_default.h"
+
 const String VoxelChunkDefault::BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE = "Normal,Process,Physics Process";
 const String VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS = "Use Isolevel,Use Lighting,Use AO,Use RAO,Generate AO,Generate RAO,Bake Lights,Create Collider,Create Lods";
 
@@ -1706,7 +1708,9 @@ void VoxelChunkDefault::_build_phase(int phase) {
 				}
 
 				for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
-					get_prop_mesher()->add_mesh_data_resource_transform(get_mesh_data_resource(i), get_mesh_data_resource_transform(i), get_mesh_data_resource_uv_rect(i));
+					if (get_mesh_data_resource_is_inside(i)) {
+						get_prop_mesher()->add_mesh_data_resource_transform(get_mesh_data_resource(i), get_mesh_data_resource_transform(i), get_mesh_data_resource_uv_rect(i));
+					}
 				}
 
 				if (get_prop_mesher()->get_vertex_count() == 0) {
@@ -1724,6 +1728,44 @@ void VoxelChunkDefault::_build_phase(int phase) {
 			if (_job->should_do()) {
 				if ((_build_flags & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
 					get_prop_mesher()->bake_colors(this);
+				}
+
+				if (_job->should_return()) {
+					return;
+				}
+			}
+
+			if (_job->should_do()) {
+				if ((_build_flags & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
+					VoxelWorldDefault *world = Object::cast_to<VoxelWorldDefault>(get_voxel_world());
+
+					if (world) {
+						for (int i = 0; i < get_mesh_data_resource_count(); ++i) {
+							if (!get_mesh_data_resource_is_inside(i)) {
+								Ref<MeshDataResource> mdr = get_mesh_data_resource(i);
+
+								ERR_CONTINUE(!mdr.is_valid());
+
+								Transform trf = get_mesh_data_resource_transform(i);
+
+								Array arr = mdr->get_array();
+
+								if (arr.size() <= Mesh::ARRAY_VERTEX) {
+									continue;
+								}
+
+								PoolVector3Array varr = arr[Mesh::ARRAY_VERTEX];
+
+								if (varr.size() == 0) {
+									continue;
+								}
+
+								PoolColorArray carr = world->get_vertex_colors(trf, varr);
+
+								get_prop_mesher()->add_mesh_data_resource_transform_colored(mdr, trf, carr, get_mesh_data_resource_uv_rect(i));
+							}
+						}
+					}
 				}
 
 				if (_job->should_return()) {
