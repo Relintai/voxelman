@@ -147,6 +147,8 @@ public:
 	Vector3 get_bottom_left_point(int face);
 	Vector3 get_bottom_right_point(int face);
 
+	uint8_t get_face_type(int face);
+
 	bool has_points();
 	int get_opposite_face(int face);
 

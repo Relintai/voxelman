@@ -33,8 +33,6 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	chunk->generate_ao();
-
 	int x_size = chunk->get_size_x();
 	int y_size = chunk->get_size_y();
 	int z_size = chunk->get_size_z();
@@ -59,6 +57,13 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 				for (int face = 0; face < VoxelCubePoints::VOXEL_FACE_COUNT; ++face) {
 					if (!cube_points->is_face_visible(face))
+						continue;
+
+					uint8_t type = cube_points->get_face_type(face);
+
+					Ref<VoxelSurface> surface = _library->get_voxel_surface(type);
+
+					if (!surface.is_valid())
 						continue;
 
 					add_indices(get_vertex_count() + 2);
@@ -102,8 +107,23 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 						add_color(light);
 
-						add_uv((cube_points->get_point_uv_direction(face, i) + Vector2(0.5, 0.5)) * Vector2(tile_uv_size, tile_uv_size));
-						add_uv2((cube_points->get_point_uv_direction(face, i) + Vector2(0.5, 0.5)) * Vector2(tile_uv_size, tile_uv_size));
+						Vector2 uv = (cube_points->get_point_uv_direction(face, i) + Vector2(0.5, 0.5)) * Vector2(tile_uv_size, tile_uv_size);
+
+						VoxelSurface::VoxelSurfaceSides side = VoxelSurface::VOXEL_SIDE_SIDE;
+
+						switch (face) {
+							case VoxelCubePoints::VOXEL_FACE_TOP:
+								side = VoxelSurface::VOXEL_SIDE_TOP;
+								break;
+							case VoxelCubePoints::VOXEL_FACE_BOTTOM:
+								side = VoxelSurface::VOXEL_SIDE_BOTTOM;
+								break;
+						}
+
+						uv = surface->transform_uv(side, uv);
+
+						add_uv(uv);
+						add_uv2(uv);
 
 						add_vertex((vertices[i] * voxel_size + Vector3(x, y, z)) * voxel_scale);
 					}

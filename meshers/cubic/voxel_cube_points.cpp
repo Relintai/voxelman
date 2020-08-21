@@ -728,6 +728,28 @@ Vector3 VoxelCubePoints::get_bottom_right_point(int face) {
 	return _points[P000];
 }
 
+uint8_t VoxelCubePoints::get_face_type(int face) {
+	if (face == VOXEL_FACE_BACK) {
+		return _point_types[P111];
+	}
+	if (face == VOXEL_FACE_FRONT) {
+		return _point_types[P110];
+	}
+	if (face == VOXEL_FACE_RIGHT) {
+		return _point_types[P110];
+	}
+	if (face == VOXEL_FACE_LEFT) {
+		return _point_types[P011];
+	}
+	if (face == VOXEL_FACE_TOP) {
+		return _point_types[P110];
+	}
+	if (face == VOXEL_FACE_BOTTOM) {
+		return _point_types[P100];
+	}
+	return _point_types[0];
+}
+
 bool VoxelCubePoints::has_points() {
 	return (_point_types[P000] != 0 && _point_types[P100] != 0 && _point_types[P010] != 0 && _point_types[P001] != 0 &&
 			_point_types[P110] != 0 && _point_types[P011] != 0 && _point_types[P101] != 0 && _point_types[P111] != 0);
@@ -813,6 +835,8 @@ void VoxelCubePoints::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_top_right_point", "face"), &VoxelCubePoints::get_top_right_point);
 	ClassDB::bind_method(D_METHOD("get_bottom_left_point", "face"), &VoxelCubePoints::get_bottom_left_point);
 	ClassDB::bind_method(D_METHOD("get_bottom_right_point", "face"), &VoxelCubePoints::get_bottom_right_point);
+
+	ClassDB::bind_method(D_METHOD("get_face_type", "face"), &VoxelCubePoints::get_face_type);
 
 	ClassDB::bind_method(D_METHOD("has_points"), &VoxelCubePoints::has_points);
 	ClassDB::bind_method(D_METHOD("get_opposite_face", "face"), &VoxelCubePoints::get_opposite_face);
