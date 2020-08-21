@@ -28,6 +28,13 @@ SOFTWARE.
 
 #include visual_server_h
 
+int VoxelMesherCubic::get_texture_scale() const {
+	return _texture_scale;
+}
+void VoxelMesherCubic::set_texture_scale(const int value) {
+	_texture_scale = value;
+}
+
 void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	Ref<VoxelChunkDefault> chunk = p_chunk;
 
@@ -120,7 +127,7 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 								break;
 						}
 
-						uv = surface->transform_uv(side, uv);
+						uv = surface->transform_uv_scaled(side, uv, x % get_texture_scale(), z % get_texture_scale(), get_texture_scale());
 
 						add_uv(uv);
 						add_uv2(uv);
@@ -135,11 +142,17 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 VoxelMesherCubic::VoxelMesherCubic() {
 	_format = VisualServer::ARRAY_FORMAT_NORMAL | VisualServer::ARRAY_FORMAT_COLOR | VisualServer::ARRAY_FORMAT_TEX_UV;
+
+	_texture_scale = 1;
 }
 
 VoxelMesherCubic::~VoxelMesherCubic() {
 }
 
 void VoxelMesherCubic::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_texture_scale"), &VoxelMesherCubic::get_texture_scale);
+	ClassDB::bind_method(D_METHOD("set_texture_scale", "value"), &VoxelMesherCubic::set_texture_scale);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "texture_scale"), "set_texture_scale", "get_texture_scale");
+
 	ClassDB::bind_method(D_METHOD("_add_chunk", "buffer"), &VoxelMesherCubic::_add_chunk);
 }

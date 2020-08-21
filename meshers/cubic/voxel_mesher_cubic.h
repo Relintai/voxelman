@@ -35,6 +35,9 @@ class VoxelMesherCubic : public VoxelMesherDefault {
 	GDCLASS(VoxelMesherCubic, VoxelMesherDefault);
 
 public:
+	int get_texture_scale() const;
+	void set_texture_scale(const int value);
+
 	void _add_chunk(Ref<VoxelChunk> p_chunk);
 
 	VoxelMesherCubic();
@@ -42,6 +45,9 @@ public:
 
 protected:
 	static void _bind_methods();
+
+private:
+	int _texture_scale;
 };
 
 #endif
