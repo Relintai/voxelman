@@ -110,6 +110,7 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 						light.r = CLAMP(light.r, 0, 1.0);
 						light.g = CLAMP(light.g, 0, 1.0);
 						light.b = CLAMP(light.b, 0, 1.0);
+						light.a = 1.0;
 
 						add_color(light);
 
