@@ -40,6 +40,14 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
+	if (!chunk->get_channel(_channel_index_type)) {
+		return;
+	}
+
+	if (chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO)) {
+		chunk->generate_ao();
+	}
+
 	int x_size = chunk->get_size_x();
 	int y_size = chunk->get_size_y();
 	int z_size = chunk->get_size_z();
@@ -49,6 +57,8 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	Ref<VoxelCubePoints> cube_points;
 	cube_points.instance();
+	cube_points->set_channel_index_type(_channel_index_type);
+	cube_points->set_channel_index_isolevel(_channel_index_isolevel);
 
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 

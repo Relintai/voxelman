@@ -38,7 +38,12 @@ void VoxelChunkMarchingCubes::_setup_channels() {
 
 void VoxelChunkMarchingCubes::_create_meshers() {
 	set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherMarchingCubes)));
-	add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherMarchingCubes())));
+
+	Ref<VoxelMesher> m = Ref<VoxelMesher>(memnew(VoxelMesherMarchingCubes()));
+	m->set_channel_index_type(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	m->set_channel_index_isolevel(VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL);
+	add_mesher(m);
+
 	//add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidMarchingCubes())));
 
 	for (int i = 0; i < _meshers.size(); ++i) {

@@ -47,7 +47,7 @@ void VoxelMesherMarchingCubes::set_texture_scale(const int value) {
 }
 
 void VoxelMesherMarchingCubes::get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
-	uint8_t *channel_type = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	uint8_t *channel_type = chunk->get_channel(_channel_index_type);
 
 	if (channel_type == NULL) {
 		arr[0] = 0;
@@ -100,7 +100,7 @@ int VoxelMesherMarchingCubes::get_case_code_from_arr(const int *data) {
 	return case_code;
 }
 int VoxelMesherMarchingCubes::get_case_code(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
-	uint8_t *channel_type = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	uint8_t *channel_type = chunk->get_channel(_channel_index_type);
 
 	if (channel_type == NULL) {
 		return 0;
@@ -136,7 +136,7 @@ int VoxelMesherMarchingCubes::get_case_code(Ref<VoxelChunk> chunk, const int x, 
 }
 
 int VoxelMesherMarchingCubes::get_voxel_type(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
-	uint8_t *channel_type = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+	uint8_t *channel_type = chunk->get_channel(_channel_index_type);
 
 	if (channel_type == NULL) {
 		return 0;
@@ -324,7 +324,7 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					Vector3 offs0 = corner_id_to_vertex(fv) * lod_size;
 					Vector3 offs1 = corner_id_to_vertex(sv) * lod_size;
 
-					int type = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+					int type = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), _channel_index_type);
 
 					int fill = 0;
 
@@ -332,12 +332,12 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					Vector3 vert_dir;
 
 					if (type == 0) {
-						fill = chunk->get_voxel(int(x + offs1.x), int(y + offs1.y), int(z + offs1.z), VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL);
+						fill = chunk->get_voxel(int(x + offs1.x), int(y + offs1.y), int(z + offs1.z), _channel_index_isolevel);
 
 						vert_pos = get_regular_vertex_second_position(case_code, i);
 						vert_dir = get_regular_vertex_first_position(case_code, i);
 					} else {
-						fill = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL);
+						fill = chunk->get_voxel(int(x + offs0.x), int(y + offs0.y), int(z + offs0.z), _channel_index_isolevel);
 
 						vert_pos = get_regular_vertex_first_position(case_code, i);
 						vert_dir = get_regular_vertex_second_position(case_code, i);

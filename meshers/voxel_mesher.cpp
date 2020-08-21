@@ -79,6 +79,20 @@ uint32_t VoxelMesher::VertexHasher::hash(const Vertex &p_vtx) {
 	return h;
 }
 
+int VoxelMesher::get_channel_index_type() const {
+	return _channel_index_type;
+}
+void VoxelMesher::set_channel_index_type(const int value) {
+	_channel_index_type = value;
+}
+
+int VoxelMesher::get_channel_index_isolevel() const {
+	return _channel_index_isolevel;
+}
+void VoxelMesher::set_channel_index_isolevel(const int value) {
+	_channel_index_isolevel = value;
+}
+
 int VoxelMesher::get_mesher_index() const {
 	return _mesher_index;
 }
@@ -888,6 +902,8 @@ VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
 	_ao_strength = 0.25;
 	_base_light_value = 0.5;
 	_uv_margin = Rect2(0, 0, 1, 1);
+	_channel_index_type = 0;
+	_channel_index_isolevel = 0;
 
 	_format = 0;
 }
@@ -900,6 +916,8 @@ VoxelMesher::VoxelMesher() {
 	_base_light_value = 0.5;
 	_uv_margin = Rect2(0, 0, 1, 1);
 	_format = 0;
+	_channel_index_type = 0;
+	_channel_index_isolevel = 0;
 }
 
 VoxelMesher::~VoxelMesher() {
@@ -912,6 +930,14 @@ void VoxelMesher::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_add_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_bake_colors", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_bake_liquid_colors", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+
+	ClassDB::bind_method(D_METHOD("get_channel_index_type"), &VoxelMesher::get_channel_index_type);
+	ClassDB::bind_method(D_METHOD("set_channel_index_type", "value"), &VoxelMesher::set_channel_index_type);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_index_type"), "set_channel_index_type", "get_channel_index_type");
+
+	ClassDB::bind_method(D_METHOD("get_channel_index_isolevel"), &VoxelMesher::get_channel_index_isolevel);
+	ClassDB::bind_method(D_METHOD("set_channel_index_isolevel", "value"), &VoxelMesher::set_channel_index_isolevel);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_index_isolevel"), "set_channel_index_isolevel", "get_channel_index_isolevel");
 
 	ClassDB::bind_method(D_METHOD("get_mesher_index"), &VoxelMesher::get_mesher_index);
 	ClassDB::bind_method(D_METHOD("set_mesher_index", "value"), &VoxelMesher::set_mesher_index);

@@ -87,6 +87,12 @@ public:
 	};
 
 public:
+	int get_channel_index_type() const;
+	void set_channel_index_type(const int value);
+
+	int get_channel_index_isolevel() const;
+	void set_channel_index_isolevel(const int value);
+
 	int get_mesher_index() const;
 	void set_mesher_index(const int value);
 
@@ -181,6 +187,9 @@ public:
 
 protected:
 	static void _bind_methods();
+
+	int _channel_index_type;
+	int _channel_index_isolevel;
 
 	int _mesher_index;
 

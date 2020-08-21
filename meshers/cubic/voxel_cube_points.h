@@ -110,6 +110,12 @@ public:
 	int get_size();
 	void set_size(int value);
 
+	int get_channel_index_type() const;
+	void set_channel_index_type(const int value);
+
+	int get_channel_index_isolevel() const;
+	void set_channel_index_isolevel(const int value);
+
 	void refresh_points();
 	void recalculate_point(int point);
 	void refresh_neighbours(Ref<VoxelChunk> chunk);
@@ -166,6 +172,9 @@ protected:
 	static const float uv_direction_table[8][4][2];
 
 private:
+	int _channel_index_type;
+	int _channel_index_isolevel;
+
 	Vector3 _points[POINT_COUNT];
 
 	uint8_t _point_types[POINT_COUNT];
