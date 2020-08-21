@@ -50,7 +50,6 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	Ref<VoxelCubePoints> cube_points;
 	cube_points.instance();
 
-	float tile_uv_size = 1 / 4.0;
 	Color base_light(_base_light_value, _base_light_value, _base_light_value);
 
 	for (int y = 0; y < y_size; ++y) {
@@ -114,7 +113,7 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 						add_color(light);
 
-						Vector2 uv = (cube_points->get_point_uv_direction(face, i) + Vector2(0.5, 0.5)) * Vector2(tile_uv_size, tile_uv_size);
+						Vector2 uv = cube_points->get_point_uv_direction(face, i) + Vector2(0.5, 0.5);
 
 						VoxelSurface::VoxelSurfaceSides side = VoxelSurface::VOXEL_SIDE_SIDE;
 
