@@ -107,6 +107,13 @@ void VoxelMesher::set_format(const int value) {
 	_format = value;
 }
 
+int VoxelMesher::get_texture_scale() const {
+	return _texture_scale;
+}
+void VoxelMesher::set_texture_scale(const int value) {
+	_texture_scale = value;
+}
+
 Ref<VoxelmanLibrary> VoxelMesher::get_library() {
 	return _library;
 }
@@ -906,6 +913,7 @@ VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
 	_channel_index_isolevel = 0;
 
 	_format = 0;
+	_texture_scale = 1;
 }
 
 VoxelMesher::VoxelMesher() {
@@ -918,6 +926,7 @@ VoxelMesher::VoxelMesher() {
 	_format = 0;
 	_channel_index_type = 0;
 	_channel_index_isolevel = 0;
+	_texture_scale = 1;
 }
 
 VoxelMesher::~VoxelMesher() {
@@ -946,6 +955,10 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_format"), &VoxelMesher::get_format);
 	ClassDB::bind_method(D_METHOD("set_format", "value"), &VoxelMesher::set_format);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "format"), "set_format", "get_format");
+
+	ClassDB::bind_method(D_METHOD("get_texture_scale"), &VoxelMesher::get_texture_scale);
+	ClassDB::bind_method(D_METHOD("set_texture_scale", "value"), &VoxelMesher::set_texture_scale);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "texture_scale"), "set_texture_scale", "get_texture_scale");
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);

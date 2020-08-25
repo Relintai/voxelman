@@ -39,13 +39,6 @@ SOFTWARE.
 typedef class RenderingServer VisualServer;
 #endif
 
-int VoxelMesherMarchingCubes::get_texture_scale() const {
-	return _texture_scale;
-}
-void VoxelMesherMarchingCubes::set_texture_scale(const int value) {
-	_texture_scale = value;
-}
-
 void VoxelMesherMarchingCubes::get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
 	uint8_t *channel_type = chunk->get_channel(_channel_index_type);
 
@@ -538,8 +531,6 @@ Vector3 VoxelMesherMarchingCubes::get_regular_vertex_direction(int index1, int i
 VoxelMesherMarchingCubes::VoxelMesherMarchingCubes() {
 	_format = VisualServer::ARRAY_FORMAT_NORMAL | VisualServer::ARRAY_FORMAT_COLOR | VisualServer::ARRAY_FORMAT_TEX_UV | VisualServer::ARRAY_FORMAT_TEX_UV2;
 
-	_texture_scale = 4;
-
 	for (int i = 0; i < 16; ++i) {
 		_regular_cell_datas[i] = Ref<MarchingCubesCellData>(memnew(MarchingCubesCellData(regularCellData[i])));
 	}
@@ -552,9 +543,6 @@ VoxelMesherMarchingCubes::~VoxelMesherMarchingCubes() {
 }
 
 void VoxelMesherMarchingCubes::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_texture_scale"), &VoxelMesherMarchingCubes::get_texture_scale);
-	ClassDB::bind_method(D_METHOD("set_texture_scale", "value"), &VoxelMesherMarchingCubes::set_texture_scale);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "texture_scale"), "set_texture_scale", "get_texture_scale");
 
 	ClassDB::bind_method(D_METHOD("_add_chunk", "chunk"), &VoxelMesherMarchingCubes::_add_chunk);
 

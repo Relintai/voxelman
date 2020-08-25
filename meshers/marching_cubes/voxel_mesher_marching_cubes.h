@@ -65,9 +65,6 @@ public:
 		VOXEL_ENTRY_MASK_111 = 1 << 7,
 	};
 
-	int get_texture_scale() const;
-	void set_texture_scale(const int value);
-
 	//arr should have a size of 8
 	void get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size = 1);
 	int get_case_code_from_arr(const int *data);
@@ -95,8 +92,6 @@ protected:
 	static void _bind_methods();
 
 	Ref<MarchingCubesCellData> _regular_cell_datas[16];
-
-	int _texture_scale;
 };
 
 VARIANT_ENUM_CAST(VoxelMesherMarchingCubes::VoxelEntryIndices);
