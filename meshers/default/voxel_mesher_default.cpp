@@ -45,8 +45,8 @@ _FORCE_INLINE_ void VoxelMesherDefault::set_build_flags(const int flags) {
 void VoxelMesherDefault::_bake_colors(Ref<VoxelChunk> chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	if ((get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) == 0)
-		return;
+	//if ((get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) == 0)
+	//	return;
 
 	if (_vertices.size() == 0)
 		return;

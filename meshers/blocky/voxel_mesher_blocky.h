@@ -33,6 +33,9 @@ class VoxelMesherBlocky : public VoxelMesherDefault {
 	GDCLASS(VoxelMesherBlocky, VoxelMesherDefault);
 
 public:
+	bool get_always_add_colors() const;
+	void set_always_add_colors(const bool value);
+
 	void _add_chunk(Ref<VoxelChunk> p_chunk);
 
 	VoxelMesherBlocky();
@@ -40,6 +43,9 @@ public:
 
 protected:
 	static void _bind_methods();
+
+private:
+	bool _always_add_colors;
 };
 
 #endif
