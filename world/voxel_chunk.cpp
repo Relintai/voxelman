@@ -363,6 +363,17 @@ void VoxelChunk::set_channel_count(const int count) {
 		_channels.set(i, NULL);
 	}
 }
+bool VoxelChunk::is_channel_allocated(const int channel_index) {
+	ERR_FAIL_INDEX_V(channel_index, _channels.size(), false);
+
+	return _channels[channel_index] != NULL;
+}
+void VoxelChunk::ensure_channel_allocated(const int channel_index, const uint8_t default_value) {
+	ERR_FAIL_INDEX(channel_index, _channels.size());
+
+	if (_channels[channel_index] == NULL)
+		allocate_channel(channel_index, default_value);
+}
 void VoxelChunk::allocate_channel(const int channel_index, const uint8_t default_value) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
 
@@ -1275,6 +1286,8 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_channel_count", "count"), &VoxelChunk::set_channel_count);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_count"), "set_channel_count", "get_channel_count");
 
+	ClassDB::bind_method(D_METHOD("is_channel_allocated", "channel_index"), &VoxelChunk::is_channel_allocated);
+	ClassDB::bind_method(D_METHOD("ensure_channel_allocated", "channel_index", "default_value"), &VoxelChunk::ensure_channel_allocated);
 	ClassDB::bind_method(D_METHOD("allocate_channel", "channel_index", "default_value"), &VoxelChunk::allocate_channel);
 	ClassDB::bind_method(D_METHOD("fill_channel", "value", "channel_index"), &VoxelChunk::fill_channel);
 	ClassDB::bind_method(D_METHOD("dealloc_channel", "channel_index"), &VoxelChunk::dealloc_channel);

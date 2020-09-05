@@ -169,6 +169,8 @@ public:
 	int get_channel_count() const;
 	void set_channel_count(const int count);
 
+	bool is_channel_allocated(const int channel_index);
+	void ensure_channel_allocated(const int channel_index, const uint8_t default_value = 0);
 	void allocate_channel(const int channel_index, const uint8_t default_value = 0);
 	void fill_channel(const uint8_t value, const int channel_index);
 	void dealloc_channel(const int channel_index);
