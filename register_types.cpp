@@ -74,6 +74,7 @@ SOFTWARE.
 
 #include "world/jobs/voxel_job.h"
 #include "world/jobs/voxel_light_job.h"
+#include "world/jobs/voxel_prop_job.h"
 #include "world/jobs/voxel_terrarin_job.h"
 
 void register_voxelman_types() {
@@ -128,6 +129,7 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelJob>();
 	ClassDB::register_class<VoxelTerrarinJob>();
 	ClassDB::register_class<VoxelLightJob>();
+	ClassDB::register_class<VoxelPropJob>();
 
 #ifdef TOOLS_ENABLED
 	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();

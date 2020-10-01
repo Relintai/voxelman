@@ -75,6 +75,7 @@ sources = [
     "world/jobs/voxel_job.cpp",
     "world/jobs/voxel_terrarin_job.cpp",
     "world/jobs/voxel_light_job.cpp",
+    "world/jobs/voxel_prop_job.cpp",
 ]
 
 if has_texture_packer:
