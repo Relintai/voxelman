@@ -73,6 +73,7 @@ sources = [
     "thirdparty/lz4/lz4.c",
 
     "world/jobs/voxel_job.cpp",
+    "world/jobs/voxel_terrarin_job.cpp",
 ]
 
 if has_texture_packer:

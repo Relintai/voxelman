@@ -1,11 +1,11 @@
 
 
 def can_build(env, platform):
-  return True
+    return True
 
 
 def configure(env):
-	pass
+    pass
 
 
 def get_doc_classes():
@@ -42,23 +42,24 @@ def get_doc_classes():
         "VoxelWorld",
 
         "VoxelMesherBlocky",
-	      "VoxelWorldBlocky",
-	      "VoxelChunkBlocky",
+        "VoxelWorldBlocky",
+        "VoxelChunkBlocky",
         "VoxelMesherLiquidBlocky",
 
         "VoxelWorldMarchingCubes",
-	      "VoxelChunkMarchingCubes",
+        "VoxelChunkMarchingCubes",
 
         "VoxelMesherCubic",
-	      "VoxelWorldCubic",
+        "VoxelWorldCubic",
         "VoxelChunkCubic",
 
         "VoxelMesherDefault",
-	      "VoxelWorldDefault",
+        "VoxelWorldDefault",
 
         "VoxelJob",
+        "VoxelTerrarinJob",
     ]
+
 
 def get_doc_path():
     return "doc_classes"
-
