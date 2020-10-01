@@ -45,6 +45,11 @@ public:
 	void add_liquid_mesher(const Ref<VoxelMesher> &mesher);
 	int get_liquid_mesher_count() const;
 
+	void phase_setup();
+	void phase_terrarin_mesh_setup();
+	void phase_collider();
+	void phase_terrarin_mesh();
+
 	void _execute();
 
 	VoxelTerrarinJob();
@@ -58,6 +63,7 @@ protected:
 
 	PoolVector<Vector3> temp_arr_collider;
 	PoolVector<Vector3> temp_arr_collider_liquid;
+	Array temp_mesh_arr;
 };
 
 #endif
