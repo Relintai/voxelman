@@ -630,6 +630,8 @@ VoxelTerrarinJob::VoxelTerrarinJob() {
 }
 
 VoxelTerrarinJob::~VoxelTerrarinJob() {
+	_meshers.clear();
+	_liquid_meshers.clear();
 }
 
 void VoxelTerrarinJob::_bind_methods() {
