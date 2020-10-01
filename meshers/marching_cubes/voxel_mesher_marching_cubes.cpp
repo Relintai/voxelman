@@ -27,7 +27,7 @@ SOFTWARE.
 #include "core/array.h"
 #include "core/dictionary.h"
 
-#include "../../world/default/voxel_job.h"
+#include "../../world/jobs/voxel_job.h"
 
 #include "core/version.h"
 

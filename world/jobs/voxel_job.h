@@ -40,11 +40,20 @@ class VoxelJob : public Resource {
 #endif
 
 public:
-	void set_chunk(const Ref<VoxelChunkDefault> &chunk);
+	enum {
+		RESULT_TYPE_FLAG_MESH = 1 << 0,
+		RESULT_TYPE_FLAG_COLLIDER = 1 << 1,
+	};
 
+public:
+	void set_chunk(const Ref<VoxelChunkDefault> &chunk);
 	void chunk_exit_tree();
 
+	void finalize_build();
 	void _execute();
+
+	void generate_ao();
+	void generate_random_ao(int seed, int octaves, int period, float persistence, float scale_factor);
 
 	VoxelJob();
 	~VoxelJob();

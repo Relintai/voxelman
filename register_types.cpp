@@ -72,7 +72,7 @@ SOFTWARE.
 
 #include "nodes/voxelman_light.h"
 
-#include "world/default/voxel_job.h"
+#include "world/jobs/voxel_job.h"
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();

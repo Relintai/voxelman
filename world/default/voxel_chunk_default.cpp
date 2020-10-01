@@ -32,7 +32,7 @@ SOFTWARE.
 #include "../voxel_world.h"
 
 #include "../../../thread_pool/thread_pool.h"
-#include "voxel_job.h"
+#include "../jobs/voxel_job.h"
 
 #include "voxel_world_default.h"
 
