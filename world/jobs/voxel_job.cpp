@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "../../../opensimplex/open_simplex_noise.h"
 
-void VoxelJob::set_chunk(const Ref<VoxelChunkDefault> &chunk) {
+void VoxelJob::set_chunk(const Ref<VoxelChunk> &chunk) {
 	_chunk = chunk;
 
 	_in_tree = true;
@@ -46,7 +46,11 @@ void VoxelJob::chunk_exit_tree() {
 void VoxelJob::_execute() {
 	ERR_FAIL_COND(!_chunk.is_valid());
 
-	if (!_chunk->has_next_phase()) {
+	Ref<VoxelChunkDefault> chunk = _chunk;
+
+	ERR_FAIL_COND(!chunk.is_valid());
+
+	if (!chunk->has_next_phase()) {
 		//_chunk->set_build_step_in_progress(false);
 
 		//if (!_in_tree) {
@@ -56,30 +60,30 @@ void VoxelJob::_execute() {
 		set_complete(true);
 	}
 
-	ERR_FAIL_COND(!_chunk->has_next_phase());
+	ERR_FAIL_COND(!chunk->has_next_phase());
 	//ERR_FAIL_COND(_build_step_in_progress);
 
 	//_chunk->set_build_step_in_progress(true);
 
-	while (!get_cancelled() && _in_tree && _chunk->has_next_phase() && _chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL) {
+	while (!get_cancelled() && _in_tree && chunk->has_next_phase() && chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL) {
 
 		//int phase = _chunk->get_current_build_phase();
 
-		_chunk->build_phase();
+		chunk->build_phase();
 
 		//print_error(String::num(get_current_execution_time()) + " phase: " + String::num(phase));
 
-		if (_chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL && should_return())
+		if (chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL && should_return())
 			return;
 
-		if (!_chunk->get_build_phase_done())
+		if (!chunk->get_build_phase_done())
 			break;
 	}
 
-	_chunk->set_build_step_in_progress(false);
+	chunk->set_build_step_in_progress(false);
 
 	if (!_in_tree) {
-		_chunk.unref();
+		chunk.unref();
 	}
 
 	set_complete(true);

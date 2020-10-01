@@ -29,7 +29,7 @@ SOFTWARE.
 #include "core/resource.h"
 #endif
 
-class VoxelChunkDefault;
+class VoxelChunk;
 
 #if THREAD_POOL_PRESENT
 class VoxelJob : public ThreadPoolJob {
@@ -46,7 +46,7 @@ public:
 	};
 
 public:
-	void set_chunk(const Ref<VoxelChunkDefault> &chunk);
+	void set_chunk(const Ref<VoxelChunk> &chunk);
 	void chunk_exit_tree();
 
 	void finalize_build();
@@ -61,10 +61,8 @@ public:
 protected:
 	static void _bind_methods();
 
-private:
 	bool _in_tree;
-
-	Ref<VoxelChunkDefault> _chunk;
+	Ref<VoxelChunk> _chunk;
 
 public:
 #if !THREAD_POOL_PRESENT

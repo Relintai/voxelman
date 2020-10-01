@@ -58,8 +58,10 @@ include_pool_vector
 
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
+		; //hackfix for a clang format issue
 
-		class VoxelWorld;
+class VoxelJob;
+class VoxelWorld;
 
 class VoxelChunk : public Resource {
 	GDCLASS(VoxelChunk, Resource);
@@ -137,6 +139,13 @@ public:
 	VoxelWorld *get_voxel_world() const;
 	void set_voxel_world(VoxelWorld *world);
 	void set_voxel_world_bind(Node *world);
+
+	//Jobs
+	Ref<VoxelMesher> get_job(const int index) const;
+	void set_job(const int index, const Ref<VoxelMesher> &job);
+	void remove_job(const int index);
+	void add_job(const Ref<VoxelMesher> &job);
+	int get_job_count() const;
 
 	//Meshers
 	Ref<VoxelMesher> get_mesher(const int index) const;
@@ -345,6 +354,8 @@ protected:
 	Vector<uint8_t *> _channels;
 
 	float _voxel_scale;
+
+	Vector<Ref<VoxelJob> > _jobs;
 
 	Ref<VoxelmanLibrary> _library;
 	Vector<Ref<VoxelMesher> > _meshers;

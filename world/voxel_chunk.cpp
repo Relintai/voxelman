@@ -28,6 +28,8 @@ SOFTWARE.
 
 #include "../defines.h"
 
+#include "jobs/voxel_job.h"
+
 _FORCE_INLINE_ bool VoxelChunk::get_is_build_threaded() const {
 	return _is_build_threaded;
 }
@@ -216,6 +218,28 @@ void VoxelChunk::set_voxel_world_bind(Node *world) {
 	}
 
 	_voxel_world = Object::cast_to<VoxelWorld>(world);
+}
+
+Ref<VoxelMesher> VoxelChunk::get_job(int index) const {
+	ERR_FAIL_INDEX_V(index, _jobs.size(), Ref<VoxelMesher>());
+
+	return _jobs.get(index);
+}
+void VoxelChunk::set_job(int index, const Ref<VoxelMesher> &job) {
+	ERR_FAIL_INDEX(index, _jobs.size());
+
+	_jobs.set(index, job);
+}
+void VoxelChunk::remove_job(const int index) {
+	ERR_FAIL_INDEX(index, _jobs.size());
+
+	_jobs.remove(index);
+}
+void VoxelChunk::add_job(const Ref<VoxelMesher> &job) {
+	_jobs.push_back(job);
+}
+int VoxelChunk::get_job_count() const {
+	return _jobs.size();
 }
 
 Ref<VoxelMesher> VoxelChunk::get_mesher(int index) const {
@@ -1070,6 +1094,8 @@ VoxelChunk::~VoxelChunk() {
 	}
 
 	_colliders.clear();
+
+	_jobs.clear();
 }
 
 void VoxelChunk::_world_transform_changed() {
@@ -1251,6 +1277,12 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelChunk::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelChunk::set_voxel_scale);
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "voxel_scale"), "set_voxel_scale", "get_voxel_scale");
+
+	ClassDB::bind_method(D_METHOD("get_job", "index"), &VoxelChunk::get_job);
+	ClassDB::bind_method(D_METHOD("set_job", "index", "job"), &VoxelChunk::set_job);
+	ClassDB::bind_method(D_METHOD("remove_job", "index"), &VoxelChunk::remove_job);
+	ClassDB::bind_method(D_METHOD("add_job", "job"), &VoxelChunk::add_job);
+	ClassDB::bind_method(D_METHOD("get_job_count"), &VoxelChunk::get_job_count);
 
 	ClassDB::bind_method(D_METHOD("get_mesher", "index"), &VoxelChunk::get_mesher);
 	ClassDB::bind_method(D_METHOD("set_mesher", "index", "mesher"), &VoxelChunk::set_mesher);
