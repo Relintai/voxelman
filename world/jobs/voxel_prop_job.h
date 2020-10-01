@@ -34,6 +34,7 @@ public:
 	Ref<VoxelMesher> get_prop_mesher() const;
 	void set_prop_mesher(const Ref<VoxelMesher> &mesher);
 
+	void phase_reset();
 	void phase_prop();
 
 	void _execute();

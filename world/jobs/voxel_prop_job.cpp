@@ -43,6 +43,13 @@ void VoxelPropJob::set_prop_mesher(const Ref<VoxelMesher> &mesher) {
 	_prop_mesher = mesher;
 }
 
+void VoxelPropJob::phase_reset() {
+	if (get_prop_mesher().is_valid()) {
+		get_prop_mesher()->reset();
+		get_prop_mesher()->set_library(_chunk->get_library());
+	}
+}
+
 void VoxelPropJob::phase_prop() {
 #ifdef MESH_DATA_RESOURCE_PRESENT
 	Ref<VoxelChunkDefault> chunk = _chunk;
