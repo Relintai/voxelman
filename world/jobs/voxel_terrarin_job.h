@@ -25,10 +25,26 @@ SOFTWARE.
 
 #include "voxel_job.h"
 
+class VoxelMesher;
+
 class VoxelTerrarinJob : public VoxelJob {
 	GDCLASS(VoxelTerrarinJob, VoxelJob);
 
 public:
+	//Meshers
+	Ref<VoxelMesher> get_mesher(const int index) const;
+	void set_mesher(const int index, const Ref<VoxelMesher> &mesher);
+	void remove_mesher(const int index);
+	void add_mesher(const Ref<VoxelMesher> &mesher);
+	int get_mesher_count() const;
+
+	//Liquid Meshers
+	Ref<VoxelMesher> get_liquid_mesher(const int index) const;
+	void set_liquid_mesher(const int index, const Ref<VoxelMesher> &mesher);
+	void remove_liquid_mesher(const int index);
+	void add_liquid_mesher(const Ref<VoxelMesher> &mesher);
+	int get_liquid_mesher_count() const;
+
 	void _execute();
 
 	VoxelTerrarinJob();
@@ -36,6 +52,9 @@ public:
 
 protected:
 	static void _bind_methods();
+
+	Vector<Ref<VoxelMesher> > _meshers;
+	Vector<Ref<VoxelMesher> > _liquid_meshers;
 
 	PoolVector<Vector3> temp_arr_collider;
 	PoolVector<Vector3> temp_arr_collider_liquid;

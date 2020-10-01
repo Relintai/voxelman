@@ -27,9 +27,51 @@ SOFTWARE.
 #include "../../library/voxel_surface.h"
 #include "../../library/voxelman_library.h"
 
+#include "../../meshers/voxel_mesher.h"
 #include "../default/voxel_chunk_default.h"
 
-void build_phase_setup() {
+Ref<VoxelMesher> VoxelTerrarinJob::get_mesher(int index) const {
+	ERR_FAIL_INDEX_V(index, _meshers.size(), Ref<VoxelMesher>());
+
+	return _meshers.get(index);
+}
+void VoxelTerrarinJob::set_mesher(int index, const Ref<VoxelMesher> &mesher) {
+	ERR_FAIL_INDEX(index, _meshers.size());
+
+	_meshers.set(index, mesher);
+}
+void VoxelTerrarinJob::remove_mesher(const int index) {
+	ERR_FAIL_INDEX(index, _meshers.size());
+
+	_meshers.remove(index);
+}
+void VoxelTerrarinJob::add_mesher(const Ref<VoxelMesher> &mesher) {
+	_meshers.push_back(mesher);
+}
+int VoxelTerrarinJob::get_mesher_count() const {
+	return _meshers.size();
+}
+
+Ref<VoxelMesher> VoxelTerrarinJob::get_liquid_mesher(int index) const {
+	ERR_FAIL_INDEX_V(index, _liquid_meshers.size(), Ref<VoxelMesher>());
+
+	return _liquid_meshers.get(index);
+}
+void VoxelTerrarinJob::set_liquid_mesher(int index, const Ref<VoxelMesher> &mesher) {
+	ERR_FAIL_INDEX(index, _liquid_meshers.size());
+
+	_liquid_meshers.set(index, mesher);
+}
+void VoxelTerrarinJob::remove_liquid_mesher(const int index) {
+	ERR_FAIL_INDEX(index, _liquid_meshers.size());
+
+	_liquid_meshers.remove(index);
+}
+void VoxelTerrarinJob::add_liquid_mesher(const Ref<VoxelMesher> &mesher) {
+	_liquid_meshers.push_back(mesher);
+}
+int VoxelTerrarinJob::get_liquid_mesher_count() const {
+	return _liquid_meshers.size();
 }
 
 void VoxelTerrarinJob::_execute() {
@@ -591,4 +633,15 @@ VoxelTerrarinJob::~VoxelTerrarinJob() {
 }
 
 void VoxelTerrarinJob::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_mesher", "index"), &VoxelTerrarinJob::get_mesher);
+	ClassDB::bind_method(D_METHOD("set_mesher", "index", "mesher"), &VoxelTerrarinJob::set_mesher);
+	ClassDB::bind_method(D_METHOD("remove_mesher", "index"), &VoxelTerrarinJob::remove_mesher);
+	ClassDB::bind_method(D_METHOD("add_mesher", "mesher"), &VoxelTerrarinJob::add_mesher);
+	ClassDB::bind_method(D_METHOD("get_mesher_count"), &VoxelTerrarinJob::get_mesher_count);
+
+	ClassDB::bind_method(D_METHOD("get_liquid_mesher", "index"), &VoxelTerrarinJob::get_liquid_mesher);
+	ClassDB::bind_method(D_METHOD("set_liquid_mesher", "index", "mesher"), &VoxelTerrarinJob::set_liquid_mesher);
+	ClassDB::bind_method(D_METHOD("remove_liquid_mesher", "index"), &VoxelTerrarinJob::remove_liquid_mesher);
+	ClassDB::bind_method(D_METHOD("add_liquid_mesher", "mesher"), &VoxelTerrarinJob::add_liquid_mesher);
+	ClassDB::bind_method(D_METHOD("get_liquid_mesher_count"), &VoxelTerrarinJob::get_liquid_mesher_count);
 }
