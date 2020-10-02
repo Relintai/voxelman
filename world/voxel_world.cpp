@@ -891,7 +891,11 @@ void VoxelWorld::_notification(int p_what) {
 				ERR_CONTINUE(!chunk.is_valid());
 
 				if (chunk->get_process()) {
-					chunk->process(get_physics_process_delta_time());
+					chunk->process(get_process_delta_time());
+				}
+
+				if (chunk->get_is_generating()) {
+					chunk->generation_process(get_process_delta_time());
 				}
 			}
 
@@ -940,6 +944,10 @@ void VoxelWorld::_notification(int p_what) {
 
 				if (chunk->get_process()) {
 					chunk->physics_process(get_physics_process_delta_time());
+				}
+
+				if (chunk->get_is_generating()) {
+					chunk->generation_physics_process(get_physics_process_delta_time());
 				}
 			}
 

@@ -129,6 +129,15 @@ void VoxelJob::_execute_phase() {
 	next_job();
 }
 
+void VoxelJob::process(const float delta) {
+	if (has_method("_process"))
+		call("_process", delta);
+}
+void VoxelJob::physics_process(const float delta) {
+	if (has_method("_physics_process"))
+		call("_physics_process", delta);
+}
+
 //Data Management functions
 void VoxelJob::generate_ao() {
 	ERR_FAIL_COND(!_chunk.is_valid());
@@ -251,6 +260,9 @@ VoxelJob::~VoxelJob() {
 }
 
 void VoxelJob::_bind_methods() {
+	BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
+	BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));
+
 	ClassDB::bind_method(D_METHOD("get_build_phase_type"), &VoxelJob::get_build_phase_type);
 	ClassDB::bind_method(D_METHOD("set_build_phase_type", "value"), &VoxelJob::set_build_phase_type);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_phase_type", PROPERTY_HINT_ENUM, BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE), "set_build_phase_type", "get_build_phase_type");

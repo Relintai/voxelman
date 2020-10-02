@@ -274,6 +274,10 @@ public:
 	void visibility_changed(const bool visible);
 	void world_light_added(const Ref<VoxelLight> &light);
 	void world_light_removed(const Ref<VoxelLight> &light);
+	void generation_process(const float delta);
+	void generation_physics_process(const float delta);
+	void _generation_process(const float delta);
+	void _generation_physics_process(const float delta);
 
 	Transform get_transform() const;
 	void set_transform(const Transform &transform);
@@ -355,6 +359,7 @@ protected:
 
 	float _voxel_scale;
 
+	int _current_job;
 	Vector<Ref<VoxelJob> > _jobs;
 
 	Ref<VoxelmanLibrary> _library;

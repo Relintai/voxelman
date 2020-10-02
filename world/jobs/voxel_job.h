@@ -71,6 +71,9 @@ public:
 	void execute_phase();
 	virtual void _execute_phase();
 
+	void process(const float delta);
+	void physics_process(const float delta);
+
 	void generate_ao();
 	void generate_random_ao(int seed, int octaves, int period, float persistence, float scale_factor);
 

@@ -1012,6 +1012,34 @@ void VoxelChunk::world_light_removed(const Ref<VoxelLight> &light) {
 	if (has_method("_world_light_removed"))
 		call("_world_light_removed", light);
 }
+void VoxelChunk::generation_process(const float delta) {
+	call("_generation_process", delta);
+}
+void VoxelChunk::generation_physics_process(const float delta) {
+	call("_generation_physics_process", delta);
+}
+void VoxelChunk::_generation_process(const float delta) {
+	ERR_FAIL_INDEX(_current_job, _jobs.size());
+
+	Ref<VoxelJob> job = _jobs[_current_job];
+
+	ERR_FAIL_COND(!job.is_valid());
+
+	if (job->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_PROCESS) {
+		job->process(delta);
+	}
+}
+void VoxelChunk::_generation_physics_process(const float delta) {
+	ERR_FAIL_INDEX(_current_job, _jobs.size());
+
+	Ref<VoxelJob> job = _jobs[_current_job];
+
+	ERR_FAIL_COND(!job.is_valid());
+
+	if (job->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
+		job->physics_process(delta);
+	}
+}
 
 Transform VoxelChunk::get_transform() const {
 	return _transform;
@@ -1067,6 +1095,8 @@ VoxelChunk::VoxelChunk() {
 
 	_margin_start = 0;
 	_margin_end = 0;
+
+	_current_job = 0;
 }
 
 VoxelChunk::~VoxelChunk() {
@@ -1178,6 +1208,9 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_world_light_added", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
 	BIND_VMETHOD(MethodInfo("_world_light_removed", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
 
+	BIND_VMETHOD(MethodInfo("_generation_process", PropertyInfo(Variant::REAL, "delta")));
+	BIND_VMETHOD(MethodInfo("_generation_physics_process", PropertyInfo(Variant::REAL, "delta")));
+
 	ClassDB::bind_method(D_METHOD("enter_tree"), &VoxelChunk::enter_tree);
 	ClassDB::bind_method(D_METHOD("exit_tree"), &VoxelChunk::exit_tree);
 	ClassDB::bind_method(D_METHOD("process", "delta"), &VoxelChunk::process);
@@ -1186,6 +1219,9 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("visibility_changed", "visible"), &VoxelChunk::visibility_changed);
 	ClassDB::bind_method(D_METHOD("world_light_added", "light"), &VoxelChunk::world_light_added);
 	ClassDB::bind_method(D_METHOD("world_light_removed", "light"), &VoxelChunk::world_light_removed);
+
+	ClassDB::bind_method(D_METHOD("generation_process", "delta"), &VoxelChunk::generation_process);
+	ClassDB::bind_method(D_METHOD("generation_physics_process", "delta"), &VoxelChunk::generation_physics_process);
 
 	ClassDB::bind_method(D_METHOD("get_process"), &VoxelChunk::get_process);
 	ClassDB::bind_method(D_METHOD("set_process", "value"), &VoxelChunk::set_process);
