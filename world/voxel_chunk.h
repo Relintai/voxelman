@@ -147,6 +147,9 @@ public:
 	void add_job(const Ref<VoxelMesher> &job);
 	int get_job_count() const;
 
+	int get_current_job_index();
+	void next_job();
+
 	//Meshers
 	Ref<VoxelMesher> get_mesher(const int index) const;
 	void set_mesher(const int index, const Ref<VoxelMesher> &mesher);

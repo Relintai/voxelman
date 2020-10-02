@@ -242,6 +242,18 @@ int VoxelChunk::get_job_count() const {
 	return _jobs.size();
 }
 
+int VoxelChunk::get_current_job_index() {
+	return _current_job;
+}
+void VoxelChunk::next_job() {
+	++_current_job;
+
+	if (_current_job >= _jobs.size()) {
+		_current_job = 0;
+		set_is_generating(false);
+	}
+}
+
 Ref<VoxelMesher> VoxelChunk::get_mesher(int index) const {
 	ERR_FAIL_INDEX_V(index, _meshers.size(), Ref<VoxelMesher>());
 
@@ -1319,6 +1331,9 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_job", "index"), &VoxelChunk::remove_job);
 	ClassDB::bind_method(D_METHOD("add_job", "job"), &VoxelChunk::add_job);
 	ClassDB::bind_method(D_METHOD("get_job_count"), &VoxelChunk::get_job_count);
+
+	ClassDB::bind_method(D_METHOD("get_current_job_index"), &VoxelChunk::get_current_job_index);
+	ClassDB::bind_method(D_METHOD("next_job"), &VoxelChunk::next_job);
 
 	ClassDB::bind_method(D_METHOD("get_mesher", "index"), &VoxelChunk::get_mesher);
 	ClassDB::bind_method(D_METHOD("set_mesher", "index", "mesher"), &VoxelChunk::set_mesher);
