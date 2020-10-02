@@ -36,6 +36,7 @@ void VoxelLightJob::phase_light() {
 	bool gr = (chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_AUTO_GENERATE_RAO) != 0;
 
 	if (!gr && (chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) == 0) {
+		next_phase();
 		return;
 	}
 
@@ -63,6 +64,7 @@ void VoxelLightJob::phase_light() {
 	}
 
 	reset_stages();
+	next_phase();
 }
 
 void VoxelLightJob::_execute() {

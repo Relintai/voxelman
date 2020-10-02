@@ -55,13 +55,13 @@ void VoxelPropJob::phase_prop() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	if (!get_prop_mesher().is_valid()) {
-		//next_phase();
+		next_phase();
 		return;
 	}
 
 	if (should_do()) {
 		if (chunk->get_mesh_data_resource_count() == 0) {
-			//next_phase();
+			next_phase();
 			return;
 		}
 
@@ -74,7 +74,7 @@ void VoxelPropJob::phase_prop() {
 		if (get_prop_mesher()->get_vertex_count() == 0) {
 			reset_stages();
 
-			//next_phase();
+			next_phase();
 			return;
 		}
 
@@ -262,7 +262,7 @@ void VoxelPropJob::phase_prop() {
 		}
 	}
 
-	//next_phase();
+	next_phase();
 
 	return;
 #endif

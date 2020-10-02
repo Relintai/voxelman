@@ -92,6 +92,8 @@ void VoxelTerrarinJob::phase_setup() {
 		mesher->set_library(_chunk->get_library());
 		mesher->reset();
 	}
+
+	next_phase();
 }
 
 void VoxelTerrarinJob::phase_terrarin_mesh_setup() {
@@ -140,12 +142,15 @@ void VoxelTerrarinJob::phase_terrarin_mesh_setup() {
 	if (has_meta("tms_lm")) {
 		remove_meta("tms_lm");
 	}
+
+	next_phase();
 }
 
 void VoxelTerrarinJob::phase_collider() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER) == 0) {
+		next_phase();
 		return;
 	}
 
@@ -199,11 +204,11 @@ void VoxelTerrarinJob::phase_collider() {
 	}
 
 	if (temp_arr_collider.size() == 0 && temp_arr_collider_liquid.size() == 0) {
+		next_phase();
 		return;
 	}
 
-	//set_active_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
-	//return;
+	set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
 }
 
 void VoxelTerrarinJob::phase_terrarin_mesh() {
@@ -341,6 +346,7 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 		}
 
 		reset_stages();
+		next_phase();
 
 		return;
 	}
@@ -540,6 +546,7 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 	}
 
 	reset_stages();
+	next_phase();
 }
 
 void VoxelTerrarinJob::phase_finalize() {
