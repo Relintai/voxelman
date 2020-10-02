@@ -542,20 +542,38 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 	reset_stages();
 }
 
-void VoxelTerrarinJob::_execute() {
+void VoxelTerrarinJob::phase_finalize() {
+	//add vs meshes to chunk
+
+	set_complete(true); //So threadpool knows it's done
+	set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
+}
+
+void VoxelTerrarinJob::phase_finalize_physics_process() {
+	// add physics meshes
+
+	next_job();
+}
+
+void VoxelTerrarinJob::_execute_phase() {
 	ERR_FAIL_COND(!_chunk.is_valid());
 
 	Ref<VoxelmanLibrary> library = _chunk->get_library();
 
 	ERR_FAIL_COND(!library.is_valid());
 
-	//Todo add checks for these whether the phases are done or not
-	phase_setup();
-	phase_terrarin_mesh_setup();
-	phase_collider();
-	phase_terrarin_mesh();
-
-	//finish
+	if (_phase == 0)
+		phase_setup();
+	else if (_phase == 1)
+		phase_terrarin_mesh_setup();
+	else if (_phase == 2)
+		phase_collider();
+	else if (_phase == 3)
+		phase_terrarin_mesh();
+	else if (_phase == 4)
+		phase_finalize();
+	else if (_phase == 5)
+		phase_finalize_physics_process();
 }
 
 VoxelTerrarinJob::VoxelTerrarinJob() {
@@ -578,4 +596,6 @@ void VoxelTerrarinJob::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_liquid_mesher", "index"), &VoxelTerrarinJob::remove_liquid_mesher);
 	ClassDB::bind_method(D_METHOD("add_liquid_mesher", "mesher"), &VoxelTerrarinJob::add_liquid_mesher);
 	ClassDB::bind_method(D_METHOD("get_liquid_mesher_count"), &VoxelTerrarinJob::get_liquid_mesher_count);
+
+	ClassDB::bind_method(D_METHOD("_execute_phase"), &VoxelTerrarinJob::_execute_phase);
 }

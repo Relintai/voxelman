@@ -26,22 +26,65 @@ SOFTWARE.
 
 #include "../../../opensimplex/open_simplex_noise.h"
 
+const String VoxelJob::BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE = "Normal,Process,Physics Process";
+
+VoxelJob::ActiveBuildPhaseType VoxelJob::get_build_phase_type() {
+	return _build_phase_type;
+}
+void VoxelJob::set_build_phase_type(VoxelJob::ActiveBuildPhaseType build_phase_type) {
+	_build_phase_type = build_phase_type;
+}
+
 void VoxelJob::set_chunk(const Ref<VoxelChunk> &chunk) {
 	_chunk = chunk;
 
 	_in_tree = true;
 }
 
-void VoxelJob::chunk_exit_tree() {
+int VoxelJob::get_phase() {
+	return _phase;
+}
+void VoxelJob::set_phase(const int phase) {
+	_phase = phase;
+}
+void VoxelJob::next_phase() {
+	++_phase;
+}
 
-	_in_tree = false;
+bool VoxelJob::get_build_done() {
+	return _build_done;
+}
+void VoxelJob::set_build_done(const bool val) {
+	_build_done = val;
+}
 
-	if (get_complete()) {
-		_chunk.unref();
-	} else {
-		set_cancelled(true);
+void VoxelJob::next_job() {
+	//chunk->next_job();
+	set_build_done(true);
+}
+
+void VoxelJob::reset() {
+	call("_reset");
+}
+void VoxelJob::_reset() {
+	_build_done = false;
+	_phase = 0;
+}
+
+#define NEW 0
+
+#if NEW
+
+void VoxelJob::_execute() {
+
+	ActiveBuildPhaseType origpt = _build_phase_type;
+
+	while (!get_cancelled() && _in_tree && !_build_done && origpt == _build_phase_type && !should_return()) {
+		execute_phase();
 	}
 }
+
+#else
 
 void VoxelJob::_execute() {
 	ERR_FAIL_COND(!_chunk.is_valid());
@@ -51,27 +94,14 @@ void VoxelJob::_execute() {
 	ERR_FAIL_COND(!chunk.is_valid());
 
 	if (!chunk->has_next_phase()) {
-		//_chunk->set_build_step_in_progress(false);
-
-		//if (!_in_tree) {
-		//	_chunk.unref();
-		//}
-
 		set_complete(true);
 	}
 
 	ERR_FAIL_COND(!chunk->has_next_phase());
-	//ERR_FAIL_COND(_build_step_in_progress);
-
-	//_chunk->set_build_step_in_progress(true);
 
 	while (!get_cancelled() && _in_tree && chunk->has_next_phase() && chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL) {
 
-		//int phase = _chunk->get_current_build_phase();
-
 		chunk->build_phase();
-
-		//print_error(String::num(get_current_execution_time()) + " phase: " + String::num(phase));
 
 		if (chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL && should_return())
 			return;
@@ -87,6 +117,16 @@ void VoxelJob::_execute() {
 	}
 
 	set_complete(true);
+}
+
+#endif
+
+void VoxelJob::execute_phase() {
+	call("_execute_phase");
+}
+
+void VoxelJob::_execute_phase() {
+	next_job();
 }
 
 //Data Management functions
@@ -176,8 +216,23 @@ void VoxelJob::generate_random_ao(int seed, int octaves, int period, float persi
 	}
 }
 
+void VoxelJob::chunk_exit_tree() {
+
+	_in_tree = false;
+
+	if (get_complete()) {
+		_chunk.unref();
+	} else {
+		set_cancelled(true);
+	}
+}
+
 VoxelJob::VoxelJob() {
 	_in_tree = false;
+
+	_build_phase_type = BUILD_PHASE_TYPE_NORMAL;
+	_build_done = true;
+	_phase = 0;
 
 #if !THREAD_POOL_PRESENT
 	_complete = true;
@@ -196,7 +251,36 @@ VoxelJob::~VoxelJob() {
 }
 
 void VoxelJob::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_build_phase_type"), &VoxelJob::get_build_phase_type);
+	ClassDB::bind_method(D_METHOD("set_build_phase_type", "value"), &VoxelJob::set_build_phase_type);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_phase_type", PROPERTY_HINT_ENUM, BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE), "set_build_phase_type", "get_build_phase_type");
+
+	ClassDB::bind_method(D_METHOD("set_chunk", "chunk"), &VoxelJob::set_chunk);
+
+	ClassDB::bind_method(D_METHOD("get_phase"), &VoxelJob::get_phase);
+	ClassDB::bind_method(D_METHOD("set_phase", "phase"), &VoxelJob::set_phase);
+	ClassDB::bind_method(D_METHOD("next_phase"), &VoxelJob::next_phase);
+
+	ClassDB::bind_method(D_METHOD("get_build_done"), &VoxelJob::get_build_done);
+	ClassDB::bind_method(D_METHOD("set_build_done", "val"), &VoxelJob::set_build_done);
+
+	ClassDB::bind_method(D_METHOD("next_job"), &VoxelJob::next_job);
+
+	BIND_VMETHOD(MethodInfo("_reset"));
+
+	ClassDB::bind_method(D_METHOD("reset"), &VoxelJob::reset);
+	ClassDB::bind_method(D_METHOD("_reset"), &VoxelJob::_reset);
+
 	ClassDB::bind_method(D_METHOD("_execute"), &VoxelJob::_execute);
+
+	BIND_VMETHOD(MethodInfo("_execute_phase"));
+
+	ClassDB::bind_method(D_METHOD("execute_phase"), &VoxelJob::execute_phase);
+
+	ClassDB::bind_method(D_METHOD("generate_ao"), &VoxelJob::generate_ao);
+	ClassDB::bind_method(D_METHOD("generate_random_ao", "seed", "octaves", "period", "persistence", "scale_factor"), &VoxelJob::generate_random_ao);
+
+	ClassDB::bind_method(D_METHOD("chunk_exit_tree"), &VoxelJob::chunk_exit_tree);
 
 #if !THREAD_POOL_PRESENT
 	ClassDB::bind_method(D_METHOD("get_complete"), &VoxelJob::get_complete);

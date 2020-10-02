@@ -40,20 +40,41 @@ class VoxelJob : public Resource {
 #endif
 
 public:
-	enum {
-		RESULT_TYPE_FLAG_MESH = 1 << 0,
-		RESULT_TYPE_FLAG_COLLIDER = 1 << 1,
+	static const String BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE;
+
+	enum ActiveBuildPhaseType {
+		BUILD_PHASE_TYPE_NORMAL = 0,
+		BUILD_PHASE_TYPE_PROCESS,
+		BUILD_PHASE_TYPE_PHYSICS_PROCESS,
 	};
 
 public:
-	void set_chunk(const Ref<VoxelChunk> &chunk);
-	void chunk_exit_tree();
+	ActiveBuildPhaseType get_build_phase_type();
+	void set_build_phase_type(VoxelJob::ActiveBuildPhaseType build_phase_type);
 
-	void finalize_build();
+	void set_chunk(const Ref<VoxelChunk> &chunk);
+
+	int get_phase();
+	void set_phase(const int phase);
+	void next_phase();
+
+	bool get_build_done();
+	void set_build_done(const bool val);
+
+	void next_job();
+
+	void reset();
+	virtual void _reset();
+
 	void _execute();
+
+	void execute_phase();
+	virtual void _execute_phase();
 
 	void generate_ao();
 	void generate_random_ao(int seed, int octaves, int period, float persistence, float scale_factor);
+
+	void chunk_exit_tree();
 
 	VoxelJob();
 	~VoxelJob();
@@ -61,6 +82,9 @@ public:
 protected:
 	static void _bind_methods();
 
+	ActiveBuildPhaseType _build_phase_type;
+	bool _build_done;
+	int _phase;
 	bool _in_tree;
 	Ref<VoxelChunk> _chunk;
 
@@ -102,5 +126,7 @@ private:
 	int _stage;
 #endif
 };
+
+VARIANT_ENUM_CAST(VoxelJob::ActiveBuildPhaseType);
 
 #endif

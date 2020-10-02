@@ -49,8 +49,10 @@ public:
 	void phase_terrarin_mesh_setup();
 	void phase_collider();
 	void phase_terrarin_mesh();
+	void phase_finalize();
+	void phase_finalize_physics_process();
 
-	void _execute();
+	void _execute_phase();
 
 	VoxelTerrarinJob();
 	~VoxelTerrarinJob();
