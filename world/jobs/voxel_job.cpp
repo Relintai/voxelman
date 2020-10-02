@@ -71,10 +71,6 @@ void VoxelJob::_reset() {
 	_phase = 0;
 }
 
-#define NEW 0
-
-#if NEW
-
 void VoxelJob::_execute() {
 
 	ActiveBuildPhaseType origpt = _build_phase_type;
@@ -83,43 +79,6 @@ void VoxelJob::_execute() {
 		execute_phase();
 	}
 }
-
-#else
-
-void VoxelJob::_execute() {
-	ERR_FAIL_COND(!_chunk.is_valid());
-
-	Ref<VoxelChunkDefault> chunk = _chunk;
-
-	ERR_FAIL_COND(!chunk.is_valid());
-
-	if (!chunk->has_next_phase()) {
-		set_complete(true);
-	}
-
-	ERR_FAIL_COND(!chunk->has_next_phase());
-
-	while (!get_cancelled() && _in_tree && chunk->has_next_phase() && chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL) {
-
-		chunk->build_phase();
-
-		if (chunk->get_active_build_phase_type() == VoxelChunkDefault::BUILD_PHASE_TYPE_NORMAL && should_return())
-			return;
-
-		if (!chunk->get_build_phase_done())
-			break;
-	}
-
-	chunk->set_build_step_in_progress(false);
-
-	if (!_in_tree) {
-		chunk.unref();
-	}
-
-	set_complete(true);
-}
-
-#endif
 
 void VoxelJob::execute_phase() {
 	call("_execute_phase");
@@ -225,6 +184,111 @@ void VoxelJob::generate_random_ao(int seed, int octaves, int period, float persi
 	}
 }
 
+Array VoxelJob::merge_mesh_array(Array arr) const {
+	ERR_FAIL_COND_V(arr.size() != VisualServer::ARRAY_MAX, arr);
+
+	PoolVector3Array verts = arr[VisualServer::ARRAY_VERTEX];
+	PoolVector3Array normals = arr[VisualServer::ARRAY_NORMAL];
+	PoolVector2Array uvs = arr[VisualServer::ARRAY_TEX_UV];
+	PoolColorArray colors = arr[VisualServer::ARRAY_COLOR];
+	PoolIntArray indices = arr[VisualServer::ARRAY_INDEX];
+
+	bool has_normals = normals.size() > 0;
+	bool has_uvs = uvs.size() > 0;
+	bool has_colors = colors.size() > 0;
+
+	int i = 0;
+	while (i < verts.size()) {
+		Vector3 v = verts[i];
+
+		Array equals;
+		for (int j = i + 1; j < verts.size(); ++j) {
+			Vector3 vc = verts[j];
+
+			if (Math::is_equal_approx(v.x, vc.x) && Math::is_equal_approx(v.y, vc.y) && Math::is_equal_approx(v.z, vc.z))
+				equals.push_back(j);
+		}
+
+		for (int k = 0; k < equals.size(); ++k) {
+			int rem = equals[k];
+			int remk = rem - k;
+
+			verts.remove(remk);
+
+			if (has_normals)
+				normals.remove(remk);
+			if (has_uvs)
+				uvs.remove(remk);
+			if (has_colors)
+				colors.remove(remk);
+
+			for (int j = 0; j < indices.size(); ++j) {
+				int indx = indices[j];
+
+				if (indx == remk)
+					indices.set(j, i);
+				else if (indx > remk)
+					indices.set(j, indx - 1);
+			}
+		}
+
+		++i;
+	}
+
+	arr[VisualServer::ARRAY_VERTEX] = verts;
+
+	if (has_normals)
+		arr[VisualServer::ARRAY_NORMAL] = normals;
+	if (has_uvs)
+		arr[VisualServer::ARRAY_TEX_UV] = uvs;
+	if (has_colors)
+		arr[VisualServer::ARRAY_COLOR] = colors;
+
+	arr[VisualServer::ARRAY_INDEX] = indices;
+
+	return arr;
+}
+Array VoxelJob::bake_mesh_array_uv(Array arr, Ref<Texture> tex, const float mul_color) const {
+	ERR_FAIL_COND_V(arr.size() != VisualServer::ARRAY_MAX, arr);
+	ERR_FAIL_COND_V(!tex.is_valid(), arr);
+
+	Ref<Image> img = tex->get_data();
+
+	ERR_FAIL_COND_V(!img.is_valid(), arr);
+
+	Vector2 imgsize = img->get_size();
+
+	PoolVector2Array uvs = arr[VisualServer::ARRAY_TEX_UV];
+	PoolColorArray colors = arr[VisualServer::ARRAY_COLOR];
+
+	if (colors.size() < uvs.size())
+		colors.resize(uvs.size());
+
+#if !GODOT4
+	img->lock();
+#endif
+
+	for (int i = 0; i < uvs.size(); ++i) {
+		Vector2 uv = uvs[i];
+		uv *= imgsize;
+
+		int ux = static_cast<int>(CLAMP(uv.x, 0, imgsize.x - 1));
+		int uy = static_cast<int>(CLAMP(uv.y, 0, imgsize.y - 1));
+
+		Color c = img->get_pixel(ux, uy);
+
+		colors.set(i, colors[i] * c * mul_color);
+	}
+
+#if !GODOT4
+	img->unlock();
+#endif
+
+	arr[VisualServer::ARRAY_COLOR] = colors;
+
+	return arr;
+}
+
 void VoxelJob::chunk_exit_tree() {
 
 	_in_tree = false;
@@ -290,7 +354,7 @@ void VoxelJob::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("execute_phase"), &VoxelJob::execute_phase);
 
 	ClassDB::bind_method(D_METHOD("generate_ao"), &VoxelJob::generate_ao);
-	ClassDB::bind_method(D_METHOD("generate_random_ao", "seed", "octaves", "period", "persistence", "scale_factor"), &VoxelJob::generate_random_ao);
+	ClassDB::bind_method(D_METHOD("generate_random_ao", "seed", "octaves", "period", "persistence", "scale_factor"), &VoxelJob::generate_random_ao, DEFVAL(4), DEFVAL(30), DEFVAL(0.3), DEFVAL(0.6));
 
 	ClassDB::bind_method(D_METHOD("chunk_exit_tree"), &VoxelJob::chunk_exit_tree);
 

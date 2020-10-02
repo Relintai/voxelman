@@ -27,6 +27,10 @@ SOFTWARE.
 
 #include "../../defines.h"
 
+#include "../jobs/voxel_light_job.h"
+#include "../jobs/voxel_prop_job.h"
+#include "../jobs/voxel_terrarin_job.h"
+
 VoxelChunkBlocky::VoxelChunkBlocky() {
 }
 
@@ -38,39 +42,22 @@ void VoxelChunkBlocky::_setup_channels() {
 }
 
 void VoxelChunkBlocky::_create_meshers() {
-	set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky)));
-	add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky())));
-	add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidBlocky())));
+	Ref<VoxelTerrarinJob> tj;
+	tj.instance();
 
-	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _meshers.get(i);
+	Ref<VoxelLightJob> lj;
+	lj.instance();
 
-		ERR_CONTINUE(!mesher.is_valid());
+	Ref<VoxelPropJob> pj;
+	pj.instance();
+	pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky)));
 
-		mesher->set_lod_size(get_lod_size());
-		mesher->set_voxel_scale(get_voxel_scale());
+	tj->add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky())));
+	tj->add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidBlocky())));
 
-		Ref<VoxelMesherDefault> md = mesher;
-
-		if (md.is_valid()) {
-			md->set_build_flags(get_build_flags());
-		}
-	}
-
-	for (int i = 0; i < _liquid_meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
-
-		ERR_CONTINUE(!mesher.is_valid());
-
-		mesher->set_lod_size(get_lod_size());
-		mesher->set_voxel_scale(get_voxel_scale());
-
-		Ref<VoxelMesherDefault> md = mesher;
-
-		if (md.is_valid()) {
-			md->set_build_flags(get_build_flags());
-		}
-	}
+	add_job(lj);
+	add_job(tj);
+	add_job(pj);
 }
 
 void VoxelChunkBlocky::_bind_methods() {

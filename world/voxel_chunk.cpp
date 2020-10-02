@@ -30,6 +30,10 @@ SOFTWARE.
 
 #include "jobs/voxel_job.h"
 
+#if THREAD_POOL_PRESENT
+#include "../../thread_pool/thread_pool.h"
+#endif
+
 _FORCE_INLINE_ bool VoxelChunk::get_is_build_threaded() const {
 	return _is_build_threaded;
 }
@@ -195,14 +199,6 @@ float VoxelChunk::get_voxel_scale() const {
 }
 void VoxelChunk::set_voxel_scale(const float value) {
 	_voxel_scale = value;
-
-	for (int i = 0; i < _meshers.size(); ++i) {
-		Ref<VoxelMesher> mesher = _meshers.get(i);
-
-		ERR_CONTINUE(!mesher.is_valid());
-
-		mesher->set_voxel_scale(_voxel_scale);
-	}
 }
 
 VoxelWorld *VoxelChunk::get_voxel_world() const {
@@ -249,60 +245,34 @@ void VoxelChunk::next_job() {
 	++_current_job;
 
 	if (_current_job >= _jobs.size()) {
-		_current_job = 0;
+		_current_job = -1;
 		set_is_generating(false);
+		return;
+	}
+
+	Ref<VoxelJob> j = _jobs[_current_job];
+
+	if (!j.is_valid()) {
+		//skip if invalid
+		next_job();
+	}
+
+	if (j->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_NORMAL) {
+		j->set_complete(false);
+
+#if THREAD_POOL_PRESENT
+		ThreadPool::get_singleton()->add_job(j);
+#else
+		j->execute();
+#endif
 	}
 }
+Ref<VoxelJob> VoxelChunk::get_current_job() {
+	if (_current_job < 0 || _current_job >= _jobs.size()) {
+		return Ref<VoxelJob>();
+	}
 
-Ref<VoxelMesher> VoxelChunk::get_mesher(int index) const {
-	ERR_FAIL_INDEX_V(index, _meshers.size(), Ref<VoxelMesher>());
-
-	return _meshers.get(index);
-}
-void VoxelChunk::set_mesher(int index, const Ref<VoxelMesher> &mesher) {
-	ERR_FAIL_INDEX(index, _meshers.size());
-
-	_meshers.set(index, mesher);
-}
-void VoxelChunk::remove_mesher(const int index) {
-	ERR_FAIL_INDEX(index, _meshers.size());
-
-	_meshers.remove(index);
-}
-void VoxelChunk::add_mesher(const Ref<VoxelMesher> &mesher) {
-	_meshers.push_back(mesher);
-}
-int VoxelChunk::get_mesher_count() const {
-	return _meshers.size();
-}
-
-Ref<VoxelMesher> VoxelChunk::get_liquid_mesher(int index) const {
-	ERR_FAIL_INDEX_V(index, _liquid_meshers.size(), Ref<VoxelMesher>());
-
-	return _liquid_meshers.get(index);
-}
-void VoxelChunk::set_liquid_mesher(int index, const Ref<VoxelMesher> &mesher) {
-	ERR_FAIL_INDEX(index, _liquid_meshers.size());
-
-	_liquid_meshers.set(index, mesher);
-}
-void VoxelChunk::remove_liquid_mesher(const int index) {
-	ERR_FAIL_INDEX(index, _liquid_meshers.size());
-
-	_liquid_meshers.remove(index);
-}
-void VoxelChunk::add_liquid_mesher(const Ref<VoxelMesher> &mesher) {
-	_liquid_meshers.push_back(mesher);
-}
-int VoxelChunk::get_liquid_mesher_count() const {
-	return _liquid_meshers.size();
-}
-
-Ref<VoxelMesher> VoxelChunk::get_prop_mesher() const {
-	return _prop_mesher;
-}
-void VoxelChunk::set_prop_mesher(const Ref<VoxelMesher> &mesher) {
-	_prop_mesher = mesher;
+	return _jobs[_current_job];
 }
 
 //Voxel Data
@@ -611,111 +581,6 @@ void VoxelChunk::clear() {
 	call("_clear");
 }
 
-Array VoxelChunk::merge_mesh_array(Array arr) const {
-	ERR_FAIL_COND_V(arr.size() != VisualServer::ARRAY_MAX, arr);
-
-	PoolVector3Array verts = arr[VisualServer::ARRAY_VERTEX];
-	PoolVector3Array normals = arr[VisualServer::ARRAY_NORMAL];
-	PoolVector2Array uvs = arr[VisualServer::ARRAY_TEX_UV];
-	PoolColorArray colors = arr[VisualServer::ARRAY_COLOR];
-	PoolIntArray indices = arr[VisualServer::ARRAY_INDEX];
-
-	bool has_normals = normals.size() > 0;
-	bool has_uvs = uvs.size() > 0;
-	bool has_colors = colors.size() > 0;
-
-	int i = 0;
-	while (i < verts.size()) {
-		Vector3 v = verts[i];
-
-		Array equals;
-		for (int j = i + 1; j < verts.size(); ++j) {
-			Vector3 vc = verts[j];
-
-			if (Math::is_equal_approx(v.x, vc.x) && Math::is_equal_approx(v.y, vc.y) && Math::is_equal_approx(v.z, vc.z))
-				equals.push_back(j);
-		}
-
-		for (int k = 0; k < equals.size(); ++k) {
-			int rem = equals[k];
-			int remk = rem - k;
-
-			verts.remove(remk);
-
-			if (has_normals)
-				normals.remove(remk);
-			if (has_uvs)
-				uvs.remove(remk);
-			if (has_colors)
-				colors.remove(remk);
-
-			for (int j = 0; j < indices.size(); ++j) {
-				int indx = indices[j];
-
-				if (indx == remk)
-					indices.set(j, i);
-				else if (indx > remk)
-					indices.set(j, indx - 1);
-			}
-		}
-
-		++i;
-	}
-
-	arr[VisualServer::ARRAY_VERTEX] = verts;
-
-	if (has_normals)
-		arr[VisualServer::ARRAY_NORMAL] = normals;
-	if (has_uvs)
-		arr[VisualServer::ARRAY_TEX_UV] = uvs;
-	if (has_colors)
-		arr[VisualServer::ARRAY_COLOR] = colors;
-
-	arr[VisualServer::ARRAY_INDEX] = indices;
-
-	return arr;
-}
-Array VoxelChunk::bake_mesh_array_uv(Array arr, Ref<Texture> tex, const float mul_color) const {
-	ERR_FAIL_COND_V(arr.size() != VisualServer::ARRAY_MAX, arr);
-	ERR_FAIL_COND_V(!tex.is_valid(), arr);
-
-	Ref<Image> img = tex->get_data();
-
-	ERR_FAIL_COND_V(!img.is_valid(), arr);
-
-	Vector2 imgsize = img->get_size();
-
-	PoolVector2Array uvs = arr[VisualServer::ARRAY_TEX_UV];
-	PoolColorArray colors = arr[VisualServer::ARRAY_COLOR];
-
-	if (colors.size() < uvs.size())
-		colors.resize(uvs.size());
-
-#if !GODOT4
-	img->lock();
-#endif
-
-	for (int i = 0; i < uvs.size(); ++i) {
-		Vector2 uv = uvs[i];
-		uv *= imgsize;
-
-		int ux = static_cast<int>(CLAMP(uv.x, 0, imgsize.x - 1));
-		int uy = static_cast<int>(CLAMP(uv.y, 0, imgsize.y - 1));
-
-		Color c = img->get_pixel(ux, uy);
-
-		colors.set(i, colors[i] * c * mul_color);
-	}
-
-#if !GODOT4
-	img->unlock();
-#endif
-
-	arr[VisualServer::ARRAY_COLOR] = colors;
-
-	return arr;
-}
-
 void VoxelChunk::bake_lights() {
 	if (has_method("_bake_lights"))
 		call("_bake_lights");
@@ -883,7 +748,7 @@ void VoxelChunk::set_mesh_data_resource_uv_rect(const int index, const Rect2 &uv
 Transform VoxelChunk::get_mesh_data_resource_transform(const int index) {
 	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Transform());
 
-	return _mesh_data_resources[index].transform;
+	return _mesh_data_resources.write[index].transform;
 }
 void VoxelChunk::set_mesh_data_resource_transform(const int index, const Transform &transform) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
@@ -1030,28 +895,6 @@ void VoxelChunk::generation_process(const float delta) {
 void VoxelChunk::generation_physics_process(const float delta) {
 	call("_generation_physics_process", delta);
 }
-void VoxelChunk::_generation_process(const float delta) {
-	ERR_FAIL_INDEX(_current_job, _jobs.size());
-
-	Ref<VoxelJob> job = _jobs[_current_job];
-
-	ERR_FAIL_COND(!job.is_valid());
-
-	if (job->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_PROCESS) {
-		job->process(delta);
-	}
-}
-void VoxelChunk::_generation_physics_process(const float delta) {
-	ERR_FAIL_INDEX(_current_job, _jobs.size());
-
-	Ref<VoxelJob> job = _jobs[_current_job];
-
-	ERR_FAIL_COND(!job.is_valid());
-
-	if (job->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
-		job->physics_process(delta);
-	}
-}
 
 Transform VoxelChunk::get_transform() const {
 	return _transform;
@@ -1112,8 +955,6 @@ VoxelChunk::VoxelChunk() {
 }
 
 VoxelChunk::~VoxelChunk() {
-	_meshers.clear();
-
 	if (_library.is_valid()) {
 		_library.unref();
 	}
@@ -1138,6 +979,57 @@ VoxelChunk::~VoxelChunk() {
 	_colliders.clear();
 
 	_jobs.clear();
+}
+
+void VoxelChunk::_enter_tree() {
+	for (int i = 0; i < _jobs.size(); ++i) {
+		Ref<VoxelJob> j = _jobs[i];
+
+		if (j.is_valid()) {
+			j->set_chunk(Ref<VoxelChunk>(this));
+		}
+	}
+}
+
+void VoxelChunk::_exit_tree() {
+	_abort_build = true;
+
+	for (int i = 0; i < _jobs.size(); ++i) {
+		Ref<VoxelJob> j = _jobs[i];
+
+		if (j.is_valid()) {
+			j->chunk_exit_tree();
+		}
+	}
+}
+
+void VoxelChunk::_generation_process(const float delta) {
+	ERR_FAIL_INDEX(_current_job, _jobs.size());
+
+	Ref<VoxelJob> job = _jobs[_current_job];
+
+	ERR_FAIL_COND(!job.is_valid());
+
+	if (job->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_PROCESS) {
+		if (!_voxel_world->can_chunk_do_build_step())
+			return;
+
+		job->process(delta);
+	}
+}
+void VoxelChunk::_generation_physics_process(const float delta) {
+	ERR_FAIL_INDEX(_current_job, _jobs.size());
+
+	Ref<VoxelJob> job = _jobs[_current_job];
+
+	ERR_FAIL_COND(!job.is_valid());
+
+	if (job->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_PHYSICS_PROCESS) {
+		if (!_voxel_world->can_chunk_do_build_step())
+			return;
+
+		job->physics_process(delta);
+	}
 }
 
 void VoxelChunk::_world_transform_changed() {
@@ -1334,22 +1226,7 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_current_job_index"), &VoxelChunk::get_current_job_index);
 	ClassDB::bind_method(D_METHOD("next_job"), &VoxelChunk::next_job);
-
-	ClassDB::bind_method(D_METHOD("get_mesher", "index"), &VoxelChunk::get_mesher);
-	ClassDB::bind_method(D_METHOD("set_mesher", "index", "mesher"), &VoxelChunk::set_mesher);
-	ClassDB::bind_method(D_METHOD("remove_mesher", "index"), &VoxelChunk::remove_mesher);
-	ClassDB::bind_method(D_METHOD("add_mesher", "mesher"), &VoxelChunk::add_mesher);
-	ClassDB::bind_method(D_METHOD("get_mesher_count"), &VoxelChunk::get_mesher_count);
-
-	ClassDB::bind_method(D_METHOD("get_liquid_mesher", "index"), &VoxelChunk::get_liquid_mesher);
-	ClassDB::bind_method(D_METHOD("set_liquid_mesher", "index", "mesher"), &VoxelChunk::set_liquid_mesher);
-	ClassDB::bind_method(D_METHOD("remove_liquid_mesher", "index"), &VoxelChunk::remove_liquid_mesher);
-	ClassDB::bind_method(D_METHOD("add_liquid_mesher", "mesher"), &VoxelChunk::add_liquid_mesher);
-	ClassDB::bind_method(D_METHOD("get_liquid_mesher_count"), &VoxelChunk::get_liquid_mesher_count);
-
-	ClassDB::bind_method(D_METHOD("get_prop_mesher"), &VoxelChunk::get_prop_mesher);
-	ClassDB::bind_method(D_METHOD("set_prop_mesher", "mesher"), &VoxelChunk::set_prop_mesher);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop_mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher", 0), "set_prop_mesher", "get_prop_mesher");
+	ClassDB::bind_method(D_METHOD("get_current_job"), &VoxelChunk::get_current_job);
 
 	ClassDB::bind_method(D_METHOD("get_voxel_world"), &VoxelChunk::get_voxel_world);
 	ClassDB::bind_method(D_METHOD("set_voxel_world", "world"), &VoxelChunk::set_voxel_world_bind);
@@ -1384,9 +1261,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_index", "x", "y", "z"), &VoxelChunk::get_index);
 	ClassDB::bind_method(D_METHOD("get_data_index", "x", "y", "z"), &VoxelChunk::get_data_index);
 	ClassDB::bind_method(D_METHOD("get_data_size"), &VoxelChunk::get_data_size);
-
-	ClassDB::bind_method(D_METHOD("merge_mesh_array", "arr"), &VoxelChunk::merge_mesh_array);
-	ClassDB::bind_method(D_METHOD("bake_mesh_array_uv", "arr", "tex", "mul_color"), &VoxelChunk::bake_mesh_array_uv, DEFVAL(0.7));
 
 	//Meshes
 
@@ -1448,4 +1322,9 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("to_global", "local"), &VoxelChunk::to_global);
 
 	ClassDB::bind_method(D_METHOD("_world_transform_changed"), &VoxelChunk::_world_transform_changed);
+	ClassDB::bind_method(D_METHOD("_enter_tree"), &VoxelChunk::_enter_tree);
+	ClassDB::bind_method(D_METHOD("_exit_tree"), &VoxelChunk::_exit_tree);
+
+	ClassDB::bind_method(D_METHOD("_generation_process"), &VoxelChunk::_generation_process);
+	ClassDB::bind_method(D_METHOD("_generation_physics_process"), &VoxelChunk::_generation_physics_process);
 }

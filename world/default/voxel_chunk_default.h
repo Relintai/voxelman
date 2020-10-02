@@ -55,30 +55,7 @@ class VoxelChunkDefault : public VoxelChunk {
 	_THREAD_SAFE_CLASS_
 
 public:
-	static const String BINDING_STRING_ACTIVE_BUILD_PHASE_TYPE;
 	static const String BINDING_STRING_BUILD_FLAGS;
-
-	enum {
-		VOXEL_CHUNK_STATE_GENERATION_QUEUED = 1,
-		VOXEL_CHUNK_STATE_GENERATION,
-		VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED,
-		VOXEL_CHUNK_STATE_MESH_GENERATION,
-		VOXEL_CHUNK_STATE_MAX,
-	};
-
-	enum {
-		BUILD_PHASE_DONE = 0,
-		BUILD_PHASE_SETUP,
-		BUILD_PHASE_TERRARIN_MESH_SETUP,
-		BUILD_PHASE_COLLIDER,
-		BUILD_PHASE_LIGHTS,
-		BUILD_PHASE_TERRARIN_MESH,
-#ifdef MESH_DATA_RESOURCE_PRESENT
-		BUILD_PHASE_MESH_DATA_RESOURCES,
-#endif
-		BUILD_PHASE_FINALIZE,
-		BUILD_PHASE_MAX
-	};
 
 	enum DefaultChannels {
 		DEFAULT_CHANNEL_TYPE = 0,
@@ -92,12 +69,6 @@ public:
 		DEFAULT_CHANNEL_RANDOM_AO,
 		DEFAULT_CHANNEL_LIQUID_FLOW,
 		MAX_DEFAULT_CHANNELS
-	};
-
-	enum ActiveBuildPhaseType {
-		BUILD_PHASE_TYPE_NORMAL = 0,
-		BUILD_PHASE_TYPE_PROCESS,
-		BUILD_PHASE_TYPE_PHYSICS_PROCESS,
 	};
 
 	enum {
@@ -131,21 +102,7 @@ public:
 	int get_build_flags() const;
 	void set_build_flags(const int flags);
 
-	ActiveBuildPhaseType get_active_build_phase_type() const;
-	void set_active_build_phase_type(const ActiveBuildPhaseType value);
-
-	bool get_build_phase_done() const;
-	void set_build_phase_done(const bool value);
-
-	int get_lod_size() const;
-	void set_lod_size(const int lod_size);
-
-	int get_current_build_phase() const;
-	void set_current_build_phase(const int value);
-
-	int get_max_build_phase() const;
-	void set_max_build_phase(const int value);
-
+	//add dirty flags
 	bool get_lights_dirty() const;
 	void set_lights_dirty(const bool value);
 
@@ -155,18 +112,6 @@ public:
 
 	int get_current_lod_level() const;
 	void set_current_lod_level(const int value);
-
-	//Data Management functions
-	void generate_ao();
-
-	void build_step();
-
-	void build_phase();
-	void build_phase_process();
-	void build_phase_physics_process();
-
-	bool has_next_phase();
-	void next_phase();
 
 	//Meshes
 	Dictionary get_mesh_rids();
@@ -229,25 +174,19 @@ public:
 	bool get_build_step_in_progress() const;
 	void set_build_step_in_progress(const bool value);
 
-	Ref<VoxelJob> get_job();
+	void build();
+	void finalize_build();
 
 	VoxelChunkDefault();
 	~VoxelChunkDefault();
 
 protected:
 	virtual void _setup_channels();
-	virtual void _build_phase(int phase);
-	virtual void _build_phase_process(int phase);
-	virtual void _build_phase_physics_process(int phase);
 
 	virtual void _create_meshers();
-	virtual void _build(bool immediate);
 	virtual void _visibility_changed(bool visible);
 
-	virtual void _enter_tree();
 	virtual void _exit_tree();
-	virtual void _process(float delta);
-	virtual void _physics_process(float delta);
 	virtual void _world_transform_changed();
 
 	//lights
@@ -257,22 +196,15 @@ protected:
 	virtual void _world_light_added(const Ref<VoxelLight> &light);
 	virtual void _world_light_removed(const Ref<VoxelLight> &light);
 
-	void wait_and_finish_thread();
-
 	static void _bind_methods();
 
 	int _build_flags;
 
-	bool _abort_build;
 	bool _queued_generation;
 
-	int _current_build_phase;
-	int _max_build_phases;
 	bool _enabled;
 
 	bool _lights_dirty;
-
-	int _lod_size;
 
 	//lod
 	int _lod_num;
@@ -286,24 +218,10 @@ protected:
 	RID _debug_mesh_instance;
 	PoolVector3Array _debug_mesh_array;
 
-	bool _build_prioritized;
-	bool _build_phase_done;
-	bool _build_step_in_progress;
-
-	PoolVector<Vector3> temp_arr_collider;
-	PoolVector<Vector3> temp_arr_collider_liquid;
-
-	ActiveBuildPhaseType _active_build_phase_type;
-
 	Vector<Ref<VoxelLight> > _lights;
-
-	Ref<VoxelJob> _job;
-
-	Array temp_mesh_arr;
 };
 
 VARIANT_ENUM_CAST(VoxelChunkDefault::DefaultChannels);
-VARIANT_ENUM_CAST(VoxelChunkDefault::ActiveBuildPhaseType);
 VARIANT_ENUM_CAST(VoxelChunkDefault::BuildFlags);
 
 #endif

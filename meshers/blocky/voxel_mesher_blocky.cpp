@@ -36,9 +36,9 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	if ((get_build_flags() & VoxelChunkDefault::BUILD_FLAG_GENERATE_AO) != 0)
-		if (!chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_AO))
-			chunk->generate_ao();
+	//if ((get_build_flags() & VoxelChunkDefault::BUILD_FLAG_GENERATE_AO) != 0)
+	//	if (!chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_AO))
+	//		chunk->generate_ao();
 
 	int x_size = chunk->get_size_x();
 	int y_size = chunk->get_size_y();

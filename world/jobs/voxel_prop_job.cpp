@@ -50,6 +50,64 @@ void VoxelPropJob::phase_reset() {
 	}
 }
 
+void VoxelPropJob::phase_physics_process() {
+	Ref<VoxelChunkDefault> chunk = _chunk;
+
+	//TODO this should only update the differences
+	for (int i = 0; i < chunk->get_collider_count(); ++i) {
+		PhysicsServer::get_singleton()->free(chunk->get_collider_body(i));
+	}
+
+	chunk->clear_colliders();
+
+#ifdef MESH_DATA_RESOURCE_PRESENT
+	for (int i = 0; i < chunk->get_mesh_data_resource_count(); ++i) {
+		Ref<MeshDataResource> mdr = chunk->get_mesh_data_resource(i);
+
+		for (int j = 0; j < mdr->get_collision_shape_count(); ++j) {
+			Ref<Shape> shape = mdr->get_collision_shape(j);
+			Transform offset = mdr->get_collision_shape_offset(j);
+
+			if (!shape.is_valid()) {
+				continue;
+			}
+
+			RID body = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
+
+			Transform transform = chunk->get_mesh_data_resource_transform(i);
+			transform *= offset;
+
+			PhysicsServer::get_singleton()->body_add_shape(body, shape->get_rid());
+
+			//TODO store the layer mask somewhere
+			PhysicsServer::get_singleton()->body_set_collision_layer(body, 1);
+			PhysicsServer::get_singleton()->body_set_collision_mask(body, 1);
+
+			if (chunk->get_voxel_world()->is_inside_tree() && chunk->get_voxel_world()->is_inside_world()) {
+				Ref<World> world = chunk->get_voxel_world()->GET_WORLD();
+
+				if (world.is_valid() && world->get_space() != RID()) {
+					PhysicsServer::get_singleton()->body_set_space(body, world->get_space());
+				}
+			}
+
+			PhysicsServer::get_singleton()->body_set_state(body, PhysicsServer::BODY_STATE_TRANSFORM, chunk->get_transform() * transform);
+
+			chunk->add_collider(transform, shape, shape->get_rid(), body);
+		}
+	}
+#endif
+
+#if TOOLS_ENABLED
+	if (SceneTree::get_singleton()->is_debugging_collisions_hint() && chunk->get_collider_count() > 0) {
+		chunk->draw_debug_mdr_colliders();
+	}
+#endif
+
+	set_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
+	next_phase();
+}
+
 void VoxelPropJob::phase_prop() {
 #ifdef MESH_DATA_RESOURCE_PRESENT
 	Ref<VoxelChunkDefault> chunk = _chunk;
@@ -196,7 +254,7 @@ void VoxelPropJob::phase_prop() {
 
 			if (should_do()) {
 				if (chunk->get_lod_num() >= 2) {
-					Array temp_mesh_arr2 = chunk->merge_mesh_array(temp_mesh_arr);
+					Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
 					temp_mesh_arr = temp_mesh_arr2;
 
 					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
@@ -222,7 +280,7 @@ void VoxelPropJob::phase_prop() {
 				}
 
 				if (tex.is_valid()) {
-					temp_mesh_arr = chunk->bake_mesh_array_uv(temp_mesh_arr, tex);
+					temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
 					temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
 
 					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);

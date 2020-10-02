@@ -27,7 +27,9 @@ SOFTWARE.
 #include "../../library/voxel_surface.h"
 #include "../../library/voxelman_library.h"
 
+#include "../../meshers/default/voxel_mesher_default.h"
 #include "../../meshers/voxel_mesher.h"
+
 #include "../default/voxel_chunk_default.h"
 
 Ref<VoxelMesher> VoxelTerrarinJob::get_mesher(int index) const {
@@ -209,6 +211,49 @@ void VoxelTerrarinJob::phase_collider() {
 	}
 
 	set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
+	next_phase();
+}
+
+void VoxelTerrarinJob::phase_physics_process() {
+	Ref<VoxelChunkDefault> chunk = _chunk;
+
+	if (temp_arr_collider.size() != 0) {
+		if (!chunk->has_meshes(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_BODY)) {
+			chunk->create_colliders(VoxelChunkDefault::MESH_INDEX_TERRARIN);
+		}
+
+		PhysicsServer::get_singleton()->shape_set_data(chunk->get_mesh_rid(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
+
+		temp_arr_collider.resize(0);
+	}
+
+	if (temp_arr_collider_liquid.size() != 0) {
+		if (Engine::get_singleton()->is_editor_hint()) {
+			if (!chunk->has_meshes(VoxelChunkDefault::MESH_INDEX_LIQUID, VoxelChunkDefault::MESH_TYPE_INDEX_BODY)) {
+				chunk->create_colliders(VoxelChunkDefault::MESH_INDEX_LIQUID);
+			}
+		}
+		/*
+			else {
+				if (!has_meshes(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_AREA)) {
+					create_colliders_area(MESH_INDEX_LIQUID);
+				}
+			}*/
+
+		PhysicsServer::get_singleton()->shape_set_data(chunk->get_mesh_rid(VoxelChunkDefault::MESH_INDEX_LIQUID, VoxelChunkDefault::MESH_TYPE_INDEX_SHAPE), temp_arr_collider_liquid);
+
+		temp_arr_collider_liquid.resize(0);
+	}
+
+	//TODO this should only update the differences
+	for (int i = 0; i < chunk->get_collider_count(); ++i) {
+		PhysicsServer::get_singleton()->free(chunk->get_collider_body(i));
+	}
+
+	chunk->clear_colliders();
+
+	set_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
+	next_phase();
 }
 
 void VoxelTerrarinJob::phase_terrarin_mesh() {
@@ -414,7 +459,7 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 
 			if (should_do()) {
 				if (chunk->get_lod_num() >= 2) {
-					Array temp_mesh_arr2 = chunk->merge_mesh_array(temp_mesh_arr);
+					Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
 					temp_mesh_arr = temp_mesh_arr2;
 
 					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
@@ -441,7 +486,7 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 					}
 
 					if (tex.is_valid()) {
-						temp_mesh_arr = chunk->bake_mesh_array_uv(temp_mesh_arr, tex);
+						temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
 						temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
 
 						VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
@@ -581,6 +626,43 @@ void VoxelTerrarinJob::_execute_phase() {
 		phase_finalize();
 	else if (_phase == 5)
 		phase_finalize_physics_process();
+}
+
+void VoxelTerrarinJob::_reset() {
+	VoxelJob::_reset();
+
+	_build_done = false;
+	_phase = 0;
+
+	for (int i = 0; i < _meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->set_voxel_scale(_chunk->get_voxel_scale());
+
+		Ref<VoxelChunkDefault> chunk = _chunk;
+		Ref<VoxelMesherDefault> md = mesher;
+
+		if (chunk.is_valid() && md.is_valid()) {
+			md->set_build_flags(chunk->get_build_flags());
+		}
+	}
+
+	for (int i = 0; i < _liquid_meshers.size(); ++i) {
+		Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
+
+		ERR_CONTINUE(!mesher.is_valid());
+
+		mesher->set_voxel_scale(_chunk->get_voxel_scale());
+
+		Ref<VoxelChunkDefault> chunk = _chunk;
+		Ref<VoxelMesherDefault> md = mesher;
+
+		if (chunk.is_valid() && md.is_valid()) {
+			md->set_build_flags(chunk->get_build_flags());
+		}
+	}
 }
 
 VoxelTerrarinJob::VoxelTerrarinJob() {

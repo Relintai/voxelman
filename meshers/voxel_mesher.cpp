@@ -149,13 +149,6 @@ void VoxelMesher::set_voxel_scale(const float voxel_scale) {
 	_voxel_scale = voxel_scale;
 }
 
-int VoxelMesher::get_lod_size() const {
-	return _lod_size;
-}
-void VoxelMesher::set_lod_size(const int lod_size) {
-	_lod_size = lod_size;
-}
-
 Rect2 VoxelMesher::get_uv_margin() const {
 	return _uv_margin;
 }
@@ -905,7 +898,6 @@ VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
 
 	_mesher_index = 0;
 	_voxel_scale = 1;
-	_lod_size = 1;
 	_ao_strength = 0.25;
 	_base_light_value = 0.5;
 	_uv_margin = Rect2(0, 0, 1, 1);
@@ -919,7 +911,6 @@ VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
 VoxelMesher::VoxelMesher() {
 	_mesher_index = 0;
 	_voxel_scale = 1;
-	_lod_size = 1;
 	_ao_strength = 0.25;
 	_base_light_value = 0.5;
 	_uv_margin = Rect2(0, 0, 1, 1);
@@ -971,10 +962,6 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelMesher::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelMesher::set_voxel_scale);
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "voxel_scale"), "set_voxel_scale", "get_voxel_scale");
-
-	ClassDB::bind_method(D_METHOD("get_lod_size"), &VoxelMesher::get_lod_size);
-	ClassDB::bind_method(D_METHOD("set_lod_size", "value"), &VoxelMesher::set_lod_size);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_size"), "set_lod_size", "get_lod_size");
 
 	ClassDB::bind_method(D_METHOD("get_ao_strength"), &VoxelMesher::get_ao_strength);
 	ClassDB::bind_method(D_METHOD("set_ao_strength", "value"), &VoxelMesher::set_ao_strength);

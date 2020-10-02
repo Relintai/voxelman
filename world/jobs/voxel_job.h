@@ -23,6 +23,8 @@ SOFTWARE.
 #ifndef VOXEL_JOB_H
 #define VOXEL_JOB_H
 
+#include "scene/resources/texture.h"
+
 #if THREAD_POOL_PRESENT
 #include "../../../thread_pool/thread_pool_job.h"
 #else
@@ -75,7 +77,9 @@ public:
 	void physics_process(const float delta);
 
 	void generate_ao();
-	void generate_random_ao(int seed, int octaves, int period, float persistence, float scale_factor);
+	void generate_random_ao(int seed, int octaves = 4, int period = 30, float persistence = 0.3, float scale_factor = 0.6);
+	Array merge_mesh_array(Array arr) const;
+	Array bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_color = 0.7) const;
 
 	void chunk_exit_tree();
 

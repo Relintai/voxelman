@@ -37,15 +37,15 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 		return;
 	}
 
-	if (chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO)) {
-		chunk->generate_ao();
-	}
+	//if (chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO)) {
+	//	chunk->generate_ao();
+	//}
 
 	int x_size = chunk->get_size_x();
 	int y_size = chunk->get_size_y();
 	int z_size = chunk->get_size_z();
 
-	float voxel_size = get_lod_size();
+	float voxel_size = 1;
 	float voxel_scale = get_voxel_scale();
 
 	Ref<VoxelCubePoints> cube_points;

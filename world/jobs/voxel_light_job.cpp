@@ -33,6 +33,10 @@ SOFTWARE.
 void VoxelLightJob::phase_light() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
+	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_GENERATE_AO) != 0)
+		if (!chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_AO))
+			generate_ao();
+
 	bool gr = (chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_AUTO_GENERATE_RAO) != 0;
 
 	if (!gr && (chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) == 0) {
@@ -50,7 +54,7 @@ void VoxelLightJob::phase_light() {
 	}
 
 	if (gr && should_do()) {
-		chunk->generate_random_ao(chunk->get_voxel_world()->get_current_seed());
+		generate_random_ao(chunk->get_voxel_world()->get_current_seed());
 
 		if (should_return())
 			return;

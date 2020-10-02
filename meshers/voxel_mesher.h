@@ -117,9 +117,6 @@ public:
 	float get_voxel_scale() const;
 	void set_voxel_scale(const float voxel_scale);
 
-	int get_lod_size() const;
-	void set_lod_size(const int lod_size);
-
 	Rect2 get_uv_margin() const;
 	void set_uv_margin(const Rect2 margin);
 
@@ -215,7 +212,6 @@ protected:
 	Ref<Material> _material;
 
 	float _voxel_scale;
-	int _lod_size;
 
 	float _ao_strength;
 	float _base_light_value;

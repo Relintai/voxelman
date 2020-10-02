@@ -182,14 +182,14 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	Ref<VoxelJob> job = chunk->get_job();
+	Ref<VoxelJob> job = chunk->get_current_job();
 
-	if (!job->has_meta("ao_done")) {
-		job->set_meta("ao_done", true);
-		chunk->generate_ao();
-	}
+	//if (!job->has_meta("ao_done")) {
+	//	job->set_meta("ao_done", true);
+	//	chunk->generate_ao();
+	//}
 
-	job->remove_meta("ao_done");
+	//job->remove_meta("ao_done");
 
 	if (job->should_return()) {
 		return;
@@ -201,7 +201,7 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	int y_size = chunk->get_size_y();
 	int z_size = chunk->get_size_z();
 
-	int lod_size = get_lod_size();
+	int lod_size = 1;
 
 	int start_y = 0;
 

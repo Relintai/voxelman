@@ -149,24 +149,7 @@ public:
 
 	int get_current_job_index();
 	void next_job();
-
-	//Meshers
-	Ref<VoxelMesher> get_mesher(const int index) const;
-	void set_mesher(const int index, const Ref<VoxelMesher> &mesher);
-	void remove_mesher(const int index);
-	void add_mesher(const Ref<VoxelMesher> &mesher);
-	int get_mesher_count() const;
-
-	//Liquid Meshers
-	Ref<VoxelMesher> get_liquid_mesher(const int index) const;
-	void set_liquid_mesher(const int index, const Ref<VoxelMesher> &mesher);
-	void remove_liquid_mesher(const int index);
-	void add_liquid_mesher(const Ref<VoxelMesher> &mesher);
-	int get_liquid_mesher_count() const;
-
-	//Prop Meshers
-	Ref<VoxelMesher> get_prop_mesher() const;
-	void set_prop_mesher(const Ref<VoxelMesher> &mesher);
+	Ref<VoxelJob> get_current_job();
 
 	//Channels
 	void setup_channels();
@@ -204,9 +187,6 @@ public:
 	void create_meshers();
 	void build(const bool immediate = false);
 	void clear();
-
-	Array merge_mesh_array(Array arr) const;
-	Array bake_mesh_array_uv(Array arr, Ref<Texture> tex, float mul_color = 0.7) const;
 
 	//light Baking
 	void bake_lights();
@@ -279,8 +259,6 @@ public:
 	void world_light_removed(const Ref<VoxelLight> &light);
 	void generation_process(const float delta);
 	void generation_physics_process(const float delta);
-	void _generation_process(const float delta);
-	void _generation_physics_process(const float delta);
 
 	Transform get_transform() const;
 	void set_transform(const Transform &transform);
@@ -291,6 +269,12 @@ public:
 
 	VoxelChunk();
 	~VoxelChunk();
+
+protected:
+	virtual void _enter_tree();
+	virtual void _exit_tree();
+	virtual void _generation_process(const float delta);
+	virtual void _generation_physics_process(const float delta);
 
 protected:
 #if PROPS_PRESENT
@@ -366,9 +350,6 @@ protected:
 	Vector<Ref<VoxelJob> > _jobs;
 
 	Ref<VoxelmanLibrary> _library;
-	Vector<Ref<VoxelMesher> > _meshers;
-	Vector<Ref<VoxelMesher> > _liquid_meshers;
-	Ref<VoxelMesher> _prop_mesher;
 
 #if PROPS_PRESENT
 	Vector<PropDataStore> _props;
@@ -381,6 +362,8 @@ protected:
 	Vector<ColliderBody> _colliders;
 
 	Transform _transform;
+
+	bool _abort_build;
 };
 
 #endif
