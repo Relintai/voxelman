@@ -2197,7 +2197,7 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_world_light_added", "light"), &VoxelChunkDefault::_world_light_added);
 	ClassDB::bind_method(D_METHOD("_world_light_removed", "light"), &VoxelChunkDefault::_world_light_removed);
 
-	ClassDB::bind_method(D_METHOD("get_job"), &VoxelChunkDefault::get_job);
+	//ClassDB::bind_method(D_METHOD("get_job"), &VoxelChunkDefault::get_job);
 
 	BIND_CONSTANT(BUILD_PHASE_DONE);
 	BIND_CONSTANT(BUILD_PHASE_SETUP);

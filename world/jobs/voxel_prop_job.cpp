@@ -287,7 +287,7 @@ VoxelPropJob::~VoxelPropJob() {
 }
 
 void VoxelPropJob::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_prop_mesher"), &VoxelChunk::get_prop_mesher);
-	ClassDB::bind_method(D_METHOD("set_prop_mesher", "mesher"), &VoxelChunk::set_prop_mesher);
+	ClassDB::bind_method(D_METHOD("get_prop_mesher"), &VoxelPropJob::get_prop_mesher);
+	ClassDB::bind_method(D_METHOD("set_prop_mesher", "mesher"), &VoxelPropJob::set_prop_mesher);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop_mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher", 0), "set_prop_mesher", "get_prop_mesher");
 }
