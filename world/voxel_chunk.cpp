@@ -216,12 +216,12 @@ void VoxelChunk::set_voxel_world_bind(Node *world) {
 	_voxel_world = Object::cast_to<VoxelWorld>(world);
 }
 
-Ref<VoxelMesher> VoxelChunk::get_job(int index) const {
-	ERR_FAIL_INDEX_V(index, _jobs.size(), Ref<VoxelMesher>());
+Ref<VoxelJob> VoxelChunk::get_job(int index) const {
+	ERR_FAIL_INDEX_V(index, _jobs.size(), Ref<VoxelJob>());
 
 	return _jobs.get(index);
 }
-void VoxelChunk::set_job(int index, const Ref<VoxelMesher> &job) {
+void VoxelChunk::set_job(int index, const Ref<VoxelJob> &job) {
 	ERR_FAIL_INDEX(index, _jobs.size());
 
 	_jobs.set(index, job);
@@ -231,7 +231,7 @@ void VoxelChunk::remove_job(const int index) {
 
 	_jobs.remove(index);
 }
-void VoxelChunk::add_job(const Ref<VoxelMesher> &job) {
+void VoxelChunk::add_job(const Ref<VoxelJob> &job) {
 	_jobs.push_back(job);
 }
 int VoxelChunk::get_job_count() const {
@@ -257,11 +257,12 @@ void VoxelChunk::next_job() {
 		next_job();
 	}
 
-	if (j->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_NORMAL) {
-		j->set_complete(false);
+	j->set_complete(false);
 
+	if (j->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_NORMAL) {
 #if THREAD_POOL_PRESENT
-		ThreadPool::get_singleton()->add_job(j);
+		//ThreadPool::get_singleton()->add_job(j);
+		j->execute();
 #else
 		j->execute();
 #endif
@@ -566,19 +567,35 @@ void VoxelChunk::create_meshers() {
 	call("_create_meshers");
 }
 
-void VoxelChunk::build(const bool immediate) {
+void VoxelChunk::build() {
 	ERR_FAIL_COND(!INSTANCE_VALIDATE(get_voxel_world()));
 	ERR_FAIL_COND(!get_voxel_world()->is_inside_tree());
 	ERR_FAIL_COND(!is_in_tree());
-	ERR_FAIL_COND_MSG(!has_method("_build"), "VoxelChunk: _build(immediate : bool) is missing! Please implement it!");
 
-	call("_build", immediate);
+	call("_build");
+}
+
+void VoxelChunk::_build() {
+	if (get_is_generating()) {
+		_queued_generation = true;
+		return;
+	}
+
+	_is_generating = true;
+
+	next_job();
 }
 
 void VoxelChunk::clear() {
 	ERR_FAIL_COND_MSG(!has_method("_clear"), "VoxelChunk: _clear() is missing! Please implement it!");
 
 	call("_clear");
+}
+
+void VoxelChunk::finalize_build() {
+	if (has_method("_finalize_build")) {
+		call("_finalize_build");
+	}
 }
 
 void VoxelChunk::bake_lights() {
@@ -952,6 +969,8 @@ VoxelChunk::VoxelChunk() {
 	_margin_end = 0;
 
 	_current_job = 0;
+
+	_queued_generation = false;
 }
 
 VoxelChunk::~VoxelChunk() {
@@ -1115,6 +1134,8 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_generation_process", PropertyInfo(Variant::REAL, "delta")));
 	BIND_VMETHOD(MethodInfo("_generation_physics_process", PropertyInfo(Variant::REAL, "delta")));
 
+	BIND_VMETHOD(MethodInfo("_finalize_build"));
+
 	ClassDB::bind_method(D_METHOD("enter_tree"), &VoxelChunk::enter_tree);
 	ClassDB::bind_method(D_METHOD("exit_tree"), &VoxelChunk::exit_tree);
 	ClassDB::bind_method(D_METHOD("process", "delta"), &VoxelChunk::process);
@@ -1126,6 +1147,8 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("generation_process", "delta"), &VoxelChunk::generation_process);
 	ClassDB::bind_method(D_METHOD("generation_physics_process", "delta"), &VoxelChunk::generation_physics_process);
+
+	ClassDB::bind_method(D_METHOD("finalize_build"), &VoxelChunk::finalize_build);
 
 	ClassDB::bind_method(D_METHOD("get_process"), &VoxelChunk::get_process);
 	ClassDB::bind_method(D_METHOD("set_process", "value"), &VoxelChunk::set_process);
@@ -1316,6 +1339,10 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_colliders"), &VoxelChunk::clear_colliders);
 
 	ClassDB::bind_method(D_METHOD("create_meshers"), &VoxelChunk::create_meshers);
+
+	BIND_VMETHOD(MethodInfo("_build"));
+	ClassDB::bind_method(D_METHOD("build"), &VoxelChunk::build);
+	ClassDB::bind_method(D_METHOD("_build"), &VoxelChunk::_build);
 
 	ClassDB::bind_method(D_METHOD("get_global_transform"), &VoxelChunk::get_global_transform);
 	ClassDB::bind_method(D_METHOD("to_local", "global"), &VoxelChunk::to_local);

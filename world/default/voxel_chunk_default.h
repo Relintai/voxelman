@@ -174,8 +174,7 @@ public:
 	bool get_build_step_in_progress() const;
 	void set_build_step_in_progress(const bool value);
 
-	void build();
-	void finalize_build();
+	void _finalize_build();
 
 	VoxelChunkDefault();
 	~VoxelChunkDefault();
@@ -199,8 +198,6 @@ protected:
 	static void _bind_methods();
 
 	int _build_flags;
-
-	bool _queued_generation;
 
 	bool _enabled;
 

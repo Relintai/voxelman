@@ -141,10 +141,10 @@ public:
 	void set_voxel_world_bind(Node *world);
 
 	//Jobs
-	Ref<VoxelMesher> get_job(const int index) const;
-	void set_job(const int index, const Ref<VoxelMesher> &job);
+	Ref<VoxelJob> get_job(const int index) const;
+	void set_job(const int index, const Ref<VoxelJob> &job);
 	void remove_job(const int index);
-	void add_job(const Ref<VoxelMesher> &job);
+	void add_job(const Ref<VoxelJob> &job);
 	int get_job_count() const;
 
 	int get_current_job_index();
@@ -185,8 +185,11 @@ public:
 
 	//Meshing
 	void create_meshers();
-	void build(const bool immediate = false);
+	void build();
 	void clear();
+	void finalize_build();
+
+	void _build();
 
 	//light Baking
 	void bake_lights();
@@ -364,6 +367,7 @@ protected:
 	Transform _transform;
 
 	bool _abort_build;
+	bool _queued_generation;
 };
 
 #endif

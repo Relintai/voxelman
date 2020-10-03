@@ -833,16 +833,7 @@ void VoxelChunkDefault::free_chunk() {
 	free_rids();
 }
 
-void VoxelChunkDefault::build() {
-	if (get_is_generating()) {
-		_queued_generation = true;
-		return;
-	}
-
-	next_job();
-}
-
-void VoxelChunkDefault::finalize_build() {
+void VoxelChunkDefault::_finalize_build() {
 	ERR_FAIL_COND(!_library.is_valid());
 
 #if TOOLS_ENABLED
@@ -858,7 +849,6 @@ void VoxelChunkDefault::finalize_build() {
 
 VoxelChunkDefault::VoxelChunkDefault() {
 	_abort_build = false;
-	_queued_generation = false;
 
 	_enabled = true;
 
@@ -978,7 +968,7 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_world_light_added", "light"), &VoxelChunkDefault::_world_light_added);
 	ClassDB::bind_method(D_METHOD("_world_light_removed", "light"), &VoxelChunkDefault::_world_light_removed);
 
-	//ClassDB::bind_method(D_METHOD("get_job"), &VoxelChunkDefault::get_job);
+	ClassDB::bind_method(D_METHOD("_finalize_build"), &VoxelChunkDefault::_finalize_build);
 
 	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_TYPE);
 	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_ISOLEVEL);
