@@ -71,7 +71,7 @@ void VoxelLightJob::phase_light() {
 	next_phase();
 }
 
-void VoxelLightJob::_execute() {
+void VoxelLightJob::_execute_phase() {
 	ERR_FAIL_COND(!_chunk.is_valid());
 
 	Ref<VoxelmanLibrary> library = _chunk->get_library();
@@ -79,6 +79,7 @@ void VoxelLightJob::_execute() {
 	ERR_FAIL_COND(!library.is_valid());
 
 	phase_light();
+	next_job();
 
 	//finish
 }

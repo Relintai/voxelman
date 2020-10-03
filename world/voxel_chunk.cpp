@@ -247,6 +247,7 @@ void VoxelChunk::next_job() {
 	if (_current_job >= _jobs.size()) {
 		_current_job = -1;
 		set_is_generating(false);
+		finalize_build();
 		return;
 	}
 
@@ -257,6 +258,7 @@ void VoxelChunk::next_job() {
 		next_job();
 	}
 
+	j->reset();
 	j->set_complete(false);
 
 	if (j->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_NORMAL) {

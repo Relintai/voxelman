@@ -59,7 +59,7 @@ void VoxelJob::set_build_done(const bool val) {
 }
 
 void VoxelJob::next_job() {
-	//chunk->next_job();
+	_chunk->next_job();
 	set_build_done(true);
 }
 
@@ -74,6 +74,18 @@ void VoxelJob::_reset() {
 void VoxelJob::_execute() {
 
 	ActiveBuildPhaseType origpt = _build_phase_type;
+
+	if (get_cancelled())
+		print_error("get_cancelled()");
+
+	if (!_in_tree)
+		print_error("_in_tree");
+
+	if (_build_done)
+		print_error("_build_done");
+
+	if (should_return())
+		print_error("should_return()");
 
 	while (!get_cancelled() && _in_tree && !_build_done && origpt == _build_phase_type && !should_return()) {
 		execute_phase();
@@ -352,6 +364,7 @@ void VoxelJob::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_execute_phase"));
 
 	ClassDB::bind_method(D_METHOD("execute_phase"), &VoxelJob::execute_phase);
+	ClassDB::bind_method(D_METHOD("_execute_phase"), &VoxelJob::_execute_phase);
 
 	ClassDB::bind_method(D_METHOD("generate_ao"), &VoxelJob::generate_ao);
 	ClassDB::bind_method(D_METHOD("generate_random_ao", "seed", "octaves", "period", "persistence", "scale_factor"), &VoxelJob::generate_random_ao, DEFVAL(4), DEFVAL(30), DEFVAL(0.3), DEFVAL(0.6));

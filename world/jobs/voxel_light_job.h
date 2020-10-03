@@ -33,7 +33,7 @@ class VoxelLightJob : public VoxelJob {
 public:
 	void phase_light();
 
-	void _execute();
+	void _execute_phase();
 
 	VoxelLightJob();
 	~VoxelLightJob();

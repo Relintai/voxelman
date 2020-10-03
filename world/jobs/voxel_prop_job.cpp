@@ -320,10 +320,12 @@ void VoxelPropJob::phase_prop() {
 		}
 	}
 
-	next_phase();
+	//next_phase();
 
 	return;
 #endif
+
+	next_job();
 }
 
 void VoxelPropJob::_execute() {
@@ -333,7 +335,9 @@ void VoxelPropJob::_execute() {
 
 	ERR_FAIL_COND(!library.is_valid());
 
-	phase_prop();
+	next_job();
+
+	//phase_prop();
 
 	//finish
 }

@@ -598,7 +598,9 @@ void VoxelTerrarinJob::phase_finalize() {
 	//add vs meshes to chunk
 
 	set_complete(true); //So threadpool knows it's done
-	set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
+	//set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
+
+	next_job();
 }
 
 void VoxelTerrarinJob::phase_finalize_physics_process() {
@@ -624,8 +626,6 @@ void VoxelTerrarinJob::_execute_phase() {
 		phase_terrarin_mesh();
 	else if (_phase == 4)
 		phase_finalize();
-	else if (_phase == 5)
-		phase_finalize_physics_process();
 }
 
 void VoxelTerrarinJob::_reset() {
@@ -665,6 +665,11 @@ void VoxelTerrarinJob::_reset() {
 	}
 }
 
+void VoxelTerrarinJob::_physics_process(float delta) {
+	if (_phase == 5)
+		phase_finalize_physics_process();
+}
+
 VoxelTerrarinJob::VoxelTerrarinJob() {
 }
 
@@ -686,5 +691,5 @@ void VoxelTerrarinJob::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_liquid_mesher", "mesher"), &VoxelTerrarinJob::add_liquid_mesher);
 	ClassDB::bind_method(D_METHOD("get_liquid_mesher_count"), &VoxelTerrarinJob::get_liquid_mesher_count);
 
-	ClassDB::bind_method(D_METHOD("_execute_phase"), &VoxelTerrarinJob::_execute_phase);
+	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &VoxelTerrarinJob::_physics_process);
 }

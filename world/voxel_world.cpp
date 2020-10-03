@@ -432,8 +432,6 @@ Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z,
 void VoxelWorld::generate_chunk(Ref<VoxelChunk> chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	chunk->set_is_generating(true);
-
 	if (has_method("_prepare_chunk_for_generation"))
 		call("_prepare_chunk_for_generation", chunk);
 
@@ -879,8 +877,6 @@ void VoxelWorld::_notification(int p_what) {
 					_chunks.set(pos, chunk);
 
 					chunk->enter_tree();
-
-					chunk->build();
 				}
 			}
 		} break;

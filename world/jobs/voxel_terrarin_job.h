@@ -56,6 +56,7 @@ public:
 
 	void _execute_phase();
 	void _reset();
+	void _physics_process(float delta);
 
 	VoxelTerrarinJob();
 	~VoxelTerrarinJob();
