@@ -75,18 +75,6 @@ void VoxelJob::_execute() {
 
 	ActiveBuildPhaseType origpt = _build_phase_type;
 
-	if (get_cancelled())
-		print_error("get_cancelled()");
-
-	if (!_in_tree)
-		print_error("_in_tree");
-
-	if (_build_done)
-		print_error("_build_done");
-
-	if (should_return())
-		print_error("should_return()");
-
 	while (!get_cancelled() && _in_tree && !_build_done && origpt == _build_phase_type && !should_return()) {
 		execute_phase();
 	}

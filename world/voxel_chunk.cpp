@@ -263,8 +263,7 @@ void VoxelChunk::next_job() {
 
 	if (j->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_NORMAL) {
 #if THREAD_POOL_PRESENT
-		//ThreadPool::get_singleton()->add_job(j);
-		j->execute();
+		ThreadPool::get_singleton()->add_job(j);
 #else
 		j->execute();
 #endif
@@ -1036,6 +1035,14 @@ void VoxelChunk::_generation_process(const float delta) {
 			return;
 
 		job->process(delta);
+
+		if (job->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_NORMAL) {
+#if THREAD_POOL_PRESENT
+			ThreadPool::get_singleton()->add_job(job);
+#else
+			job->execute();
+#endif
+		}
 	}
 }
 void VoxelChunk::_generation_physics_process(const float delta) {
@@ -1050,6 +1057,14 @@ void VoxelChunk::_generation_physics_process(const float delta) {
 			return;
 
 		job->physics_process(delta);
+
+		if (job->get_build_phase_type() == VoxelJob::BUILD_PHASE_TYPE_NORMAL) {
+#if THREAD_POOL_PRESENT
+			ThreadPool::get_singleton()->add_job(job);
+#else
+			job->execute();
+#endif
+		}
 	}
 }
 

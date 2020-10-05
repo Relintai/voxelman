@@ -207,6 +207,7 @@ void VoxelTerrarinJob::phase_collider() {
 
 	if (temp_arr_collider.size() == 0 && temp_arr_collider_liquid.size() == 0) {
 		next_phase();
+		next_phase();
 		return;
 	}
 
@@ -245,20 +246,13 @@ void VoxelTerrarinJob::phase_physics_process() {
 		temp_arr_collider_liquid.resize(0);
 	}
 
-	//TODO this should only update the differences
-	for (int i = 0; i < chunk->get_collider_count(); ++i) {
-		PhysicsServer::get_singleton()->free(chunk->get_collider_body(i));
-	}
-
-	chunk->clear_colliders();
-
 	set_build_phase_type(BUILD_PHASE_TYPE_NORMAL);
 	next_phase();
 }
 
 void VoxelTerrarinJob::phase_terrarin_mesh() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
-
+	/*
 	if (should_do()) {
 		for (int i = 0; i < _meshers.size(); ++i) {
 			Ref<VoxelMesher> mesher = _meshers.get(i);
@@ -278,7 +272,7 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 
 		if (should_return())
 			return;
-	}
+	}*/
 
 	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
 		int starti = 0;
@@ -622,9 +616,9 @@ void VoxelTerrarinJob::_execute_phase() {
 		phase_terrarin_mesh_setup();
 	else if (_phase == 2)
 		phase_collider();
-	else if (_phase == 3)
-		phase_terrarin_mesh();
 	else if (_phase == 4)
+		phase_terrarin_mesh();
+	else if (_phase == 5)
 		phase_finalize();
 }
 
@@ -666,8 +660,8 @@ void VoxelTerrarinJob::_reset() {
 }
 
 void VoxelTerrarinJob::_physics_process(float delta) {
-	if (_phase == 5)
-		phase_finalize_physics_process();
+	if (_phase == 3)
+		phase_physics_process();
 }
 
 VoxelTerrarinJob::VoxelTerrarinJob() {
