@@ -970,7 +970,7 @@ VoxelChunk::VoxelChunk() {
 	_margin_start = 0;
 	_margin_end = 0;
 
-	_current_job = 0;
+	_current_job = -1;
 
 	_queued_generation = false;
 }
