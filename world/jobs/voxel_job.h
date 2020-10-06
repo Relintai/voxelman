@@ -31,6 +31,12 @@ SOFTWARE.
 #include "core/resource.h"
 #endif
 
+#include "../../defines.h"
+
+#if GODOT4
+#define Texture Texture2D
+#endif
+
 class VoxelChunk;
 
 #if THREAD_POOL_PRESENT

@@ -25,7 +25,13 @@ SOFTWARE.
 
 #include "voxel_job.h"
 
-class VoxelMesher;
+#include "../../defines.h"
+
+#include pool_vector_h
+
+include_pool_vector
+
+		class VoxelMesher;
 
 class VoxelTerrarinJob : public VoxelJob {
 	GDCLASS(VoxelTerrarinJob, VoxelJob);
@@ -63,8 +69,8 @@ public:
 protected:
 	static void _bind_methods();
 
-	Vector<Ref<VoxelMesher> > _meshers;
-	Vector<Ref<VoxelMesher> > _liquid_meshers;
+	Vector<Ref<VoxelMesher>> _meshers;
+	Vector<Ref<VoxelMesher>> _liquid_meshers;
 
 	PoolVector<Vector3> temp_arr_collider;
 	PoolVector<Vector3> temp_arr_collider_liquid;

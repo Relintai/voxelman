@@ -22,8 +22,6 @@ SOFTWARE.
 
 #include "voxel_terrarin_job.h"
 
-#include "../../defines.h"
-
 #include "../../library/voxel_surface.h"
 #include "../../library/voxelman_library.h"
 
@@ -176,7 +174,6 @@ void VoxelTerrarinJob::phase_collider() {
 	}
 
 	if (Engine::get_singleton()->is_editor_hint()) {
-
 		starti = 0;
 
 		if (has_meta("bpc_laa")) {
@@ -346,7 +343,6 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 	}
 
 	if (mesher->get_vertex_count() == 0 && liquid_mesher.is_valid() && liquid_mesher->get_vertex_count() == 0) {
-
 		if (has_meta("bptm_ulm")) {
 			remove_meta("bptm_ulm");
 		}
@@ -370,7 +366,6 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 	}
 
 	if (mesher->get_vertex_count() != 0) {
-
 		if (should_do()) {
 			temp_mesh_arr = mesher->build_mesh();
 
