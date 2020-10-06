@@ -43,13 +43,6 @@ void VoxelPropJob::set_prop_mesher(const Ref<VoxelMesher> &mesher) {
 	_prop_mesher = mesher;
 }
 
-void VoxelPropJob::phase_reset() {
-	if (get_prop_mesher().is_valid()) {
-		get_prop_mesher()->reset();
-		get_prop_mesher()->set_library(_chunk->get_library());
-	}
-}
-
 void VoxelPropJob::phase_physics_process() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
@@ -320,24 +313,57 @@ void VoxelPropJob::phase_prop() {
 		}
 	}
 
-	//next_phase()
 #endif
 
+	set_complete(true); //So threadpool knows it's done
 	next_job();
 }
 
-void VoxelPropJob::_execute() {
+void VoxelPropJob::_physics_process(float delta) {
+	if (_phase == 0)
+		phase_physics_process();
+}
+
+void VoxelPropJob::_execute_phase() {
 	ERR_FAIL_COND(!_chunk.is_valid());
 
 	Ref<VoxelmanLibrary> library = _chunk->get_library();
 
 	ERR_FAIL_COND(!library.is_valid());
 
-	next_job();
+	Ref<VoxelChunkDefault> chunk = _chunk;
 
-	//phase_prop();
+	if (!chunk.is_valid()
+			//#ifdef MESH_DATA_RESOURCE_PRESENT
+			|| chunk->get_mesh_data_resource_count() == 0
+			//#endif
+	) {
+		set_complete(true);
+		next_job();
+		return;
+	}
 
-	//finish
+	if (_phase == 1) {
+		phase_prop();
+	} else if (_phase > 1) {
+		set_complete(true); //So threadpool knows it's done
+		next_job();
+		ERR_FAIL_MSG("VoxelPropJob: _phase is too high!");
+	}
+}
+
+void VoxelPropJob::_reset() {
+	VoxelJob::_reset();
+
+	_build_done = false;
+	_phase = 0;
+
+	if (get_prop_mesher().is_valid()) {
+		get_prop_mesher()->reset();
+		get_prop_mesher()->set_library(_chunk->get_library());
+	}
+
+	set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
 }
 
 VoxelPropJob::VoxelPropJob() {
@@ -350,4 +376,6 @@ void VoxelPropJob::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_prop_mesher"), &VoxelPropJob::get_prop_mesher);
 	ClassDB::bind_method(D_METHOD("set_prop_mesher", "mesher"), &VoxelPropJob::set_prop_mesher);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prop_mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher", 0), "set_prop_mesher", "get_prop_mesher");
+
+	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &VoxelPropJob::_physics_process);
 }

@@ -568,10 +568,7 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 }
 
 void VoxelTerrarinJob::phase_finalize() {
-	//add vs meshes to chunk
-
 	set_complete(true); //So threadpool knows it's done
-	//set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
 
 	next_job();
 }
