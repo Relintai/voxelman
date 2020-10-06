@@ -24,10 +24,35 @@ SOFTWARE.
 
 #include "voxel_chunk_marching_cubes.h"
 
-Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
+#include "../../meshers/marching_cubes/voxel_mesher_marching_cubes.h"
+#include "../jobs/voxel_light_job.h"
+#include "../jobs/voxel_prop_job.h"
+#include "../jobs/voxel_terrarin_job.h"
 
+Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkMarchingCubes));
+
+		Ref<VoxelTerrarinJob> tj;
+		tj.instance();
+
+		Ref<VoxelLightJob> lj;
+		lj.instance();
+
+		Ref<VoxelPropJob> pj;
+		pj.instance();
+		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherMarchingCubes)));
+
+		Ref<VoxelMesher> m = Ref<VoxelMesher>(memnew(VoxelMesherMarchingCubes()));
+		m->set_channel_index_type(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
+		m->set_channel_index_isolevel(VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL);
+
+		tj->add_mesher(m);
+		//add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidMarchingCubes())));
+
+		chunk->add_job(lj);
+		chunk->add_job(tj);
+		chunk->add_job(pj);
 	}
 
 	return VoxelWorld::_create_chunk(x, y, z, chunk);

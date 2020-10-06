@@ -26,6 +26,11 @@ SOFTWARE.
 
 #include "../../defines.h"
 
+#include "../../meshers/default/voxel_mesher_default.h"
+#include "../jobs/voxel_light_job.h"
+#include "../jobs/voxel_prop_job.h"
+#include "../jobs/voxel_terrarin_job.h"
+
 _FORCE_INLINE_ int VoxelWorldDefault::get_build_flags() const {
 	return _build_flags;
 }
@@ -160,6 +165,20 @@ void VoxelWorldDefault::_update_lods() {
 Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkDefault));
+
+		Ref<VoxelTerrarinJob> tj;
+		tj.instance();
+
+		Ref<VoxelLightJob> lj;
+		lj.instance();
+
+		Ref<VoxelPropJob> pj;
+		pj.instance();
+		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault)));
+
+		chunk->add_job(lj);
+		chunk->add_job(tj);
+		chunk->add_job(pj);
 	}
 
 	Ref<VoxelChunkDefault> vcd = chunk;

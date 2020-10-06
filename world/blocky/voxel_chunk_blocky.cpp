@@ -22,14 +22,7 @@ SOFTWARE.
 
 #include "voxel_chunk_blocky.h"
 
-#include "../../meshers/blocky/voxel_mesher_blocky.h"
-#include "../../meshers/blocky/voxel_mesher_liquid_blocky.h"
-
 #include "../../defines.h"
-
-#include "../jobs/voxel_light_job.h"
-#include "../jobs/voxel_prop_job.h"
-#include "../jobs/voxel_terrarin_job.h"
 
 VoxelChunkBlocky::VoxelChunkBlocky() {
 }
@@ -39,25 +32,6 @@ VoxelChunkBlocky::~VoxelChunkBlocky() {
 
 void VoxelChunkBlocky::_setup_channels() {
 	set_channel_count(MAX_DEFAULT_CHANNELS);
-}
-
-void VoxelChunkBlocky::_create_meshers() {
-	Ref<VoxelTerrarinJob> tj;
-	tj.instance();
-
-	Ref<VoxelLightJob> lj;
-	lj.instance();
-
-	Ref<VoxelPropJob> pj;
-	pj.instance();
-	pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky)));
-
-	tj->add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky())));
-	tj->add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidBlocky())));
-
-	add_job(lj);
-	add_job(tj);
-	add_job(pj);
 }
 
 void VoxelChunkBlocky::_bind_methods() {

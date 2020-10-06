@@ -870,22 +870,6 @@ void VoxelChunkDefault::_setup_channels() {
 	set_channel_count(MAX_DEFAULT_CHANNELS);
 }
 
-void VoxelChunkDefault::_create_meshers() {
-	Ref<VoxelTerrarinJob> tj;
-	tj.instance();
-
-	Ref<VoxelLightJob> lj;
-	lj.instance();
-
-	Ref<VoxelPropJob> pj;
-	pj.instance();
-	pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault)));
-
-	add_job(lj);
-	add_job(tj);
-	add_job(pj);
-}
-
 void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_build_flags"), &VoxelChunkDefault::get_build_flags);
 	ClassDB::bind_method(D_METHOD("set_build_flags", "value"), &VoxelChunkDefault::set_build_flags);
@@ -957,7 +941,6 @@ void VoxelChunkDefault::_bind_methods() {
 	//virtuals
 	ClassDB::bind_method(D_METHOD("_setup_channels"), &VoxelChunkDefault::_setup_channels);
 
-	ClassDB::bind_method(D_METHOD("_create_meshers"), &VoxelChunkDefault::_create_meshers);
 	ClassDB::bind_method(D_METHOD("_visibility_changed", "visible"), &VoxelChunkDefault::_visibility_changed);
 
 	//lights

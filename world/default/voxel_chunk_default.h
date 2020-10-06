@@ -182,7 +182,6 @@ public:
 protected:
 	virtual void _setup_channels();
 
-	virtual void _create_meshers();
 	virtual void _visibility_changed(bool visible);
 
 	virtual void _exit_tree();

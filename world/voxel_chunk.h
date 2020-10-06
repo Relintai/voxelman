@@ -184,7 +184,6 @@ public:
 	int get_data_size() const;
 
 	//Meshing
-	void create_meshers();
 	void build();
 	void clear();
 	void finalize_build();

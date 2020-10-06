@@ -402,6 +402,8 @@ Ref<VoxelChunk> VoxelWorld::create_chunk(const int x, const int y, const int z) 
 Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 		chunk.instance();
+
+		//no meshers here
 	}
 
 	ERR_FAIL_COND_V(!chunk.is_valid(), NULL);
@@ -419,8 +421,6 @@ Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z,
 	chunk->set_voxel_scale(_voxel_scale);
 	chunk->set_size(_chunk_size_x, _chunk_size_y, _chunk_size_z, _data_margin_start, _data_margin_end);
 	//chunk->set_translation(Vector3(x * _chunk_size_x * _voxel_scale, y * _chunk_size_y * _voxel_scale, z * _chunk_size_z * _voxel_scale));
-
-	chunk->create_meshers();
 
 	add_chunk(chunk, x, y, z);
 

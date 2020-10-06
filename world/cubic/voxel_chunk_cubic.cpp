@@ -22,13 +22,7 @@ SOFTWARE.
 
 #include "voxel_chunk_cubic.h"
 
-#include "../../meshers/cubic/voxel_mesher_cubic.h"
-
 #include "../../defines.h"
-
-#include "../jobs/voxel_light_job.h"
-#include "../jobs/voxel_prop_job.h"
-#include "../jobs/voxel_terrarin_job.h"
 
 VoxelChunkCubic::VoxelChunkCubic() {
 }
@@ -38,29 +32,6 @@ VoxelChunkCubic::~VoxelChunkCubic() {
 
 void VoxelChunkCubic::_setup_channels() {
 	set_channel_count(MAX_DEFAULT_CHANNELS);
-}
-
-void VoxelChunkCubic::_create_meshers() {
-	Ref<VoxelTerrarinJob> tj;
-	tj.instance();
-
-	Ref<VoxelLightJob> lj;
-	lj.instance();
-
-	Ref<VoxelPropJob> pj;
-	pj.instance();
-	pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic)));
-
-	Ref<VoxelMesher> m = Ref<VoxelMesher>(memnew(VoxelMesherCubic()));
-	m->set_channel_index_type(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
-	m->set_channel_index_isolevel(VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL);
-
-	tj->add_mesher(m);
-	//add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidMarchingCubes())));
-
-	add_job(lj);
-	add_job(tj);
-	add_job(pj);
 }
 
 void VoxelChunkCubic::_bind_methods() {

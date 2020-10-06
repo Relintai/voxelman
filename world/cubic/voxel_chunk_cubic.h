@@ -34,7 +34,6 @@ public:
 
 protected:
 	virtual void _setup_channels();
-	virtual void _create_meshers();
 
 	static void _bind_methods();
 };

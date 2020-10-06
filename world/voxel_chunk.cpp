@@ -562,12 +562,6 @@ _FORCE_INLINE_ int VoxelChunk::get_data_size() const {
 	return _data_size_x * _data_size_y * _data_size_z;
 }
 
-void VoxelChunk::create_meshers() {
-	ERR_FAIL_COND_MSG(!has_method("_create_meshers"), "VoxelChunk: _create_meshers() is missing! Please implement it!");
-
-	call("_create_meshers");
-}
-
 void VoxelChunk::build() {
 	ERR_FAIL_COND(!INSTANCE_VALIDATE(get_voxel_world()));
 	ERR_FAIL_COND(!get_voxel_world()->is_inside_tree());
@@ -1128,7 +1122,6 @@ void VoxelChunk::_bind_methods() {
 
 	BIND_VMETHOD(MethodInfo("_mesh_data_resource_added", PropertyInfo(Variant::INT, "index")));
 
-	BIND_VMETHOD(MethodInfo("_create_meshers"));
 	BIND_VMETHOD(MethodInfo("_setup_channels"));
 
 	BIND_VMETHOD(MethodInfo("_bake_lights"));
@@ -1354,8 +1347,6 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_collider_count"), &VoxelChunk::get_collider_count);
 	ClassDB::bind_method(D_METHOD("remove_collider", "index"), &VoxelChunk::remove_collider);
 	ClassDB::bind_method(D_METHOD("clear_colliders"), &VoxelChunk::clear_colliders);
-
-	ClassDB::bind_method(D_METHOD("create_meshers"), &VoxelChunk::create_meshers);
 
 	BIND_VMETHOD(MethodInfo("_build"));
 	ClassDB::bind_method(D_METHOD("build"), &VoxelChunk::build);
