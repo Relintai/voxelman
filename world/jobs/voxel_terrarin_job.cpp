@@ -252,27 +252,6 @@ void VoxelTerrarinJob::phase_physics_process() {
 
 void VoxelTerrarinJob::phase_terrarin_mesh() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
-	/*
-	if (should_do()) {
-		for (int i = 0; i < _meshers.size(); ++i) {
-			Ref<VoxelMesher> mesher = _meshers.get(i);
-
-			ERR_CONTINUE(!mesher.is_valid());
-
-			mesher->set_library(_chunk->get_library());
-		}
-
-		for (int i = 0; i < _liquid_meshers.size(); ++i) {
-			Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
-
-			ERR_CONTINUE(!mesher.is_valid());
-
-			mesher->set_library(_chunk->get_library());
-		}
-
-		if (should_return())
-			return;
-	}*/
 
 	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
 		int starti = 0;
@@ -593,12 +572,6 @@ void VoxelTerrarinJob::phase_finalize() {
 
 	set_complete(true); //So threadpool knows it's done
 	//set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
-
-	next_job();
-}
-
-void VoxelTerrarinJob::phase_finalize_physics_process() {
-	// add physics meshes
 
 	next_job();
 }

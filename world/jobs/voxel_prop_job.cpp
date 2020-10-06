@@ -320,9 +320,7 @@ void VoxelPropJob::phase_prop() {
 		}
 	}
 
-	//next_phase();
-
-	return;
+	//next_phase()
 #endif
 
 	next_job();
