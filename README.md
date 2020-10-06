@@ -78,6 +78,40 @@ You can write your own algorithm by implementing the ``` void _generate_chunk(ch
 
 `VoxelManLevelGeneratorFlat` is also available, it will generate a floor for you, if you use it.
 
+## VoxelJobs
+
+Producing just a terrarin mesh for a chunk is not that hard by itself. However when you start adding layers/features
+like lod generation, collision meshes (especially since manipulating the physics server is not threadsafe), 
+vertex volumetric lights, props, snapping props, props with vertex lights, etc
+chunk mesh generation can quicly become a serious mess.
+
+VoxelJobs are meant to solve the issue with this complexity.
+
+They also provide a way to easily modularize mesh generation.
+
+### VoxelJob
+
+Base class for jobs.
+
+If the (thread pool)[https://github.com/Relintai/thread_pool] module is present, this is inherited from `ThreadPoolJob`,
+else it implements the same api as `ThreadPoolJob`, but it's not going to use threading.
+
+A job has a reference to it's owner chunk.
+
+If you implement your own jobs, when your job finishes call `next_job()`.
+
+### VoxelLightJob
+
+This is the job that will generate vertex light based ao, random ao, and will bake your `VoxelLight`s.
+
+### VoxelTerrarinJob
+
+This will generate your terrarin collider and mesh (with lods) for you, using the meshers that you add into it.
+
+### VoxelPropJob
+
+This will generate your prop meshes (with lods).
+
 ### Internal workings
 
 #### VoxelWorld
@@ -90,8 +124,16 @@ getting overridden. Like:
 
 ``` 
     func _create_chunk(x : int, y : int, z : int, chunk : VoxelChunk) -> VoxelChunk:
-        if chunk == null:
+        if !chunk:
             chunk = MyChunk.new()
+
+            # Setup a blocky (minecratf like) mesher job
+            var tj : VoxelTerrarinJob = VoxelTerrarinJob.new()
+
+            tj.add_mesher(VoxelMesherBlocky.new());
+		    tj.add_liquid_mesher(VoxelMesherLiquidBlocky.new());
+
+            chunk.add_job(tj);
 
         #setup your chunk here
 
@@ -100,17 +142,9 @@ getting overridden. Like:
 
 #### VoxelChunk
 
-The most important method in VoxelChunk is the ``` void _create_meshers() virtual ```.
+Stores terrarin data, prop data. And mesh data (VoxelChunkDefault), and the mesh generation jobs.
 
-This is where you need to setup your meshers.
-
-For example:
-
-```
-func _create_meshers():
-    var mesher : MyMesher = MyMesher.new()
-    add_mesher(mesher)
-```
+When it starts building meshes it will start submitting jobs to thread_pool (if present) one by one.
 
 #### VoxelMesher
 
