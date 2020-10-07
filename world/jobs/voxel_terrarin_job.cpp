@@ -575,16 +575,21 @@ void VoxelTerrarinJob::_execute_phase() {
 
 	ERR_FAIL_COND(!library.is_valid());
 
-	if (_phase == 0)
+	if (_phase == 0) {
 		phase_setup();
-	else if (_phase == 1)
+	} else if (_phase == 1) {
 		phase_terrarin_mesh_setup();
-	else if (_phase == 2)
+	} else if (_phase == 2) {
 		phase_collider();
-	else if (_phase == 4)
+	} else if (_phase == 4) {
 		phase_terrarin_mesh();
-	else if (_phase == 5)
+	} else if (_phase == 5) {
 		phase_finalize();
+	} else if (_phase > 5) {
+		set_complete(true); //So threadpool knows it's done
+		next_job();
+		ERR_FAIL_MSG("VoxelTerrarinJob: _phase is too high!");
+	}
 }
 
 void VoxelTerrarinJob::_reset() {

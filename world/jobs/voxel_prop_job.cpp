@@ -334,9 +334,9 @@ void VoxelPropJob::_execute_phase() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	if (!chunk.is_valid()
-			//#ifdef MESH_DATA_RESOURCE_PRESENT
+#ifdef MESH_DATA_RESOURCE_PRESENT
 			|| chunk->get_mesh_data_resource_count() == 0
-			//#endif
+#endif
 	) {
 		set_complete(true);
 		next_job();
