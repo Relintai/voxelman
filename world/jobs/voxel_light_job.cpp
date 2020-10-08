@@ -79,9 +79,8 @@ void VoxelLightJob::_execute_phase() {
 	ERR_FAIL_COND(!library.is_valid());
 
 	phase_light();
+	set_complete(true);
 	next_job();
-
-	//finish
 }
 
 VoxelLightJob::VoxelLightJob() {
