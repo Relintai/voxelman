@@ -821,7 +821,7 @@ void VoxelChunk::set_collider_transform(const int index, const Transform &transf
 }
 
 Ref<Shape> VoxelChunk::get_collider_shape(const int index) {
-	ERR_FAIL_INDEX_V(index, _colliders.size(), Ref<MeshDataResource>());
+	ERR_FAIL_INDEX_V(index, _colliders.size(), Ref<Shape>());
 
 	return _colliders[index].shape;
 }
@@ -973,7 +973,10 @@ VoxelChunk::~VoxelChunk() {
 		_library.unref();
 	}
 
+#if PROPS_PRESENT
 	clear_props();
+#endif
+
 #if MESH_DATA_RESOURCE_PRESENT
 	clear_mesh_data_resources();
 #endif
@@ -1297,11 +1300,13 @@ void VoxelChunk::_bind_methods() {
 
 	//Meshes
 
+#if PROPS_PRESENT
 	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelChunk::add_prop);
 	ClassDB::bind_method(D_METHOD("get_prop", "index"), &VoxelChunk::get_prop);
 	ClassDB::bind_method(D_METHOD("get_prop_count"), &VoxelChunk::get_prop_count);
 	ClassDB::bind_method(D_METHOD("remove_prop", "index"), &VoxelChunk::remove_prop);
 	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
+#endif
 
 #if MESH_DATA_RESOURCE_PRESENT
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resourcev", "local_data_pos", "mesh", "texture", "color", "apply_voxel_scale"), &VoxelChunk::add_mesh_data_resourcev, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)), DEFVAL(true));
