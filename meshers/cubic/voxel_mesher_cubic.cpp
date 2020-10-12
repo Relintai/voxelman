@@ -33,7 +33,7 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	if (!chunk->get_channel(_channel_index_type)) {
+	if (!chunk->get_channel(_channel_index_type) || !chunk->get_channel(_channel_index_isolevel)) {
 		return;
 	}
 
@@ -41,9 +41,9 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	//	chunk->generate_ao();
 	//}
 
-	int x_size = chunk->get_size_x();
-	int y_size = chunk->get_size_y();
-	int z_size = chunk->get_size_z();
+	int x_size = chunk->get_size_x() - 1;
+	int y_size = chunk->get_size_y() - 1;
+	int z_size = chunk->get_size_z() - 1;
 
 	float voxel_size = 1;
 	float voxel_scale = get_voxel_scale();
@@ -68,7 +68,7 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					if (!cube_points->is_face_visible(face))
 						continue;
 
-					uint8_t type = cube_points->get_face_type(face);
+					uint8_t type = cube_points->get_face_type(face) - 1;
 
 					Ref<VoxelSurface> surface = _library->get_voxel_surface(type);
 

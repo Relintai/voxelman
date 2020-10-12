@@ -467,6 +467,12 @@ void VoxelCubePoints::setup(Ref<VoxelChunk> chunk, int x, int y, int z, int size
 	if (!has_points())
 		return;
 
+	//for (int i = 0; i < 8; ++i) {
+	//	if (_point_types[i] == 0) {
+	//		_point_types[i] = 1;
+	//	}
+	//}
+
 	_point_fills[P000] = chunk->get_voxel(x, y, z, _channel_index_isolevel);
 	_point_fills[P100] = chunk->get_voxel(x + size, y, z, _channel_index_isolevel);
 	_point_fills[P010] = chunk->get_voxel(x, y + size, z, _channel_index_isolevel);
@@ -475,6 +481,12 @@ void VoxelCubePoints::setup(Ref<VoxelChunk> chunk, int x, int y, int z, int size
 	_point_fills[P011] = chunk->get_voxel(x, y + size, z + size, _channel_index_isolevel);
 	_point_fills[P101] = chunk->get_voxel(x + size, y, z + size, _channel_index_isolevel);
 	_point_fills[P111] = chunk->get_voxel(x + size, y + size, z + size, _channel_index_isolevel);
+
+	//for (int i = 0; i < 8; ++i) {
+	//	if (_point_fills[i] == 0) {
+	//		_point_fills[i] = 1;
+	//	}
+	//}
 
 	_point_aos[P000] = chunk->get_voxel(x, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO);
 	_point_aos[P100] = chunk->get_voxel(x + size, y, z, VoxelChunkDefault::DEFAULT_CHANNEL_AO);
@@ -767,6 +779,9 @@ uint8_t VoxelCubePoints::get_face_type(int face) {
 bool VoxelCubePoints::has_points() {
 	return (_point_types[P000] != 0 && _point_types[P100] != 0 && _point_types[P010] != 0 && _point_types[P001] != 0 &&
 			_point_types[P110] != 0 && _point_types[P011] != 0 && _point_types[P101] != 0 && _point_types[P111] != 0);
+
+	//return !(_point_types[P000] == 0 && _point_types[P100] == 0 && _point_types[P010] == 0 && _point_types[P001] == 0 &&
+	//		 _point_types[P110] == 0 && _point_types[P011] == 0 && _point_types[P101] == 0 && _point_types[P111] == 0);
 }
 
 int VoxelCubePoints::get_opposite_face(int face) {
