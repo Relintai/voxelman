@@ -95,15 +95,23 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 		if (channel == -1)
 			return false;
 
+		int isolevel = _current_isolevel;
+
 		if (_tool_mode == TOOL_MODE_ADD) {
 			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * res.normal));
 			selected_voxel = _selected_type + 1;
 		} else if (_tool_mode == TOOL_MODE_REMOVE) {
 			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * -res.normal));
 			selected_voxel = 0;
+			isolevel = 0;
 		}
 
-		_world->set_voxel_at_world_position(pos, selected_voxel, channel);
+		if (_channel_isolevel == -1) {
+			_world->set_voxel_at_world_position(pos, selected_voxel, channel);
+		} else {
+			_world->set_voxel_at_world_position(pos, selected_voxel, channel, false);
+			_world->set_voxel_at_world_position(pos, isolevel, _channel_isolevel);
+		}
 
 		return true;
 	}
@@ -118,6 +126,13 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 		return;
 
 	_channel_type = _world->get_channel_index_info(VoxelWorld::CHANNEL_TYPE_INFO_TYPE);
+	_channel_isolevel = _world->get_channel_index_info(VoxelWorld::CHANNEL_TYPE_INFO_ISOLEVEL);
+
+	if (_channel_isolevel == -1) {
+		_isolevel_slider->hide();
+	} else {
+		_isolevel_slider->show();
+	}
 
 	spatial_editor = Object::cast_to<SpatialEditorPlugin>(_editor->get_editor_plugin_screen());
 
@@ -169,6 +184,8 @@ VoxelWorldEditor::VoxelWorldEditor() {
 	_world = NULL;
 	_selected_type = 0;
 	_channel_type = -1;
+	_current_isolevel = 255;
+	_channel_isolevel = -1;
 	_editor = NULL;
 	_tool_mode = TOOL_MODE_ADD;
 }
@@ -176,6 +193,9 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	_world = NULL;
 	_selected_type = 0;
 	_channel_type = -1;
+	_current_isolevel = 255;
+	_channel_isolevel = -1;
+
 	_editor = p_editor;
 	_tool_mode = TOOL_MODE_ADD;
 
@@ -218,6 +238,18 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	spatial_editor_hb->add_child(insert_buton);
 
 	set_custom_minimum_size(Size2(200 * EDSCALE, 0));
+
+	_isolevel_slider = memnew(HSlider);
+	_isolevel_slider->set_min(1);
+	_isolevel_slider->set_max(255);
+	_isolevel_slider->set_value(_current_isolevel);
+	_isolevel_slider->set_custom_minimum_size(Size2(50 * EDSCALE, 0));
+	_isolevel_slider->set_v_size_flags(SIZE_EXPAND_FILL);
+	spatial_editor_hb->add_child(_isolevel_slider);
+
+	_isolevel_slider->CONNECT("value_changed", this, VoxelWorldEditor, _on_isolevel_slider_value_changed);
+
+	_isolevel_slider->hide();
 
 	ScrollContainer *scs = memnew(ScrollContainer);
 	scs->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -280,7 +312,16 @@ void VoxelWorldEditor::_on_insert_block_at_camera_button_pressed() {
 	Vector3 pos = cam->get_transform().origin;
 	selected_voxel = _selected_type + 1;
 
-	_world->set_voxel_at_world_position(pos, selected_voxel, channel);
+	if (_channel_isolevel == -1) {
+		_world->set_voxel_at_world_position(pos, selected_voxel, channel);
+	} else {
+		_world->set_voxel_at_world_position(pos, selected_voxel, channel, false);
+		_world->set_voxel_at_world_position(pos, _current_isolevel, _channel_isolevel);
+	}
+}
+
+void VoxelWorldEditor::_on_isolevel_slider_value_changed(float value) {
+	_current_isolevel = value;
 }
 
 void VoxelWorldEditor::_bind_methods() {
@@ -288,6 +329,7 @@ void VoxelWorldEditor::_bind_methods() {
 	ClassDB::bind_method("_on_surface_button_pressed", &VoxelWorldEditor::_on_surface_button_pressed);
 	ClassDB::bind_method("_on_tool_button_pressed", &VoxelWorldEditor::_on_tool_button_pressed);
 	ClassDB::bind_method("_on_insert_block_at_camera_button_pressed", &VoxelWorldEditor::_on_insert_block_at_camera_button_pressed);
+	ClassDB::bind_method("_on_isolevel_slider_value_changed", &VoxelWorldEditor::_on_isolevel_slider_value_changed);
 }
 
 void VoxelWorldEditorPlugin::_notification(int p_what) {

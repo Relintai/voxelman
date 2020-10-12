@@ -58,6 +58,7 @@ protected:
 	void _on_surface_button_pressed();
 	void _on_tool_button_pressed();
 	void _on_insert_block_at_camera_button_pressed();
+	void _on_isolevel_slider_value_changed(float value);
 
 private:
 	VBoxContainer *_surfaces_vbox_container;
@@ -68,12 +69,16 @@ private:
 	VoxelWorldEditorToolMode _tool_mode;
 	VoxelWorld *_world;
 
+	HSlider *_isolevel_slider;
+
 	int _selected_type;
+	int _current_isolevel;
 
 	SpatialEditorPlugin *spatial_editor;
 	EditorNode *_editor;
 
 	int _channel_type;
+	int _channel_isolevel;
 };
 
 class VoxelWorldEditorPlugin : public EditorPlugin {

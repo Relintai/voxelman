@@ -176,7 +176,7 @@ public:
 
 	//Helpers
 	uint8_t get_voxel_at_world_position(const Vector3 &world_position, const int channel_index);
-	void set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index);
+	void set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index, const bool rebuild = true);
 	Ref<VoxelChunk> get_chunk_at_world_position(const Vector3 &world_position);
 	Ref<VoxelChunk> get_or_create_chunk_at_world_position(const Vector3 &world_position);
 

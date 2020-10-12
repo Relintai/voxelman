@@ -698,7 +698,7 @@ uint8_t VoxelWorld::get_voxel_at_world_position(const Vector3 &world_position, c
 	return 0;
 }
 
-void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index) {
+void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index, const bool rebuild) {
 	Vector3 pos = world_position / get_voxel_scale();
 
 	//Note: floor is needed to handle negative numbers proiberly
@@ -726,19 +726,25 @@ void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, cons
 		if (bx == 0) {
 			Ref<VoxelChunk> chunk = get_or_create_chunk(x - 1, y, z);
 			chunk->set_voxel(data, get_chunk_size_x(), by, bz, channel_index);
-			chunk->build();
+
+			if (rebuild)
+				chunk->build();
 		}
 
 		if (by == 0) {
 			Ref<VoxelChunk> chunk = get_or_create_chunk(x, y - 1, z);
 			chunk->set_voxel(data, bx, get_chunk_size_y(), bz, channel_index);
-			chunk->build();
+
+			if (rebuild)
+				chunk->build();
 		}
 
 		if (bz == 0) {
 			Ref<VoxelChunk> chunk = get_or_create_chunk(x, y, z - 1);
 			chunk->set_voxel(data, bx, by, get_chunk_size_z(), channel_index);
-			chunk->build();
+
+			if (rebuild)
+				chunk->build();
 		}
 	}
 
@@ -746,25 +752,33 @@ void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, cons
 		if (bx == get_chunk_size_x() - 1) {
 			Ref<VoxelChunk> chunk = get_or_create_chunk(x + 1, y, z);
 			chunk->set_voxel(data, -1, by, bz, channel_index);
-			chunk->build();
+
+			if (rebuild)
+				chunk->build();
 		}
 
 		if (by == get_chunk_size_y() - 1) {
 			Ref<VoxelChunk> chunk = get_or_create_chunk(x, y + 1, z);
 			chunk->set_voxel(data, bx, -1, bz, channel_index);
-			chunk->build();
+
+			if (rebuild)
+				chunk->build();
 		}
 
 		if (bz == get_chunk_size_z() - 1) {
 			Ref<VoxelChunk> chunk = get_or_create_chunk(x, y, z + 1);
 			chunk->set_voxel(data, bx, by, -1, channel_index);
-			chunk->build();
+
+			if (rebuild)
+				chunk->build();
 		}
 	}
 
 	Ref<VoxelChunk> chunk = get_or_create_chunk(x, y, z);
 	chunk->set_voxel(data, bx, by, bz, channel_index);
-	chunk->build();
+
+	if (rebuild)
+		chunk->build();
 }
 
 Ref<VoxelChunk> VoxelWorld::get_chunk_at_world_position(const Vector3 &world_position) {
@@ -1120,7 +1134,7 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_lights", "chunks"), &VoxelWorld::set_lights);
 
 	ClassDB::bind_method(D_METHOD("get_voxel_at_world_position", "world_position", "channel_index"), &VoxelWorld::get_voxel_at_world_position);
-	ClassDB::bind_method(D_METHOD("set_voxel_at_world_position", "world_position", "data", "channel_index"), &VoxelWorld::set_voxel_at_world_position);
+	ClassDB::bind_method(D_METHOD("set_voxel_at_world_position", "world_position", "data", "channel_index", "rebuild"), &VoxelWorld::set_voxel_at_world_position, DEFVAL(true));
 	ClassDB::bind_method(D_METHOD("get_chunk_at_world_position", "world_position"), &VoxelWorld::get_chunk_at_world_position);
 	ClassDB::bind_method(D_METHOD("get_or_create_chunk_at_world_position", "world_position"), &VoxelWorld::get_or_create_chunk_at_world_position);
 
