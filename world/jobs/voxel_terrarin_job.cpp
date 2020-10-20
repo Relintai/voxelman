@@ -30,8 +30,6 @@ SOFTWARE.
 
 #include "../default/voxel_chunk_default.h"
 
-//#define MESH_UTILS_PRESENT 1
-
 #ifdef MESH_UTILS_PRESENT
 #include "../../../mesh_utils/fast_quadratic_mesh_simplifier.h"
 #endif
