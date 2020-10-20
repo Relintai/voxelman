@@ -30,6 +30,12 @@ SOFTWARE.
 
 #include "../default/voxel_chunk_default.h"
 
+//#define MESH_UTILS_PRESENT 1
+
+#ifdef MESH_UTILS_PRESENT
+#include "../../../mesh_utils/fast_quadratic_mesh_simplifier.h"
+#endif
+
 Ref<VoxelMesher> VoxelTerrarinJob::get_mesher(int index) const {
 	ERR_FAIL_INDEX_V(index, _meshers.size(), Ref<VoxelMesher>());
 
@@ -457,10 +463,14 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 						temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
 						temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
 
-						VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+						VisualServer::get_singleton()->mesh_add_surface_from_arrays(
+								chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3),
+								VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 						if (chunk->get_library()->get_material(3).is_valid())
-							VisualServer::get_singleton()->mesh_surface_set_material(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0, chunk->get_library()->get_material(3)->get_rid());
+							VisualServer::get_singleton()->mesh_surface_set_material(
+									chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0,
+									chunk->get_library()->get_material(3)->get_rid());
 					}
 				}
 
@@ -469,34 +479,34 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 				}
 			}
 
-			/*
-					if (should_do()) {
-						if (chunk->get_lod_num() > 4) {
-							Ref<FastQuadraticMeshSimplifier> fqms;
-							fqms.instance();
-							fqms->initialize(temp_mesh_arr);
+#ifdef MESH_UTILS_PRESENT
+			if (should_do()) {
+				if (chunk->get_lod_num() > 4) {
+					Ref<FastQuadraticMeshSimplifier> fqms;
+					fqms.instance();
+					fqms->set_preserve_border_edges(true);
+					fqms->initialize(temp_mesh_arr);
 
-							Array arr_merged_simplified;
+					for (int i = 4; i < chunk->get_lod_num(); ++i) {
+						fqms->simplify_mesh(temp_mesh_arr.size() * 0.8, 7);
+						temp_mesh_arr = fqms->get_arrays();
 
-							for (int i = 4; i < _lod_num; ++i) {
-								fqms->simplify_mesh(arr_merged_simplified[0].size() * 0.8, 7);
-								arr_merged_simplified = fqms->get_arrays();
+						VisualServer::get_singleton()->mesh_add_surface_from_arrays(
+								chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i),
+								VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-								if (arr_merged_simplified[0].size() == 0)
-									break;
-
-								VisualServer::get_singleton()->mesh_add_surface_from_arrays(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, i), VisualServer::PRIMITIVE_TRIANGLES, arr_merged_simplified);
-
-								if (get_library()->get_material(i).is_valid())
-									VisualServer::get_singleton()->mesh_surface_set_material(get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH, i), 0, get_library()->get_material(i)->get_rid());
-							}
-						}
-
-						if (should_return()) {
-							return;
-						}
+						if (chunk->get_library()->get_material(i).is_valid())
+							VisualServer::get_singleton()->mesh_surface_set_material(
+									chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i), 0,
+									chunk->get_library()->get_material(i)->get_rid());
 					}
-					*/
+				}
+
+				if (should_return()) {
+					return;
+				}
+			}
+#endif
 		}
 	}
 

@@ -18,6 +18,9 @@ if os.path.isdir('../mesh_data_resource'):
 if os.path.isdir('../props'):
     module_env.Append(CPPDEFINES=['PROPS_PRESENT'])
 
+if os.path.isdir('../mesh_utils'):
+    module_env.Append(CPPDEFINES=['MESH_UTILS_PRESENT'])
+
 sources = [
 
     "register_types.cpp",

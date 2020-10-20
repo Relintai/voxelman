@@ -14,7 +14,8 @@ check whether it works from time to time.
 `https://github.com/Relintai/thread_pool`: Threaded chunk generation. Without this Voxelman is single threaded! \
 `https://github.com/Relintai/texture_packer`: You get access to [VoxelmanLibraryMerger](#voxelmanlibrarymerger). \
 `https://github.com/Relintai/mesh_data_resource`: You get access to a bunch of properties, and methods that can manipulate meshes.\
-`https://github.com/Relintai/props`: You get access to a bunch of properties, and methods that can manipulate, and use props.
+`https://github.com/Relintai/props`: You get access to a bunch of properties, and methods that can manipulate, and use props.\
+`https://github.com/Relintai/mesh_utils`: Lets you use lod levels higher than 4 by default.
 
 ## Pre-built binaries
 

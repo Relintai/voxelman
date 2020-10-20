@@ -54,6 +54,13 @@ void VoxelWorldDefault::set_lod_update_interval(const float value) {
 	_lod_update_interval = value;
 }
 
+int VoxelWorldDefault::get_num_lods() const {
+	return _num_lods;
+}
+void VoxelWorldDefault::set_num_lods(const int value) {
+	_num_lods = value;
+}
+
 void VoxelWorldDefault::update_lods() {
 	call("_update_lods");
 }
@@ -134,6 +141,9 @@ void VoxelWorldDefault::_update_lods() {
 		return;
 	}
 
+	if (_num_lods <= 1)
+		return;
+
 	Vector3 ppos = get_player()->get_transform().origin;
 
 	int ppx = int(ppos.x / get_chunk_size_x() / get_voxel_scale());
@@ -155,7 +165,7 @@ void VoxelWorldDefault::_update_lods() {
 		mr -= _chunk_lod_falloff;
 
 		//Todo 3 should be _num_lod, but it's NYI, because chunk can only handle 3 lod levels for now -> FQMS needs to be fixed
-		mr = CLAMP(mr, 0, 3);
+		mr = CLAMP(mr, 0, _num_lods - 1);
 
 		if (c->get_current_lod_level() != mr)
 			c->set_current_lod_level(mr);
@@ -185,6 +195,7 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 
 	if (vcd.is_valid()) {
 		vcd->set_build_flags(_build_flags);
+		vcd->set_lod_num(_num_lods);
 	}
 
 	return VoxelWorld::_create_chunk(x, y, z, chunk);
@@ -216,6 +227,7 @@ VoxelWorldDefault::VoxelWorldDefault() {
 	_lod_update_timer = 0;
 	_lod_update_interval = 0.5;
 	_build_flags = VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER | VoxelChunkDefault::BUILD_FLAG_CREATE_LODS;
+	_num_lods = 4;
 
 	set_data_margin_start(1);
 	set_data_margin_end(1);
@@ -267,6 +279,10 @@ void VoxelWorldDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_chunk_lod_falloff"), &VoxelWorldDefault::get_chunk_lod_falloff);
 	ClassDB::bind_method(D_METHOD("set_chunk_lod_falloff", "value"), &VoxelWorldDefault::set_chunk_lod_falloff);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "chunk_lod_falloff"), "set_chunk_lod_falloff", "get_chunk_lod_falloff");
+
+	ClassDB::bind_method(D_METHOD("get_num_lods"), &VoxelWorldDefault::get_num_lods);
+	ClassDB::bind_method(D_METHOD("set_num_lods", "value"), &VoxelWorldDefault::set_num_lods);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "num_lods"), "set_num_lods", "get_num_lods");
 
 	BIND_VMETHOD(MethodInfo("_update_lods"));
 	ClassDB::bind_method(D_METHOD("update_lods"), &VoxelWorldDefault::update_lods);

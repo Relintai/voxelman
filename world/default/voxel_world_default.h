@@ -38,6 +38,9 @@ public:
 	int get_chunk_lod_falloff() const;
 	void set_chunk_lod_falloff(const int value);
 
+	int get_num_lods() const;
+	void set_num_lods(const int value);
+
 	void update_lods();
 
 	PoolColorArray get_vertex_colors(const Transform &transform, const PoolVector3Array &vertices, const float base_light_value = 0.45, const float ao_strength = 0.2);
@@ -60,6 +63,7 @@ private:
 	float _lod_update_timer;
 	float _lod_update_interval;
 	int _chunk_lod_falloff;
+	int _num_lods;
 };
 
 #endif
