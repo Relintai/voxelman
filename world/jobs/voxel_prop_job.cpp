@@ -110,13 +110,15 @@ void VoxelPropJob::phase_prop() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	if (!get_prop_mesher().is_valid()) {
-		next_phase();
+		set_complete(true); //So threadpool knows it's done
+		next_job();
 		return;
 	}
 
 	if (should_do()) {
 		if (chunk->get_mesh_data_resource_count() == 0) {
-			next_phase();
+			set_complete(true); //So threadpool knows it's done
+			next_job();
 			return;
 		}
 
@@ -127,9 +129,10 @@ void VoxelPropJob::phase_prop() {
 		}
 
 		if (get_prop_mesher()->get_vertex_count() == 0) {
-			reset_stages();
+			//reset_stages();
 
-			next_phase();
+			set_complete(true); //So threadpool knows it's done
+			next_job();
 			return;
 		}
 
@@ -372,6 +375,7 @@ void VoxelPropJob::_reset() {
 }
 
 VoxelPropJob::VoxelPropJob() {
+	set_build_phase_type(BUILD_PHASE_TYPE_PHYSICS_PROCESS);
 }
 
 VoxelPropJob::~VoxelPropJob() {
