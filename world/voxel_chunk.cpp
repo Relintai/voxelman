@@ -242,6 +242,8 @@ int VoxelChunk::get_current_job_index() {
 	return _current_job;
 }
 void VoxelChunk::next_job() {
+	_THREAD_SAFE_METHOD_
+
 	++_current_job;
 
 	if (_current_job >= _jobs.size()) {
@@ -270,6 +272,8 @@ void VoxelChunk::next_job() {
 	}
 }
 Ref<VoxelJob> VoxelChunk::get_current_job() {
+	_THREAD_SAFE_METHOD_
+
 	if (_current_job < 0 || _current_job >= _jobs.size()) {
 		return Ref<VoxelJob>();
 	}
@@ -1021,7 +1025,10 @@ void VoxelChunk::_exit_tree() {
 }
 
 void VoxelChunk::_generation_process(const float delta) {
-	ERR_FAIL_INDEX(_current_job, _jobs.size());
+	_THREAD_SAFE_METHOD_
+
+	if (_current_job < 0 || _current_job >= _jobs.size())
+		return;
 
 	Ref<VoxelJob> job = _jobs[_current_job];
 
@@ -1043,7 +1050,10 @@ void VoxelChunk::_generation_process(const float delta) {
 	}
 }
 void VoxelChunk::_generation_physics_process(const float delta) {
-	ERR_FAIL_INDEX(_current_job, _jobs.size());
+	_THREAD_SAFE_METHOD_
+
+	if (_current_job < 0 || _current_job >= _jobs.size())
+		return;
 
 	Ref<VoxelJob> job = _jobs[_current_job];
 
