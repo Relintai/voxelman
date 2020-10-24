@@ -78,6 +78,10 @@ void VoxelJob::_execute() {
 	while (!get_cancelled() && _in_tree && !_build_done && origpt == _build_phase_type && !should_return()) {
 		execute_phase();
 	}
+
+	if (!_in_tree) {
+		_chunk.unref();
+	}
 }
 
 void VoxelJob::execute_phase() {
