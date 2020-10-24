@@ -28,7 +28,7 @@ SOFTWARE.
 #if THREAD_POOL_PRESENT
 #include "../../../thread_pool/thread_pool_job.h"
 #else
-#include "core/resource.h"
+#include "core/reference.h"
 #endif
 
 #include "../../defines.h"
@@ -43,8 +43,8 @@ class VoxelChunk;
 class VoxelJob : public ThreadPoolJob {
 	GDCLASS(VoxelJob, ThreadPoolJob);
 #else
-class VoxelJob : public Resource {
-	GDCLASS(VoxelJob, Resource);
+class VoxelJob : public Reference {
+	GDCLASS(VoxelJob, Reference);
 #endif
 
 public:
