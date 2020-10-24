@@ -86,7 +86,6 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 	PhysicsDirectSpaceState::RayResult res;
 
 	if (ss->intersect_ray(from, to, res)) {
-		Vector3 pos;
 		int selected_voxel = 0;
 		int channel = 0;
 
@@ -96,22 +95,18 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 			return false;
 
 		int isolevel = _current_isolevel;
+		bool mode_add = false;
 
 		if (_tool_mode == TOOL_MODE_ADD) {
-			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * res.normal));
 			selected_voxel = _selected_type + 1;
+			mode_add = true;
 		} else if (_tool_mode == TOOL_MODE_REMOVE) {
-			pos = (res.position + (Vector3(0.1, 0.1, 0.1) * -res.normal));
 			selected_voxel = 0;
 			isolevel = 0;
+			mode_add = false;
 		}
 
-		if (_channel_isolevel == -1) {
-			_world->set_voxel_at_world_position(pos, selected_voxel, channel);
-		} else {
-			_world->set_voxel_at_world_position(pos, selected_voxel, channel, false);
-			_world->set_voxel_at_world_position(pos, isolevel, _channel_isolevel);
-		}
+		_world->set_voxel_with_tool(mode_add, res.position, res.normal, selected_voxel, isolevel);
 
 		return true;
 	}
