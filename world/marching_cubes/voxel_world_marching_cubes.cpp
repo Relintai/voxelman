@@ -58,6 +58,46 @@ Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<
 	return VoxelWorld::_create_chunk(x, y, z, chunk);
 }
 
+void VoxelWorldMarchingCubes::_set_voxel_with_tool(const bool mode_add, const Vector3 hit_position, const Vector3 hit_normal, const int selected_voxel, const int isolevel) {
+	Vector3 pos;
+
+	Vector3 hp = hit_position;
+	if (hp.x >= 0)
+		hp.x = (hp.x) - 0.5 * get_voxel_scale();
+	//else
+	//	hp.x = (hp.x) + 0.5 * get_voxel_scale();
+
+	if (hp.x >= 0)
+		hp.y = (hp.y) - 0.5 * get_voxel_scale();
+	//else
+	//	hp.y = (hp.y) + 0.5 * get_voxel_scale();
+
+	if (hp.x >= 0)
+		hp.z = (hp.z) - 0.5 * get_voxel_scale();
+	//else
+	//	hp.z = (hp.z) + 0.5 * get_voxel_scale();
+
+	hp.x = static_cast<int>(hp.x);
+	hp.y = static_cast<int>(hp.y);
+	hp.z = static_cast<int>(hp.z);
+
+	if (mode_add) {
+		pos = (hit_position + (Vector3(0.8, 0.8, 0.8) * hit_normal * get_voxel_scale()));
+	} else {
+		pos = (hit_position + (Vector3(0.8, 0.8, 0.8) * -hit_normal * get_voxel_scale()));
+	}
+
+	int channel_type = get_channel_index_info(VoxelWorld::CHANNEL_TYPE_INFO_TYPE);
+	int channel_isolevel = get_channel_index_info(VoxelWorld::CHANNEL_TYPE_INFO_ISOLEVEL);
+
+	if (channel_isolevel == -1) {
+		set_voxel_at_world_position(pos, selected_voxel, channel_type);
+	} else {
+		set_voxel_at_world_position(pos, selected_voxel, channel_type, false);
+		set_voxel_at_world_position(pos, isolevel, channel_isolevel);
+	}
+}
+
 VoxelWorldMarchingCubes::VoxelWorldMarchingCubes() {
 	set_data_margin_start(1);
 	set_data_margin_end(2);
