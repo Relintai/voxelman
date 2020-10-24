@@ -689,7 +689,7 @@ void VoxelWorld::set_lights(const Vector<Variant> &chunks) {
 uint8_t VoxelWorld::get_voxel_at_world_position(const Vector3 &world_position, const int channel_index) {
 	Vector3 pos = world_position / get_voxel_scale();
 
-	//Note: floor is needed to handle negative numbers proiberly
+	//Note: floor is needed to handle negative numbers properly
 	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x()));
 	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y()));
 	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z()));
@@ -721,7 +721,7 @@ uint8_t VoxelWorld::get_voxel_at_world_position(const Vector3 &world_position, c
 void VoxelWorld::set_voxel_at_world_position(const Vector3 &world_position, const uint8_t data, const int channel_index, const bool rebuild) {
 	Vector3 pos = world_position / get_voxel_scale();
 
-	//Note: floor is needed to handle negative numbers proiberly
+	//Note: floor is needed to handle negative numbers properly
 	int x = static_cast<int>(Math::floor(pos.x / get_chunk_size_x()));
 	int y = static_cast<int>(Math::floor(pos.y / get_chunk_size_y()));
 	int z = static_cast<int>(Math::floor(pos.z / get_chunk_size_z()));
