@@ -123,11 +123,16 @@ Since properly initializing a chunk usually takes quite a few steps that you pro
 parameter was added. This means you can just call the super `_create_chunk` methods, and you won't need to worry about your chunk
 getting overridden. Like:
 
+Note that `_create_chunk` is also responsible for initializing chunks if you have them stored inside a scene. 
+This is done by `setup_chunk(shunk)` in `VoxelWorld`.
+
 ``` 
     func _create_chunk(x : int, y : int, z : int, chunk : VoxelChunk) -> VoxelChunk:
         if !chunk:
             chunk = MyChunk.new()
 
+        # We need to check whether or not we need to initialize jobs
+        if chunk.get_job_count() == 0:
             # Setup a blocky (minecratf like) mesher job
             var tj : VoxelTerrarinJob = VoxelTerrarinJob.new()
 

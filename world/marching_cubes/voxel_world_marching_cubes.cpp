@@ -32,7 +32,9 @@ SOFTWARE.
 Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkMarchingCubes));
+	}
 
+	if (chunk->get_job_count() == 0) {
 		Ref<VoxelTerrarinJob> tj;
 		tj.instance();
 

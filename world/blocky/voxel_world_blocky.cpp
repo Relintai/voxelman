@@ -34,7 +34,9 @@ Ref<VoxelChunk> VoxelWorldBlocky::_create_chunk(int x, int y, int z, Ref<VoxelCh
 
 	if (!chunk.is_valid()) {
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkBlocky));
+	}
 
+	if (chunk->get_job_count() == 0) {
 		Ref<VoxelTerrarinJob> tj;
 		tj.instance();
 

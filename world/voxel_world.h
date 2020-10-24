@@ -149,6 +149,7 @@ public:
 
 	Ref<VoxelChunk> get_or_create_chunk(const int x, const int y, const int z);
 	Ref<VoxelChunk> create_chunk(const int x, const int y, const int z);
+	void setup_chunk(Ref<VoxelChunk> chunk);
 
 	void generate_chunk(Ref<VoxelChunk> chunk);
 

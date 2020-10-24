@@ -262,14 +262,17 @@ void VoxelWorld::add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, cons
 
 	IntPos pos(x, y, z);
 
-	ERR_FAIL_COND(_chunks.has(pos));
+	//ERR_FAIL_COND(_chunks.has(pos));
 
 	chunk->set_voxel_world(this);
 	chunk->set_position(x, y, z);
 	chunk->world_transform_changed();
 
-	_chunks.set(pos, chunk);
-	_chunks_vector.push_back(chunk);
+	if (!_chunks.has(pos))
+		_chunks.set(pos, chunk);
+
+	if (_chunks_vector.find(chunk) == -1)
+		_chunks_vector.push_back(chunk);
 
 	if (is_inside_tree())
 		chunk->enter_tree();
@@ -397,14 +400,23 @@ Ref<VoxelChunk> VoxelWorld::get_or_create_chunk(int x, int y, int z) {
 Ref<VoxelChunk> VoxelWorld::create_chunk(const int x, const int y, const int z) {
 	Ref<VoxelChunk> c = call("_create_chunk", x, y, z, Ref<VoxelChunk>());
 
+	add_to_generation_queue(c);
+
 	return c;
 }
+
+void VoxelWorld::setup_chunk(Ref<VoxelChunk> chunk) {
+	ERR_FAIL_COND(!chunk.is_valid());
+
+	call("_create_chunk", chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z(), chunk);
+}
+
 Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 		chunk.instance();
-
-		//no meshers here
 	}
+
+	//no meshers here
 
 	ERR_FAIL_COND_V(!chunk.is_valid(), NULL);
 
@@ -423,8 +435,6 @@ Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z,
 	//chunk->set_translation(Vector3(x * _chunk_size_x * _voxel_scale, y * _chunk_size_y * _voxel_scale, z * _chunk_size_z * _voxel_scale));
 
 	add_chunk(chunk, x, y, z);
-
-	add_to_generation_queue(chunk);
 
 	return chunk;
 }
@@ -907,14 +917,9 @@ void VoxelWorld::_notification(int p_what) {
 				Ref<VoxelChunk> chunk = _chunks_vector[i];
 
 				if (chunk.is_valid()) {
-					IntPos pos(chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z());
+					setup_chunk(chunk);
 
-					chunk->set_voxel_world(this);
-					chunk->world_transform_changed();
-
-					_chunks.set(pos, chunk);
-
-					chunk->enter_tree();
+					chunk->build();
 				}
 			}
 		} break;
@@ -1136,6 +1141,7 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_or_create_chunk", "x", "y", "z"), &VoxelWorld::get_or_create_chunk);
 	ClassDB::bind_method(D_METHOD("create_chunk", "x", "y", "z"), &VoxelWorld::create_chunk);
 	ClassDB::bind_method(D_METHOD("_create_chunk", "x", "y", "z", "chunk"), &VoxelWorld::_create_chunk);
+	ClassDB::bind_method(D_METHOD("setup_chunk", "chunk"), &VoxelWorld::setup_chunk);
 
 	ClassDB::bind_method(D_METHOD("_generate_chunk", "chunk"), &VoxelWorld::_generate_chunk);
 

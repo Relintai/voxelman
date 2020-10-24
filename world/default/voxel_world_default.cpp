@@ -175,7 +175,9 @@ void VoxelWorldDefault::_update_lods() {
 Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkDefault));
+	}
 
+	if (chunk->get_job_count() == 0) {
 		Ref<VoxelTerrarinJob> tj;
 		tj.instance();
 
