@@ -29,6 +29,7 @@ SOFTWARE.
 #include "../defines.h"
 
 #include "jobs/voxel_job.h"
+#include "voxel_structure.h"
 
 #if THREAD_POOL_PRESENT
 #include "../../thread_pool/thread_pool.h"
@@ -564,6 +565,59 @@ _FORCE_INLINE_ int VoxelChunk::get_data_index(const int x, const int y, const in
 
 _FORCE_INLINE_ int VoxelChunk::get_data_size() const {
 	return _data_size_x * _data_size_y * _data_size_z;
+}
+
+//Voxel Structures
+
+Ref<VoxelStructure> VoxelChunk::voxel_structure_get(const int index) const {
+	ERR_FAIL_INDEX_V(index, _voxel_structures.size(), Ref<VoxelStructure>());
+
+	return _voxel_structures.get(index);
+}
+void VoxelChunk::voxel_structure_add(const Ref<VoxelStructure> &structure) {
+	_voxel_structures.push_back(structure);
+}
+void VoxelChunk::voxel_structure_remove(const Ref<VoxelStructure> &structure) {
+	if (!structure.is_valid())
+		return;
+
+	int index = _voxel_structures.find(structure);
+
+	if (index != -1)
+		_voxel_structures.remove(index);
+}
+void VoxelChunk::voxel_structure_remove_index(const int index) {
+	ERR_FAIL_INDEX(index, _voxel_structures.size());
+
+	_voxel_structures.remove(index);
+}
+void VoxelChunk::voxel_structure_clear() {
+	_voxel_structures.clear();
+}
+int VoxelChunk::voxel_structure_get_count() const {
+	return _voxel_structures.size();
+}
+void VoxelChunk::voxel_structure_add_at_position(Ref<VoxelStructure> structure, const Vector3 &world_position) {
+	ERR_FAIL_COND(!structure.is_valid());
+
+	structure->set_position_x(static_cast<int>(world_position.x / _voxel_scale));
+	structure->set_position_y(static_cast<int>(world_position.y / _voxel_scale));
+	structure->set_position_z(static_cast<int>(world_position.z / _voxel_scale));
+
+	voxel_structure_add(structure);
+}
+
+Vector<Variant> VoxelChunk::voxel_structures_get() {
+	VARIANT_ARRAY_GET(_voxel_structures);
+}
+void VoxelChunk::voxel_structures_set(const Vector<Variant> &structures) {
+	voxel_structure_clear();
+
+	for (int i = 0; i < structures.size(); ++i) {
+		Ref<VoxelLight> structure = Ref<VoxelLight>(structures[i]);
+
+		voxel_structure_add(structure);
+	}
 }
 
 void VoxelChunk::build() {
@@ -1307,6 +1361,18 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_index", "x", "y", "z"), &VoxelChunk::get_index);
 	ClassDB::bind_method(D_METHOD("get_data_index", "x", "y", "z"), &VoxelChunk::get_data_index);
 	ClassDB::bind_method(D_METHOD("get_data_size"), &VoxelChunk::get_data_size);
+
+	ClassDB::bind_method(D_METHOD("voxel_structure_get", "index"), &VoxelChunk::voxel_structure_get);
+	ClassDB::bind_method(D_METHOD("voxel_structure_add", "structure"), &VoxelChunk::voxel_structure_add);
+	ClassDB::bind_method(D_METHOD("voxel_structure_remove", "structure"), &VoxelChunk::voxel_structure_remove);
+	ClassDB::bind_method(D_METHOD("voxel_structure_remove_index", "index"), &VoxelChunk::voxel_structure_remove_index);
+	ClassDB::bind_method(D_METHOD("voxel_structure_clear"), &VoxelChunk::voxel_structure_clear);
+	ClassDB::bind_method(D_METHOD("voxel_structure_get_count"), &VoxelChunk::voxel_structure_get_count);
+	ClassDB::bind_method(D_METHOD("voxel_structure_add_at_position", "structure", "world_position"), &VoxelChunk::voxel_structure_add_at_position);
+
+	ClassDB::bind_method(D_METHOD("voxel_structures_get"), &VoxelChunk::voxel_structures_get);
+	ClassDB::bind_method(D_METHOD("voxel_structures_set"), &VoxelChunk::voxel_structures_set);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_structures", PROPERTY_HINT_NONE, "17/17:VoxelStructure", PROPERTY_USAGE_DEFAULT, "VoxelStructure"), "voxel_structures_set", "voxel_structures_get");
 
 	//Meshes
 
