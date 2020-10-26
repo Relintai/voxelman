@@ -220,30 +220,30 @@ public:
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT
-	int add_mesh_data_resourcev(const Vector3 &local_data_pos, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1), const bool apply_voxel_scale = true);
-	int add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1), const bool apply_voxel_scale = true);
+	int mesh_data_resource_addv(const Vector3 &local_data_pos, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1), const bool apply_voxel_scale = true);
+	int mesh_data_resource_add(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture = Ref<Texture>(), const Color &color = Color(1, 1, 1, 1), const bool apply_voxel_scale = true);
 
-	Ref<MeshDataResource> get_mesh_data_resource(const int index);
-	void set_mesh_data_resource(const int index, const Ref<MeshDataResource> &mesh);
+	Ref<MeshDataResource> mesh_data_resource_get(const int index);
+	void mesh_data_resource_set(const int index, const Ref<MeshDataResource> &mesh);
 
-	Ref<Texture> get_mesh_data_resource_texture(const int index);
-	void set_mesh_data_resource_texture(const int index, const Ref<Texture> &texture);
+	Ref<Texture> mesh_data_resource_get_texture(const int index);
+	void mesh_data_resource_set_texture(const int index, const Ref<Texture> &texture);
 
-	Color get_mesh_data_resource_color(const int index);
-	void set_mesh_data_resource_color(const int index, const Color &color);
+	Color mesh_data_resource_get_color(const int index);
+	void mesh_data_resource_set_color(const int index, const Color &color);
 
-	Rect2 get_mesh_data_resource_uv_rect(const int index);
-	void set_mesh_data_resource_uv_rect(const int index, const Rect2 &uv_rect);
+	Rect2 mesh_data_resource_get_uv_rect(const int index);
+	void mesh_data_resource_set_uv_rect(const int index, const Rect2 &uv_rect);
 
-	Transform get_mesh_data_resource_transform(const int index);
-	void set_mesh_data_resource_transform(const int index, const Transform &transform);
+	Transform mesh_data_resource_get_transform(const int index);
+	void mesh_data_resource_set_transform(const int index, const Transform &transform);
 
-	bool get_mesh_data_resource_is_inside(const int index);
-	void set_mesh_data_resource_is_inside(const int index, const bool &inside);
+	bool mesh_data_resource_get_is_inside(const int index);
+	void mesh_data_resource_set_is_inside(const int index, const bool &inside);
 
-	int get_mesh_data_resource_count() const;
-	void remove_mesh_data_resource(const int index);
-	void clear_mesh_data_resources();
+	int mesh_data_resource_get_count() const;
+	void mesh_data_resource_remove(const int index);
+	void mesh_data_resource_clear();
 #endif
 
 	//Colliders

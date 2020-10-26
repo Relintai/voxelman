@@ -701,7 +701,7 @@ void VoxelChunk::clear_props() {
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT
-int VoxelChunk::add_mesh_data_resourcev(const Vector3 &local_data_pos, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color, const bool apply_voxel_scale) {
+int VoxelChunk::mesh_data_resource_addv(const Vector3 &local_data_pos, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color, const bool apply_voxel_scale) {
 	ERR_FAIL_COND_V(!mesh.is_valid(), 0);
 
 	int index = _mesh_data_resources.size();
@@ -737,7 +737,7 @@ int VoxelChunk::add_mesh_data_resourcev(const Vector3 &local_data_pos, const Ref
 	return index;
 }
 
-int VoxelChunk::add_mesh_data_resource(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color, const bool apply_voxel_scale) {
+int VoxelChunk::mesh_data_resource_add(const Transform &local_transform, const Ref<MeshDataResource> &mesh, const Ref<Texture> &texture, const Color &color, const bool apply_voxel_scale) {
 	ERR_FAIL_COND_V(!mesh.is_valid(), 0);
 
 	int index = _mesh_data_resources.size();
@@ -772,80 +772,80 @@ int VoxelChunk::add_mesh_data_resource(const Transform &local_transform, const R
 	return index;
 }
 
-Ref<MeshDataResource> VoxelChunk::get_mesh_data_resource(const int index) {
+Ref<MeshDataResource> VoxelChunk::mesh_data_resource_get(const int index) {
 	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Ref<MeshDataResource>());
 
 	return _mesh_data_resources[index].mesh;
 }
 
-void VoxelChunk::set_mesh_data_resource(const int index, const Ref<MeshDataResource> &mesh) {
+void VoxelChunk::mesh_data_resource_set(const int index, const Ref<MeshDataResource> &mesh) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 }
 
-Ref<Texture> VoxelChunk::get_mesh_data_resource_texture(const int index) {
+Ref<Texture> VoxelChunk::mesh_data_resource_get_texture(const int index) {
 	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Ref<Texture>());
 
 	return _mesh_data_resources[index].texture;
 }
-void VoxelChunk::set_mesh_data_resource_texture(const int index, const Ref<Texture> &texture) {
+void VoxelChunk::mesh_data_resource_set_texture(const int index, const Ref<Texture> &texture) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 
 	_mesh_data_resources.write[index].texture = texture;
 }
 
-Color VoxelChunk::get_mesh_data_resource_color(const int index) {
+Color VoxelChunk::mesh_data_resource_get_color(const int index) {
 	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Color());
 
 	return _mesh_data_resources[index].color;
 }
-void VoxelChunk::set_mesh_data_resource_color(const int index, const Color &color) {
+void VoxelChunk::mesh_data_resource_set_color(const int index, const Color &color) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 
 	_mesh_data_resources.write[index].color = color;
 }
 
-Rect2 VoxelChunk::get_mesh_data_resource_uv_rect(const int index) {
+Rect2 VoxelChunk::mesh_data_resource_get_uv_rect(const int index) {
 	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Rect2());
 
 	return _mesh_data_resources[index].uv_rect;
 }
-void VoxelChunk::set_mesh_data_resource_uv_rect(const int index, const Rect2 &uv_rect) {
+void VoxelChunk::mesh_data_resource_set_uv_rect(const int index, const Rect2 &uv_rect) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 
 	_mesh_data_resources.write[index].uv_rect = uv_rect;
 }
 
-Transform VoxelChunk::get_mesh_data_resource_transform(const int index) {
+Transform VoxelChunk::mesh_data_resource_get_transform(const int index) {
 	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), Transform());
 
 	return _mesh_data_resources.write[index].transform;
 }
-void VoxelChunk::set_mesh_data_resource_transform(const int index, const Transform &transform) {
+void VoxelChunk::mesh_data_resource_set_transform(const int index, const Transform &transform) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 
 	_mesh_data_resources.write[index].transform = transform;
 }
 
-bool VoxelChunk::get_mesh_data_resource_is_inside(const int index) {
+bool VoxelChunk::mesh_data_resource_get_is_inside(const int index) {
 	ERR_FAIL_INDEX_V(index, _mesh_data_resources.size(), true);
 
 	return _mesh_data_resources[index].is_inside;
 }
-void VoxelChunk::set_mesh_data_resource_is_inside(const int index, const bool &inside) {
+void VoxelChunk::mesh_data_resource_set_is_inside(const int index, const bool &inside) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 
 	_mesh_data_resources.write[index].is_inside = inside;
 }
 
-int VoxelChunk::get_mesh_data_resource_count() const {
+int VoxelChunk::mesh_data_resource_get_count() const {
 	return _mesh_data_resources.size();
 }
-void VoxelChunk::remove_mesh_data_resource(const int index) {
+void VoxelChunk::mesh_data_resource_remove(const int index) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 
 	_mesh_data_resources.remove(index);
 }
-void VoxelChunk::clear_mesh_data_resources() {
+void VoxelChunk::mesh_data_resource_clear() {
 	_mesh_data_resources.clear();
 }
 
@@ -1036,7 +1036,7 @@ VoxelChunk::~VoxelChunk() {
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT
-	clear_mesh_data_resources();
+	mesh_data_resource_clear();
 #endif
 
 	for (int i = 0; i < _channels.size(); ++i) {
@@ -1385,30 +1385,30 @@ void VoxelChunk::_bind_methods() {
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resourcev", "local_data_pos", "mesh", "texture", "color", "apply_voxel_scale"), &VoxelChunk::add_mesh_data_resourcev, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)), DEFVAL(true));
-	ClassDB::bind_method(D_METHOD("add_mesh_data_resource", "local_transform", "mesh", "texture", "color", "apply_voxel_scale"), &VoxelChunk::add_mesh_data_resource, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)), DEFVAL(true));
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_addv", "local_data_pos", "mesh", "texture", "color", "apply_voxel_scale"), &VoxelChunk::mesh_data_resource_addv, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)), DEFVAL(true));
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_add", "local_transform", "mesh", "texture", "color", "apply_voxel_scale"), &VoxelChunk::mesh_data_resource_add, DEFVAL(Ref<Texture>()), DEFVAL(Color(1, 1, 1, 1)), DEFVAL(true));
 
-	ClassDB::bind_method(D_METHOD("get_mesh_data_resource", "index"), &VoxelChunk::get_mesh_data_resource);
-	ClassDB::bind_method(D_METHOD("set_mesh_data_resource", "index", "mesh"), &VoxelChunk::set_mesh_data_resource);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_get", "index"), &VoxelChunk::mesh_data_resource_get);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_set", "index", "mesh"), &VoxelChunk::mesh_data_resource_set);
 
-	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_texture", "index"), &VoxelChunk::get_mesh_data_resource_texture);
-	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_texture", "index", "texture"), &VoxelChunk::set_mesh_data_resource_texture);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_get_texture", "index"), &VoxelChunk::mesh_data_resource_get_texture);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_set_texture", "index", "texture"), &VoxelChunk::mesh_data_resource_set_texture);
 
-	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_color", "index"), &VoxelChunk::get_mesh_data_resource_color);
-	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_color", "index", "color"), &VoxelChunk::set_mesh_data_resource_color);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_get_color", "index"), &VoxelChunk::mesh_data_resource_get_color);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_set_color", "index", "color"), &VoxelChunk::mesh_data_resource_set_color);
 
-	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_uv_rect", "index"), &VoxelChunk::get_mesh_data_resource_uv_rect);
-	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_uv_rect", "index", "uv_rect"), &VoxelChunk::set_mesh_data_resource_uv_rect);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_get_uv_rect", "index"), &VoxelChunk::mesh_data_resource_get_uv_rect);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_set_uv_rect", "index", "uv_rect"), &VoxelChunk::mesh_data_resource_set_uv_rect);
 
-	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_transform", "index"), &VoxelChunk::get_mesh_data_resource_transform);
-	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_transform", "index", "transform"), &VoxelChunk::set_mesh_data_resource_transform);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_get_transform", "index"), &VoxelChunk::mesh_data_resource_get_transform);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_set_transform", "index", "transform"), &VoxelChunk::mesh_data_resource_set_transform);
 
-	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_is_inside", "index"), &VoxelChunk::get_mesh_data_resource_is_inside);
-	ClassDB::bind_method(D_METHOD("set_mesh_data_resource_is_inside", "index", "inside"), &VoxelChunk::set_mesh_data_resource_is_inside);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_get_is_inside", "index"), &VoxelChunk::mesh_data_resource_get_is_inside);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_set_is_inside", "index", "inside"), &VoxelChunk::mesh_data_resource_set_is_inside);
 
-	ClassDB::bind_method(D_METHOD("get_mesh_data_resource_count"), &VoxelChunk::get_mesh_data_resource_count);
-	ClassDB::bind_method(D_METHOD("remove_mesh_data_resource", "index"), &VoxelChunk::remove_mesh_data_resource);
-	ClassDB::bind_method(D_METHOD("clear_mesh_data_resources"), &VoxelChunk::clear_mesh_data_resources);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_get_count"), &VoxelChunk::mesh_data_resource_get_count);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_remove", "index"), &VoxelChunk::mesh_data_resource_remove);
+	ClassDB::bind_method(D_METHOD("mesh_data_resource_clear"), &VoxelChunk::mesh_data_resource_clear);
 #endif
 
 	ClassDB::bind_method(D_METHOD("add_collider", "local_transform", "shape", "shape_rid", "body"), &VoxelChunk::add_collider, DEFVAL(RID()), DEFVAL(RID()));

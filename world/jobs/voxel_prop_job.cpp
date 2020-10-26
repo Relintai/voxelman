@@ -58,8 +58,8 @@ void VoxelPropJob::phase_physics_process() {
 	chunk->clear_colliders();
 
 #ifdef MESH_DATA_RESOURCE_PRESENT
-	for (int i = 0; i < chunk->get_mesh_data_resource_count(); ++i) {
-		Ref<MeshDataResource> mdr = chunk->get_mesh_data_resource(i);
+	for (int i = 0; i < chunk->mesh_data_resource_get_count(); ++i) {
+		Ref<MeshDataResource> mdr = chunk->mesh_data_resource_get(i);
 
 		for (int j = 0; j < mdr->get_collision_shape_count(); ++j) {
 			Ref<Shape> shape = mdr->get_collision_shape(j);
@@ -71,7 +71,7 @@ void VoxelPropJob::phase_physics_process() {
 
 			RID body = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
 
-			Transform transform = chunk->get_mesh_data_resource_transform(i);
+			Transform transform = chunk->mesh_data_resource_get_transform(i);
 			transform *= offset;
 
 			PhysicsServer::get_singleton()->body_add_shape(body, shape->get_rid());
@@ -116,15 +116,15 @@ void VoxelPropJob::phase_prop() {
 	}
 
 	if (should_do()) {
-		if (chunk->get_mesh_data_resource_count() == 0) {
+		if (chunk->mesh_data_resource_get_count() == 0) {
 			set_complete(true); //So threadpool knows it's done
 			next_job();
 			return;
 		}
 
-		for (int i = 0; i < chunk->get_mesh_data_resource_count(); ++i) {
-			if (chunk->get_mesh_data_resource_is_inside(i)) {
-				get_prop_mesher()->add_mesh_data_resource_transform(chunk->get_mesh_data_resource(i), chunk->get_mesh_data_resource_transform(i), chunk->get_mesh_data_resource_uv_rect(i));
+		for (int i = 0; i < chunk->mesh_data_resource_get_count(); ++i) {
+			if (chunk->mesh_data_resource_get_is_inside(i)) {
+				get_prop_mesher()->add_mesh_data_resource_transform(chunk->mesh_data_resource_get(i), chunk->mesh_data_resource_get_transform(i), chunk->mesh_data_resource_get_uv_rect(i));
 			}
 		}
 
@@ -156,13 +156,13 @@ void VoxelPropJob::phase_prop() {
 			VoxelWorldDefault *world = Object::cast_to<VoxelWorldDefault>(chunk->get_voxel_world());
 
 			if (world) {
-				for (int i = 0; i < chunk->get_mesh_data_resource_count(); ++i) {
-					if (!chunk->get_mesh_data_resource_is_inside(i)) {
-						Ref<MeshDataResource> mdr = chunk->get_mesh_data_resource(i);
+				for (int i = 0; i < chunk->mesh_data_resource_get_count(); ++i) {
+					if (!chunk->mesh_data_resource_get_is_inside(i)) {
+						Ref<MeshDataResource> mdr = chunk->mesh_data_resource_get(i);
 
 						ERR_CONTINUE(!mdr.is_valid());
 
-						Transform trf = chunk->get_mesh_data_resource_transform(i);
+						Transform trf = chunk->mesh_data_resource_get_transform(i);
 
 						Array arr = mdr->get_array();
 
@@ -178,7 +178,7 @@ void VoxelPropJob::phase_prop() {
 
 						PoolColorArray carr = world->get_vertex_colors(trf, varr);
 
-						get_prop_mesher()->add_mesh_data_resource_transform_colored(mdr, trf, carr, chunk->get_mesh_data_resource_uv_rect(i));
+						get_prop_mesher()->add_mesh_data_resource_transform_colored(mdr, trf, carr, chunk->mesh_data_resource_get_uv_rect(i));
 					}
 				}
 			}
@@ -343,7 +343,7 @@ void VoxelPropJob::_execute_phase() {
 
 	if (!chunk.is_valid()
 #ifdef MESH_DATA_RESOURCE_PRESENT
-			|| chunk->get_mesh_data_resource_count() == 0
+			|| chunk->mesh_data_resource_get_count() == 0
 #endif
 	) {
 		set_complete(true);

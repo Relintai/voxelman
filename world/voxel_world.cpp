@@ -622,7 +622,7 @@ void VoxelWorld::add_prop(Transform tarnsform, const Ref<PropData> &prop, const 
 			if (!mdr.is_valid())
 				continue;
 
-			chunk->add_mesh_data_resource(t, mdr, mesh_data->get_texture());
+			chunk->mesh_data_resource_add(t, mdr, mesh_data->get_texture());
 
 			continue;
 		}
