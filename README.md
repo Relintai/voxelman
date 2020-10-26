@@ -132,14 +132,14 @@ This is done by `setup_chunk(shunk)` in `VoxelWorld`.
             chunk = MyChunk.new()
 
         # We need to check whether or not we need to initialize jobs
-        if chunk.get_job_count() == 0:
+        if chunk.job_get_count() == 0:
             # Setup a blocky (minecratf like) mesher job
             var tj : VoxelTerrarinJob = VoxelTerrarinJob.new()
 
             tj.add_mesher(VoxelMesherBlocky.new());
 		    tj.add_liquid_mesher(VoxelMesherLiquidBlocky.new());
 
-            chunk.add_job(tj);
+            chunk.job_add(tj);
 
         #setup your chunk here
 

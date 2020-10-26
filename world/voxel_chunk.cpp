@@ -217,32 +217,32 @@ void VoxelChunk::set_voxel_world_bind(Node *world) {
 	_voxel_world = Object::cast_to<VoxelWorld>(world);
 }
 
-Ref<VoxelJob> VoxelChunk::get_job(int index) const {
+Ref<VoxelJob> VoxelChunk::job_get(int index) const {
 	ERR_FAIL_INDEX_V(index, _jobs.size(), Ref<VoxelJob>());
 
 	return _jobs.get(index);
 }
-void VoxelChunk::set_job(int index, const Ref<VoxelJob> &job) {
+void VoxelChunk::job_set(int index, const Ref<VoxelJob> &job) {
 	ERR_FAIL_INDEX(index, _jobs.size());
 
 	_jobs.set(index, job);
 }
-void VoxelChunk::remove_job(const int index) {
+void VoxelChunk::job_remove(const int index) {
 	ERR_FAIL_INDEX(index, _jobs.size());
 
 	_jobs.remove(index);
 }
-void VoxelChunk::add_job(const Ref<VoxelJob> &job) {
+void VoxelChunk::job_add(const Ref<VoxelJob> &job) {
 	_jobs.push_back(job);
 }
-int VoxelChunk::get_job_count() const {
+int VoxelChunk::job_get_count() const {
 	return _jobs.size();
 }
 
-int VoxelChunk::get_current_job_index() {
+int VoxelChunk::job_get_current_index() {
 	return _current_job;
 }
-void VoxelChunk::next_job() {
+void VoxelChunk::job_next() {
 	_THREAD_SAFE_METHOD_
 
 	++_current_job;
@@ -258,7 +258,7 @@ void VoxelChunk::next_job() {
 
 	if (!j.is_valid()) {
 		//skip if invalid
-		next_job();
+		job_next();
 	}
 
 	j->reset();
@@ -272,7 +272,7 @@ void VoxelChunk::next_job() {
 #endif
 	}
 }
-Ref<VoxelJob> VoxelChunk::get_current_job() {
+Ref<VoxelJob> VoxelChunk::job_get_current() {
 	_THREAD_SAFE_METHOD_
 
 	if (_current_job < 0 || _current_job >= _jobs.size()) {
@@ -636,7 +636,7 @@ void VoxelChunk::_build() {
 
 	_is_generating = true;
 
-	next_job();
+	job_next();
 }
 
 void VoxelChunk::clear() {
@@ -1318,15 +1318,15 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelChunk::set_voxel_scale);
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "voxel_scale"), "set_voxel_scale", "get_voxel_scale");
 
-	ClassDB::bind_method(D_METHOD("get_job", "index"), &VoxelChunk::get_job);
-	ClassDB::bind_method(D_METHOD("set_job", "index", "job"), &VoxelChunk::set_job);
-	ClassDB::bind_method(D_METHOD("remove_job", "index"), &VoxelChunk::remove_job);
-	ClassDB::bind_method(D_METHOD("add_job", "job"), &VoxelChunk::add_job);
-	ClassDB::bind_method(D_METHOD("get_job_count"), &VoxelChunk::get_job_count);
+	ClassDB::bind_method(D_METHOD("job_get", "index"), &VoxelChunk::job_get);
+	ClassDB::bind_method(D_METHOD("job_set", "index", "job"), &VoxelChunk::job_set);
+	ClassDB::bind_method(D_METHOD("job_remove", "index"), &VoxelChunk::job_remove);
+	ClassDB::bind_method(D_METHOD("job_add", "job"), &VoxelChunk::job_add);
+	ClassDB::bind_method(D_METHOD("job_get_count"), &VoxelChunk::job_get_count);
 
-	ClassDB::bind_method(D_METHOD("get_current_job_index"), &VoxelChunk::get_current_job_index);
-	ClassDB::bind_method(D_METHOD("next_job"), &VoxelChunk::next_job);
-	ClassDB::bind_method(D_METHOD("get_current_job"), &VoxelChunk::get_current_job);
+	ClassDB::bind_method(D_METHOD("job_get_current_index"), &VoxelChunk::job_get_current_index);
+	ClassDB::bind_method(D_METHOD("job_next"), &VoxelChunk::job_next);
+	ClassDB::bind_method(D_METHOD("job_get_current"), &VoxelChunk::job_get_current);
 
 	ClassDB::bind_method(D_METHOD("get_voxel_world"), &VoxelChunk::get_voxel_world);
 	ClassDB::bind_method(D_METHOD("set_voxel_world", "world"), &VoxelChunk::set_voxel_world_bind);

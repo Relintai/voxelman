@@ -34,7 +34,7 @@ Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkMarchingCubes));
 	}
 
-	if (chunk->get_job_count() == 0) {
+	if (chunk->job_get_count() == 0) {
 		Ref<VoxelTerrarinJob> tj;
 		tj.instance();
 
@@ -52,9 +52,9 @@ Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<
 		tj->add_mesher(m);
 		//add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidMarchingCubes())));
 
-		chunk->add_job(lj);
-		chunk->add_job(tj);
-		chunk->add_job(pj);
+		chunk->job_add(lj);
+		chunk->job_add(tj);
+		chunk->job_add(pj);
 	}
 
 	return VoxelWorld::_create_chunk(x, y, z, chunk);

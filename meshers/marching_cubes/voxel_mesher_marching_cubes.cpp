@@ -182,7 +182,7 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	Ref<VoxelJob> job = chunk->get_current_job();
+	Ref<VoxelJob> job = chunk->job_get_current();
 
 	//if (!job->has_meta("ao_done")) {
 	//	job->set_meta("ao_done", true);

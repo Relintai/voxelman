@@ -177,7 +177,7 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkDefault));
 	}
 
-	if (chunk->get_job_count() == 0) {
+	if (chunk->job_get_count() == 0) {
 		Ref<VoxelTerrarinJob> tj;
 		tj.instance();
 
@@ -188,9 +188,9 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 		pj.instance();
 		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault)));
 
-		chunk->add_job(lj);
-		chunk->add_job(tj);
-		chunk->add_job(pj);
+		chunk->job_add(lj);
+		chunk->job_add(tj);
+		chunk->job_add(pj);
 	}
 
 	Ref<VoxelChunkDefault> vcd = chunk;

@@ -59,7 +59,7 @@ void VoxelJob::set_build_done(const bool val) {
 }
 
 void VoxelJob::next_job() {
-	_chunk->next_job();
+	_chunk->job_next();
 	set_build_done(true);
 }
 

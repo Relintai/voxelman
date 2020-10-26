@@ -144,15 +144,15 @@ public:
 	void set_voxel_world_bind(Node *world);
 
 	//Jobs
-	Ref<VoxelJob> get_job(const int index) const;
-	void set_job(const int index, const Ref<VoxelJob> &job);
-	void remove_job(const int index);
-	void add_job(const Ref<VoxelJob> &job);
-	int get_job_count() const;
+	Ref<VoxelJob> job_get(const int index) const;
+	void job_set(const int index, const Ref<VoxelJob> &job);
+	void job_remove(const int index);
+	void job_add(const Ref<VoxelJob> &job);
+	int job_get_count() const;
 
-	int get_current_job_index();
-	void next_job();
-	Ref<VoxelJob> get_current_job();
+	int job_get_current_index();
+	void job_next();
+	Ref<VoxelJob> job_get_current();
 
 	//Channels
 	void setup_channels();
