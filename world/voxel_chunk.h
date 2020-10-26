@@ -247,23 +247,23 @@ public:
 #endif
 
 	//Colliders
-	int add_collider(const Transform &local_transform, const Ref<Shape> &shape, const RID &shape_rid = RID(), const RID &body = RID());
+	int collider_add(const Transform &local_transform, const Ref<Shape> &shape, const RID &shape_rid = RID(), const RID &body = RID());
 
-	Transform get_collider_transform(const int index);
-	void set_collider_transform(const int index, const Transform &transform);
+	Transform collider_get_transform(const int index);
+	void collider_set_transform(const int index, const Transform &transform);
 
-	Ref<Shape> get_collider_shape(const int index);
-	void set_collider_shape(const int index, const Ref<Shape> &shape);
+	Ref<Shape> collider_get_shape(const int index);
+	void collider_set_shape(const int index, const Ref<Shape> &shape);
 
-	RID get_collider_shape_rid(const int index);
-	void set_collider_shape_rid(const int index, const RID &rid);
+	RID collider_get_shape_rid(const int index);
+	void collider_set_shape_rid(const int index, const RID &rid);
 
-	RID get_collider_body(const int index);
-	void set_collider_body(const int index, const RID &rid);
+	RID collider_get_body(const int index);
+	void collider_set_body(const int index, const RID &rid);
 
-	int get_collider_count() const;
-	void remove_collider(const int index);
-	void clear_colliders();
+	int collider_get_count() const;
+	void collider_remove(const int index);
+	void colliders_clear();
 
 	//handlers
 	void enter_tree();

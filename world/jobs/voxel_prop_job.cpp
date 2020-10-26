@@ -51,11 +51,11 @@ void VoxelPropJob::phase_physics_process() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	//TODO this should only update the differences
-	for (int i = 0; i < chunk->get_collider_count(); ++i) {
-		PhysicsServer::get_singleton()->free(chunk->get_collider_body(i));
+	for (int i = 0; i < chunk->collider_get_count(); ++i) {
+		PhysicsServer::get_singleton()->free(chunk->collider_get_body(i));
 	}
 
-	chunk->clear_colliders();
+	chunk->colliders_clear();
 
 #ifdef MESH_DATA_RESOURCE_PRESENT
 	for (int i = 0; i < chunk->mesh_data_resource_get_count(); ++i) {
@@ -90,13 +90,13 @@ void VoxelPropJob::phase_physics_process() {
 
 			PhysicsServer::get_singleton()->body_set_state(body, PhysicsServer::BODY_STATE_TRANSFORM, chunk->get_transform() * transform);
 
-			chunk->add_collider(transform, shape, shape->get_rid(), body);
+			chunk->collider_add(transform, shape, shape->get_rid(), body);
 		}
 	}
 #endif
 
 #if TOOLS_ENABLED
-	if (SceneTree::get_singleton()->is_debugging_collisions_hint() && chunk->get_collider_count() > 0) {
+	if (SceneTree::get_singleton()->is_debugging_collisions_hint() && chunk->collider_get_count() > 0) {
 		chunk->draw_debug_mdr_colliders();
 	}
 #endif

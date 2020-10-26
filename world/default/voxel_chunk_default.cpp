@@ -502,8 +502,8 @@ void VoxelChunkDefault::update_transforms() {
 		}
 	}
 
-	for (int i = 0; i < get_collider_count(); ++i) {
-		PhysicsServer::get_singleton()->body_set_state(get_collider_body(i), PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * get_collider_transform(i));
+	for (int i = 0; i < collider_get_count(); ++i) {
+		PhysicsServer::get_singleton()->body_set_state(collider_get_body(i), PhysicsServer::BODY_STATE_TRANSFORM, get_transform() * collider_get_transform(i));
 	}
 
 	if (_debug_mesh_instance != RID()) {
@@ -683,13 +683,13 @@ void VoxelChunkDefault::draw_debug_mdr_colliders() {
 		debug_mesh_allocate();
 	}
 
-	for (int i = 0; i < get_collider_count(); ++i) {
-		Ref<Shape> shape = get_collider_shape(i);
+	for (int i = 0; i < collider_get_count(); ++i) {
+		Ref<Shape> shape = collider_get_shape(i);
 
 		if (!shape.is_valid())
 			continue;
 
-		Transform t = get_collider_transform(i);
+		Transform t = collider_get_transform(i);
 
 		shape->add_vertices_to_array(_debug_mesh_array, t);
 	}
