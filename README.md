@@ -136,8 +136,8 @@ This is done by `setup_chunk(shunk)` in `VoxelWorld`.
             # Setup a blocky (minecratf like) mesher job
             var tj : VoxelTerrarinJob = VoxelTerrarinJob.new()
 
-            tj.add_mesher(VoxelMesherBlocky.new());
-		    tj.add_liquid_mesher(VoxelMesherLiquidBlocky.new());
+            tj.add_mesher(VoxelMesherBlocky.new())
+            tj.add_liquid_mesher(VoxelMesherLiquidBlocky.new())
 
             chunk.job_add(tj);
 
