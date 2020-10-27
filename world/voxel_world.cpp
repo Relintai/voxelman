@@ -183,23 +183,23 @@ void VoxelWorld::set_player_bind(Node *player) {
 	set_player(Object::cast_to<Spatial>(player));
 }
 
-Ref<WorldArea> VoxelWorld::get_world_area(const int index) const {
+Ref<WorldArea> VoxelWorld::world_area_get(const int index) const {
 	ERR_FAIL_INDEX_V(index, _world_areas.size(), Ref<WorldArea>());
 
 	return _world_areas.get(index);
 }
-void VoxelWorld::add_world_area(const Ref<WorldArea> &area) {
+void VoxelWorld::world_area_add(const Ref<WorldArea> &area) {
 	_world_areas.push_back(area);
 }
-void VoxelWorld::remove_world_area(const int index) {
+void VoxelWorld::world_area_remove(const int index) {
 	ERR_FAIL_INDEX(index, _world_areas.size());
 
 	_world_areas.remove(index);
 }
-void VoxelWorld::clear_world_areas() {
+void VoxelWorld::world_areas_clear() {
 	_world_areas.clear();
 }
-int VoxelWorld::get_world_area_count() const {
+int VoxelWorld::world_area_get_count() const {
 	return _world_areas.size();
 }
 
@@ -1090,11 +1090,11 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_chunks"), &VoxelWorld::set_chunks);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "chunks", PROPERTY_HINT_NONE, "17/17:VoxelChunk", PROPERTY_USAGE_DEFAULT, "VoxelChunk"), "set_chunks", "get_chunks");
 
-	ClassDB::bind_method(D_METHOD("get_world_area", "index"), &VoxelWorld::get_world_area);
-	ClassDB::bind_method(D_METHOD("add_world_area", "area"), &VoxelWorld::add_world_area);
-	ClassDB::bind_method(D_METHOD("remove_world_area", "index"), &VoxelWorld::remove_world_area);
-	ClassDB::bind_method(D_METHOD("clear_world_areas"), &VoxelWorld::clear_world_areas);
-	ClassDB::bind_method(D_METHOD("get_world_area_count"), &VoxelWorld::get_world_area_count);
+	ClassDB::bind_method(D_METHOD("world_area_get", "index"), &VoxelWorld::world_area_get);
+	ClassDB::bind_method(D_METHOD("world_area_add", "area"), &VoxelWorld::world_area_add);
+	ClassDB::bind_method(D_METHOD("world_area_remove", "index"), &VoxelWorld::world_area_remove);
+	ClassDB::bind_method(D_METHOD("world_areas_clear"), &VoxelWorld::world_areas_clear);
+	ClassDB::bind_method(D_METHOD("world_area_get_count"), &VoxelWorld::world_area_get_count);
 
 	ClassDB::bind_method(D_METHOD("get_voxel_structure", "index"), &VoxelWorld::get_voxel_structure);
 	ClassDB::bind_method(D_METHOD("add_voxel_structure", "structure"), &VoxelWorld::add_voxel_structure);

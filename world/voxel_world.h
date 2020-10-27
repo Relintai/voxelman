@@ -107,11 +107,11 @@ public:
 	void set_player_bind(Node *player);
 
 	//World Areas
-	Ref<WorldArea> get_world_area(const int index) const;
-	void add_world_area(const Ref<WorldArea> &area);
-	void remove_world_area(const int index);
-	void clear_world_areas();
-	int get_world_area_count() const;
+	Ref<WorldArea> world_area_get(const int index) const;
+	void world_area_add(const Ref<WorldArea> &area);
+	void world_area_remove(const int index);
+	void world_areas_clear();
+	int world_area_get_count() const;
 
 	//Voxel Structures
 	Ref<VoxelStructure> get_voxel_structure(const int index) const;
