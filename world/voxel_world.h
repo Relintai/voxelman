@@ -151,15 +151,15 @@ public:
 
 	void on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk);
 
-	void add_to_generation_queue(const Ref<VoxelChunk> &chunk);
-	Ref<VoxelChunk> get_generation_queue_index(const int index);
-	void remove_generation_queue_index(const int index);
-	int get_generation_queue_size() const;
+	void generation_queue_add_to(const Ref<VoxelChunk> &chunk);
+	Ref<VoxelChunk> generation_queue_get_index(const int index);
+	void generation_queue_remove_index(const int index);
+	int generation_queue_get_size() const;
 
-	void add_to_generation(const Ref<VoxelChunk> &chunk);
-	Ref<VoxelChunk> get_generation_index(const int index);
-	void remove_generation_index(const int index);
-	int get_generation_size() const;
+	void generation_add_to(const Ref<VoxelChunk> &chunk);
+	Ref<VoxelChunk> generation_get_index(const int index);
+	void generation_remove_index(const int index);
+	int generation_get_size() const;
 
 #if PROPS_PRESENT
 	void prop_add(Transform tarnsform, const Ref<PropData> &prop, const bool apply_voxel_scael = true);

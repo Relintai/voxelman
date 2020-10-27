@@ -361,7 +361,7 @@ Ref<VoxelChunk> VoxelWorld::chunk_get_or_create(int x, int y, int z) {
 Ref<VoxelChunk> VoxelWorld::chunk_create(const int x, const int y, const int z) {
 	Ref<VoxelChunk> c = call("_create_chunk", x, y, z, Ref<VoxelChunk>());
 
-	add_to_generation_queue(c);
+	generation_queue_add_to(c);
 
 	return c;
 }
@@ -500,43 +500,43 @@ void VoxelWorld::on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk) {
 	call_deferred("emit_signal", "chunk_mesh_generation_finished", p_chunk);
 }
 
-void VoxelWorld::add_to_generation_queue(const Ref<VoxelChunk> &chunk) {
+void VoxelWorld::generation_queue_add_to(const Ref<VoxelChunk> &chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
 	set_process_internal(true);
 
 	_generation_queue.push_back(chunk);
 }
-Ref<VoxelChunk> VoxelWorld::get_generation_queue_index(int index) {
+Ref<VoxelChunk> VoxelWorld::generation_queue_get_index(int index) {
 	ERR_FAIL_INDEX_V(index, _generation_queue.size(), NULL);
 
 	return _generation_queue.get(index);
 }
-void VoxelWorld::remove_generation_queue_index(int index) {
+void VoxelWorld::generation_queue_remove_index(int index) {
 	ERR_FAIL_INDEX(index, _generation_queue.size());
 
 	_generation_queue.remove(index);
 }
-int VoxelWorld::get_generation_queue_size() const {
+int VoxelWorld::generation_queue_get_size() const {
 	return _generation_queue.size();
 }
 
-void VoxelWorld::add_to_generation(const Ref<VoxelChunk> &chunk) {
+void VoxelWorld::generation_add_to(const Ref<VoxelChunk> &chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
 	_generating.push_back(chunk);
 }
-Ref<VoxelChunk> VoxelWorld::get_generation_index(const int index) {
+Ref<VoxelChunk> VoxelWorld::generation_get_index(const int index) {
 	ERR_FAIL_INDEX_V(index, _generating.size(), NULL);
 
 	return _generating.get(index);
 }
-void VoxelWorld::remove_generation_index(const int index) {
+void VoxelWorld::generation_remove_index(const int index) {
 	ERR_FAIL_INDEX(index, _generating.size());
 
 	_generating.remove(index);
 }
-int VoxelWorld::get_generation_size() const {
+int VoxelWorld::generation_get_size() const {
 	return _generating.size();
 }
 
@@ -1123,15 +1123,15 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("chunks_set"), &VoxelWorld::chunks_set);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "chunks", PROPERTY_HINT_NONE, "17/17:VoxelChunk", PROPERTY_USAGE_DEFAULT, "VoxelChunk"), "chunks_set", "chunks_get");
 
-	ClassDB::bind_method(D_METHOD("add_to_generation_queue", "chunk"), &VoxelWorld::add_to_generation_queue);
-	ClassDB::bind_method(D_METHOD("get_generation_queue_index", "index"), &VoxelWorld::get_generation_queue_index);
-	ClassDB::bind_method(D_METHOD("remove_generation_queue_index", "index"), &VoxelWorld::remove_generation_queue_index);
-	ClassDB::bind_method(D_METHOD("get_generation_queue_size"), &VoxelWorld::get_generation_queue_size);
+	ClassDB::bind_method(D_METHOD("generation_queue_add_to", "chunk"), &VoxelWorld::generation_queue_add_to);
+	ClassDB::bind_method(D_METHOD("generation_queue_get_index", "index"), &VoxelWorld::generation_queue_get_index);
+	ClassDB::bind_method(D_METHOD("generation_queue_remove_index", "index"), &VoxelWorld::generation_queue_remove_index);
+	ClassDB::bind_method(D_METHOD("generation_queue_get_size"), &VoxelWorld::generation_queue_get_size);
 
-	ClassDB::bind_method(D_METHOD("add_to_generation", "chunk"), &VoxelWorld::add_to_generation);
-	ClassDB::bind_method(D_METHOD("get_generation_index", "index"), &VoxelWorld::get_generation_index);
-	ClassDB::bind_method(D_METHOD("remove_generation_index", "index"), &VoxelWorld::remove_generation_index);
-	ClassDB::bind_method(D_METHOD("get_generation_size"), &VoxelWorld::get_generation_size);
+	ClassDB::bind_method(D_METHOD("generation_add_to", "chunk"), &VoxelWorld::generation_add_to);
+	ClassDB::bind_method(D_METHOD("generation_get_index", "index"), &VoxelWorld::generation_get_index);
+	ClassDB::bind_method(D_METHOD("generation_remove_index", "index"), &VoxelWorld::generation_remove_index);
+	ClassDB::bind_method(D_METHOD("generation_get_size"), &VoxelWorld::generation_get_size);
 
 	ADD_SIGNAL(MethodInfo("generation_finished"));
 	BIND_VMETHOD(MethodInfo("_generation_finished"));
