@@ -76,8 +76,8 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	}
 
 	Vector<uint8_t> liquids;
-	for (int i = 0; i < _library->get_num_surfaces(); ++i) {
-		Ref<VoxelSurface> surface = _library->get_voxel_surface(i);
+	for (int i = 0; i < _library->voxel_surface_get_num(); ++i) {
+		Ref<VoxelSurface> surface = _library->voxel_surface_get(i);
 
 		if (!surface.is_valid())
 			continue;
@@ -106,7 +106,7 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 				if (liquids.find(type) != -1)
 					continue;
 
-				Ref<VoxelSurface> surface = _library->get_voxel_surface(type - 1);
+				Ref<VoxelSurface> surface = _library->voxel_surface_get(type - 1);
 
 				if (!surface.is_valid())
 					continue;

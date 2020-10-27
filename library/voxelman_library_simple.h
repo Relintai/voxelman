@@ -44,12 +44,12 @@ public:
 	int get_atlas_rows() const;
 	void set_atlas_rows(int s);
 
-	Ref<VoxelSurface> get_voxel_surface(const int index);
-	void add_voxel_surface(Ref<VoxelSurface> value);
-	void set_voxel_surface(const int index, Ref<VoxelSurface> value);
-	void remove_surface(const int index);
-	int get_num_surfaces() const;
-	void clear_surfaces();
+	Ref<VoxelSurface> voxel_surface_get(const int index);
+	void voxel_surface_add(Ref<VoxelSurface> value);
+	void voxel_surface_set(const int index, Ref<VoxelSurface> value);
+	void voxel_surface_remove(const int index);
+	int voxel_surface_get_num() const;
+	void voxel_surfaces_clear();
 
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);

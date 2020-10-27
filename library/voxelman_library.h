@@ -57,58 +57,58 @@ public:
 	bool get_initialized() const;
 	void set_initialized(const bool value);
 
-	Ref<Material> get_material(const int index);
-	void add_material(const Ref<Material> &value);
-	void set_material(const int index, const Ref<Material> &value);
-	void remove_material(const int index);
-	int get_num_materials() const;
-	void clear_materials();
+	Ref<Material> material_get(const int index);
+	void material_add(const Ref<Material> &value);
+	void material_set(const int index, const Ref<Material> &value);
+	void material_remove(const int index);
+	int material_get_num() const;
+	void materials_clear();
 
-	Vector<Variant> get_materials();
-	void set_materials(const Vector<Variant> &materials);
+	Vector<Variant> materials_get();
+	void materials_set(const Vector<Variant> &materials);
 
-	Ref<Material> get_liquid_material(const int index);
-	void add_liquid_material(const Ref<Material> &value);
-	void set_liquid_material(const int index, const Ref<Material> &value);
-	void remove_liquid_material(const int index);
-	int get_num_liquid_materials() const;
-	void clear_liquid_materials();
+	Ref<Material> liquid_material_get(const int index);
+	void liquid_material_add(const Ref<Material> &value);
+	void liquid_material_set(const int index, const Ref<Material> &value);
+	void liquid_material_remove(const int index);
+	int liquid_material_get_num() const;
+	void liquid_materials_clear();
 
-	Vector<Variant> get_liquid_materials();
-	void set_liquid_materials(const Vector<Variant> &materials);
+	Vector<Variant> liquid_materials_get();
+	void liquid_materials_set(const Vector<Variant> &materials);
 
-	Ref<Material> get_prop_material(const int index);
-	void add_prop_material(const Ref<Material> &value);
-	void set_prop_material(const int index, const Ref<Material> &value);
-	void remove_prop_material(const int index);
-	int get_num_prop_materials() const;
-	void clear_prop_materials();
+	Ref<Material> prop_material_get(const int index);
+	void prop_material_add(const Ref<Material> &value);
+	void prop_material_set(const int index, const Ref<Material> &value);
+	void prop_material_remove(const int index);
+	int prop_material_get_num() const;
+	void prop_materials_clear();
 
-	Vector<Variant> get_prop_materials();
-	void set_prop_materials(const Vector<Variant> &materials);
+	Vector<Variant> prop_materials_get();
+	void prop_materials_set(const Vector<Variant> &materials);
 
-	virtual Ref<VoxelSurface> get_voxel_surface(const int index);
-	virtual void add_voxel_surface(Ref<VoxelSurface> value);
-	virtual void set_voxel_surface(const int index, Ref<VoxelSurface> value);
-	virtual void remove_surface(const int index);
-	virtual int get_num_surfaces() const;
-	virtual void clear_surfaces();
+	virtual Ref<VoxelSurface> voxel_surface_get(const int index);
+	virtual void voxel_surface_add(Ref<VoxelSurface> value);
+	virtual void voxel_surface_set(const int index, Ref<VoxelSurface> value);
+	virtual void voxel_surface_remove(const int index);
+	virtual int voxel_surface_get_num() const;
+	virtual void voxel_surfaces_clear();
 
-	virtual Ref<PackedScene> get_scene(const int id);
-	virtual void add_scene(Ref<PackedScene> value);
-	virtual void set_scene(const int id, Ref<PackedScene> value);
-	virtual void remove_scene(const int id);
-	virtual int get_num_scenes() const;
-	virtual void clear_scenes();
+	virtual Ref<PackedScene> scene_get(const int id);
+	virtual void scene_add(Ref<PackedScene> value);
+	virtual void scene_set(const int id, Ref<PackedScene> value);
+	virtual void scene_remove(const int id);
+	virtual int scene_get_num() const;
+	virtual void scenes_clear();
 
 #ifdef PROPS_PRESENT
-	virtual Ref<PropData> get_prop(const int id);
-	virtual void add_prop(Ref<PropData> value);
-	virtual bool has_prop(const Ref<PropData> &value) const;
-	virtual void set_prop(const int id, Ref<PropData> value);
-	virtual void remove_prop(const int id);
-	virtual int get_num_props() const;
-	virtual void clear_props();
+	virtual Ref<PropData> prop_get(const int id);
+	virtual void prop_add(Ref<PropData> value);
+	virtual bool prop_has(const Ref<PropData> &value) const;
+	virtual void prop_set(const int id, Ref<PropData> value);
+	virtual void prop_remove(const int id);
+	virtual int prop_get_num() const;
+	virtual void props_clear();
 
 	virtual Rect2 get_prop_uv_rect(const Ref<Texture> &texture);
 #endif
@@ -125,9 +125,9 @@ protected:
 
 private:
 	bool _initialized;
-	Vector<Ref<Material>> _materials;
-	Vector<Ref<Material>> _liquid_materials;
-	Vector<Ref<Material>> _prop_materials;
+	Vector<Ref<Material> > _materials;
+	Vector<Ref<Material> > _liquid_materials;
+	Vector<Ref<Material> > _prop_materials;
 };
 
 #endif // VOXEL_LIBRARY_H

@@ -307,8 +307,8 @@ void VoxelMesherMarchingCubes::_add_chunk(Ref<VoxelChunk> p_chunk) {
 					}
 				}
 
-				Ref<VoxelSurface> surface1 = _library->get_voxel_surface(type_id1 - 1);
-				Ref<VoxelSurface> surface2 = _library->get_voxel_surface(type_id2 - 1);
+				Ref<VoxelSurface> surface1 = _library->voxel_surface_get(type_id1 - 1);
+				Ref<VoxelSurface> surface2 = _library->voxel_surface_get(type_id2 - 1);
 
 				for (int i = 0; i < vertex_count; ++i) {
 					int fv = get_regular_vertex_data_first_vertex(case_code, i);

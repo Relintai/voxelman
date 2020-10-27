@@ -226,8 +226,8 @@ void VoxelPropJob::phase_prop() {
 
 			VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-			if (chunk->get_library()->get_prop_material(0).is_valid())
-				VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, chunk->get_library()->get_prop_material(0)->get_rid());
+			if (chunk->get_library()->prop_material_get(0).is_valid())
+				VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, chunk->get_library()->prop_material_get(0)->get_rid());
 
 			if (should_return()) {
 				return;
@@ -243,8 +243,8 @@ void VoxelPropJob::phase_prop() {
 
 					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-					if (chunk->get_library()->get_prop_material(1).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), 0, chunk->get_library()->get_prop_material(1)->get_rid());
+					if (chunk->get_library()->prop_material_get(1).is_valid())
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), 0, chunk->get_library()->prop_material_get(1)->get_rid());
 				}
 
 				if (should_return()) {
@@ -259,8 +259,8 @@ void VoxelPropJob::phase_prop() {
 
 					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
 
-					if (chunk->get_library()->get_prop_material(2).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), 0, chunk->get_library()->get_prop_material(2)->get_rid());
+					if (chunk->get_library()->prop_material_get(2).is_valid())
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), 0, chunk->get_library()->prop_material_get(2)->get_rid());
 				}
 				if (should_return()) {
 					return;
@@ -269,8 +269,8 @@ void VoxelPropJob::phase_prop() {
 
 			//	if (should_do()) {
 			if (chunk->get_lod_num() >= 3) {
-				Ref<ShaderMaterial> mat = chunk->get_library()->get_prop_material(0);
-				Ref<SpatialMaterial> spmat = chunk->get_library()->get_prop_material(0);
+				Ref<ShaderMaterial> mat = chunk->get_library()->prop_material_get(0);
+				Ref<SpatialMaterial> spmat = chunk->get_library()->prop_material_get(0);
 				Ref<Texture> tex;
 
 				if (mat.is_valid()) {
@@ -285,8 +285,8 @@ void VoxelPropJob::phase_prop() {
 
 					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-					if (chunk->get_library()->get_prop_material(3).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0, chunk->get_library()->get_prop_material(3)->get_rid());
+					if (chunk->get_library()->prop_material_get(3).is_valid())
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0, chunk->get_library()->prop_material_get(3)->get_rid());
 				}
 			}
 
@@ -306,10 +306,10 @@ void VoxelPropJob::phase_prop() {
 								chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i),
 								VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-						if (chunk->get_library()->get_material(i).is_valid())
+						if (chunk->get_library()->prop_material_get(i).is_valid())
 							VisualServer::get_singleton()->mesh_surface_set_material(
 									chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i), 0,
-									chunk->get_library()->get_material(i)->get_rid());
+									chunk->get_library()->prop_material_get(i)->get_rid());
 					}
 				}
 

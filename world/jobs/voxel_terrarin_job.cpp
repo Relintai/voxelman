@@ -310,11 +310,11 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 
 		if (!mesher.is_valid()) {
 			mesher = m;
-			mesher->set_material(_chunk->get_library()->get_material(0));
+			mesher->set_material(_chunk->get_library()->material_get(0));
 			continue;
 		}
 
-		mesher->set_material(_chunk->get_library()->get_material(0));
+		mesher->set_material(_chunk->get_library()->material_get(0));
 		mesher->add_mesher(m);
 	}
 
@@ -338,11 +338,11 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 
 		if (!liquid_mesher.is_valid()) {
 			liquid_mesher = m;
-			liquid_mesher->set_material(_chunk->get_library()->get_material(0));
+			liquid_mesher->set_material(_chunk->get_library()->material_get(0));
 			continue;
 		}
 
-		liquid_mesher->set_material(_chunk->get_library()->get_material(0));
+		liquid_mesher->set_material(_chunk->get_library()->material_get(0));
 		liquid_mesher->add_mesher(m);
 	}
 
@@ -405,8 +405,8 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 		if (should_do()) {
 			VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-			if (chunk->get_library()->get_material(0).is_valid())
-				VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, chunk->get_library()->get_material(0)->get_rid());
+			if (chunk->get_library()->material_get(0).is_valid())
+				VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, chunk->get_library()->material_get(0)->get_rid());
 
 			if (should_return()) {
 				return;
@@ -421,8 +421,8 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 
 					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-					if (chunk->get_library()->get_material(1).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), 0, chunk->get_library()->get_material(1)->get_rid());
+					if (chunk->get_library()->material_get(1).is_valid())
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), 0, chunk->get_library()->material_get(1)->get_rid());
 				}
 				if (should_return()) {
 					return;
@@ -436,8 +436,8 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 
 					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
 
-					if (chunk->get_library()->get_material(2).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), 0, chunk->get_library()->get_material(2)->get_rid());
+					if (chunk->get_library()->material_get(2).is_valid())
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), 0, chunk->get_library()->material_get(2)->get_rid());
 				}
 
 				if (should_return()) {
@@ -447,8 +447,8 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 
 			if (should_do()) {
 				if (chunk->get_lod_num() >= 3) {
-					Ref<ShaderMaterial> mat = chunk->get_library()->get_material(0);
-					Ref<SpatialMaterial> spmat = chunk->get_library()->get_material(0);
+					Ref<ShaderMaterial> mat = chunk->get_library()->material_get(0);
+					Ref<SpatialMaterial> spmat = chunk->get_library()->material_get(0);
 					Ref<Texture> tex;
 
 					if (mat.is_valid()) {
@@ -465,10 +465,10 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 								chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3),
 								VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-						if (chunk->get_library()->get_material(3).is_valid())
+						if (chunk->get_library()->material_get(3).is_valid())
 							VisualServer::get_singleton()->mesh_surface_set_material(
 									chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0,
-									chunk->get_library()->get_material(3)->get_rid());
+									chunk->get_library()->material_get(3)->get_rid());
 					}
 				}
 
@@ -493,10 +493,10 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 								chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i),
 								VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-						if (chunk->get_library()->get_material(i).is_valid())
+						if (chunk->get_library()->material_get(i).is_valid())
 							VisualServer::get_singleton()->mesh_surface_set_material(
 									chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i), 0,
-									chunk->get_library()->get_material(i)->get_rid());
+									chunk->get_library()->material_get(i)->get_rid());
 					}
 				}
 
@@ -541,8 +541,8 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 		//	if (should_do()) {
 		VS::get_singleton()->mesh_add_surface_from_arrays(mesh_rid, VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
-		if (chunk->get_library()->get_liquid_material(0).is_valid())
-			VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, chunk->get_library()->get_liquid_material(0)->get_rid());
+		if (chunk->get_library()->liquid_material_get(0).is_valid())
+			VS::get_singleton()->mesh_surface_set_material(mesh_rid, 0, chunk->get_library()->liquid_material_get(0)->get_rid());
 
 		//	if (should_return()) {
 		//		return;

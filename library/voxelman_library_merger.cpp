@@ -78,13 +78,13 @@ void VoxelmanLibraryMerger::set_margin(const int margin) {
 }
 
 //Surfaces
-Ref<VoxelSurface> VoxelmanLibraryMerger::get_voxel_surface(const int index) {
+Ref<VoxelSurface> VoxelmanLibraryMerger::voxel_surface_get(const int index) {
 	ERR_FAIL_INDEX_V(index, _voxel_surfaces.size(), Ref<VoxelSurface>(NULL));
 
 	return _voxel_surfaces[index];
 }
 
-void VoxelmanLibraryMerger::add_voxel_surface(Ref<VoxelSurface> value) {
+void VoxelmanLibraryMerger::voxel_surface_add(Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(!value.is_valid());
 
 	value->set_library(Ref<VoxelmanLibraryMerger>(this));
@@ -93,7 +93,7 @@ void VoxelmanLibraryMerger::add_voxel_surface(Ref<VoxelSurface> value) {
 	_voxel_surfaces.push_back(value);
 }
 
-void VoxelmanLibraryMerger::set_voxel_surface(const int index, Ref<VoxelSurface> value) {
+void VoxelmanLibraryMerger::voxel_surface_set(const int index, Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(index < 0);
 
 	if (_voxel_surfaces.size() < index) {
@@ -111,15 +111,15 @@ void VoxelmanLibraryMerger::set_voxel_surface(const int index, Ref<VoxelSurface>
 	}
 }
 
-void VoxelmanLibraryMerger::remove_surface(const int index) {
+void VoxelmanLibraryMerger::voxel_surface_remove(const int index) {
 	_voxel_surfaces.remove(index);
 }
 
-int VoxelmanLibraryMerger::get_num_surfaces() const {
+int VoxelmanLibraryMerger::voxel_surface_get_num() const {
 	return _voxel_surfaces.size();
 }
 
-void VoxelmanLibraryMerger::clear_surfaces() {
+void VoxelmanLibraryMerger::voxel_surfaces_clear() {
 	_packer->clear();
 
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
@@ -302,13 +302,13 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 
 	switch (material_index) {
 		case MATERIAL_INDEX_VOXELS:
-			count = get_num_materials();
+			count = material_get_num();
 			break;
 		case MATERIAL_INDEX_LIQUID:
-			count = get_num_liquid_materials();
+			count = liquid_material_get_num();
 			break;
 		case MATERIAL_INDEX_PROP:
-			count = get_num_prop_materials();
+			count = prop_material_get_num();
 			break;
 	}
 
@@ -316,13 +316,13 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 
 		switch (material_index) {
 			case MATERIAL_INDEX_VOXELS:
-				mat = get_material(i);
+				mat = material_get(i);
 				break;
 			case MATERIAL_INDEX_LIQUID:
-				mat = get_liquid_material(i);
+				mat = liquid_material_get(i);
 				break;
 			case MATERIAL_INDEX_PROP:
-				mat = get_prop_material(i);
+				mat = prop_material_get(i);
 				break;
 		}
 
@@ -337,13 +337,13 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 
 		switch (material_index) {
 			case MATERIAL_INDEX_VOXELS:
-				shmat = get_material(i);
+				shmat = material_get(i);
 				break;
 			case MATERIAL_INDEX_LIQUID:
-				shmat = get_liquid_material(i);
+				shmat = liquid_material_get(i);
 				break;
 			case MATERIAL_INDEX_PROP:
-				shmat = get_prop_material(i);
+				shmat = prop_material_get(i);
 				break;
 		}
 

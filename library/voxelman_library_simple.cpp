@@ -43,13 +43,13 @@ void VoxelmanLibrarySimple::set_atlas_rows(int s) {
 }
 
 //Surfaces
-Ref<VoxelSurface> VoxelmanLibrarySimple::get_voxel_surface(const int index) {
+Ref<VoxelSurface> VoxelmanLibrarySimple::voxel_surface_get(const int index) {
 	ERR_FAIL_INDEX_V(index, _voxel_surfaces.size(), Ref<VoxelSurface>(NULL));
 
 	return _voxel_surfaces[index];
 }
 
-void VoxelmanLibrarySimple::add_voxel_surface(Ref<VoxelSurface> value) {
+void VoxelmanLibrarySimple::voxel_surface_add(Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(!value.is_valid());
 
 	value->set_library(Ref<VoxelmanLibrarySimple>(this));
@@ -58,7 +58,7 @@ void VoxelmanLibrarySimple::add_voxel_surface(Ref<VoxelSurface> value) {
 	_voxel_surfaces.push_back(value);
 }
 
-void VoxelmanLibrarySimple::set_voxel_surface(const int index, Ref<VoxelSurface> value) {
+void VoxelmanLibrarySimple::voxel_surface_set(const int index, Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(index < 0);
 
 	if (_voxel_surfaces.size() < index) {
@@ -76,15 +76,15 @@ void VoxelmanLibrarySimple::set_voxel_surface(const int index, Ref<VoxelSurface>
 	}
 }
 
-void VoxelmanLibrarySimple::remove_surface(const int index) {
+void VoxelmanLibrarySimple::voxel_surface_remove(const int index) {
 	_voxel_surfaces.remove(index);
 }
 
-int VoxelmanLibrarySimple::get_num_surfaces() const {
+int VoxelmanLibrarySimple::voxel_surface_get_num() const {
 	return _voxel_surfaces.size();
 }
 
-void VoxelmanLibrarySimple::clear_surfaces() {
+void VoxelmanLibrarySimple::voxel_surfaces_clear() {
 	_voxel_surfaces.clear();
 }
 

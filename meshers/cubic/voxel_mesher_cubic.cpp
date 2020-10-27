@@ -70,7 +70,7 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 					uint8_t type = cube_points->get_face_type(face) - 1;
 
-					Ref<VoxelSurface> surface = _library->get_voxel_surface(type);
+					Ref<VoxelSurface> surface = _library->voxel_surface_get(type);
 
 					if (!surface.is_valid())
 						continue;
