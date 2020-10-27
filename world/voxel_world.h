@@ -166,14 +166,14 @@ public:
 #endif
 
 	//Lights
-	void add_light(const Ref<VoxelLight> &light);
-	Ref<VoxelLight> get_light(const int index);
-	void remove_light(const int index);
-	int get_light_count() const;
-	void clear_lights();
+	void light_add(const Ref<VoxelLight> &light);
+	Ref<VoxelLight> light_get(const int index);
+	void light_remove(const int index);
+	int light_get_count() const;
+	void lights_clear();
 
-	Vector<Variant> get_lights();
-	void set_lights(const Vector<Variant> &chunks);
+	Vector<Variant> lights_get();
+	void lights_set(const Vector<Variant> &chunks);
 
 	//Helpers
 	uint8_t get_voxel_at_world_position(const Vector3 &world_position, const int channel_index);
