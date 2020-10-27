@@ -34,7 +34,7 @@ void VoxelLightJob::phase_light() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_GENERATE_AO) != 0)
-		if (!chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_AO))
+		if (!chunk->channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_AO))
 			generate_ao();
 
 	bool gr = (chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_AUTO_GENERATE_RAO) != 0;

@@ -31,12 +31,12 @@ VoxelChunkCubic::~VoxelChunkCubic() {
 }
 
 void VoxelChunkCubic::_setup_channels() {
-	set_channel_count(MAX_DEFAULT_CHANNELS);
+	channel_set_count(MAX_DEFAULT_CHANNELS);
 }
 
 void VoxelChunkCubic::_bind_methods() {
-	ADD_PROPERTYI(PropertyInfo(Variant::POOL_BYTE_ARRAY, "data_channel"), "set_channel_compressed", "get_channel_compressed", 0);
-	ADD_PROPERTYI(PropertyInfo(Variant::POOL_BYTE_ARRAY, "isolevel_channel"), "set_channel_compressed", "get_channel_compressed", 1);
+	ADD_PROPERTYI(PropertyInfo(Variant::POOL_BYTE_ARRAY, "data_channel"), "channel_set_compressed", "channel_get_compressed", 0);
+	ADD_PROPERTYI(PropertyInfo(Variant::POOL_BYTE_ARRAY, "isolevel_channel"), "channel_set_compressed", "channel_get_compressed", 1);
 
 	//ClassDB::bind_method(D_METHOD("get_channel_compressed", "channel_index"), &VoxelChunk::get_channel_compressed);
 	//ClassDB::bind_method(D_METHOD("set_channel_compressed", "channel_index", "array"), &VoxelChunk::set_channel_compressed);

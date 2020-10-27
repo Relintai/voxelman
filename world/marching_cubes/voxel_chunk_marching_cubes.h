@@ -33,7 +33,7 @@ public:
 	~VoxelChunkMarchingCubes();
 
 protected:
-	virtual void _setup_channels();
+	virtual void _channel_setup();
 
 	static void _bind_methods();
 };

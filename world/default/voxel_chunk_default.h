@@ -180,7 +180,7 @@ public:
 	~VoxelChunkDefault();
 
 protected:
-	virtual void _setup_channels();
+	virtual void _channel_setup();
 
 	virtual void _visibility_changed(bool visible);
 

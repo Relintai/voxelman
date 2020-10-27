@@ -446,7 +446,7 @@ void VoxelCubePoints::refresh_neighbours(Ref<VoxelChunk> chunk) {
 void VoxelCubePoints::setup(Ref<VoxelChunk> chunk, int x, int y, int z, int size) {
 	ERR_FAIL_COND(!chunk.is_valid());
 	ERR_FAIL_COND(size <= 0);
-	ERR_FAIL_COND(!chunk->validate_channel_data_position(x + size, y + size, z + size) || !chunk->validate_channel_data_position(x, y, z));
+	ERR_FAIL_COND(!chunk->validate_data_position(x + size, y + size, z + size) || !chunk->validate_data_position(x, y, z));
 
 	reset();
 

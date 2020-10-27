@@ -755,9 +755,9 @@ void VoxelChunkDefault::_bake_light(Ref<VoxelLight> light) {
 	int64_t dsy = static_cast<int64_t>(_data_size_y);
 	int64_t dsz = static_cast<int64_t>(_data_size_z);
 
-	uint8_t *channel_color_r = get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R);
-	uint8_t *channel_color_g = get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G);
-	uint8_t *channel_color_b = get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B);
+	uint8_t *channel_color_r = channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R);
+	uint8_t *channel_color_g = channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G);
+	uint8_t *channel_color_b = channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B);
 
 	ERR_FAIL_COND(channel_color_r == NULL || channel_color_g == NULL || channel_color_b == NULL);
 
@@ -810,9 +810,9 @@ void VoxelChunkDefault::_bake_light(Ref<VoxelLight> light) {
 	}
 }
 void VoxelChunkDefault::_clear_baked_lights() {
-	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_R);
-	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_G);
-	fill_channel(0, DEFAULT_CHANNEL_LIGHT_COLOR_B);
+	channel_fill(0, DEFAULT_CHANNEL_LIGHT_COLOR_R);
+	channel_fill(0, DEFAULT_CHANNEL_LIGHT_COLOR_G);
+	channel_fill(0, DEFAULT_CHANNEL_LIGHT_COLOR_B);
 }
 void VoxelChunkDefault::_world_light_added(const Ref<VoxelLight> &light) {
 	_lights.push_back(light);
@@ -866,8 +866,8 @@ VoxelChunkDefault::~VoxelChunkDefault() {
 	debug_mesh_free();
 }
 
-void VoxelChunkDefault::_setup_channels() {
-	set_channel_count(MAX_DEFAULT_CHANNELS);
+void VoxelChunkDefault::_channel_setup() {
+	channel_set_count(MAX_DEFAULT_CHANNELS);
 }
 
 void VoxelChunkDefault::_bind_methods() {
@@ -939,7 +939,7 @@ void VoxelChunkDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("emit_build_finished"), &VoxelChunkDefault::emit_build_finished);
 
 	//virtuals
-	ClassDB::bind_method(D_METHOD("_setup_channels"), &VoxelChunkDefault::_setup_channels);
+	ClassDB::bind_method(D_METHOD("_channel_setup"), &VoxelChunkDefault::_channel_setup);
 
 	ClassDB::bind_method(D_METHOD("_visibility_changed", "visible"), &VoxelChunkDefault::_visibility_changed);
 

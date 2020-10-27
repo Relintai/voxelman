@@ -51,7 +51,7 @@ void VoxelmanLevelGeneratorFlat::_generate_chunk(Ref<VoxelChunk> chunk) {
 			int k = key;
 			int value = _channel_map[key];
 
-			chunk->fill_channel(value, k);
+			chunk->channel_fill(value, k);
 		}
 
 		return;
@@ -64,7 +64,7 @@ void VoxelmanLevelGeneratorFlat::_generate_chunk(Ref<VoxelChunk> chunk) {
 		int k = key;
 		int value = _channel_map[key];
 
-		uint8_t *channel = chunk->get_valid_channel(k, 0);
+		uint8_t *channel = chunk->channel_get_valid(k, 0);
 
 		if (!channel)
 			continue;

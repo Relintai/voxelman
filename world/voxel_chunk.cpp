@@ -283,10 +283,10 @@ Ref<VoxelJob> VoxelChunk::job_get_current() {
 }
 
 //Voxel Data
-void VoxelChunk::setup_channels() {
-	ERR_FAIL_COND_MSG(!has_method("_setup_channels"), "VoxelChunk: _setup_channels() is missing! Please implement it!");
+void VoxelChunk::channel_setup() {
+	ERR_FAIL_COND_MSG(!has_method("_channel_setup"), "VoxelChunk: _setup_channels() is missing! Please implement it!");
 
-	call("_setup_channels");
+	call("_channel_setup");
 }
 
 void VoxelChunk::set_size(const int size_x, const int size_y, const int size_z, const int margin_start, const int margin_end) {
@@ -302,7 +302,7 @@ void VoxelChunk::set_size(const int size_x, const int size_y, const int size_z, 
 		}
 	}
 
-	setup_channels();
+	channel_setup();
 
 	_size_x = size_x;
 	_size_y = size_y;
@@ -316,7 +316,7 @@ void VoxelChunk::set_size(const int size_x, const int size_y, const int size_z, 
 	_margin_end = margin_end;
 }
 
-bool VoxelChunk::validate_channel_data_position(const int x, const int y, const int z) const {
+bool VoxelChunk::validate_data_position(const int x, const int y, const int z) const {
 	return x < _data_size_x && y < _data_size_y && z < _data_size_z;
 }
 
@@ -326,7 +326,7 @@ uint8_t VoxelChunk::get_voxel(const int p_x, const int p_y, const int p_z, const
 	int z = p_z + _margin_start;
 
 	ERR_FAIL_INDEX_V(p_channel_index, _channels.size(), 0);
-	ERR_FAIL_COND_V_MSG(!validate_channel_data_position(x, y, z), 0, "Error, index out of range! " + String::num(x) + " " + String::num(y) + " " + String::num(z));
+	ERR_FAIL_COND_V_MSG(!validate_data_position(x, y, z), 0, "Error, index out of range! " + String::num(x) + " " + String::num(y) + " " + String::num(z));
 
 	uint8_t *ch = _channels.get(p_channel_index);
 
@@ -341,18 +341,18 @@ void VoxelChunk::set_voxel(const uint8_t p_value, const int p_x, const int p_y, 
 	int z = p_z + _margin_start;
 
 	ERR_FAIL_INDEX(p_channel_index, _channels.size());
-	ERR_FAIL_COND_MSG(!validate_channel_data_position(x, y, z), "Error, index out of range! " + String::num(x) + " " + String::num(y) + " " + String::num(z));
+	ERR_FAIL_COND_MSG(!validate_data_position(x, y, z), "Error, index out of range! " + String::num(x) + " " + String::num(y) + " " + String::num(z));
 
-	uint8_t *ch = get_valid_channel(p_channel_index);
+	uint8_t *ch = channel_get_valid(p_channel_index);
 
 	ch[get_data_index(x, y, z)] = p_value;
 }
 
-int VoxelChunk::get_channel_count() const {
+int VoxelChunk::channel_get_count() const {
 	return _channels.size();
 }
 
-void VoxelChunk::set_channel_count(const int count) {
+void VoxelChunk::channel_set_count(const int count) {
 	if (count == _channels.size())
 		return;
 
@@ -376,18 +376,18 @@ void VoxelChunk::set_channel_count(const int count) {
 		_channels.set(i, NULL);
 	}
 }
-bool VoxelChunk::is_channel_allocated(const int channel_index) {
+bool VoxelChunk::channel_is_allocated(const int channel_index) {
 	ERR_FAIL_INDEX_V(channel_index, _channels.size(), false);
 
 	return _channels[channel_index] != NULL;
 }
-void VoxelChunk::ensure_channel_allocated(const int channel_index, const uint8_t default_value) {
+void VoxelChunk::channel_ensure_allocated(const int channel_index, const uint8_t default_value) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
 
 	if (_channels[channel_index] == NULL)
-		allocate_channel(channel_index, default_value);
+		channel_allocate(channel_index, default_value);
 }
-void VoxelChunk::allocate_channel(const int channel_index, const uint8_t default_value) {
+void VoxelChunk::channel_allocate(const int channel_index, const uint8_t default_value) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
 
 	if (_channels[channel_index] != NULL)
@@ -400,13 +400,13 @@ void VoxelChunk::allocate_channel(const int channel_index, const uint8_t default
 
 	_channels.set(channel_index, ch);
 }
-void VoxelChunk::fill_channel(const uint8_t value, const int channel_index) {
+void VoxelChunk::channel_fill(const uint8_t value, const int channel_index) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
 
 	uint8_t *ch = _channels.get(channel_index);
 
 	if (ch == NULL) {
-		allocate_channel(channel_index, value);
+		channel_allocate(channel_index, value);
 		return;
 	}
 
@@ -416,7 +416,7 @@ void VoxelChunk::fill_channel(const uint8_t value, const int channel_index) {
 		ch[i] = value;
 	}
 }
-void VoxelChunk::dealloc_channel(const int channel_index) {
+void VoxelChunk::channel_dealloc(const int channel_index) {
 	ERR_FAIL_INDEX(channel_index, _channels.size());
 
 	uint8_t *ch = _channels.get(channel_index);
@@ -428,18 +428,18 @@ void VoxelChunk::dealloc_channel(const int channel_index) {
 	}
 }
 
-uint8_t *VoxelChunk::get_channel(const int channel_index) {
+uint8_t *VoxelChunk::channel_get(const int channel_index) {
 	ERR_FAIL_INDEX_V(channel_index, _channels.size(), NULL);
 
 	return _channels.get(channel_index);
 }
-uint8_t *VoxelChunk::get_valid_channel(const int channel_index, const uint8_t default_value) {
+uint8_t *VoxelChunk::channel_get_valid(const int channel_index, const uint8_t default_value) {
 	ERR_FAIL_INDEX_V(channel_index, _channels.size(), 0);
 
 	uint8_t *ch = _channels.get(channel_index);
 
 	if (ch == NULL) {
-		allocate_channel(channel_index, default_value);
+		channel_allocate(channel_index, default_value);
 
 		return _channels.get(channel_index);
 	}
@@ -447,7 +447,7 @@ uint8_t *VoxelChunk::get_valid_channel(const int channel_index, const uint8_t de
 	return ch;
 }
 
-PoolByteArray VoxelChunk::get_channel_array(const int channel_index) const {
+PoolByteArray VoxelChunk::channel_get_array(const int channel_index) const {
 	PoolByteArray arr;
 
 	uint32_t size = _data_size_x * _data_size_y * _data_size_z;
@@ -468,12 +468,12 @@ PoolByteArray VoxelChunk::get_channel_array(const int channel_index) const {
 
 	return arr;
 }
-void VoxelChunk::set_channel_array(const int channel_index, const PoolByteArray &array) {
+void VoxelChunk::channel_set_array(const int channel_index, const PoolByteArray &array) {
 	if (array.size() == 0)
 		return;
 
 	if (_channels.size() <= channel_index)
-		set_channel_count(channel_index + 1);
+		channel_set_count(channel_index + 1);
 
 	uint8_t *ch = _channels.get(channel_index);
 
@@ -490,7 +490,7 @@ void VoxelChunk::set_channel_array(const int channel_index, const PoolByteArray 
 	}
 }
 
-PoolByteArray VoxelChunk::get_channel_compressed(const int channel_index) const {
+PoolByteArray VoxelChunk::channel_get_compressed(const int channel_index) const {
 	PoolByteArray arr;
 
 	int size = _data_size_x * _data_size_y * _data_size_z;
@@ -519,14 +519,14 @@ PoolByteArray VoxelChunk::get_channel_compressed(const int channel_index) const 
 
 	return arr;
 }
-void VoxelChunk::set_channel_compressed(const int channel_index, const PoolByteArray &data) {
+void VoxelChunk::channel_set_compressed(const int channel_index, const PoolByteArray &data) {
 	if (data.size() == 0)
 		return;
 
 	int size = _data_size_x * _data_size_y * _data_size_z;
 
 	if (_channels.size() <= channel_index)
-		set_channel_count(channel_index + 1);
+		channel_set_count(channel_index + 1);
 
 	uint8_t *ch = _channels.get(channel_index);
 
@@ -1189,7 +1189,7 @@ void VoxelChunk::_bind_methods() {
 
 	BIND_VMETHOD(MethodInfo("_mesh_data_resource_added", PropertyInfo(Variant::INT, "index")));
 
-	BIND_VMETHOD(MethodInfo("_setup_channels"));
+	BIND_VMETHOD(MethodInfo("_channel_setup"));
 
 	BIND_VMETHOD(MethodInfo("_bake_lights"));
 	BIND_VMETHOD(MethodInfo("_bake_light", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
@@ -1333,30 +1333,30 @@ void VoxelChunk::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "voxel_world", PROPERTY_HINT_RESOURCE_TYPE, "VoxelWorld", 0), "set_voxel_world", "get_voxel_world");
 
 	//Voxel Data
-	ClassDB::bind_method(D_METHOD("setup_channels"), &VoxelChunk::setup_channels);
+	ClassDB::bind_method(D_METHOD("channel_setup"), &VoxelChunk::channel_setup);
 
 	ClassDB::bind_method(D_METHOD("set_size", "size_x", "size_y", "size_z", "margin_start", "margin_end"), &VoxelChunk::set_size, DEFVAL(0), DEFVAL(0));
 
-	ClassDB::bind_method(D_METHOD("validate_channel_data_position", "x", "y", "z"), &VoxelChunk::validate_channel_data_position);
+	ClassDB::bind_method(D_METHOD("validate_data_position", "x", "y", "z"), &VoxelChunk::validate_data_position);
 
-	ClassDB::bind_method(D_METHOD("get_voxel", "x", "y", "z", "channel_index"), &VoxelChunk::get_voxel);
-	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "channel_index"), &VoxelChunk::set_voxel);
+	ClassDB::bind_method(D_METHOD("get_voxel", "x", "y", "z", "index"), &VoxelChunk::get_voxel);
+	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "index"), &VoxelChunk::set_voxel);
 
-	ClassDB::bind_method(D_METHOD("get_channel_count"), &VoxelChunk::get_channel_count);
-	ClassDB::bind_method(D_METHOD("set_channel_count", "count"), &VoxelChunk::set_channel_count);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_count"), "set_channel_count", "get_channel_count");
+	ClassDB::bind_method(D_METHOD("channel_get_count"), &VoxelChunk::channel_get_count);
+	ClassDB::bind_method(D_METHOD("channel_set_count", "count"), &VoxelChunk::channel_set_count);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_count"), "channel_set_count", "channel_get_count");
 
-	ClassDB::bind_method(D_METHOD("is_channel_allocated", "channel_index"), &VoxelChunk::is_channel_allocated);
-	ClassDB::bind_method(D_METHOD("ensure_channel_allocated", "channel_index", "default_value"), &VoxelChunk::ensure_channel_allocated);
-	ClassDB::bind_method(D_METHOD("allocate_channel", "channel_index", "default_value"), &VoxelChunk::allocate_channel);
-	ClassDB::bind_method(D_METHOD("fill_channel", "value", "channel_index"), &VoxelChunk::fill_channel);
-	ClassDB::bind_method(D_METHOD("dealloc_channel", "channel_index"), &VoxelChunk::dealloc_channel);
+	ClassDB::bind_method(D_METHOD("channel_is_allocated", "index"), &VoxelChunk::channel_is_allocated);
+	ClassDB::bind_method(D_METHOD("channel_ensure_allocated", "index", "default_value"), &VoxelChunk::channel_ensure_allocated);
+	ClassDB::bind_method(D_METHOD("channel_allocate", "index", "default_value"), &VoxelChunk::channel_allocate);
+	ClassDB::bind_method(D_METHOD("channel_fill", "value", "index"), &VoxelChunk::channel_fill);
+	ClassDB::bind_method(D_METHOD("channel_dealloc", "index"), &VoxelChunk::channel_dealloc);
 
-	ClassDB::bind_method(D_METHOD("get_channel_array", "channel_index"), &VoxelChunk::get_channel_array);
-	ClassDB::bind_method(D_METHOD("set_channel_array", "channel_index", "array"), &VoxelChunk::set_channel_array);
+	ClassDB::bind_method(D_METHOD("channel_get_array", "index"), &VoxelChunk::channel_get_array);
+	ClassDB::bind_method(D_METHOD("channel_set_array", "index", "array"), &VoxelChunk::channel_set_array);
 
-	ClassDB::bind_method(D_METHOD("get_channel_compressed", "channel_index"), &VoxelChunk::get_channel_compressed);
-	ClassDB::bind_method(D_METHOD("set_channel_compressed", "channel_index", "array"), &VoxelChunk::set_channel_compressed);
+	ClassDB::bind_method(D_METHOD("channel_get_compressed", "index"), &VoxelChunk::channel_get_compressed);
+	ClassDB::bind_method(D_METHOD("channel_set_compressed", "index", "array"), &VoxelChunk::channel_set_compressed);
 
 	ClassDB::bind_method(D_METHOD("get_index", "x", "y", "z"), &VoxelChunk::get_index);
 	ClassDB::bind_method(D_METHOD("get_data_index", "x", "y", "z"), &VoxelChunk::get_data_index);

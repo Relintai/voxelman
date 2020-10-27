@@ -46,7 +46,7 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	float voxel_scale = get_voxel_scale();
 
-	uint8_t *channel_type = chunk->get_channel(_channel_index_type);
+	uint8_t *channel_type = chunk->channel_get(_channel_index_type);
 
 	if (!channel_type)
 		return;
@@ -64,15 +64,15 @@ void VoxelMesherBlocky::_add_chunk(Ref<VoxelChunk> p_chunk) {
 	bool use_rao = (get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_RAO) != 0;
 
 	if (use_lighting) {
-		channel_color_r = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R);
-		channel_color_g = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G);
-		channel_color_b = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B);
+		channel_color_r = chunk->channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_R);
+		channel_color_g = chunk->channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_G);
+		channel_color_b = chunk->channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_LIGHT_COLOR_B);
 
 		if (use_ao)
-			channel_ao = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_AO);
+			channel_ao = chunk->channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_AO);
 
 		if (use_rao)
-			channel_rao = chunk->get_channel(VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO);
+			channel_rao = chunk->channel_get(VoxelChunkDefault::DEFAULT_CHANNEL_RANDOM_AO);
 	}
 
 	Vector<uint8_t> liquids;

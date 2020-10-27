@@ -33,7 +33,7 @@ void VoxelMesherCubic::_add_chunk(Ref<VoxelChunk> p_chunk) {
 
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	if (!chunk->get_channel(_channel_index_type) || !chunk->get_channel(_channel_index_isolevel)) {
+	if (!chunk->channel_get(_channel_index_type) || !chunk->channel_get(_channel_index_isolevel)) {
 		return;
 	}
 

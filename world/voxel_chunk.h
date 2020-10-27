@@ -155,32 +155,32 @@ public:
 	Ref<VoxelJob> job_get_current();
 
 	//Channels
-	void setup_channels();
+	void channel_setup();
 
 	void set_size(const int size_x, const int size_y, const int size_z, const int margin_start = 0, const int margin_end = 0);
 
-	bool validate_channel_data_position(const int x, const int y, const int z) const;
+	bool validate_data_position(const int x, const int y, const int z) const;
 
-	uint8_t get_voxel(const int p_x, const int p_y, const int p_z, const int p_channel_index) const;
-	void set_voxel(const uint8_t p_value, const int p_x, const int p_y, const int p_z, const int p_channel_index);
+	uint8_t get_voxel(const int p_x, const int p_y, const int p_z, const int p_index) const;
+	void set_voxel(const uint8_t p_value, const int p_x, const int p_y, const int p_z, const int p_index);
 
-	int get_channel_count() const;
-	void set_channel_count(const int count);
+	int channel_get_count() const;
+	void channel_set_count(const int count);
 
-	bool is_channel_allocated(const int channel_index);
-	void ensure_channel_allocated(const int channel_index, const uint8_t default_value = 0);
-	void allocate_channel(const int channel_index, const uint8_t default_value = 0);
-	void fill_channel(const uint8_t value, const int channel_index);
-	void dealloc_channel(const int channel_index);
+	bool channel_is_allocated(const int channel_index);
+	void channel_ensure_allocated(const int channel_index, const uint8_t default_value = 0);
+	void channel_allocate(const int channel_index, const uint8_t default_value = 0);
+	void channel_fill(const uint8_t value, const int channel_index);
+	void channel_dealloc(const int channel_index);
 
-	uint8_t *get_channel(const int channel_index);
-	uint8_t *get_valid_channel(const int channel_index, const uint8_t default_value = 0);
+	uint8_t *channel_get(const int channel_index);
+	uint8_t *channel_get_valid(const int channel_index, const uint8_t default_value = 0);
 
-	PoolByteArray get_channel_array(const int channel_index) const;
-	void set_channel_array(const int channel_index, const PoolByteArray &array);
+	PoolByteArray channel_get_array(const int channel_index) const;
+	void channel_set_array(const int channel_index, const PoolByteArray &array);
 
-	PoolByteArray get_channel_compressed(const int channel_index) const;
-	void set_channel_compressed(const int channel_index, const PoolByteArray &data);
+	PoolByteArray channel_get_compressed(const int channel_index) const;
+	void channel_set_compressed(const int channel_index, const PoolByteArray &data);
 
 	int get_index(const int x, const int y, const int z) const;
 	int get_data_index(const int x, const int y, const int z) const;

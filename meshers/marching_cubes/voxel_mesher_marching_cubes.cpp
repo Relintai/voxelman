@@ -40,7 +40,7 @@ typedef class RenderingServer VisualServer;
 #endif
 
 void VoxelMesherMarchingCubes::get_voxel_type_array(int *arr, Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
-	uint8_t *channel_type = chunk->get_channel(_channel_index_type);
+	uint8_t *channel_type = chunk->channel_get(_channel_index_type);
 
 	if (channel_type == NULL) {
 		arr[0] = 0;
@@ -93,7 +93,7 @@ int VoxelMesherMarchingCubes::get_case_code_from_arr(const int *data) {
 	return case_code;
 }
 int VoxelMesherMarchingCubes::get_case_code(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
-	uint8_t *channel_type = chunk->get_channel(_channel_index_type);
+	uint8_t *channel_type = chunk->channel_get(_channel_index_type);
 
 	if (channel_type == NULL) {
 		return 0;
@@ -129,7 +129,7 @@ int VoxelMesherMarchingCubes::get_case_code(Ref<VoxelChunk> chunk, const int x, 
 }
 
 int VoxelMesherMarchingCubes::get_voxel_type(Ref<VoxelChunk> chunk, const int x, const int y, const int z, const int size) {
-	uint8_t *channel_type = chunk->get_channel(_channel_index_type);
+	uint8_t *channel_type = chunk->channel_get(_channel_index_type);
 
 	if (channel_type == NULL) {
 		return 0;
