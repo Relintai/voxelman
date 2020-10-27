@@ -114,16 +114,16 @@ public:
 	int world_area_get_count() const;
 
 	//Voxel Structures
-	Ref<VoxelStructure> get_voxel_structure(const int index) const;
-	void add_voxel_structure(const Ref<VoxelStructure> &structure);
-	void remove_voxel_structure(const Ref<VoxelStructure> &structure);
-	void remove_voxel_structure_index(const int index);
-	void clear_voxel_structures();
-	int get_voxel_structure_count() const;
-	void add_voxel_structure_at_position(Ref<VoxelStructure> structure, const Vector3 &world_position);
+	Ref<VoxelStructure> voxel_structure_get(const int index) const;
+	void voxel_structure_add(const Ref<VoxelStructure> &structure);
+	void voxel_structure_remove(const Ref<VoxelStructure> &structure);
+	void voxel_structure_remove_index(const int index);
+	void voxel_structures_clear();
+	int voxel_structure_get_count() const;
+	void voxel_structure_add_at_position(Ref<VoxelStructure> structure, const Vector3 &world_position);
 
-	Vector<Variant> get_voxel_structures();
-	void set_voxel_structures(const Vector<Variant> &structures);
+	Vector<Variant> voxel_structures_get();
+	void voxel_structures_set(const Vector<Variant> &structures);
 
 	//Chunks
 	void add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z);

@@ -206,15 +206,15 @@ int VoxelWorld::world_area_get_count() const {
 
 //Voxel Structures
 
-Ref<VoxelStructure> VoxelWorld::get_voxel_structure(const int index) const {
+Ref<VoxelStructure> VoxelWorld::voxel_structure_get(const int index) const {
 	ERR_FAIL_INDEX_V(index, _voxel_structures.size(), Ref<VoxelStructure>());
 
 	return _voxel_structures.get(index);
 }
-void VoxelWorld::add_voxel_structure(const Ref<VoxelStructure> &structure) {
+void VoxelWorld::voxel_structure_add(const Ref<VoxelStructure> &structure) {
 	_voxel_structures.push_back(structure);
 }
-void VoxelWorld::remove_voxel_structure(const Ref<VoxelStructure> &structure) {
+void VoxelWorld::voxel_structure_remove(const Ref<VoxelStructure> &structure) {
 	if (!structure.is_valid())
 		return;
 
@@ -223,37 +223,37 @@ void VoxelWorld::remove_voxel_structure(const Ref<VoxelStructure> &structure) {
 	if (index != -1)
 		_voxel_structures.remove(index);
 }
-void VoxelWorld::remove_voxel_structure_index(const int index) {
+void VoxelWorld::voxel_structure_remove_index(const int index) {
 	ERR_FAIL_INDEX(index, _voxel_structures.size());
 
 	_voxel_structures.remove(index);
 }
-void VoxelWorld::clear_voxel_structures() {
+void VoxelWorld::voxel_structures_clear() {
 	_voxel_structures.clear();
 }
-int VoxelWorld::get_voxel_structure_count() const {
+int VoxelWorld::voxel_structure_get_count() const {
 	return _voxel_structures.size();
 }
-void VoxelWorld::add_voxel_structure_at_position(Ref<VoxelStructure> structure, const Vector3 &world_position) {
+void VoxelWorld::voxel_structure_add_at_position(Ref<VoxelStructure> structure, const Vector3 &world_position) {
 	ERR_FAIL_COND(!structure.is_valid());
 
 	structure->set_position_x(static_cast<int>(world_position.x / _voxel_scale));
 	structure->set_position_y(static_cast<int>(world_position.y / _voxel_scale));
 	structure->set_position_z(static_cast<int>(world_position.z / _voxel_scale));
 
-	add_voxel_structure(structure);
+	voxel_structure_add(structure);
 }
 
-Vector<Variant> VoxelWorld::get_voxel_structures() {
+Vector<Variant> VoxelWorld::voxel_structures_get() {
 	VARIANT_ARRAY_GET(_voxel_structures);
 }
-void VoxelWorld::set_voxel_structures(const Vector<Variant> &structures) {
-	clear_voxel_structures();
+void VoxelWorld::voxel_structures_set(const Vector<Variant> &structures) {
+	voxel_structures_clear();
 
 	for (int i = 0; i < structures.size(); ++i) {
 		Ref<VoxelLight> structure = Ref<VoxelLight>(structures[i]);
 
-		add_voxel_structure(structure);
+		voxel_structure_add(structure);
 	}
 }
 
@@ -1097,17 +1097,17 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("world_areas_clear"), &VoxelWorld::world_areas_clear);
 	ClassDB::bind_method(D_METHOD("world_area_get_count"), &VoxelWorld::world_area_get_count);
 
-	ClassDB::bind_method(D_METHOD("get_voxel_structure", "index"), &VoxelWorld::get_voxel_structure);
-	ClassDB::bind_method(D_METHOD("add_voxel_structure", "structure"), &VoxelWorld::add_voxel_structure);
-	ClassDB::bind_method(D_METHOD("remove_voxel_structure", "structure"), &VoxelWorld::remove_voxel_structure);
-	ClassDB::bind_method(D_METHOD("remove_voxel_structure_index", "index"), &VoxelWorld::remove_voxel_structure_index);
-	ClassDB::bind_method(D_METHOD("clear_voxel_structures"), &VoxelWorld::clear_voxel_structures);
-	ClassDB::bind_method(D_METHOD("get_voxel_structure_count"), &VoxelWorld::get_voxel_structure_count);
-	ClassDB::bind_method(D_METHOD("add_voxel_structure_at_position", "structure", "world_position"), &VoxelWorld::add_voxel_structure_at_position);
+	ClassDB::bind_method(D_METHOD("voxel_structure_get", "index"), &VoxelWorld::voxel_structure_get);
+	ClassDB::bind_method(D_METHOD("voxel_structure_add", "structure"), &VoxelWorld::voxel_structure_add);
+	ClassDB::bind_method(D_METHOD("voxel_structure_remove", "structure"), &VoxelWorld::voxel_structure_remove);
+	ClassDB::bind_method(D_METHOD("voxel_structure_remove_index", "index"), &VoxelWorld::voxel_structure_remove_index);
+	ClassDB::bind_method(D_METHOD("voxel_structures_clear"), &VoxelWorld::voxel_structures_clear);
+	ClassDB::bind_method(D_METHOD("voxel_structure_get_count"), &VoxelWorld::voxel_structure_get_count);
+	ClassDB::bind_method(D_METHOD("add_at_position", "structure", "world_position"), &VoxelWorld::voxel_structure_add_at_position);
 
-	ClassDB::bind_method(D_METHOD("get_voxel_structures"), &VoxelWorld::get_voxel_structures);
-	ClassDB::bind_method(D_METHOD("set_voxel_structures"), &VoxelWorld::set_voxel_structures);
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_structures", PROPERTY_HINT_NONE, "17/17:VoxelStructure", PROPERTY_USAGE_DEFAULT, "VoxelStructure"), "set_voxel_structures", "get_voxel_structures");
+	ClassDB::bind_method(D_METHOD("voxel_structures_get"), &VoxelWorld::voxel_structures_get);
+	ClassDB::bind_method(D_METHOD("voxel_structures_set"), &VoxelWorld::voxel_structures_set);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_structures", PROPERTY_HINT_NONE, "17/17:VoxelStructure", PROPERTY_USAGE_DEFAULT, "VoxelStructure"), "voxel_structures_set", "voxel_structures_get");
 
 	BIND_VMETHOD(MethodInfo("_chunk_added", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
