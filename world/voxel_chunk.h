@@ -211,12 +211,12 @@ public:
 	void clear_baked_lights();
 
 #if PROPS_PRESENT
-	void add_prop(const Transform &tarnsform, const Ref<PropData> &prop);
-	Ref<PropData> get_prop(const int index);
-	Transform get_prop_tarnsform(const int index);
-	int get_prop_count() const;
-	void remove_prop(const int index);
-	void clear_props();
+	void prop_add(const Transform &tarnsform, const Ref<PropData> &prop);
+	Ref<PropData> prop_get(const int index);
+	Transform prop_get_tarnsform(const int index);
+	int prop_get_count() const;
+	void prop_remove(const int index);
+	void props_clear();
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT

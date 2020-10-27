@@ -668,7 +668,7 @@ void VoxelChunk::clear_baked_lights() {
 }
 
 #if PROPS_PRESENT
-void VoxelChunk::add_prop(const Transform &tarnsform, const Ref<PropData> &prop) {
+void VoxelChunk::prop_add(const Transform &tarnsform, const Ref<PropData> &prop) {
 	ERR_FAIL_COND(!prop.is_valid());
 
 	PropDataStore s;
@@ -677,25 +677,25 @@ void VoxelChunk::add_prop(const Transform &tarnsform, const Ref<PropData> &prop)
 
 	_props.push_back(s);
 }
-Ref<PropData> VoxelChunk::get_prop(int index) {
+Ref<PropData> VoxelChunk::prop_get(int index) {
 	ERR_FAIL_INDEX_V(index, _props.size(), Ref<PropData>());
 
 	return _props.get(index).prop;
 }
-Transform VoxelChunk::get_prop_tarnsform(const int index) {
+Transform VoxelChunk::prop_get_tarnsform(const int index) {
 	ERR_FAIL_INDEX_V(index, _props.size(), Transform());
 
 	return _props.get(index).transform;
 }
-int VoxelChunk::get_prop_count() const {
+int VoxelChunk::prop_get_count() const {
 	return _props.size();
 }
-void VoxelChunk::remove_prop(const int index) {
+void VoxelChunk::prop_remove(const int index) {
 	ERR_FAIL_INDEX(index, _props.size());
 
 	_props.remove(index);
 }
-void VoxelChunk::clear_props() {
+void VoxelChunk::props_clear() {
 	_props.clear();
 }
 #endif
@@ -1032,7 +1032,7 @@ VoxelChunk::~VoxelChunk() {
 	}
 
 #if PROPS_PRESENT
-	clear_props();
+	props_clear();
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT
@@ -1377,11 +1377,11 @@ void VoxelChunk::_bind_methods() {
 	//Meshes
 
 #if PROPS_PRESENT
-	ClassDB::bind_method(D_METHOD("add_prop", "prop"), &VoxelChunk::add_prop);
-	ClassDB::bind_method(D_METHOD("get_prop", "index"), &VoxelChunk::get_prop);
-	ClassDB::bind_method(D_METHOD("get_prop_count"), &VoxelChunk::get_prop_count);
-	ClassDB::bind_method(D_METHOD("remove_prop", "index"), &VoxelChunk::remove_prop);
-	ClassDB::bind_method(D_METHOD("clear_props"), &VoxelChunk::clear_props);
+	ClassDB::bind_method(D_METHOD("prop_add", "prop"), &VoxelChunk::prop_add);
+	ClassDB::bind_method(D_METHOD("prop_get", "index"), &VoxelChunk::prop_get);
+	ClassDB::bind_method(D_METHOD("prop_get_count"), &VoxelChunk::prop_get_count);
+	ClassDB::bind_method(D_METHOD("prop_remove", "index"), &VoxelChunk::prop_remove);
+	ClassDB::bind_method(D_METHOD("props_clear"), &VoxelChunk::props_clear);
 #endif
 
 #if MESH_DATA_RESOURCE_PRESENT

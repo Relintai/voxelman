@@ -550,7 +550,7 @@ void VoxelWorld::add_prop(Transform tarnsform, const Ref<PropData> &prop, const 
 	wp = tarnsform.xform(wp);
 	Ref<VoxelChunk> chunk = get_or_create_chunk_at_world_position(wp);
 
-	chunk->add_prop(tarnsform, prop);
+	chunk->prop_add(tarnsform, prop);
 
 	int count = prop->get_prop_count();
 	for (int i = 0; i < count; ++i) {
