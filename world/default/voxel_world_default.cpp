@@ -37,8 +37,8 @@ _FORCE_INLINE_ int VoxelWorldDefault::get_build_flags() const {
 _FORCE_INLINE_ void VoxelWorldDefault::set_build_flags(const int flags) {
 	_build_flags = flags;
 
-	for (int i = 0; i < get_chunk_count(); ++i) {
-		Ref<VoxelChunkDefault> c = get_chunk_index(i);
+	for (int i = 0; i < chunk_get_count(); ++i) {
+		Ref<VoxelChunkDefault> c = chunk_get_index(i);
 
 		if (!c.is_valid())
 			continue;
@@ -102,7 +102,7 @@ PoolColorArray VoxelWorldDefault::get_vertex_colors(const Transform &transform, 
 			bz += get_chunk_size_z();
 		}
 
-		Ref<VoxelChunk> chunk = get_chunk(x, y, z);
+		Ref<VoxelChunk> chunk = chunk_get(x, y, z);
 
 		if (chunk.is_valid()) {
 			Color light = Color(
@@ -150,8 +150,8 @@ void VoxelWorldDefault::_update_lods() {
 	int ppy = int(ppos.y / get_chunk_size_y() / get_voxel_scale());
 	int ppz = int(ppos.z / get_chunk_size_z() / get_voxel_scale());
 
-	for (int i = 0; i < get_chunk_count(); ++i) {
-		Ref<VoxelChunkDefault> c = get_chunk_index(i);
+	for (int i = 0; i < chunk_get_count(); ++i) {
+		Ref<VoxelChunkDefault> c = chunk_get_index(i);
 
 		if (!c.is_valid())
 			continue;

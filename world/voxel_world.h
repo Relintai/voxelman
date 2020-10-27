@@ -126,14 +126,30 @@ public:
 	void voxel_structures_set(const Vector<Variant> &structures);
 
 	//Chunks
-	void add_chunk(Ref<VoxelChunk> chunk, const int x, const int y, const int z);
-	bool has_chunk(const int x, const int y, const int z) const;
-	Ref<VoxelChunk> get_chunk(const int x, const int y, const int z);
-	Ref<VoxelChunk> remove_chunk(const int x, const int y, const int z);
-	Ref<VoxelChunk> remove_chunk_index(const int index);
-	Ref<VoxelChunk> get_chunk_index(const int index);
+	void chunk_add(Ref<VoxelChunk> chunk, const int x, const int y, const int z);
+	bool chunk_has(const int x, const int y, const int z) const;
+	Ref<VoxelChunk> chunk_get(const int x, const int y, const int z);
+	Ref<VoxelChunk> chunk_remove(const int x, const int y, const int z);
+	Ref<VoxelChunk> chunk_remove_index(const int index);
+	Ref<VoxelChunk> chunk_get_index(const int index);
 
-	int get_chunk_count() const;
+	int chunk_get_count() const;
+
+	void chunks_clear();
+
+	Ref<VoxelChunk> chunk_get_or_create(const int x, const int y, const int z);
+	Ref<VoxelChunk> chunk_create(const int x, const int y, const int z);
+	void chunk_setup(Ref<VoxelChunk> chunk);
+
+	void chunk_generate(Ref<VoxelChunk> chunk);
+
+	Vector<Variant> chunks_get();
+	void chunks_set(const Vector<Variant> &chunks);
+
+	bool can_chunk_do_build_step();
+	bool is_position_walkable(const Vector3 &p_pos);
+
+	void on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk);
 
 	void add_to_generation_queue(const Ref<VoxelChunk> &chunk);
 	Ref<VoxelChunk> get_generation_queue_index(const int index);
@@ -144,22 +160,6 @@ public:
 	Ref<VoxelChunk> get_generation_index(const int index);
 	void remove_generation_index(const int index);
 	int get_generation_size() const;
-
-	void clear_chunks();
-
-	Ref<VoxelChunk> get_or_create_chunk(const int x, const int y, const int z);
-	Ref<VoxelChunk> create_chunk(const int x, const int y, const int z);
-	void setup_chunk(Ref<VoxelChunk> chunk);
-
-	void generate_chunk(Ref<VoxelChunk> chunk);
-
-	bool can_chunk_do_build_step();
-	bool is_position_walkable(const Vector3 &p_pos);
-
-	void on_chunk_mesh_generation_finished(Ref<VoxelChunk> p_chunk);
-
-	Vector<Variant> get_chunks();
-	void set_chunks(const Vector<Variant> &chunks);
 
 #if PROPS_PRESENT
 	void prop_add(Transform tarnsform, const Ref<PropData> &prop, const bool apply_voxel_scael = true);
