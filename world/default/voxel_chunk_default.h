@@ -114,29 +114,32 @@ public:
 	void set_current_lod_level(const int value);
 
 	//Meshes
-	Dictionary get_mesh_rids();
-	void set_mesh_rids(const Dictionary &rids);
-	void clear_rids();
+	Dictionary mesh_rids_get();
+	void mesh_rids_set(const Dictionary &rids);
 
-	RID get_mesh_rid(const int mesh_index, const int mesh_type_index);
-	void set_mesh_rid(const int mesh_index, const int mesh_type_index, RID value);
-	RID get_mesh_rid_index(const int mesh_index, const int mesh_type_index, const int index);
-	void set_mesh_rid_index(const int mesh_index, const int mesh_type_index, const int index, RID value);
-	int get_mesh_rid_count(const int mesh_index, const int mesh_type_index);
-	void clear_mesh_rids(const int mesh_index, const int mesh_type_index);
-	Array get_meshes(const int mesh_index, const int mesh_type_index);
-	void set_meshes(const int mesh_index, const int mesh_type_index, const Array &meshes);
-	bool has_meshes(const int mesh_index, const int mesh_type_index);
+	RID mesh_rid_get(const int mesh_index, const int mesh_type_index);
+	void mesh_rid_set(const int mesh_index, const int mesh_type_index, RID value);
+	RID mesh_rid_get_index(const int mesh_index, const int mesh_type_index, const int index);
+	void mesh_rid_set_index(const int mesh_index, const int mesh_type_index, const int index, RID value);
+	int mesh_rid_get_count(const int mesh_index, const int mesh_type_index);
+	void mesh_rids_clear(const int mesh_index, const int mesh_type_index);
 
-	void free_rids();
+	Array meshes_get(const int mesh_index, const int mesh_type_index);
+	void meshes_set(const int mesh_index, const int mesh_type_index, const Array &meshes);
+	bool meshes_has(const int mesh_index, const int mesh_type_index);
+
+	void rids_clear();
+
+	void rids_free();
+
+	void meshes_create(const int mesh_index, const int mesh_count);
+	void meshes_free(const int mesh_index);
+
+	void colliders_create(const int mesh_index, const int layer_mask = 1);
+	void colliders_create_area(const int mesh_index, const int layer_mask = 1);
+	void colliders_free(const int mesh_index);
+
 	void free_index(const int mesh_index);
-
-	void create_meshes(const int mesh_index, const int mesh_count);
-	void free_meshes(const int mesh_index);
-
-	void create_colliders(const int mesh_index, const int layer_mask = 1);
-	void create_colliders_area(const int mesh_index, const int layer_mask = 1);
-	void free_colliders(const int mesh_index);
 
 	//Transform
 	void update_transforms();

@@ -198,16 +198,16 @@ void VoxelPropJob::phase_prop() {
 			}
 		}
 
-		RID mesh_rid = chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 0);
+		RID mesh_rid = chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 0);
 
 		if (should_do()) {
 			if (mesh_rid == RID()) {
 				if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_CREATE_LODS) != 0)
-					chunk->create_meshes(VoxelChunkDefault::MESH_INDEX_PROP, chunk->get_lod_num() + 1);
+					chunk->meshes_create(VoxelChunkDefault::MESH_INDEX_PROP, chunk->get_lod_num() + 1);
 				else
-					chunk->create_meshes(VoxelChunkDefault::MESH_INDEX_PROP, 1);
+					chunk->meshes_create(VoxelChunkDefault::MESH_INDEX_PROP, 1);
 
-				mesh_rid = chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 0);
+				mesh_rid = chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 0);
 			}
 
 			if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
@@ -241,10 +241,10 @@ void VoxelPropJob::phase_prop() {
 					//for lod 1 just remove uv2
 					temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
 
-					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 					if (chunk->get_library()->get_prop_material(1).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), 0, chunk->get_library()->get_prop_material(1)->get_rid());
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), 0, chunk->get_library()->get_prop_material(1)->get_rid());
 				}
 
 				if (should_return()) {
@@ -257,10 +257,10 @@ void VoxelPropJob::phase_prop() {
 					Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
 					temp_mesh_arr = temp_mesh_arr2;
 
-					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
+					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
 
 					if (chunk->get_library()->get_prop_material(2).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), 0, chunk->get_library()->get_prop_material(2)->get_rid());
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), 0, chunk->get_library()->get_prop_material(2)->get_rid());
 				}
 				if (should_return()) {
 					return;
@@ -283,10 +283,10 @@ void VoxelPropJob::phase_prop() {
 					temp_mesh_arr = bake_mesh_array_uv(temp_mesh_arr, tex);
 					temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
 
-					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 					if (chunk->get_library()->get_prop_material(3).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0, chunk->get_library()->get_prop_material(3)->get_rid());
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_PROP, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0, chunk->get_library()->get_prop_material(3)->get_rid());
 				}
 			}
 
@@ -303,12 +303,12 @@ void VoxelPropJob::phase_prop() {
 						temp_mesh_arr = fqms->get_arrays();
 
 						VisualServer::get_singleton()->mesh_add_surface_from_arrays(
-								chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i),
+								chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i),
 								VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 						if (chunk->get_library()->get_material(i).is_valid())
 							VisualServer::get_singleton()->mesh_surface_set_material(
-									chunk->get_mesh_rid_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i), 0,
+									chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i), 0,
 									chunk->get_library()->get_material(i)->get_rid());
 					}
 				}

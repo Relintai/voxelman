@@ -83,12 +83,12 @@ void VoxelChunkDefault::set_current_lod_level(const int value) {
 		if (i == _current_lod_level)
 			vis = true;
 
-		RID rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+		RID rid = mesh_rid_get_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, vis);
 
-		rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+		rid = mesh_rid_get_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, vis);
@@ -104,17 +104,14 @@ void VoxelChunkDefault::emit_build_finished() {
 }
 
 //Meshes
-Dictionary VoxelChunkDefault::get_mesh_rids() {
+Dictionary VoxelChunkDefault::mesh_rids_get() {
 	return _rids;
 }
-void VoxelChunkDefault::set_mesh_rids(const Dictionary &rids) {
+void VoxelChunkDefault::mesh_rids_set(const Dictionary &rids) {
 	_rids = rids;
 }
-void VoxelChunkDefault::clear_rids() {
-	_rids.clear();
-}
 
-RID VoxelChunkDefault::get_mesh_rid(const int mesh_index, const int mesh_type_index) {
+RID VoxelChunkDefault::mesh_rid_get(const int mesh_index, const int mesh_type_index) {
 	if (!_rids.has(mesh_index))
 		return RID();
 
@@ -130,7 +127,7 @@ RID VoxelChunkDefault::get_mesh_rid(const int mesh_index, const int mesh_type_in
 
 	return v;
 }
-void VoxelChunkDefault::set_mesh_rid(const int mesh_index, const int mesh_type_index, RID value) {
+void VoxelChunkDefault::mesh_rid_set(const int mesh_index, const int mesh_type_index, RID value) {
 	if (!_rids.has(mesh_index))
 		_rids[mesh_index] = Dictionary();
 
@@ -149,7 +146,7 @@ void VoxelChunkDefault::set_mesh_rid(const int mesh_index, const int mesh_type_i
 	m[mesh_type_index] = value;
 	_rids[mesh_index] = m;
 }
-RID VoxelChunkDefault::get_mesh_rid_index(const int mesh_index, const int mesh_type_index, const int index) {
+RID VoxelChunkDefault::mesh_rid_get_index(const int mesh_index, const int mesh_type_index, const int index) {
 	if (!_rids.has(mesh_index))
 		return RID();
 
@@ -169,7 +166,7 @@ RID VoxelChunkDefault::get_mesh_rid_index(const int mesh_index, const int mesh_t
 
 	return arr[index];
 }
-void VoxelChunkDefault::set_mesh_rid_index(const int mesh_index, const int mesh_type_index, const int index, RID value) {
+void VoxelChunkDefault::mesh_rid_set_index(const int mesh_index, const int mesh_type_index, const int index, RID value) {
 	if (!_rids.has(mesh_index))
 		_rids[mesh_index] = Dictionary();
 
@@ -199,7 +196,7 @@ void VoxelChunkDefault::set_mesh_rid_index(const int mesh_index, const int mesh_
 	m[mesh_type_index] = arr;
 	_rids[mesh_index] = m;
 }
-int VoxelChunkDefault::get_mesh_rid_count(const int mesh_index, const int mesh_type_index) {
+int VoxelChunkDefault::mesh_rid_get_count(const int mesh_index, const int mesh_type_index) {
 	if (!_rids.has(mesh_index))
 		return 0;
 
@@ -217,7 +214,7 @@ int VoxelChunkDefault::get_mesh_rid_count(const int mesh_index, const int mesh_t
 
 	return arr.size();
 }
-void VoxelChunkDefault::clear_mesh_rids(const int mesh_index, const int mesh_type_index) {
+void VoxelChunkDefault::mesh_rids_clear(const int mesh_index, const int mesh_type_index) {
 	if (!_rids.has(mesh_index))
 		return;
 
@@ -228,7 +225,7 @@ void VoxelChunkDefault::clear_mesh_rids(const int mesh_index, const int mesh_typ
 
 	m.erase(mesh_type_index);
 }
-Array VoxelChunkDefault::get_meshes(const int mesh_index, const int mesh_type_index) {
+Array VoxelChunkDefault::meshes_get(const int mesh_index, const int mesh_type_index) {
 	if (!_rids.has(mesh_index))
 		return Array();
 
@@ -244,7 +241,7 @@ Array VoxelChunkDefault::get_meshes(const int mesh_index, const int mesh_type_in
 
 	return v;
 }
-void VoxelChunkDefault::set_meshes(const int mesh_index, const int mesh_type_index, const Array &meshes) {
+void VoxelChunkDefault::meshes_set(const int mesh_index, const int mesh_type_index, const Array &meshes) {
 	if (!_rids.has(mesh_index))
 		_rids[mesh_index] = Dictionary();
 
@@ -253,7 +250,7 @@ void VoxelChunkDefault::set_meshes(const int mesh_index, const int mesh_type_ind
 	m[mesh_type_index] = meshes;
 	_rids[mesh_index] = m;
 }
-bool VoxelChunkDefault::has_meshes(const int mesh_index, const int mesh_type_index) {
+bool VoxelChunkDefault::meshes_has(const int mesh_index, const int mesh_type_index) {
 	if (!_rids.has(mesh_index))
 		return false;
 
@@ -265,7 +262,11 @@ bool VoxelChunkDefault::has_meshes(const int mesh_index, const int mesh_type_ind
 	return true;
 }
 
-void VoxelChunkDefault::free_rids() {
+void VoxelChunkDefault::rids_clear() {
+	_rids.clear();
+}
+
+void VoxelChunkDefault::rids_free() {
 	List<Variant> keys;
 
 	_rids.get_key_list(&keys);
@@ -280,12 +281,7 @@ void VoxelChunkDefault::free_rids() {
 	}
 }
 
-void VoxelChunkDefault::free_index(const int mesh_index) {
-	free_meshes(mesh_index);
-	free_colliders(mesh_index);
-}
-
-void VoxelChunkDefault::create_meshes(const int mesh_index, const int mesh_count) {
+void VoxelChunkDefault::meshes_create(const int mesh_index, const int mesh_count) {
 	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(!get_library().is_valid());
 
@@ -324,7 +320,7 @@ void VoxelChunkDefault::create_meshes(const int mesh_index, const int mesh_count
 
 	_rids[mesh_index] = m;
 }
-void VoxelChunkDefault::free_meshes(const int mesh_index) {
+void VoxelChunkDefault::meshes_free(const int mesh_index) {
 	if (!_rids.has(mesh_index))
 		return;
 
@@ -359,7 +355,7 @@ void VoxelChunkDefault::free_meshes(const int mesh_index) {
 	m.erase(MESH_TYPE_INDEX_MESH_INSTANCE);
 }
 
-void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_mask) {
+void VoxelChunkDefault::colliders_create(const int mesh_index, const int layer_mask) {
 	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(PhysicsServer::get_singleton()->is_flushing_queries());
 	//ERR_FAIL_COND(!get_voxel_world()->is_inside_tree());
@@ -394,7 +390,7 @@ void VoxelChunkDefault::create_colliders(const int mesh_index, const int layer_m
 
 	_rids[mesh_index] = m;
 }
-void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int layer_mask) {
+void VoxelChunkDefault::colliders_create_area(const int mesh_index, const int layer_mask) {
 	ERR_FAIL_COND(_voxel_world == NULL);
 	ERR_FAIL_COND(PhysicsServer::get_singleton()->is_flushing_queries());
 
@@ -435,7 +431,7 @@ void VoxelChunkDefault::create_colliders_area(const int mesh_index, const int la
 	_rids[mesh_index] = m;
 }
 
-void VoxelChunkDefault::free_colliders(const int mesh_index) {
+void VoxelChunkDefault::colliders_free(const int mesh_index) {
 	if (!_rids.has(mesh_index))
 		return;
 
@@ -458,6 +454,11 @@ void VoxelChunkDefault::free_colliders(const int mesh_index) {
 	m.erase(MESH_TYPE_INDEX_BODY);
 
 	_rids[mesh_index] = m;
+}
+
+void VoxelChunkDefault::free_index(const int mesh_index) {
+	meshes_free(mesh_index);
+	colliders_free(mesh_index);
 }
 
 void VoxelChunkDefault::update_transforms() {
@@ -702,17 +703,17 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 	}
 
 	for (int i = 0; i < _lod_num + 1; ++i) {
-		RID rid = get_mesh_rid_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+		RID rid = mesh_rid_get_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, false);
 
-		rid = get_mesh_rid_index(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+		rid = mesh_rid_get_index(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, false);
 
-		rid = get_mesh_rid_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+		rid = mesh_rid_get_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, false);
@@ -722,7 +723,7 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 void VoxelChunkDefault::_exit_tree() {
 	VoxelChunk::_exit_tree();
 
-	free_rids();
+	rids_free();
 }
 
 void VoxelChunkDefault::_world_transform_changed() {
@@ -830,7 +831,7 @@ void VoxelChunkDefault::_world_light_removed(const Ref<VoxelLight> &light) {
 }
 
 void VoxelChunkDefault::free_chunk() {
-	free_rids();
+	rids_free();
 }
 
 void VoxelChunkDefault::_finalize_build() {
@@ -888,28 +889,28 @@ void VoxelChunkDefault::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "current_lod_level"), "set_current_lod_level", "get_current_lod_level");
 
 	//Meshes
-	ClassDB::bind_method(D_METHOD("get_mesh_rids"), &VoxelChunkDefault::get_mesh_rids);
-	ClassDB::bind_method(D_METHOD("set_mesh_rids", "rids"), &VoxelChunkDefault::set_mesh_rids);
-	ClassDB::bind_method(D_METHOD("clear_rids"), &VoxelChunkDefault::clear_rids);
+	ClassDB::bind_method(D_METHOD("get_mesh_rids"), &VoxelChunkDefault::mesh_rids_get);
+	ClassDB::bind_method(D_METHOD("set_mesh_rids", "rids"), &VoxelChunkDefault::mesh_rids_set);
+	ClassDB::bind_method(D_METHOD("clear_rids"), &VoxelChunkDefault::rids_clear);
 
-	ClassDB::bind_method(D_METHOD("get_mesh_rid", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::get_mesh_rid);
-	ClassDB::bind_method(D_METHOD("set_mesh_rid", "mesh_index", "mesh_type_index", "value"), &VoxelChunkDefault::set_mesh_rid);
-	ClassDB::bind_method(D_METHOD("get_mesh_rid_index", "mesh_index", "mesh_type_index", "index"), &VoxelChunkDefault::get_mesh_rid_index);
-	ClassDB::bind_method(D_METHOD("set_mesh_rid_index", "mesh_index", "mesh_type_index", "index", "value"), &VoxelChunkDefault::set_mesh_rid_index);
-	ClassDB::bind_method(D_METHOD("get_mesh_rid_count", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::get_mesh_rid_count);
-	ClassDB::bind_method(D_METHOD("clear_mesh_rids", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::clear_mesh_rids);
-	ClassDB::bind_method(D_METHOD("get_meshes", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::get_meshes);
-	ClassDB::bind_method(D_METHOD("set_meshes", "mesh_index", "mesh_type_index", "meshes"), &VoxelChunkDefault::set_meshes);
-	ClassDB::bind_method(D_METHOD("has_meshes", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::has_meshes);
+	ClassDB::bind_method(D_METHOD("mesh_rid_get", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::mesh_rid_get);
+	ClassDB::bind_method(D_METHOD("mesh_rid_set", "mesh_index", "mesh_type_index", "value"), &VoxelChunkDefault::mesh_rid_set);
+	ClassDB::bind_method(D_METHOD("mesh_rid_get_index", "mesh_index", "mesh_type_index", "index"), &VoxelChunkDefault::mesh_rid_get_index);
+	ClassDB::bind_method(D_METHOD("mesh_rid_set_index", "mesh_index", "mesh_type_index", "index", "value"), &VoxelChunkDefault::mesh_rid_set_index);
+	ClassDB::bind_method(D_METHOD("mesh_rid_get_count", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::mesh_rid_get_count);
+	ClassDB::bind_method(D_METHOD("mesh_rids_clear", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::mesh_rids_clear);
+	ClassDB::bind_method(D_METHOD("meshes_get", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::meshes_get);
+	ClassDB::bind_method(D_METHOD("meshes_set", "mesh_index", "mesh_type_index", "meshes"), &VoxelChunkDefault::meshes_set);
+	ClassDB::bind_method(D_METHOD("meshes_has", "mesh_index", "mesh_type_index"), &VoxelChunkDefault::meshes_has);
 
-	ClassDB::bind_method(D_METHOD("free_rids"), &VoxelChunkDefault::free_rids);
+	ClassDB::bind_method(D_METHOD("rids_free"), &VoxelChunkDefault::rids_free);
 	ClassDB::bind_method(D_METHOD("free_index", "mesh_index"), &VoxelChunkDefault::free_index);
 
-	ClassDB::bind_method(D_METHOD("create_meshes", "mesh_index", "mesh_count"), &VoxelChunkDefault::create_meshes);
-	ClassDB::bind_method(D_METHOD("free_meshes", "mesh_index"), &VoxelChunkDefault::free_meshes);
+	ClassDB::bind_method(D_METHOD("meshes_create", "mesh_index", "mesh_count"), &VoxelChunkDefault::meshes_create);
+	ClassDB::bind_method(D_METHOD("meshes_free", "mesh_index"), &VoxelChunkDefault::meshes_free);
 
-	ClassDB::bind_method(D_METHOD("create_colliders", "mesh_index", "layer_mask"), &VoxelChunkDefault::create_colliders, DEFVAL(1));
-	ClassDB::bind_method(D_METHOD("free_colliders", "mesh_index"), &VoxelChunkDefault::free_colliders);
+	ClassDB::bind_method(D_METHOD("create_colliders", "mesh_index", "layer_mask"), &VoxelChunkDefault::colliders_create, DEFVAL(1));
+	ClassDB::bind_method(D_METHOD("free_colliders", "mesh_index"), &VoxelChunkDefault::colliders_free);
 
 	//Lights
 	ClassDB::bind_method(D_METHOD("get_light", "index"), &VoxelChunkDefault::get_light);
