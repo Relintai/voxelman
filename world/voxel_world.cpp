@@ -1103,7 +1103,7 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("voxel_structure_remove_index", "index"), &VoxelWorld::voxel_structure_remove_index);
 	ClassDB::bind_method(D_METHOD("voxel_structures_clear"), &VoxelWorld::voxel_structures_clear);
 	ClassDB::bind_method(D_METHOD("voxel_structure_get_count"), &VoxelWorld::voxel_structure_get_count);
-	ClassDB::bind_method(D_METHOD("add_at_position", "structure", "world_position"), &VoxelWorld::voxel_structure_add_at_position);
+	ClassDB::bind_method(D_METHOD("voxel_structure_add_at_position", "structure", "world_position"), &VoxelWorld::voxel_structure_add_at_position);
 
 	ClassDB::bind_method(D_METHOD("voxel_structures_get"), &VoxelWorld::voxel_structures_get);
 	ClassDB::bind_method(D_METHOD("voxel_structures_set"), &VoxelWorld::voxel_structures_set);
