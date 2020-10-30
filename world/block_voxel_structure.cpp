@@ -22,79 +22,69 @@ SOFTWARE.
 
 #include "block_voxel_structure.h"
 
-int BlockVoxelStructure::get_channel_count() const {
-	return _channel_count;
+int BlockVoxelStructure::get_channel_type() const {
+	return _channel_type;
 }
-void BlockVoxelStructure::set_channel_count(const int value) {
-	_channel_count = value;
+void BlockVoxelStructure::set_channel_type(const int value) {
+	_channel_type = value;
 }
 
-uint8_t BlockVoxelStructure::get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const {
-	VSIntPos p;
-	p.x = p_x;
-	p.y = p_y;
-	p.z = p_z;
-
-	if (!_data.has(p))
-		return 0;
-
-	PoolByteArray arr = _data[p];
-
-	ERR_FAIL_INDEX_V(arr.size(), p_channel_index, 0);
-
-	return arr[p_channel_index];
+int BlockVoxelStructure::get_channel_isolevel() const {
+	return _channel_isolevel;
 }
-void BlockVoxelStructure::set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index) {
-	VSIntPos p;
-	p.x = p_x;
-	p.y = p_y;
-	p.z = p_z;
+void BlockVoxelStructure::set_channel_isolevel(const int value) {
+	_channel_isolevel = value;
+}
 
-	PoolByteArray arr;
+int BlockVoxelStructure::get_voxel_type(int p_x, int p_y, int p_z) const {
+	DataEntry p;
 
-	if (!_data.has(p)) {
-		arr.resize(_channel_count);
+	for (int i = 0; i < _data.size(); ++i) {
+		p = _data[i];
 
-		for (int i = 0; i < _channel_count; ++i) {
-			arr.set(i, p_value);
+		if (p.x == p_x && p.y == p_y && p.z == p_z) {
+			return p.data_type;
 		}
-	} else {
-		arr = _data[p];
 	}
 
-	_data[p] = arr;
+	return 0;
+}
+int BlockVoxelStructure::get_voxel_isolevel(int p_x, int p_y, int p_z) const {
+	DataEntry p;
+
+	for (int i = 0; i < _data.size(); ++i) {
+		p = _data[i];
+
+		if (p.x == p_x && p.y == p_y && p.z == p_z) {
+			return p.data_isolevel;
+		}
+	}
+
+	return 0;
 }
 
-PoolByteArray BlockVoxelStructure::get_voxel_data(int p_x, int p_y, int p_z) const {
-	VSIntPos p;
+void BlockVoxelStructure::set_voxel(int p_x, int p_y, int p_z, int p_type, int p_isolevel) {
+	DataEntry p;
 	p.x = p_x;
 	p.y = p_y;
 	p.z = p_z;
+	p.data_type = p_type;
+	p.data_isolevel = p_isolevel;
 
-	if (!_data.has(p))
-		return PoolByteArray();
-
-	return _data[p];
-}
-void BlockVoxelStructure::set_voxel_data(PoolByteArray p_arr, int p_x, int p_y, int p_z) {
-	VSIntPos p;
-	p.x = p_x;
-	p.y = p_y;
-	p.z = p_z;
-
-	_data[p] = p_arr;
+	_data.push_back(p);
 }
 
-//void BlockVoxelStructure::_write_to_chunk(Node *chunk) {
-//Ref<VoxelChunk> c = Object::cast_to<VoxelChunk>(chunk);
-//}
+void BlockVoxelStructure::_write_to_chunk(Ref<VoxelChunk> chunk) {
+	//Ref<VoxelChunk> c = Object::cast_to<VoxelChunk>(chunk);
+}
 
 void BlockVoxelStructure::clear() {
 	_data.clear();
 }
 
 BlockVoxelStructure::BlockVoxelStructure() {
-	_channel_count = 0;
+	_channel_type = 0;
+	_channel_isolevel = 0;
 }
 
 BlockVoxelStructure::~BlockVoxelStructure() {
@@ -102,15 +92,18 @@ BlockVoxelStructure::~BlockVoxelStructure() {
 }
 
 void BlockVoxelStructure::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_channel_count"), &BlockVoxelStructure::get_channel_count);
-	ClassDB::bind_method(D_METHOD("set_channel_count", "value"), &BlockVoxelStructure::set_channel_count);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_count"), "set_channel_count", "get_channel_count");
+	ClassDB::bind_method(D_METHOD("get_channel_type"), &BlockVoxelStructure::get_channel_type);
+	ClassDB::bind_method(D_METHOD("set_channel_type", "value"), &BlockVoxelStructure::set_channel_type);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_type"), "set_channel_type", "get_channel_type");
 
-	ClassDB::bind_method(D_METHOD("get_voxel", "x", "y", "z", "channel_index"), &BlockVoxelStructure::get_voxel, DEFVAL(0));
-	ClassDB::bind_method(D_METHOD("set_voxel", "value", "x", "y", "z", "channel_index"), &BlockVoxelStructure::set_voxel, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("get_channel_isolevel"), &BlockVoxelStructure::get_channel_isolevel);
+	ClassDB::bind_method(D_METHOD("set_channel_isolevel", "value"), &BlockVoxelStructure::set_channel_isolevel);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "channel_isolevel"), "set_channel_isolevel", "get_channel_isolevel");
 
-	ClassDB::bind_method(D_METHOD("get_voxel_data", "x", "y", "z"), &BlockVoxelStructure::get_voxel_data);
-	ClassDB::bind_method(D_METHOD("set_voxel_data", "arr", "x", "y", "z"), &BlockVoxelStructure::set_voxel_data);
+	ClassDB::bind_method(D_METHOD("get_voxel_type", "x", "y", "z"), &BlockVoxelStructure::get_voxel_type);
+	ClassDB::bind_method(D_METHOD("get_voxel_isolevel", "x", "y", "z"), &BlockVoxelStructure::get_voxel_isolevel);
 
-	//ClassDB::bind_method(D_METHOD("_write_to_chunk", "chunk"), &BlockVoxelStructure::_write_to_chunk);
+	ClassDB::bind_method(D_METHOD("set_voxel", "x", "y", "z", "type", "isolevel"), &BlockVoxelStructure::set_voxel);
+
+	ClassDB::bind_method(D_METHOD("_write_to_chunk", "chunk"), &BlockVoxelStructure::_write_to_chunk);
 }

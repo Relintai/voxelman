@@ -29,23 +29,26 @@ SOFTWARE.
 
 #include pool_vector_h
 include_pool_vector
-#include "core/hash_map.h"
+#include "core/vector.h"
 #include "voxel_chunk.h"
+		;
 
-		class BlockVoxelStructure : public VoxelStructure {
+class BlockVoxelStructure : public VoxelStructure {
 	GDCLASS(BlockVoxelStructure, VoxelStructure);
 
 public:
-	int get_channel_count() const;
-	void set_channel_count(const int value);
+	int get_channel_type() const;
+	void set_channel_type(const int value);
 
-	uint8_t get_voxel(int p_x, int p_y, int p_z, int p_channel_index) const;
-	void set_voxel(uint8_t p_value, int p_x, int p_y, int p_z, int p_channel_index);
+	int get_channel_isolevel() const;
+	void set_channel_isolevel(const int value);
 
-	PoolByteArray get_voxel_data(int p_x, int p_y, int p_z) const;
-	void set_voxel_data(PoolByteArray p_arr, int p_x, int p_y, int p_z);
+	int get_voxel_type(int p_x, int p_y, int p_z) const;
+	int get_voxel_isolevel(int p_x, int p_y, int p_z) const;
 
-	//void _write_to_chunk(Node *chunk);
+	void set_voxel(int p_x, int p_y, int p_z, int p_type, int p_isolevel);
+
+	void _write_to_chunk(Ref<VoxelChunk> chunk);
 
 	void clear();
 
@@ -56,28 +59,19 @@ protected:
 	static void _bind_methods();
 
 public:
-	struct VSIntPos {
+	struct DataEntry {
 		int x;
 		int y;
 		int z;
-	};
-
-	struct VSIntPosHasher {
-		static _FORCE_INLINE_ uint32_t hash(const VSIntPos &v) {
-			uint32_t hash = hash_djb2_one_32(v.x);
-			hash = hash_djb2_one_32(v.y, hash);
-			return hash_djb2_one_32(v.z, hash);
-		}
+		int data_type;
+		int data_isolevel;
 	};
 
 private:
-	int _channel_count;
+	int _channel_type;
+	int _channel_isolevel;
 
-	HashMap<VSIntPos, PoolByteArray, VSIntPosHasher> _data;
+	Vector<DataEntry> _data;
 };
-
-_FORCE_INLINE_ bool operator==(const BlockVoxelStructure::VSIntPos &a, const BlockVoxelStructure::VSIntPos &b) {
-	return a.x == b.x && a.y == b.y && a.z == b.z;
-}
 
 #endif
