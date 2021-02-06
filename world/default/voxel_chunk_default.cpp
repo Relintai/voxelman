@@ -122,8 +122,13 @@ RID VoxelChunkDefault::mesh_rid_get(const int mesh_index, const int mesh_type_in
 
 	Variant v = m[mesh_type_index];
 
+#if VERSION_MAJOR > 3
+	if (v.get_type() != Variant::RID)
+		return RID();
+#else
 	if (v.get_type() != Variant::_RID)
 		return RID();
+#endif
 
 	return v;
 }
@@ -141,7 +146,11 @@ void VoxelChunkDefault::mesh_rid_set(const int mesh_index, const int mesh_type_i
 
 	Variant v = m[mesh_type_index];
 
+#if VERSION_MAJOR > 3
+	ERR_FAIL_COND(v.get_type() != Variant::RID);
+#else
 	ERR_FAIL_COND(v.get_type() != Variant::_RID);
+#endif
 
 	m[mesh_type_index] = value;
 	_rids[mesh_index] = m;

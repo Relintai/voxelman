@@ -23,7 +23,13 @@ SOFTWARE.
 #ifndef MARCHING_CUBES_CELL_DATA_H
 #define MARCHING_CUBES_CELL_DATA_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/object/reference.h"
+#else
 #include "core/reference.h"
+#endif
 
 #include "marching_cubes_tables.h"
 

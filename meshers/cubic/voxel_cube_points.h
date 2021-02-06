@@ -23,8 +23,15 @@ SOFTWARE.
 #ifndef SUB_VOXEL_POINTS_H
 #define SUB_VOXEL_POINTS_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/object/reference.h"
+#include "core/templates/vector.h"
+#else
 #include "core/reference.h"
 #include "core/vector.h"
+#endif
 
 class VoxelChunk;
 class SubVoxelFacePointsHelper;

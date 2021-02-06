@@ -23,7 +23,17 @@ SOFTWARE.
 #ifndef VOXEL_TOOLS_H
 #define VOXEL_TOOLS_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/object/reference.h"
+#include "core/templates/vector.h"
+#include "core/math/color.h"
+#else
 #include "core/reference.h"
+#include "core/vector.h"
+#include "core/color.h"
+#endif
 
 #include "../defines.h"
 
@@ -32,11 +42,9 @@ include_pool_vector
 
 #include mesh_instance_h
 
-#include "core/color.h"
 #include "core/math/rect2.h"
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
-#include "core/vector.h"
 #include "scene/main/node.h"
 #include "scene/resources/material.h"
 #include "scene/resources/mesh.h"

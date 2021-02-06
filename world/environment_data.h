@@ -23,12 +23,19 @@ SOFTWARE.
 #ifndef ENVIRONMENT_DATA_H
 #define ENVIRONMENT_DATA_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/io/resource.h"
+#include "core/math/color.h"
+#else
+#include "core/resource.h"
+#include "core/color.h"
+#endif
+
 #include "../defines.h"
 
 #include light_h
-
-#include "core/color.h"
-#include "core/resource.h"
 
 #include "scene/3d/world_environment.h"
 #include "scene/main/node.h"

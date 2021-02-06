@@ -23,9 +23,17 @@ SOFTWARE.
 #ifndef VOXEL_LIGHT_H
 #define VOXEL_LIGHT_H
 
-#include "core/color.h"
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/object/reference.h"
+#include "core/templates/vector.h"
+#include "core/math/color.h"
+#else
 #include "core/reference.h"
 #include "core/vector.h"
+#include "core/color.h"
+#endif
 
 class VoxelLight : public Reference {
 	GDCLASS(VoxelLight, Reference);

@@ -20,12 +20,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/variant/array.h"
+#include "core/variant/dictionary.h"
+#else
+#include "core/array.h"
+#include "core/dictionary.h"
+#endif
+
 #include "voxel_mesher_marching_cubes.h"
 
 #include "../../world/default/voxel_chunk_default.h"
 #include "../../world/voxel_chunk.h"
-#include "core/array.h"
-#include "core/dictionary.h"
 
 #include "../../world/jobs/voxel_job.h"
 

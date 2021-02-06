@@ -23,10 +23,18 @@ SOFTWARE.
 #ifndef WORLD_AREA_H
 #define WORLD_AREA_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/object/reference.h"
+#include "core/string/ustring.h"
+#else
 #include "core/reference.h"
+#include "core/ustring.h"
+#endif
 
 #include "core/math/aabb.h"
-#include "core/ustring.h"
+
 #include "scene/resources/texture.h"
 
 class WorldArea : public Reference {

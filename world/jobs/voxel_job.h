@@ -28,7 +28,15 @@ SOFTWARE.
 #if THREAD_POOL_PRESENT
 #include "../../../thread_pool/thread_pool_job.h"
 #else
+
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/object/reference.h"
+#else
 #include "core/reference.h"
+#endif
+
 #endif
 
 #include "../../defines.h"

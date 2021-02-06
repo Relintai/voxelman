@@ -18,7 +18,7 @@
 #define light_h "scene/3d/light_3d.h"
 #define visual_server_h "servers/rendering_server.h"
 #define mesh_instance_h "scene/3d/mesh_instance_3d.h"
-#define pool_vector_h "core/vector.h"
+#define pool_vector_h "core/templates/vector.h"
 #define physics_server_h "servers/physics_server_3d.h"
 #define immediate_geometry_h "scene/3d/immediate_geometry_3d.h"
 #define include_pool_vector \

@@ -23,8 +23,15 @@ SOFTWARE.
 #ifndef VOXEL_MESHER_MARCHING_CUBES_H
 #define VOXEL_MESHER_MARCHING_CUBES_H
 
-#include "../default/voxel_mesher_default.h"
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/object/reference.h"
+#else
 #include "core/reference.h"
+#endif
+
+#include "../default/voxel_mesher_default.h"
 
 #include "marching_cubes_cell_data.h"
 

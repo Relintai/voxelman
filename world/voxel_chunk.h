@@ -23,20 +23,28 @@ SOFTWARE.
 #ifndef VOXEL_CHUNK_H
 #define VOXEL_CHUNK_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/io/resource.h"
+#include "core/string/ustring.h"
+#include "core/config/engine.h"
+#include "core/variant/array.h"
+#else
 #include "core/resource.h"
+#include "core/ustring.h"
+#include "core/engine.h"
+#include "core/array.h"
+#endif
 
 #include "../defines.h"
 
 #include pool_vector_h
 include_pool_vector
 
-#include "core/engine.h"
 #include "core/os/mutex.h"
 #include "core/os/thread.h"
 #include "core/os/thread_safe.h"
-#include "core/ustring.h"
-
-#include "core/array.h"
 
 #include "scene/resources/packed_scene.h"
 

@@ -23,10 +23,18 @@ SOFTWARE.
 #ifndef VOXELMAN_LIBRARY_MERGER_H
 #define VOXELMAN_LIBRARY_MERGER_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/io/resource.h"
+#include "core/templates/map.h"
+#else
+#include "core/resource.h"
+#include "core/map.h"
+#endif
+
 #include "voxelman_library.h"
 
-#include "core/map.h"
-#include "core/resource.h"
 #include "scene/resources/material.h"
 
 #include "../data/voxel_light.h"

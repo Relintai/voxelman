@@ -23,8 +23,15 @@ SOFTWARE.
 #ifndef VOXELMAN_LIBRARY_H
 #define VOXELMAN_LIBRARY_H
 
-#include "core/math/rect2.h"
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/io/resource.h"
+#else
 #include "core/resource.h"
+#endif
+
+#include "core/math/rect2.h"
 #include "scene/resources/material.h"
 
 #include "../data/voxel_light.h"

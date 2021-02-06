@@ -23,11 +23,20 @@ SOFTWARE.
 #ifndef VOXEL_SURFACE_H
 #define VOXEL_SURFACE_H
 
-#include "core/resource.h"
 
-#include "core/color.h"
-#include "core/math/rect2.h"
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/io/resource.h"
+#include "core/templates/vector.h"
+#include "core/math/color.h"
+#else
+#include "core/resource.h"
 #include "core/vector.h"
+#include "core/color.h"
+#endif
+
+#include "core/math/rect2.h"
 #include "scene/resources/material.h"
 
 #include "voxelman_library.h"

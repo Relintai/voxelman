@@ -23,12 +23,19 @@ SOFTWARE.
 #ifndef VOXEL_WORLD_H
 #define VOXEL_WORLD_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/templates/hash_map.h"
+#include "core/config/engine.h"
+#else
+#include "core/hash_map.h"
+#include "core/engine.h"
+#endif
+
 #include "../defines.h"
 
 #include navigation_h
-
-#include "core/engine.h"
-#include "core/hash_map.h"
 
 #include "../areas/world_area.h"
 #include "../level_generator/voxelman_level_generator.h"

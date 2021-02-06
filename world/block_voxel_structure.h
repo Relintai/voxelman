@@ -23,13 +23,21 @@ SOFTWARE.
 #ifndef BLOCK_VOXEL_STRUCTURE_H
 #define BLOCK_VOXEL_STRUCTURE_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/templates/vector.h"
+#else
+#include "core/vector.h"
+#endif
+
 #include "voxel_structure.h"
 
 #include "../defines.h"
 
 #include pool_vector_h
 include_pool_vector
-#include "core/vector.h"
+
 #include "voxel_chunk.h"
 		;
 

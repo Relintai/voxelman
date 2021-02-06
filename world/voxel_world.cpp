@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "voxel_world.h"
 
+#include "core/version.h"
+
 #include "voxel_chunk.h"
 #include "voxel_structure.h"
 
@@ -942,7 +944,11 @@ void VoxelWorld::_notification(int p_what) {
 				}
 			}
 
+#if VERSION_MAJOR > 3
+			if (_is_priority_generation && _generation_queue.is_empty() && _generating.is_empty()) {
+#else
 			if (_is_priority_generation && _generation_queue.empty() && _generating.empty()) {
+#endif
 				_is_priority_generation = false;
 
 				call("_generation_finished");

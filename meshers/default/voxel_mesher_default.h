@@ -23,7 +23,14 @@ SOFTWARE.
 #ifndef VOXEL_MESHER_DEFAULT_H
 #define VOXEL_MESHER_DEFAULT_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/math/color.h"
+#else
 #include "core/color.h"
+#endif
+
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
 

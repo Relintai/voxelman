@@ -23,14 +23,21 @@ SOFTWARE.
 #ifndef VOXEL_STRUCTURE_H
 #define VOXEL_STRUCTURE_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/io/resource.h"
+#include "core/templates/hash_map.h"
+#else
 #include "core/resource.h"
+#include "core/hash_map.h"
+#endif
 
 #include "../defines.h"
 
 #include pool_vector_h
 include_pool_vector
 
-#include "core/hash_map.h"
 #include "core/math/aabb.h"
 #include "voxel_chunk.h"
 

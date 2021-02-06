@@ -23,7 +23,13 @@ SOFTWARE.
 #ifndef VOXELMAN_LEVEL_GENERATOR_H
 #define VOXELMAN_LEVEL_GENERATOR_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/io/resource.h"
+#else
 #include "core/resource.h"
+#endif
 
 class VoxelChunk;
 

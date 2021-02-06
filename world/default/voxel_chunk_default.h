@@ -23,26 +23,31 @@ SOFTWARE.
 #ifndef VOXEL_CHUNK_DEFAULT_H
 #define VOXEL_CHUNK_DEFAULT_H
 
+#include "core/version.h"
+
+#if VERSION_MAJOR > 3
+#include "core/string/ustring.h"
+#include "core/config/engine.h"
+#include "core/variant/array.h"
+#else
+#include "core/ustring.h"
+#include "core/engine.h"
+#include "core/array.h"
+#endif
+
+
 #include "../voxel_chunk.h"
 
 #include "../../defines.h"
 
-#include "core/engine.h"
 #include "core/os/mutex.h"
 #include "core/os/thread.h"
 #include "core/os/thread_safe.h"
-#include "core/ustring.h"
-
-#include "core/array.h"
 
 #include "scene/resources/packed_scene.h"
-
 #include "../voxel_world.h"
-
 #include "../../data/voxel_light.h"
-
 #include "../../meshers/voxel_mesher.h"
-
 #include "../../library/voxel_surface.h"
 #include "../../library/voxelman_library.h"
 
