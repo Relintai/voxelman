@@ -435,6 +435,11 @@ void VoxelJob::set_stage(const int value) {
 	_stage = value;
 }
 
+void VoxelJob::reset_stages() {
+	_current_run_stage = 0;
+	_stage = 0;
+}
+
 float VoxelJob::get_current_execution_time() {
 	return 0;
 }

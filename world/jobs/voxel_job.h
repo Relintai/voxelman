@@ -129,6 +129,8 @@ public:
 	int get_stage() const;
 	void set_stage(const int value);
 
+	void reset_stages();
+
 	float get_current_execution_time();
 
 	bool should_do(const bool just_check = false);
