@@ -723,11 +723,15 @@ int VoxelChunk::mesh_data_resource_addv(const Vector3 &local_data_pos, const Ref
 	AABB mesh_aabb = e.transform.xform(mesh->get_aabb());
 	e.is_inside = aabb.encloses(mesh_aabb);
 
+#if PROPS_PRESENT
 	if (get_library().is_valid() && texture.is_valid()) {
 		e.uv_rect = get_library()->get_prop_uv_rect(texture);
 	} else {
 		e.uv_rect = Rect2(0, 0, 1, 1);
 	}
+#else
+	e.uv_rect = Rect2(0, 0, 1, 1);
+#endif
 
 	_mesh_data_resources.push_back(e);
 
@@ -759,10 +763,14 @@ int VoxelChunk::mesh_data_resource_add(const Transform &local_transform, const R
 	AABB mesh_aabb = e.transform.xform(mesh->get_aabb());
 	e.is_inside = aabb.encloses(mesh_aabb);
 
+#if PROPS_PRESENT
 	if (get_library().is_valid() && texture.is_valid())
 		e.uv_rect = get_library()->get_prop_uv_rect(texture);
 	else
 		e.uv_rect = Rect2(0, 0, 1, 1);
+#else
+	e.uv_rect = Rect2(0, 0, 1, 1);
+#endif
 
 	_mesh_data_resources.push_back(e);
 
