@@ -66,8 +66,13 @@ void VoxelStructure::set_position(const int x, const int y, const int z) {
 void VoxelStructure::write_to_chunk(Ref<VoxelChunk> chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	if (has_method("_write_to_chunk"))
+#if VERSION_MAJOR < 4
+	if (has_method("_write_to_chunk")) {
 		call("_write_to_chunk", chunk);
+	}
+#else
+	GDVIRTUAL_CALL(_write_to_chunk, chunk);
+#endif
 }
 
 VoxelStructure::VoxelStructure() {
@@ -81,7 +86,11 @@ VoxelStructure::~VoxelStructure() {
 }
 
 void VoxelStructure::_bind_methods() {
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_write_to_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+#else
+	GDVIRTUAL_BIND(_write_to_chunk, "chunk");
+#endif
 
 	ClassDB::bind_method(D_METHOD("get_use_aabb"), &VoxelStructure::get_use_aabb);
 	ClassDB::bind_method(D_METHOD("set_use_aabb", "value"), &VoxelStructure::set_use_aabb);

@@ -29,19 +29,18 @@ SOFTWARE.
 #include "core/io/resource.h"
 #include "core/templates/hash_map.h"
 #else
-#include "core/resource.h"
 #include "core/hash_map.h"
+#include "core/resource.h"
 #endif
 
 #include "../defines.h"
 
 #include pool_vector_h
 include_pool_vector
-
 #include "core/math/aabb.h"
 #include "voxel_chunk.h"
 
-class VoxelStructure : public Resource {
+		class VoxelStructure : public Resource {
 	GDCLASS(VoxelStructure, Resource);
 
 public:
@@ -63,6 +62,10 @@ public:
 	void set_position(const int x, const int y, const int z);
 
 	void write_to_chunk(Ref<VoxelChunk> chunk);
+
+#if VERSION_MAJOR >= 4
+	GDVIRTUAL1(_write_to_chunk, Ref<VoxelChunk>);
+#endif
 
 	VoxelStructure();
 	~VoxelStructure();

@@ -230,7 +230,11 @@ void VoxelChunk::job_set(int index, const Ref<VoxelJob> &job) {
 void VoxelChunk::job_remove(const int index) {
 	ERR_FAIL_INDEX(index, _jobs.size());
 
+#if VERSION_MAJOR < 4
 	_jobs.remove(index);
+#else
+	_jobs.remove_at(index);
+#endif
 }
 void VoxelChunk::job_add(const Ref<VoxelJob> &job) {
 	_jobs.push_back(job);
@@ -284,9 +288,13 @@ Ref<VoxelJob> VoxelChunk::job_get_current() {
 
 //Voxel Data
 void VoxelChunk::channel_setup() {
+#if VERSION_MAJOR < 4
 	ERR_FAIL_COND_MSG(!has_method("_channel_setup"), "VoxelChunk: _setup_channels() is missing! Please implement it!");
 
 	call("_channel_setup");
+#else
+	GDVIRTUAL_CALL(_channel_setup);
+#endif
 }
 
 void VoxelChunk::set_size(const int size_x, const int size_y, const int size_z, const int margin_start, const int margin_end) {
@@ -583,13 +591,22 @@ void VoxelChunk::voxel_structure_remove(const Ref<VoxelStructure> &structure) {
 
 	int index = _voxel_structures.find(structure);
 
-	if (index != -1)
+	if (index != -1) {
+#if VERSION_MAJOR < 4
 		_voxel_structures.remove(index);
+#else
+		_voxel_structures.remove_at(index);
+#endif
+	}
 }
 void VoxelChunk::voxel_structure_remove_index(const int index) {
 	ERR_FAIL_INDEX(index, _voxel_structures.size());
 
+#if VERSION_MAJOR < 4
 	_voxel_structures.remove(index);
+#else
+	_voxel_structures.remove_at(index);
+#endif
 }
 void VoxelChunk::voxel_structure_clear() {
 	_voxel_structures.clear();
@@ -625,7 +642,11 @@ void VoxelChunk::build() {
 	ERR_FAIL_COND(!get_voxel_world()->is_inside_tree());
 	ERR_FAIL_COND(!is_in_tree());
 
+#if VERSION_MAJOR < 4
 	call("_build");
+#else
+	GDVIRTUAL_CALL(_build);
+#endif
 }
 
 void VoxelChunk::_build() {
@@ -646,25 +667,44 @@ void VoxelChunk::clear() {
 }
 
 void VoxelChunk::finalize_build() {
+#if VERSION_MAJOR < 4
 	if (has_method("_finalize_build")) {
 		call("_finalize_build");
 	}
+#else
+	GDVIRTUAL_CALL(_finalize_build);
+#endif
 }
 
 void VoxelChunk::bake_lights() {
-	if (has_method("_bake_lights"))
+#if VERSION_MAJOR < 4
+	if (has_method("_bake_lights")) {
 		call("_bake_lights");
+	}
+#else
+	GDVIRTUAL_CALL(_bake_lights);
+#endif
 }
 void VoxelChunk::bake_light(Ref<VoxelLight> light) {
 	if (!light.is_valid())
 		return;
 
-	if (has_method("_bake_lights"))
+#if VERSION_MAJOR < 4
+	if (has_method("_bake_light")) {
 		call("_bake_light", light);
+	}
+#else
+	GDVIRTUAL_CALL(_bake_light, light);
+#endif
 }
 void VoxelChunk::clear_baked_lights() {
-	if (has_method("_clear_baked_lights"))
+#if VERSION_MAJOR < 4
+	if (has_method("_clear_baked_lights")) {
 		call("_clear_baked_lights");
+	}
+#else
+	GDVIRTUAL_CALL(_clear_baked_lights);
+#endif
 }
 
 #if PROPS_PRESENT
@@ -693,7 +733,11 @@ int VoxelChunk::prop_get_count() const {
 void VoxelChunk::prop_remove(const int index) {
 	ERR_FAIL_INDEX(index, _props.size());
 
+#if VERSION_MAJOR < 4
 	_props.remove(index);
+#else
+	_props.remove_at(index);
+#endif
 }
 void VoxelChunk::props_clear() {
 	_props.clear();
@@ -735,8 +779,13 @@ int VoxelChunk::mesh_data_resource_addv(const Vector3 &local_data_pos, const Ref
 
 	_mesh_data_resources.push_back(e);
 
-	if (has_method("_mesh_data_resource_added"))
+#if VERSION_MAJOR < 4
+	if (has_method("_mesh_data_resource_added")) {
 		call("_mesh_data_resource_added", index);
+	}
+#else
+	GDVIRTUAL_CALL(_mesh_data_resource_added, index);
+#endif
 
 	return index;
 }
@@ -774,8 +823,13 @@ int VoxelChunk::mesh_data_resource_add(const Transform &local_transform, const R
 
 	_mesh_data_resources.push_back(e);
 
-	if (has_method("_mesh_data_resource_added"))
+#if VERSION_MAJOR < 4
+	if (has_method("_mesh_data_resource_added")) {
 		call("_mesh_data_resource_added", index);
+	}
+#else
+	GDVIRTUAL_CALL(_mesh_data_resource_added, index);
+#endif
 
 	return index;
 }
@@ -926,7 +980,11 @@ int VoxelChunk::collider_get_count() const {
 void VoxelChunk::collider_remove(const int index) {
 	ERR_FAIL_INDEX(index, _colliders.size());
 
+#if VERSION_MAJOR < 4
 	_colliders.remove(index);
+#else
+	_colliders.remove_at(index);
+#endif
 }
 void VoxelChunk::colliders_clear() {
 	_colliders.clear();
@@ -935,43 +993,92 @@ void VoxelChunk::colliders_clear() {
 void VoxelChunk::enter_tree() {
 	_is_in_tree = true;
 
-	if (has_method("_enter_tree"))
+#if VERSION_MAJOR < 4
+	if (has_method("_enter_tree")) {
 		call("_enter_tree");
+	}
+#else
+	GDVIRTUAL_CALL(_enter_tree);
+#endif
 }
 void VoxelChunk::exit_tree() {
 	_is_in_tree = false;
 
-	if (has_method("_exit_tree"))
+#if VERSION_MAJOR < 4
+	if (has_method("_exit_tree")) {
 		call("_exit_tree");
+	}
+#else
+	GDVIRTUAL_CALL(_exit_tree);
+#endif
 }
 void VoxelChunk::process(const float delta) {
-	if (has_method("_process"))
+#if VERSION_MAJOR < 4
+	if (has_method("_process")) {
 		call("_process", delta);
+	}
+#else
+	GDVIRTUAL_CALL(_process, delta);
+#endif
 }
 void VoxelChunk::physics_process(const float delta) {
-	if (has_method("_physics_process"))
+#if VERSION_MAJOR < 4
+	if (has_method("_physics_process")) {
 		call("_physics_process", delta);
+	}
+#else
+	GDVIRTUAL_CALL(_physics_process, delta);
+#endif
 }
 void VoxelChunk::world_transform_changed() {
 	call("_world_transform_changed");
+
+#if VERSION_MAJOR < 4
+	call("_world_transform_changed");
+#else
+	GDVIRTUAL_CALL(_world_transform_changed);
+#endif
 }
 void VoxelChunk::visibility_changed(const bool visible) {
-	if (has_method("_visibility_changed"))
+#if VERSION_MAJOR < 4
+	if (has_method("_visibility_changed")) {
 		call("_visibility_changed", _is_visible);
+	}
+#else
+	GDVIRTUAL_CALL(_visibility_changed, _is_visible);
+#endif
 }
 void VoxelChunk::world_light_added(const Ref<VoxelLight> &light) {
-	if (has_method("_world_light_added"))
+#if VERSION_MAJOR < 4
+	if (has_method("_world_light_added")) {
 		call("_world_light_added", light);
+	}
+#else
+	GDVIRTUAL_CALL(_world_light_added, light);
+#endif
 }
 void VoxelChunk::world_light_removed(const Ref<VoxelLight> &light) {
-	if (has_method("_world_light_removed"))
+#if VERSION_MAJOR < 4
+	if (has_method("_world_light_removed")) {
 		call("_world_light_removed", light);
+	}
+#else
+	GDVIRTUAL_CALL(_world_light_removed, light);
+#endif
 }
 void VoxelChunk::generation_process(const float delta) {
+#if VERSION_MAJOR < 4
 	call("_generation_process", delta);
+#else
+	GDVIRTUAL_CALL(_generation_process, delta);
+#endif
 }
 void VoxelChunk::generation_physics_process(const float delta) {
+#if VERSION_MAJOR < 4
 	call("_generation_physics_process", delta);
+#else
+	GDVIRTUAL_CALL(_generation_physics_process, delta);
+#endif
 }
 
 Transform VoxelChunk::get_transform() const {
@@ -982,19 +1089,16 @@ void VoxelChunk::set_transform(const Transform &transform) {
 }
 
 Transform VoxelChunk::get_global_transform() const {
-
 	ERR_FAIL_COND_V(!get_voxel_world(), Transform());
 
 	return get_voxel_world()->get_global_transform() * _transform;
 }
 
 Vector3 VoxelChunk::to_local(Vector3 p_global) const {
-
 	return get_global_transform().affine_inverse().xform(p_global);
 }
 
 Vector3 VoxelChunk::to_global(Vector3 p_local) const {
-
 	return get_global_transform().xform(p_local);
 }
 
@@ -1195,6 +1299,7 @@ void VoxelChunk::_get_property_list(List<PropertyInfo> *p_list) const {
 void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_mesh_data_resource_added", PropertyInfo(Variant::INT, "index")));
 
 	BIND_VMETHOD(MethodInfo("_channel_setup"));
@@ -1202,11 +1307,21 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_bake_lights"));
 	BIND_VMETHOD(MethodInfo("_bake_light", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
 	BIND_VMETHOD(MethodInfo("_clear_baked_lights"));
+#else
+	GDVIRTUAL_BIND(_mesh_data_resource_added, "index");
+
+	GDVIRTUAL_BIND(_channel_setup);
+
+	GDVIRTUAL_BIND(_bake_lights);
+	GDVIRTUAL_BIND(_bake_light, "light");
+	GDVIRTUAL_BIND(_clear_baked_lights);
+#endif
 
 	ClassDB::bind_method(D_METHOD("bake_lights"), &VoxelChunk::bake_lights);
 	ClassDB::bind_method(D_METHOD("bake_light", "light"), &VoxelChunk::bake_light);
 	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
 
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_enter_tree"));
 	BIND_VMETHOD(MethodInfo("_exit_tree"));
 	BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
@@ -1220,6 +1335,21 @@ void VoxelChunk::_bind_methods() {
 	BIND_VMETHOD(MethodInfo("_generation_physics_process", PropertyInfo(Variant::REAL, "delta")));
 
 	BIND_VMETHOD(MethodInfo("_finalize_build"));
+#else
+	GDVIRTUAL_BIND(_enter_tree);
+	GDVIRTUAL_BIND(_exit_tree);
+	GDVIRTUAL_BIND(_process, "delta");
+	GDVIRTUAL_BIND(_physics_process, "delta");
+	GDVIRTUAL_BIND(_world_transform_changed);
+	GDVIRTUAL_BIND(_visibility_changed, "visible");
+	GDVIRTUAL_BIND(_world_light_added, "light");
+	GDVIRTUAL_BIND(_world_light_removed, "light");
+
+	GDVIRTUAL_BIND(_generation_process, "delta");
+	GDVIRTUAL_BIND(_generation_physics_process, "delta");
+
+	GDVIRTUAL_BIND(_finalize_build);
+#endif
 
 	ClassDB::bind_method(D_METHOD("enter_tree"), &VoxelChunk::enter_tree);
 	ClassDB::bind_method(D_METHOD("exit_tree"), &VoxelChunk::exit_tree);
@@ -1437,7 +1567,12 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("collider_remove", "index"), &VoxelChunk::collider_remove);
 	ClassDB::bind_method(D_METHOD("colliders_clear"), &VoxelChunk::colliders_clear);
 
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_build"));
+#else
+	GDVIRTUAL_BIND(_build);
+#endif
+
 	ClassDB::bind_method(D_METHOD("build"), &VoxelChunk::build);
 	ClassDB::bind_method(D_METHOD("_build"), &VoxelChunk::_build);
 

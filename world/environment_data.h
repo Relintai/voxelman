@@ -57,6 +57,10 @@ public:
 	void setup(WorldEnvironment *world_environment, DirectionalLight *primary_light, DirectionalLight *secondary_light);
 	void setup_bind(Node *world_environment, Node *primary_light, Node *secondary_light);
 
+#if VERSION_MAJOR >= 4
+	GDVIRTUAL3(_setup, WorldEnvironment*, DirectionalLight*, DirectionalLight*);
+#endif
+
 	EnvironmentData();
 	~EnvironmentData();
 

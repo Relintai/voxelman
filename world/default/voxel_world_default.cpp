@@ -179,13 +179,25 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 
 	if (chunk->job_get_count() == 0) {
 		Ref<VoxelTerrarinJob> tj;
+#if VERSION_MAJOR < 4
 		tj.instance();
+#else
+		tj.instantiate();
+#endif
 
 		Ref<VoxelLightJob> lj;
+#if VERSION_MAJOR < 4
 		lj.instance();
+#else
+		lj.instantiate();
+#endif
 
 		Ref<VoxelPropJob> pj;
+#if VERSION_MAJOR < 4
 		pj.instance();
+#else
+		pj.instantiate();
+#endif
 		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault)));
 
 		chunk->job_add(lj);

@@ -26,7 +26,10 @@ SOFTWARE.
 #include "core/version.h"
 
 #if VERSION_MAJOR > 3
-#include "core/object/reference.h"
+#include "core/object/ref_counted.h"
+#ifndef Reference
+#define Reference RefCounted
+#endif
 #include "core/templates/vector.h"
 #include "core/math/color.h"
 #else
@@ -188,6 +191,13 @@ public:
 	int get_index(const int idx) const;
 	void remove_index(const int idx);
 	void add_indices(const int index);
+
+#if VERSION_MAJOR >= 4
+	GDVIRTUAL1(_add_chunk, Ref<VoxelChunk>);
+	GDVIRTUAL1(_bake_colors, Ref<VoxelChunk>);
+	GDVIRTUAL1(_bake_liquid_colors, Ref<VoxelChunk>);
+	GDVIRTUAL1(_add_mesher, Ref<VoxelMesher>);
+#endif
 
 	VoxelMesher(const Ref<VoxelmanLibrary> &library);
 	VoxelMesher();

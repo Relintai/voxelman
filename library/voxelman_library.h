@@ -124,6 +124,11 @@ public:
 
 	void setup_material_albedo(int material_index, Ref<Texture> texture);
 
+
+#if VERSION_MAJOR >= 4
+	GDVIRTUAL2(_setup_material_albedo, int, Ref<Texture>);
+#endif
+
 	VoxelmanLibrary();
 	~VoxelmanLibrary();
 

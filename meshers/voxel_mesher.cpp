@@ -30,7 +30,6 @@ SOFTWARE.
 #include "../world/voxel_chunk.h"
 
 bool VoxelMesher::Vertex::operator==(const Vertex &p_vertex) const {
-
 	if (vertex != p_vertex.vertex)
 		return false;
 
@@ -66,7 +65,6 @@ bool VoxelMesher::Vertex::operator==(const Vertex &p_vertex) const {
 }
 
 uint32_t VoxelMesher::VertexHasher::hash(const Vertex &p_vtx) {
-
 	uint32_t h = hash_djb2_buffer((const uint8_t *)&p_vtx.vertex, sizeof(real_t) * 3);
 	h = hash_djb2_buffer((const uint8_t *)&p_vtx.normal, sizeof(real_t) * 3, h);
 	h = hash_djb2_buffer((const uint8_t *)&p_vtx.binormal, sizeof(real_t) * 3, h);
@@ -295,7 +293,6 @@ void VoxelMesher::build_mesh_into(RID mesh) {
 }
 
 void VoxelMesher::generate_normals(bool p_flip) {
-
 	_format = _format | VisualServer::ARRAY_FORMAT_NORMAL;
 
 	for (int i = 0; i < _indices.size(); i += 3) {
@@ -346,7 +343,11 @@ void VoxelMesher::remove_doubles() {
 		for (int j = 0; j < indices.size(); ++j) {
 			int index = indices[j];
 
+#if VERSION_MAJOR < 4
 			_vertices.remove(index);
+#else
+			_vertices.remove_at(index);
+#endif
 
 			//make all indices that were bigger than the one we replaced one lower
 			for (int k = 0; k < _indices.size(); ++k) {
@@ -398,8 +399,13 @@ void VoxelMesher::remove_doubles_hashed() {
 		for (int j = 0; j < indices.size(); ++j) {
 			int index = indices[j];
 
+#if VERSION_MAJOR < 4
 			hashes.remove(index);
 			_vertices.remove(index);
+#else
+			hashes.remove_at(index);
+			_vertices.remove_at(index);
+#endif
 
 			//make all indices that were bigger than the one we replaced one lower
 			for (int k = 0; k < _indices.size(); ++k) {
@@ -582,11 +588,9 @@ PoolVector<Vector3> VoxelMesher::build_collider() const {
 		return face_points;
 
 	if (_indices.size() == 0) {
-
 		int len = (_vertices.size() / 4);
 
 		for (int i = 0; i < len; ++i) {
-
 			face_points.push_back(_vertices.get(i * 4).vertex);
 			face_points.push_back(_vertices.get((i * 4) + 2).vertex);
 			face_points.push_back(_vertices.get((i * 4) + 1).vertex);
@@ -607,7 +611,7 @@ PoolVector<Vector3> VoxelMesher::build_collider() const {
 	return face_points;
 }
 
-void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &lights) {
+void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight>> &lights) {
 	ERR_FAIL_COND(node == NULL);
 
 	Color darkColor(0, 0, 0, 1);
@@ -649,13 +653,13 @@ void VoxelMesher::bake_lights(MeshInstance *node, Vector<Ref<VoxelLight> > &ligh
 			v_lightDiffuse += value;
 
 			/*
-                    float dist2 = Mathf.Clamp(Vector3.Distance(transformedLights[i], vertices), 0f, 15f);
-                    dist2 /= 35f;
+					float dist2 = Mathf.Clamp(Vector3.Distance(transformedLights[i], vertices), 0f, 15f);
+					dist2 /= 35f;
 
-                    Vector3 value = Vector3.one;
-                    value *= ((float) lights[i].Strength) / 255f;
-                    value *= (1 - dist2);
-                    v_lightDiffuse += value;*/
+					Vector3 value = Vector3.one;
+					value *= ((float) lights[i].Strength) / 255f;
+					value *= (1 - dist2);
+					v_lightDiffuse += value;*/
 		}
 
 		Color f = vertexv.color;
@@ -742,7 +746,11 @@ Vector3 VoxelMesher::get_vertex(const int idx) const {
 }
 
 void VoxelMesher::remove_vertex(const int idx) {
+#if VERSION_MAJOR < 4
 	_vertices.remove(idx);
+#else
+	_vertices.remove_at(idx);
+#endif
 }
 
 PoolVector<Vector3> VoxelMesher::get_normals() const {
@@ -890,7 +898,11 @@ int VoxelMesher::get_index(const int idx) const {
 }
 
 void VoxelMesher::remove_index(const int idx) {
+#if VERSION_MAJOR < 4
 	_indices.remove(idx);
+#else
+	_indices.remove_at(idx);
+#endif
 }
 
 VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
@@ -927,9 +939,15 @@ VoxelMesher::~VoxelMesher() {
 }
 
 void VoxelMesher::_bind_methods() {
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_add_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_bake_colors", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_bake_liquid_colors", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+#else
+	GDVIRTUAL_BIND(_add_chunk, "chunk");
+	GDVIRTUAL_BIND(_bake_colors, "chunk");
+	GDVIRTUAL_BIND(_bake_liquid_colors, "chunk");
+#endif
 
 	ClassDB::bind_method(D_METHOD("get_channel_index_type"), &VoxelMesher::get_channel_index_type);
 	ClassDB::bind_method(D_METHOD("set_channel_index_type", "value"), &VoxelMesher::set_channel_index_type);
@@ -983,7 +1001,12 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_mesh_data_resource_transform_colored", "mesh", "transform", "colors", "uv_rect"), &VoxelMesher::add_mesh_data_resource_transform_colored, DEFVAL(Rect2(0, 0, 1, 1)));
 #endif
 
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_add_mesher", PropertyInfo(Variant::OBJECT, "mesher", PROPERTY_HINT_RESOURCE_TYPE, "VoxelMesher")));
+#else
+	GDVIRTUAL_BIND(_add_mesher, "mesher");
+#endif
+
 	ClassDB::bind_method(D_METHOD("add_mesher", "mesher"), &VoxelMesher::add_mesher);
 	ClassDB::bind_method(D_METHOD("_add_mesher", "mesher"), &VoxelMesher::_add_mesher);
 

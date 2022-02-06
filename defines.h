@@ -14,7 +14,8 @@
 #define spatial_editor_plugin_h "editor/plugins/node_3d_editor_plugin.h"
 #define camera_h "scene/3d/camera_3d.h"
 #define spatial_h "scene/3d/node_3d.h"
-#define navigation_h "scene/3d/navigation_3d.h"
+#define navigation_h "scene/3d/node_3d.h"
+#define Navigation3D Node3D
 #define light_h "scene/3d/light_3d.h"
 #define visual_server_h "servers/rendering_server.h"
 #define mesh_instance_h "scene/3d/mesh_instance_3d.h"
@@ -63,6 +64,7 @@
 #define Camera Camera3D
 #define ToolButton Button
 #define Shape Shape3D
+#define Reference RefCounted
 
 typedef class World3D World;
 

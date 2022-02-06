@@ -191,6 +191,20 @@ public:
 
 	int get_channel_index_info(const ChannelTypeInfo channel_type);
 
+#if VERSION_MAJOR >= 4
+	GDVIRTUAL1(_chunk_added, Ref<VoxelChunk>);
+
+	GDVIRTUAL0(_generation_finished);
+
+	GDVIRTUAL4R(Ref<VoxelChunk>, _create_chunk, int, int, int, Ref<VoxelChunk>);
+	GDVIRTUAL1(_prepare_chunk_for_generation, Ref<VoxelChunk>);
+	GDVIRTUAL1(_generate_chunk, Ref<VoxelChunk>);
+
+	GDVIRTUAL1R(int, _get_channel_index_info, int);
+
+	GDVIRTUAL5(_set_voxel_with_tool, bool, Vector3, Vector3, int, int);
+#endif
+
 	VoxelWorld();
 	~VoxelWorld();
 

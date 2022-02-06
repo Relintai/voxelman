@@ -197,7 +197,11 @@ void VoxelWorld::world_area_add(const Ref<WorldArea> &area) {
 void VoxelWorld::world_area_remove(const int index) {
 	ERR_FAIL_INDEX(index, _world_areas.size());
 
+#if VERSION_MAJOR < 4
 	_world_areas.remove(index);
+#else
+	_world_areas.remove_at(index);
+#endif
 }
 void VoxelWorld::world_areas_clear() {
 	_world_areas.clear();
@@ -222,13 +226,22 @@ void VoxelWorld::voxel_structure_remove(const Ref<VoxelStructure> &structure) {
 
 	int index = _voxel_structures.find(structure);
 
-	if (index != -1)
+	if (index != -1) {
+#if VERSION_MAJOR < 4
 		_voxel_structures.remove(index);
+#else
+		_voxel_structures.remove_at(index);
+#endif
+	}
 }
 void VoxelWorld::voxel_structure_remove_index(const int index) {
 	ERR_FAIL_INDEX(index, _voxel_structures.size());
 
+#if VERSION_MAJOR < 4
 	_voxel_structures.remove(index);
+#else
+	_voxel_structures.remove_at(index);
+#endif
 }
 void VoxelWorld::voxel_structures_clear() {
 	_voxel_structures.clear();
@@ -280,8 +293,13 @@ void VoxelWorld::chunk_add(Ref<VoxelChunk> chunk, const int x, const int y, cons
 	if (is_inside_tree())
 		chunk->enter_tree();
 
-	if (has_method("_chunk_added"))
+	if (has_method("_chunk_added")) {
+#if VERSION_MAJOR < 4
 		call("_chunk_added", chunk);
+#else
+		GDVIRTUAL_CALL(_chunk_added, chunk);
+#endif
+	}
 }
 bool VoxelWorld::chunk_has(const int x, const int y, const int z) const {
 	return _chunks.has(IntPos(x, y, z));
@@ -304,7 +322,11 @@ Ref<VoxelChunk> VoxelWorld::chunk_remove(const int x, const int y, const int z) 
 
 	for (int i = 0; i < _chunks_vector.size(); ++i) {
 		if (_chunks_vector.get(i) == chunk) {
+#if VERSION_MAJOR < 4
 			_chunks_vector.remove(i);
+#else
+			_chunks_vector.remove_at(i);
+#endif
 			break;
 		}
 	}
@@ -321,7 +343,11 @@ Ref<VoxelChunk> VoxelWorld::chunk_remove_index(const int index) {
 	ERR_FAIL_INDEX_V(index, _chunks_vector.size(), NULL);
 
 	Ref<VoxelChunk> chunk = _chunks_vector.get(index);
+#if VERSION_MAJOR < 4
 	_chunks_vector.remove(index);
+#else
+	_chunks_vector.remove_at(index);
+#endif
 	_chunks.erase(IntPos(chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z()));
 	chunk->exit_tree();
 
@@ -361,7 +387,12 @@ Ref<VoxelChunk> VoxelWorld::chunk_get_or_create(int x, int y, int z) {
 }
 
 Ref<VoxelChunk> VoxelWorld::chunk_create(const int x, const int y, const int z) {
+#if VERSION_MAJOR < 4
 	Ref<VoxelChunk> c = call("_create_chunk", x, y, z, Ref<VoxelChunk>());
+#else
+	Ref<VoxelChunk> c;
+	GDVIRTUAL_CALL(_create_chunk, x, y, z, Ref<VoxelChunk>(), c);
+#endif
 
 	generation_queue_add_to(c);
 
@@ -371,12 +402,21 @@ Ref<VoxelChunk> VoxelWorld::chunk_create(const int x, const int y, const int z) 
 void VoxelWorld::chunk_setup(Ref<VoxelChunk> chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
+#if VERSION_MAJOR < 4
 	call("_create_chunk", chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z(), chunk);
+#else
+	Ref<VoxelChunk> c;
+	GDVIRTUAL_CALL(_create_chunk, chunk->get_position_x(), chunk->get_position_y(), chunk->get_position_z(), chunk, c);
+#endif
 }
 
 Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
+#if VERSION_MAJOR < 4
 		chunk.instance();
+#else
+		chunk.instantiate();
+#endif
 	}
 
 	//no meshers here
@@ -405,10 +445,19 @@ Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z,
 void VoxelWorld::chunk_generate(Ref<VoxelChunk> chunk) {
 	ERR_FAIL_COND(!chunk.is_valid());
 
-	if (has_method("_prepare_chunk_for_generation"))
+	if (has_method("_prepare_chunk_for_generation")) {
+#if VERSION_MAJOR < 4
 		call("_prepare_chunk_for_generation", chunk);
+#else
+		GDVIRTUAL_CALL(_prepare_chunk_for_generation, chunk);
+#endif
+	}
 
+#if VERSION_MAJOR < 4
 	call("_generate_chunk", chunk);
+#else
+	GDVIRTUAL_CALL(_generate_chunk, chunk);
+#endif
 
 	chunk->build();
 }
@@ -517,7 +566,11 @@ Ref<VoxelChunk> VoxelWorld::generation_queue_get_index(int index) {
 void VoxelWorld::generation_queue_remove_index(int index) {
 	ERR_FAIL_INDEX(index, _generation_queue.size());
 
+#if VERSION_MAJOR < 4
 	_generation_queue.remove(index);
+#else
+	_generation_queue.remove_at(index);
+#endif
 }
 int VoxelWorld::generation_queue_get_size() const {
 	return _generation_queue.size();
@@ -536,7 +589,11 @@ Ref<VoxelChunk> VoxelWorld::generation_get_index(const int index) {
 void VoxelWorld::generation_remove_index(const int index) {
 	ERR_FAIL_INDEX(index, _generating.size());
 
+#if VERSION_MAJOR < 4
 	_generating.remove(index);
+#else
+	_generating.remove_at(index);
+#endif
 }
 int VoxelWorld::generation_get_size() const {
 	return _generating.size();
@@ -589,7 +646,11 @@ void VoxelWorld::prop_add(Transform tarnsform, const Ref<PropData> &prop, const 
 			if (!sc.is_valid())
 				continue;
 
+#if VERSION_MAJOR < 4
 			Node *n = sc->instance();
+#else
+			Node *n = sc->instantiate();
+#endif
 			add_child(n);
 			n->set_owner(this);
 
@@ -837,11 +898,24 @@ Ref<VoxelChunk> VoxelWorld::get_or_create_chunk_at_world_position(const Vector3 
 }
 
 void VoxelWorld::set_voxel_with_tool(const bool mode_add, const Vector3 hit_position, const Vector3 hit_normal, const int selected_voxel, const int isolevel) {
+#if VERSION_MAJOR < 4
 	call("_set_voxel_with_tool", mode_add, hit_position, hit_normal, selected_voxel, isolevel);
+#else
+	GDVIRTUAL_CALL(_set_voxel_with_tool, mode_add, hit_position, hit_normal, selected_voxel, isolevel);
+#endif
 }
 
 int VoxelWorld::get_channel_index_info(const VoxelWorld::ChannelTypeInfo channel_type) {
+#if VERSION_MAJOR < 4
 	return call("_get_channel_index_info", channel_type);
+#else
+	int ret;
+	if (GDVIRTUAL_CALL(_get_channel_index_info, channel_type, ret)) {
+		return ret;
+	}
+
+	return 0;
+#endif
 }
 
 VoxelWorld::VoxelWorld() {
@@ -951,7 +1025,11 @@ void VoxelWorld::_notification(int p_what) {
 #endif
 				_is_priority_generation = false;
 
+#if VERSION_MAJOR < 4
 				call("_generation_finished");
+#else
+				GDVIRTUAL_CALL(_generation_finished);
+#endif
 
 				emit_signal("generation_finished");
 
@@ -962,7 +1040,11 @@ void VoxelWorld::_notification(int p_what) {
 				Ref<VoxelChunk> chunk = _generating.get(i);
 
 				if (!chunk.is_valid() || !chunk->get_is_generating()) {
+#if VERSION_MAJOR < 4
 					_generating.remove(i);
+#else
+					_generating.remove_at(i);
+#endif
 					--i;
 					continue;
 				}
@@ -976,7 +1058,12 @@ void VoxelWorld::_notification(int p_what) {
 
 			while (_generating.size() < _max_concurrent_generations && _generation_queue.size() != 0) {
 				Ref<VoxelChunk> chunk = _generation_queue.get(0);
+
+#if VERSION_MAJOR < 4
 				_generation_queue.remove(0);
+#else
+				_generation_queue.remove_at(0);
+#endif
 
 				ERR_FAIL_COND(!chunk.is_valid());
 
@@ -1112,7 +1199,11 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("voxel_structures_set"), &VoxelWorld::voxel_structures_set);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_structures", PROPERTY_HINT_NONE, "17/17:VoxelStructure", PROPERTY_USAGE_DEFAULT, "VoxelStructure"), "voxel_structures_set", "voxel_structures_get");
 
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_chunk_added", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+#else
+	GDVIRTUAL_BIND(_chunk_added, "chunk");
+#endif
 
 	ClassDB::bind_method(D_METHOD("chunk_add", "chunk", "x", "y", "z"), &VoxelWorld::chunk_add);
 	ClassDB::bind_method(D_METHOD("chunk_has", "x", "y", "z"), &VoxelWorld::chunk_has);
@@ -1140,11 +1231,19 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("generation_get_size"), &VoxelWorld::generation_get_size);
 
 	ADD_SIGNAL(MethodInfo("generation_finished"));
+
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_generation_finished"));
 
 	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk"), "_create_chunk", PropertyInfo(Variant::INT, "x"), PropertyInfo(Variant::INT, "y"), PropertyInfo(Variant::INT, "z"), PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_prepare_chunk_for_generation", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+#else
+	GDVIRTUAL_BIND(_generation_finished);
+	GDVIRTUAL_BIND(_create_chunk, "chunk", "x", "y", "z", "chunk", "ret");
+	GDVIRTUAL_BIND(_prepare_chunk_for_generation, "chunk");
+	GDVIRTUAL_BIND(_generate_chunk, "chunk");
+#endif
 
 	ClassDB::bind_method(D_METHOD("chunk_get_or_create", "x", "y", "z"), &VoxelWorld::chunk_get_or_create);
 	ClassDB::bind_method(D_METHOD("chunk_create", "x", "y", "z"), &VoxelWorld::chunk_create);
@@ -1176,17 +1275,25 @@ void VoxelWorld::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_chunk_at_world_position", "world_position"), &VoxelWorld::get_chunk_at_world_position);
 	ClassDB::bind_method(D_METHOD("get_or_create_chunk_at_world_position", "world_position"), &VoxelWorld::get_or_create_chunk_at_world_position);
 
-	BIND_VMETHOD(MethodInfo("_get_channel_index_info", PropertyInfo(Variant::INT, "channel_type", PROPERTY_HINT_ENUM, BINDING_STRING_CHANNEL_TYPE_INFO)));
+#if VERSION_MAJOR < 4
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::INT, "ret", "_get_channel_index_info", PropertyInfo(Variant::INT, "channel_type", PROPERTY_HINT_ENUM, BINDING_STRING_CHANNEL_TYPE_INFO)));
+#else
+	GDVIRTUAL_BIND(_get_channel_index_info, "channel_type", "ret");
+#endif
 
 	ClassDB::bind_method(D_METHOD("get_channel_index_info", "channel_type"), &VoxelWorld::get_channel_index_info);
 	ClassDB::bind_method(D_METHOD("_get_channel_index_info", "channel_type"), &VoxelWorld::_get_channel_index_info);
 
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_set_voxel_with_tool",
 			PropertyInfo(Variant::BOOL, "mode_add"),
 			PropertyInfo(Variant::VECTOR3, "hit_position"),
 			PropertyInfo(Variant::VECTOR3, "hit_normal"),
 			PropertyInfo(Variant::INT, "selected_voxel"),
 			PropertyInfo(Variant::INT, "isolevel")));
+#else
+	GDVIRTUAL_BIND(_set_voxel_with_tool, "mode_add", "hit_position", "hit_normal", "selected_voxel", "isolevel");
+#endif
 
 	ClassDB::bind_method(D_METHOD("set_voxel_with_tool", "mode_add", "hit_position", "hit_normal", "selected_voxel", "isolevel"), &VoxelWorld::set_voxel_with_tool);
 	ClassDB::bind_method(D_METHOD("_set_voxel_with_tool", "mode_add", "hit_position", "hit_normal", "selected_voxel", "isolevel"), &VoxelWorld::_set_voxel_with_tool);

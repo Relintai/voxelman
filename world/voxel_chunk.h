@@ -26,15 +26,15 @@ SOFTWARE.
 #include "core/version.h"
 
 #if VERSION_MAJOR > 3
+#include "core/config/engine.h"
 #include "core/io/resource.h"
 #include "core/string/ustring.h"
-#include "core/config/engine.h"
 #include "core/variant/array.h"
 #else
+#include "core/array.h"
+#include "core/engine.h"
 #include "core/resource.h"
 #include "core/ustring.h"
-#include "core/engine.h"
-#include "core/array.h"
 #endif
 
 #include "../defines.h"
@@ -62,11 +62,14 @@ include_pool_vector
 
 #if VERSION_MAJOR >= 4
 #define Texture Texture2D
+
+#include "core/math/transform_3d.h"
+		typedef class Transform3D Transform;
 #endif
 
 #include "../library/voxel_surface.h"
 #include "../library/voxelman_library.h"
-		; //hackfix for a clang format issue
+; //hackfix for a clang format issue
 
 class VoxelJob;
 class VoxelWorld;
@@ -292,6 +295,31 @@ public:
 	Vector3 to_local(Vector3 p_global) const;
 	Vector3 to_global(Vector3 p_local) const;
 
+#if VERSION_MAJOR >= 4
+	GDVIRTUAL1(_mesh_data_resource_added, int);
+
+	GDVIRTUAL0(_channel_setup);
+
+	GDVIRTUAL0(_bake_lights);
+	GDVIRTUAL1(_bake_light, Ref<VoxelLight>);
+	GDVIRTUAL0(_clear_baked_lights);
+
+	GDVIRTUAL0(_enter_tree);
+	GDVIRTUAL0(_exit_tree);
+	GDVIRTUAL1(_process, float);
+	GDVIRTUAL1(_physics_process, float);
+	GDVIRTUAL0(_world_transform_changed);
+	GDVIRTUAL1(_visibility_changed, bool);
+	GDVIRTUAL1(_world_light_added, Ref<VoxelLight>);
+	GDVIRTUAL1(_world_light_removed, Ref<VoxelLight>);
+
+	GDVIRTUAL1(_generation_process, float);
+	GDVIRTUAL1(_generation_physics_process, float);
+
+	GDVIRTUAL0(_finalize_build);
+	GDVIRTUAL0(_build);
+#endif
+
 	VoxelChunk();
 	~VoxelChunk();
 
@@ -372,11 +400,11 @@ protected:
 	float _voxel_scale;
 
 	int _current_job;
-	Vector<Ref<VoxelJob> > _jobs;
+	Vector<Ref<VoxelJob>> _jobs;
 
 	Ref<VoxelmanLibrary> _library;
 
-	Vector<Ref<VoxelStructure> > _voxel_structures;
+	Vector<Ref<VoxelStructure>> _voxel_structures;
 
 #if PROPS_PRESENT
 	Vector<PropDataStore> _props;

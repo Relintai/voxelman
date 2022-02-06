@@ -42,6 +42,7 @@ SOFTWARE.
 #include spatial_editor_plugin_h
 #include camera_h
 
+#if VERSION_MAJOR < 4
 bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event) {
 	if (!_world || !_world->get_editable()) {
 		return false;
@@ -68,6 +69,39 @@ bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<I
 
 	return false;
 }
+#else
+EditorPlugin::AfterGUIInput VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event) {
+	if (!_world || !_world->get_editable()) {
+		return EditorPlugin::AFTER_GUI_INPUT_PASS;
+	}
+
+	Ref<InputEventMouseButton> mb = p_event;
+
+	if (mb.is_valid()) {
+		if (mb->is_pressed()) {
+			Ref<VoxelmanLibrary> lib = _world->get_library();
+
+			if (!lib.is_valid())
+				return EditorPlugin::AFTER_GUI_INPUT_PASS;
+
+			if (mb->get_button_index() == MouseButton::LEFT) {
+				if (do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true)) {
+					return EditorPlugin::AFTER_GUI_INPUT_STOP;
+				} else {
+					return EditorPlugin::AFTER_GUI_INPUT_PASS;
+				}
+			} else {
+				return EditorPlugin::AFTER_GUI_INPUT_PASS;
+			}
+
+			//return do_input_action(p_camera, Point2(mb->get_position().x, mb->get_position().y), true);
+		}
+	}
+
+	return EditorPlugin::AFTER_GUI_INPUT_PASS;
+}
+
+#endif
 
 bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, bool p_click) {
 	if (!spatial_editor || !_world || !_world->is_inside_world())
@@ -85,7 +119,18 @@ bool VoxelWorldEditor::do_input_action(Camera *p_camera, const Point2 &p_point, 
 
 	PhysicsDirectSpaceState::RayResult res;
 
+#if VERSION_MAJOR >= 4
+	PhysicsDirectSpaceState::RayParameters keyparams;
+	keyparams.from = from;
+	keyparams.to = to;
+#endif
+
+
+#if VERSION_MAJOR < 4
 	if (ss->intersect_ray(from, to, res)) {
+#else
+	if (ss->intersect_ray(keyparams, res)) {
+#endif
 		int selected_voxel = 0;
 		int channel = 0;
 
@@ -158,7 +203,11 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 
 		Button *button = memnew(Button);
 		button->set_text(text);
+#if VERSION_MAJOR < 4
 		button->set_text_align(Button::ALIGN_LEFT);
+#else
+		button->set_text_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT);
+#endif
 		button->set_meta("index", i);
 		button->set_toggle_mode(true);
 		button->set_button_group(_surfaces_button_group);
@@ -196,10 +245,18 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 
 	spatial_editor_hb = memnew(HBoxContainer);
 	spatial_editor_hb->set_h_size_flags(SIZE_EXPAND_FILL);
+#if VERSION_MAJOR < 4
 	spatial_editor_hb->set_alignment(BoxContainer::ALIGN_BEGIN);
+#else
+	spatial_editor_hb->set_alignment(BoxContainer::ALIGNMENT_BEGIN);
+#endif
 	SpatialEditor::get_singleton()->add_control_to_menu_panel(spatial_editor_hb);
 
+#if VERSION_MAJOR < 4
 	_tool_button_group.instance();
+#else
+	_tool_button_group.instantiate();
+#endif
 
 	ToolButton *add_button = memnew(ToolButton);
 	add_button->set_text("Add");
@@ -210,7 +267,12 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 
 	add_button->CONNECT("button_up", this, VoxelWorldEditor, _on_tool_button_pressed);
 
+#if VERSION_MAJOR < 4
 	add_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/add_mode", "Add Mode", KEY_A));
+#else
+	add_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/add_mode", "Add Mode", Key::A));
+#endif
+
 	spatial_editor_hb->add_child(add_button);
 
 	ToolButton *remove_button = memnew(ToolButton);
@@ -221,7 +283,12 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 
 	remove_button->CONNECT("button_up", this, VoxelWorldEditor, _on_tool_button_pressed);
 
+#if VERSION_MAJOR < 4
 	remove_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/remove_mode", "Remove Mode", KEY_S));
+#else
+	remove_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/remove_mode", "Remove Mode", Key::S));
+#endif
+
 	spatial_editor_hb->add_child(remove_button);
 
 	ToolButton *insert_buton = memnew(ToolButton);
@@ -229,7 +296,12 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 
 	insert_buton->CONNECT("button_up", this, VoxelWorldEditor, _on_insert_block_at_camera_button_pressed);
 
+#if VERSION_MAJOR < 4
 	insert_buton->set_shortcut(ED_SHORTCUT("voxelman_world_editor/instert_block_at_camera", "Insert at camera", KEY_B));
+#else
+	insert_buton->set_shortcut(ED_SHORTCUT("voxelman_world_editor/instert_block_at_camera", "Insert at camera", Key::B));
+#endif
+
 	spatial_editor_hb->add_child(insert_buton);
 
 	set_custom_minimum_size(Size2(200 * EDSCALE, 0));
@@ -256,7 +328,11 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	scs->add_child(_surfaces_vbox_container);
 	_surfaces_vbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
 
+#if VERSION_MAJOR < 4
 	_surfaces_button_group.instance();
+#else
+	_surfaces_button_group.instantiate();
+#endif
 }
 VoxelWorldEditor::~VoxelWorldEditor() {
 	_world = NULL;
@@ -299,7 +375,12 @@ void VoxelWorldEditor::_on_insert_block_at_camera_button_pressed() {
 	if (!vp)
 		return;
 
+
+#if VERSION_MAJOR < 4
 	Camera *cam = vp->get_camera();
+#else
+	Camera *cam = vp->get_camera_3d();
+#endif
 
 	if (!cam)
 		return;
@@ -337,7 +418,7 @@ void VoxelWorldEditorPlugin::_notification(int p_what) {
 			case 1: { // Right.
 				SpatialEditor::get_singleton()->get_palette_split()->move_child(voxel_world_editor, 1);
 			} break;
-#else 
+#else
 			case 0: { // Left.
 				SpatialEditor::get_singleton()->move_control_to_left_panel(voxel_world_editor);
 			} break;
