@@ -45,10 +45,6 @@ void VoxelSurfaceMerger::set_texture(const VoxelSurfaceSides side, const Ref<Tex
 }
 
 void VoxelSurfaceMerger::refresh_rects() {
-	VoxelLibraryMerger *lib = Object::cast_to<VoxelLibraryMerger>(_library);
-
-	ERR_FAIL_COND(lib == NULL);
-
 	for (int i = 0; i < VOXEL_SIDES_COUNT; ++i) {
 		if (!_regions[i].is_valid()) {
 			_rects[i] = Rect2();
