@@ -78,6 +78,7 @@ sources = [
 
     "world/jobs/voxel_job.cpp",
     "world/jobs/voxel_terrain_job.cpp",
+    "world/jobs/voxel_mesher_job_step.cpp",
     "world/jobs/voxel_light_job.cpp",
     "world/jobs/voxel_prop_job.cpp",
 ]

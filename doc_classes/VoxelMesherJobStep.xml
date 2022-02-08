@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelMesherJobStep" inherits="Reference" version="3.5">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="fqms" type="FastQuadraticMeshSimplifier" setter="set_fqms" getter="get_fqms">
+		</member>
+		<member name="job_type" type="int" setter="set_job_type" getter="get_job_type" enum="VoxelMesherJobStep.VoxelMesherJobStepType" default="0">
+		</member>
+		<member name="lod_index" type="int" setter="set_lod_index" getter="get_lod_index" default="0">
+		</member>
+		<member name="simplification_agressiveness" type="float" setter="set_simplification_agressiveness" getter="get_simplification_agressiveness" default="7.0">
+		</member>
+		<member name="simplification_step_ratio" type="float" setter="set_simplification_step_ratio" getter="get_simplification_step_ratio" default="0.8">
+		</member>
+		<member name="simplification_steps" type="int" setter="set_simplification_steps" getter="get_simplification_steps" default="2">
+		</member>
+	</members>
+	<constants>
+		<constant name="TYPE_NORMAL" value="0" enum="VoxelMesherJobStepType">
+		</constant>
+		<constant name="TYPE_NORMAL_LOD" value="1" enum="VoxelMesherJobStepType">
+		</constant>
+		<constant name="TYPE_DROP_UV2" value="2" enum="VoxelMesherJobStepType">
+		</constant>
+		<constant name="TYPE_MERGE_VERTS" value="3" enum="VoxelMesherJobStepType">
+		</constant>
+		<constant name="TYPE_BAKE_TEXTURE" value="4" enum="VoxelMesherJobStepType">
+		</constant>
+		<constant name="TYPE_SIMPLIFY_MESH" value="5" enum="VoxelMesherJobStepType">
+		</constant>
+		<constant name="TYPE_OTHER" value="6" enum="VoxelMesherJobStepType">
+		</constant>
+	</constants>
+</class>

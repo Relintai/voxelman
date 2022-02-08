@@ -64,6 +64,7 @@ def get_doc_classes():
         "VoxelTerrainJob",
         "VoxelLightJob",
         "VoxelPropJob",
+        "VoxelMesherJobStep",
     ]
 
 
