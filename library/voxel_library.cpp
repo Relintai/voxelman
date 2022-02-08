@@ -22,6 +22,9 @@ SOFTWARE.
 
 #include "voxel_library.h"
 
+#include "../world/voxel_chunk.h"
+#include "voxel_material_cache.h"
+
 #ifdef PROPS_PRESENT
 #include "../../props/props/prop_data.h"
 #endif
@@ -37,11 +40,54 @@ void VoxelLibrary::set_initialized(const bool value) {
 	_initialized = value;
 }
 
+bool VoxelLibrary::supports_caching() {
+	return call("_supports_caching");
+}
+bool VoxelLibrary::_supports_caching() {
+	return false;
+}
+
+
 //Materials
 Ref<Material> VoxelLibrary::material_get(const int index) {
-	ERR_FAIL_INDEX_V(index, _materials.size(), Ref<VoxelSurface>(NULL));
+	ERR_FAIL_INDEX_V(index, _materials.size(), Ref<Material>(NULL));
 
 	return _materials[index];
+}
+
+Ref<Material> VoxelLibrary::material_lod_get(const int index) {
+	ERR_FAIL_COND_V(_materials.size() == 0, Ref<Material>(NULL));
+
+	if (index < 0) {
+		return _materials[0];
+	}
+
+	if (index >= _materials.size()) {
+		return _materials[_materials.size() - 1];
+	}
+
+	return _materials[index];
+}
+
+void VoxelLibrary::material_cache_get_key(Ref<VoxelChunk> chunk) {
+	call("_material_cache_get_key", chunk);
+}
+
+void VoxelLibrary::_material_cache_get_key(Ref<VoxelChunk> chunk) {
+}
+
+Ref<VoxelMaterialCache> VoxelLibrary::material_cache_get(const int key) {
+	return call("_material_cache_get", key);
+}
+
+Ref<VoxelMaterialCache> VoxelLibrary::_material_cache_get(const int key) {
+	ERR_FAIL_V_MSG(Ref<VoxelMaterialCache>(), "This VoxelLibrary doesn't support cached materials!");
+}
+
+void VoxelLibrary::material_cache_unref(const int key) {
+	call("_material_cache_unref", key);
+}
+void VoxelLibrary::_material_cache_unref(const int key) {
 }
 
 void VoxelLibrary::material_add(const Ref<Material> &value) {
@@ -88,10 +134,46 @@ void VoxelLibrary::materials_set(const Vector<Variant> &materials) {
 
 //Liquid Materials
 Ref<Material> VoxelLibrary::liquid_material_get(const int index) {
-	ERR_FAIL_INDEX_V(index, _liquid_materials.size(), Ref<VoxelSurface>(NULL));
+	ERR_FAIL_INDEX_V(index, _liquid_materials.size(), Ref<Material>(NULL));
 
 	return _liquid_materials[index];
 }
+
+Ref<Material> VoxelLibrary::liquid_material_lod_get(const int index) {
+	ERR_FAIL_COND_V(_materials.size() == 0, Ref<Material>(NULL));
+
+	if (index < 0) {
+		return _liquid_materials[0];
+	}
+
+	if (index >= _liquid_materials.size()) {
+		return _liquid_materials[_liquid_materials.size() - 1];
+	}
+
+	return _liquid_materials[index];
+}
+
+void VoxelLibrary::liquid_material_cache_get_key(Ref<VoxelChunk> chunk) {
+	call("_liquid_material_cache_get_key", chunk);
+}
+
+void VoxelLibrary::_liquid_material_cache_get_key(Ref<VoxelChunk> chunk) {
+}
+
+Ref<VoxelMaterialCache> VoxelLibrary::liquid_material_cache_get(const int key) {
+	return call("_liquid_material_cache_get", key);
+}
+
+Ref<VoxelMaterialCache> VoxelLibrary::_liquid_material_cache_get(const int key) {
+	ERR_FAIL_V_MSG(Ref<VoxelMaterialCache>(), "This VoxelLibrary doesn't support cached liquid materials!");
+}
+
+void VoxelLibrary::liquid_material_cache_unref(const int key) {
+	call("_liquid_material_cache_unref", key);
+}
+void VoxelLibrary::_liquid_material_cache_unref(const int key) {
+}
+
 
 void VoxelLibrary::liquid_material_add(const Ref<Material> &value) {
 	ERR_FAIL_COND(!value.is_valid());
@@ -137,10 +219,46 @@ void VoxelLibrary::liquid_materials_set(const Vector<Variant> &materials) {
 
 //Prop Materials
 Ref<Material> VoxelLibrary::prop_material_get(const int index) {
-	ERR_FAIL_INDEX_V(index, _prop_materials.size(), Ref<VoxelSurface>(NULL));
+	ERR_FAIL_INDEX_V(index, _prop_materials.size(), Ref<Material>(NULL));
 
 	return _prop_materials[index];
 }
+
+Ref<Material> VoxelLibrary::prop_material_lod_get(const int index) {
+	ERR_FAIL_COND_V(_prop_materials.size() == 0, Ref<Material>(NULL));
+
+	if (index < 0) {
+		return _prop_materials[0];
+	}
+
+	if (index >= _prop_materials.size()) {
+		return _prop_materials[_prop_materials.size() - 1];
+	}
+
+	return _prop_materials[index];
+}
+
+void VoxelLibrary::prop_material_cache_get_key(Ref<VoxelChunk> chunk) {
+	call("_prop_material_cache_get_key", chunk);
+}
+
+void VoxelLibrary::_prop_material_cache_get_key(Ref<VoxelChunk> chunk) {
+}
+
+Ref<VoxelMaterialCache> VoxelLibrary::prop_material_cache_get(const int key) {
+	return call("_prop_material_cache_get", key);
+}
+
+Ref<VoxelMaterialCache> VoxelLibrary::_prop_material_cache_get(const int key) {
+	ERR_FAIL_V_MSG(Ref<VoxelMaterialCache>(), "This VoxelLibrary doesn't support cached prop materials!");
+}
+
+void VoxelLibrary::prop_material_cache_unref(const int key) {
+	call("_prop_material_cache_unref", key);
+}
+void VoxelLibrary::_prop_material_cache_unref(const int key) {
+}
+
 
 void VoxelLibrary::prop_material_add(const Ref<Material> &value) {
 	ERR_FAIL_COND(!value.is_valid());
@@ -264,12 +382,40 @@ void VoxelLibrary::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "initialized", PROPERTY_HINT_NONE, "", 0), "set_initialized", "get_initialized");
 
 #if VERSION_MAJOR < 4
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::BOOL, "ret"), "_supports_caching"));
+#else
+	GDVIRTUAL_BIND(_supports_caching);
+#endif
+
+	ClassDB::bind_method(D_METHOD("_supports_caching"), &VoxelLibrary::_supports_caching);
+	ClassDB::bind_method(D_METHOD("supports_caching"), &VoxelLibrary::supports_caching);
+
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_setup_material_albedo", PropertyInfo(Variant::INT, "material_index"), PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture")));
 #else
 	GDVIRTUAL_BIND(_setup_material_albedo, "material_index", "texture");
 #endif
 
+#if VERSION_MAJOR < 4
+	BIND_VMETHOD(MethodInfo("_material_cache_get_key", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "TerrainMaterialCache"), "_material_cache_get", PropertyInfo(Variant::INT, "key")));
+	BIND_VMETHOD(MethodInfo("_material_cache_unref", PropertyInfo(Variant::INT, "key")));
+#else
+	GDVIRTUAL_BIND(_material_cache_get_key, "chunk", "texture");
+	GDVIRTUAL_BIND(_material_cache_get, "key");
+	GDVIRTUAL_BIND(_material_cache_unref, "key");
+#endif
+
 	ClassDB::bind_method(D_METHOD("material_get", "index"), &VoxelLibrary::material_get);
+	ClassDB::bind_method(D_METHOD("material_lod_get", "index"), &VoxelLibrary::material_lod_get);
+
+	ClassDB::bind_method(D_METHOD("material_cache_get_key", "chunk"), &VoxelLibrary::material_cache_get_key);
+	ClassDB::bind_method(D_METHOD("_material_cache_get_key", "chunk"), &VoxelLibrary::_material_cache_get_key);
+	ClassDB::bind_method(D_METHOD("material_cache_get", "key"), &VoxelLibrary::material_cache_get);
+	ClassDB::bind_method(D_METHOD("_material_cache_get", "key"), &VoxelLibrary::_material_cache_get);
+	ClassDB::bind_method(D_METHOD("material_cache_unref", "key"), &VoxelLibrary::material_cache_unref);
+	ClassDB::bind_method(D_METHOD("_material_cache_unref", "key"), &VoxelLibrary::_material_cache_unref);
+
 	ClassDB::bind_method(D_METHOD("material_add", "value"), &VoxelLibrary::material_add);
 	ClassDB::bind_method(D_METHOD("material_set", "index", "value"), &VoxelLibrary::material_set);
 	ClassDB::bind_method(D_METHOD("material_remove", "index"), &VoxelLibrary::material_remove);
@@ -280,7 +426,26 @@ void VoxelLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("materials_set"), &VoxelLibrary::materials_set);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "materials", PROPERTY_HINT_NONE, "17/17:Material", PROPERTY_USAGE_DEFAULT, "Material"), "materials_set", "materials_get");
 
+#if VERSION_MAJOR < 4
+	BIND_VMETHOD(MethodInfo("_liquid_material_cache_get_key", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "TerrainMaterialCache"), "_liquid_material_cache_get", PropertyInfo(Variant::INT, "key")));
+	BIND_VMETHOD(MethodInfo("_liquid_material_cache_unref", PropertyInfo(Variant::INT, "key")));
+#else
+	GDVIRTUAL_BIND(_liquid_material_cache_get_key, "chunk", "texture");
+	GDVIRTUAL_BIND(_liquid_material_cache_get, "key");
+	GDVIRTUAL_BIND(_liquid_material_cache_unref, "key");
+#endif
+
 	ClassDB::bind_method(D_METHOD("liquid_material_get", "index"), &VoxelLibrary::liquid_material_get);
+	ClassDB::bind_method(D_METHOD("liquid_material_lod_get", "index"), &VoxelLibrary::liquid_material_lod_get);
+
+	ClassDB::bind_method(D_METHOD("liquid_material_cache_get_key", "chunk"), &VoxelLibrary::liquid_material_cache_get_key);
+	ClassDB::bind_method(D_METHOD("_liquid_material_cache_get_key", "chunk"), &VoxelLibrary::_liquid_material_cache_get_key);
+	ClassDB::bind_method(D_METHOD("liquid_material_cache_get", "key"), &VoxelLibrary::liquid_material_cache_get);
+	ClassDB::bind_method(D_METHOD("_liquid_material_cache_get", "key"), &VoxelLibrary::_liquid_material_cache_get);
+	ClassDB::bind_method(D_METHOD("liquid_material_cache_unref", "key"), &VoxelLibrary::liquid_material_cache_unref);
+	ClassDB::bind_method(D_METHOD("_liquid_material_cache_unref", "key"), &VoxelLibrary::_liquid_material_cache_unref);
+
 	ClassDB::bind_method(D_METHOD("liquid_material_add", "value"), &VoxelLibrary::liquid_material_add);
 	ClassDB::bind_method(D_METHOD("liquid_material_set", "index", "value"), &VoxelLibrary::liquid_material_set);
 	ClassDB::bind_method(D_METHOD("liquid_material_remove", "index"), &VoxelLibrary::liquid_material_remove);
@@ -291,7 +456,26 @@ void VoxelLibrary::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("liquid_materials_set"), &VoxelLibrary::liquid_materials_set);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "liquid_materials", PROPERTY_HINT_NONE, "17/17:Material", PROPERTY_USAGE_DEFAULT, "Material"), "liquid_materials_set", "liquid_materials_get");
 
+#if VERSION_MAJOR < 4
+	BIND_VMETHOD(MethodInfo("_prop_material_cache_get_key", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::OBJECT, "ret", PROPERTY_HINT_RESOURCE_TYPE, "TerrainMaterialCache"), "_prop_material_cache_get", PropertyInfo(Variant::INT, "key")));
+	BIND_VMETHOD(MethodInfo("_prop_material_cache_unref", PropertyInfo(Variant::INT, "key")));
+#else
+	GDVIRTUAL_BIND(_prop_material_cache_get_key, "chunk", "texture");
+	GDVIRTUAL_BIND(_prop_material_cache_get, "key");
+	GDVIRTUAL_BIND(_prop_material_cache_unref, "key");
+#endif
+
 	ClassDB::bind_method(D_METHOD("prop_material_get", "index"), &VoxelLibrary::prop_material_get);
+	ClassDB::bind_method(D_METHOD("prop_material_lod_get", "index"), &VoxelLibrary::prop_material_lod_get);
+
+	ClassDB::bind_method(D_METHOD("prop_material_cache_get_key", "chunk"), &VoxelLibrary::prop_material_cache_get_key);
+	ClassDB::bind_method(D_METHOD("_prop_material_cache_get_key", "chunk"), &VoxelLibrary::_prop_material_cache_get_key);
+	ClassDB::bind_method(D_METHOD("prop_material_cache_get", "key"), &VoxelLibrary::prop_material_cache_get);
+	ClassDB::bind_method(D_METHOD("_prop_material_cache_get", "key"), &VoxelLibrary::_prop_material_cache_get);
+	ClassDB::bind_method(D_METHOD("prop_material_cache_unref", "key"), &VoxelLibrary::prop_material_cache_unref);
+	ClassDB::bind_method(D_METHOD("_prop_material_cache_unref", "key"), &VoxelLibrary::_prop_material_cache_unref);
+
 	ClassDB::bind_method(D_METHOD("prop_material_add", "value"), &VoxelLibrary::prop_material_add);
 	ClassDB::bind_method(D_METHOD("prop_material_set", "index", "value"), &VoxelLibrary::prop_material_set);
 	ClassDB::bind_method(D_METHOD("prop_material_remove", "index"), &VoxelLibrary::prop_material_remove);

@@ -43,6 +43,8 @@ SOFTWARE.
 #define Texture Texture2D
 #endif
 
+class VoxelMaterialCache;
+class VoxelChunk;
 class VoxelSurface;
 class VoxelMesher;
 class PackedScene;
@@ -64,7 +66,19 @@ public:
 	bool get_initialized() const;
 	void set_initialized(const bool value);
 
+	bool supports_caching();
+	virtual bool _supports_caching();
+
 	Ref<Material> material_get(const int index);
+	Ref<Material> material_lod_get(const int index);
+
+	void material_cache_get_key(Ref<VoxelChunk> chunk);
+	virtual void _material_cache_get_key(Ref<VoxelChunk> chunk);
+	Ref<VoxelMaterialCache> material_cache_get(const int key);
+	virtual Ref<VoxelMaterialCache> _material_cache_get(const int key);
+	void material_cache_unref(const int key);
+	virtual void _material_cache_unref(const int key);
+
 	void material_add(const Ref<Material> &value);
 	void material_set(const int index, const Ref<Material> &value);
 	void material_remove(const int index);
@@ -75,6 +89,15 @@ public:
 	void materials_set(const Vector<Variant> &materials);
 
 	Ref<Material> liquid_material_get(const int index);
+	Ref<Material> liquid_material_lod_get(const int index);
+
+	void liquid_material_cache_get_key(Ref<VoxelChunk> chunk);
+	virtual void _liquid_material_cache_get_key(Ref<VoxelChunk> chunk);
+	Ref<VoxelMaterialCache> liquid_material_cache_get(const int key);
+	virtual Ref<VoxelMaterialCache> _liquid_material_cache_get(const int key);
+	void liquid_material_cache_unref(const int key);
+	virtual void _liquid_material_cache_unref(const int key);
+
 	void liquid_material_add(const Ref<Material> &value);
 	void liquid_material_set(const int index, const Ref<Material> &value);
 	void liquid_material_remove(const int index);
@@ -85,6 +108,15 @@ public:
 	void liquid_materials_set(const Vector<Variant> &materials);
 
 	Ref<Material> prop_material_get(const int index);
+	Ref<Material> prop_material_lod_get(const int index);
+
+	void prop_material_cache_get_key(Ref<VoxelChunk> chunk);
+	virtual void _prop_material_cache_get_key(Ref<VoxelChunk> chunk);
+	Ref<VoxelMaterialCache> prop_material_cache_get(const int key);
+	virtual Ref<VoxelMaterialCache> _prop_material_cache_get(const int key);
+	void prop_material_cache_unref(const int key);
+	virtual void _prop_material_cache_unref(const int key);
+
 	void prop_material_add(const Ref<Material> &value);
 	void prop_material_set(const int index, const Ref<Material> &value);
 	void prop_material_remove(const int index);
