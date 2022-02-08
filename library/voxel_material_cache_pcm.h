@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019-2020 Péter Magyar
+Copyright (c) 2019-2022 Péter Magyar
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,32 +20,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXEL_LIBRARY_MERGER_H
-#define VOXEL_LIBRARY_MERGER_H
+#ifndef VOXEL_MATERIAL_CACHE_PCM_H
+#define VOXEL_MATERIAL_CACHE_PCM_H
+
+#include "voxel_material_cache.h"
 
 #include "core/version.h"
 
 #if VERSION_MAJOR > 3
 #include "core/io/resource.h"
-#include "core/templates/map.h"
+#include "core/math/color.h"
+#include "core/templates/vector.h"
 #else
+#include "core/color.h"
 #include "core/resource.h"
-#include "core/map.h"
+#include "core/vector.h"
 #endif
 
-#include "voxel_library.h"
-
+#include "core/math/rect2.h"
 #include "scene/resources/material.h"
 
-#include "../data/voxel_light.h"
-#include "voxel_surface_merger.h"
+#include "../defines.h"
 
-class VoxelSurfaceSimple;
-class VoxelMesher;
-class PackedScene;
+class VoxelSurface;
+class TexturePacker;
+class PropData;
 
-class VoxelLibraryMerger : public VoxelLibrary {
-	GDCLASS(VoxelLibraryMerger, VoxelLibrary)
+class VoxelMaterialCachePCM : public VoxelMaterialCache {
+	GDCLASS(VoxelMaterialCachePCM, VoxelMaterialCache);
 
 public:
 	int get_texture_flags() const;
@@ -63,54 +65,20 @@ public:
 	int get_margin() const;
 	void set_margin(const int margin);
 
-	Ref<VoxelSurface> voxel_surface_get(const int index);
-	void voxel_surface_add(Ref<VoxelSurface> value);
-	void voxel_surface_set(const int index, Ref<VoxelSurface> value);
-	void voxel_surface_remove(const int index);
-	int voxel_surface_get_num() const;
-	void voxel_surfaces_clear();
-
-	Vector<Variant> get_voxel_surfaces();
-	void set_voxel_surfaces(const Vector<Variant> &surfaces);
-
-#ifdef PROPS_PRESENT
-	Ref<PropData> get_prop(const int index);
-	void add_prop(Ref<PropData> value);
-	bool has_prop(const Ref<PropData> &value) const;
-	void set_prop(const int index, const Ref<PropData> &value);
-	void remove_prop(const int index);
-	int get_num_props() const;
-	void clear_props();
-
-	Vector<Variant> get_props();
-	void set_props(const Vector<Variant> &props);
-
-	Rect2 get_prop_uv_rect(const Ref<Texture> &texture);
-
-	Ref<TexturePacker> get_prop_packer();
-#endif
+	Ref<AtlasTexture> additional_texture_get_atlas_tex(const Ref<Texture> &texture);
+	Rect2 additional_texture_get_uv_rect(const Ref<Texture> &texture);
 
 	void refresh_rects();
 
-	void _setup_material_albedo(const int material_index, const Ref<Texture> &texture);
+	void _setup_material_albedo(Ref<Texture> texture);
 
-	VoxelLibraryMerger();
-	~VoxelLibraryMerger();
+	VoxelMaterialCachePCM();
+	~VoxelMaterialCachePCM();
 
 protected:
-#ifdef PROPS_PRESENT
-	bool process_prop_textures(Ref<PropData> prop);
-#endif
-
 	static void _bind_methods();
 
-	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
-#ifdef PROPS_PRESENT
-	Vector<Ref<PropData> > _props;
-#endif
-
 	Ref<TexturePacker> _packer;
-	Ref<TexturePacker> _prop_packer;
 };
 
 #endif

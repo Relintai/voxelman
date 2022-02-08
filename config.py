@@ -24,6 +24,10 @@ def get_doc_classes():
         "VoxelLibraryMerger",
         "VoxelLibrarySimple",
         "VoxelLibrary",
+        "VoxelLibraryMergerPCM",
+
+        "VoxelMaterialCache",
+        "VoxelMaterialCachePCM",
 
         "VoxelCubePoints",
         "VoxelMesherCubic",

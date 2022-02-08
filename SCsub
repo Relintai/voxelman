@@ -32,6 +32,7 @@ sources = [
 
     "library/voxel_surface.cpp",
     "library/voxel_surface_simple.cpp",
+    "library/voxel_material_cache.cpp",
 
     "data/voxel_light.cpp",
 
@@ -84,6 +85,8 @@ sources = [
 if has_texture_packer:
     sources.append("library/voxel_library_merger.cpp")
     sources.append("library/voxel_surface_merger.cpp")
+    sources.append("library/voxel_library_merger_pcm.cpp")
+    sources.append("library/voxel_material_cache_pcm.cpp")
 
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':
     # Shared lib compilation

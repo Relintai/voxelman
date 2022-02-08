@@ -702,15 +702,27 @@
 		</member>
 		<member name="library" type="VoxelLibrary" setter="set_library" getter="get_library">
 		</member>
+		<member name="liquid_material_cache_key" type="int" setter="liquid_material_cache_key_set" getter="liquid_material_cache_key_get" default="0">
+		</member>
+		<member name="liquid_material_cache_key_has" type="bool" setter="liquid_material_cache_key_has_set" getter="liquid_material_cache_key_has" default="false">
+		</member>
 		<member name="margin_end" type="int" setter="set_margin_end" getter="get_margin_end" default="0">
 		</member>
 		<member name="margin_start" type="int" setter="set_margin_start" getter="get_margin_start" default="0">
+		</member>
+		<member name="material_cache_key" type="int" setter="material_cache_key_set" getter="material_cache_key_get" default="0">
+		</member>
+		<member name="material_cache_key_has" type="bool" setter="material_cache_key_has_set" getter="material_cache_key_has" default="false">
 		</member>
 		<member name="position_x" type="int" setter="set_position_x" getter="get_position_x" default="0">
 		</member>
 		<member name="position_y" type="int" setter="set_position_y" getter="get_position_y" default="0">
 		</member>
 		<member name="position_z" type="int" setter="set_position_z" getter="get_position_z" default="0">
+		</member>
+		<member name="prop_material_cache_key" type="int" setter="prop_material_cache_key_set" getter="prop_material_cache_key_get" default="0">
+		</member>
+		<member name="prop_material_cache_key_has" type="bool" setter="prop_material_cache_key_has_set" getter="prop_material_cache_key_has" default="false">
 		</member>
 		<member name="size_x" type="int" setter="set_size_x" getter="get_size_x" default="0">
 		</member>

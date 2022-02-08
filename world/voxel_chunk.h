@@ -67,8 +67,8 @@ include_pool_vector
 		typedef class Transform3D Transform;
 #endif
 
-#include "../library/voxel_surface.h"
 #include "../library/voxel_library.h"
+#include "../library/voxel_surface.h"
 ; //hackfix for a clang format issue
 
 class VoxelJob;
@@ -143,6 +143,24 @@ public:
 	int get_margin_end() const;
 	void set_margin_start(const int value);
 	void set_margin_end(const int value);
+
+	int material_cache_key_get() const;
+	void material_cache_key_set(const int value);
+
+	bool material_cache_key_has() const;
+	void material_cache_key_has_set(const bool value);
+
+	int liquid_material_cache_key_get() const;
+	void liquid_material_cache_key_set(const int value);
+
+	bool liquid_material_cache_key_has() const;
+	void liquid_material_cache_key_has_set(const bool value);
+
+	int prop_material_cache_key_get() const;
+	void prop_material_cache_key_set(const int value);
+
+	bool prop_material_cache_key_has() const;
+	void prop_material_cache_key_has_set(const bool value);
 
 	Ref<VoxelLibrary> get_library();
 	void set_library(const Ref<VoxelLibrary> &value);
@@ -394,6 +412,15 @@ protected:
 
 	int _margin_start;
 	int _margin_end;
+
+	int _material_cache_key;
+	bool _material_cache_key_has;
+
+	int _liquid_material_cache_key;
+	bool _liquid_material_cache_key_has;
+
+	int _prop_material_cache_key;
+	bool _prop_material_cache_key_has;
 
 	Vector<uint8_t *> _channels;
 

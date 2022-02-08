@@ -72,7 +72,6 @@ public:
 protected:
 	static void _bind_methods();
 
-private:
 	Vector<Ref<VoxelSurfaceSimple> > _voxel_surfaces;
 
 	//atlas

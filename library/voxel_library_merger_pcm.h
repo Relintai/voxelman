@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019-2020 Péter Magyar
+Copyright (c) 2019-2022 Péter Magyar
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXEL_LIBRARY_MERGER_H
-#define VOXEL_LIBRARY_MERGER_H
+#ifndef VOXEL_LIBRARY_MERGER_PCM_H
+#define VOXEL_LIBRARY_MERGER_PCM_H
 
 #include "core/version.h"
 
@@ -40,14 +40,31 @@ SOFTWARE.
 #include "../data/voxel_light.h"
 #include "voxel_surface_merger.h"
 
+#include "core/os/mutex.h"
+
 class VoxelSurfaceSimple;
 class VoxelMesher;
 class PackedScene;
+class VoxelMaterialCache;
+class VoxelMaterialCachePCM;
+class TexturePacker;
+class VoxelChunk;
 
-class VoxelLibraryMerger : public VoxelLibrary {
-	GDCLASS(VoxelLibraryMerger, VoxelLibrary)
+//pcm = per chunk material
+class VoxelLibraryMergerPCM : public VoxelLibrary {
+	GDCLASS(VoxelLibraryMergerPCM, VoxelLibrary);
 
 public:
+	bool _supports_caching();
+
+	void _material_cache_get_key(Ref<VoxelChunk> chunk);
+	Ref<VoxelMaterialCache> _material_cache_get(const int key);
+	void _material_cache_unref(const int key);
+
+	void _prop_material_cache_get_key(Ref<VoxelChunk> chunk);
+	Ref<VoxelMaterialCache> _prop_material_cache_get(const int key);
+	void _prop_material_cache_unref(const int key);
+
 	int get_texture_flags() const;
 	void set_texture_flags(const int flags);
 
@@ -94,8 +111,8 @@ public:
 
 	void _setup_material_albedo(const int material_index, const Ref<Texture> &texture);
 
-	VoxelLibraryMerger();
-	~VoxelLibraryMerger();
+	VoxelLibraryMergerPCM();
+	~VoxelLibraryMergerPCM();
 
 protected:
 #ifdef PROPS_PRESENT
@@ -104,13 +121,20 @@ protected:
 
 	static void _bind_methods();
 
+	Map<int, Ref<VoxelMaterialCachePCM> > _material_cache;
+	Map<int, Ref<VoxelMaterialCachePCM> > _prop_material_cache;
+
 	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
 #ifdef PROPS_PRESENT
 	Vector<Ref<PropData> > _props;
 #endif
 
+	//todo remove these
 	Ref<TexturePacker> _packer;
 	Ref<TexturePacker> _prop_packer;
+
+	Mutex _material_cache_mutex;
+	Mutex _prop_material_cache_mutex;
 };
 
 #endif

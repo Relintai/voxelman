@@ -135,7 +135,6 @@ public:
 protected:
 	static void _bind_methods();
 
-private:
 	bool _initialized;
 	Vector<Ref<Material> > _materials;
 	Vector<Ref<Material> > _liquid_materials;

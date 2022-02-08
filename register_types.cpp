@@ -27,10 +27,13 @@ SOFTWARE.
 
 #include "library/voxel_library.h"
 #include "library/voxel_library_simple.h"
+#include "library/voxel_material_cache.h"
 
 #ifdef TEXTURE_PACKER_PRESENT
-#include "library/voxel_surface_merger.h"
 #include "library/voxel_library_merger.h"
+#include "library/voxel_library_merger_pcm.h"
+#include "library/voxel_material_cache_pcm.h"
+#include "library/voxel_surface_merger.h"
 #endif
 
 #include "data/voxel_light.h"
@@ -90,9 +93,13 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelLibrary>();
 	ClassDB::register_class<VoxelLibrarySimple>();
 
+	ClassDB::register_class<VoxelMaterialCache>();
+
 #ifdef TEXTURE_PACKER_PRESENT
 	ClassDB::register_class<VoxelSurfaceMerger>();
 	ClassDB::register_class<VoxelLibraryMerger>();
+	ClassDB::register_class<VoxelLibraryMergerPCM>();
+	ClassDB::register_class<VoxelMaterialCachePCM>();
 #endif
 
 	ClassDB::register_class<VoxelLight>();
