@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "voxel_surface_merger.h"
 
-#include "voxelman_library_merger.h"
+#include "voxel_library_merger.h"
 
 #include "../defines.h"
 
@@ -45,7 +45,7 @@ void VoxelSurfaceMerger::set_texture(const VoxelSurfaceSides side, const Ref<Tex
 }
 
 void VoxelSurfaceMerger::refresh_rects() {
-	VoxelmanLibraryMerger *lib = Object::cast_to<VoxelmanLibraryMerger>(_library);
+	VoxelLibraryMerger *lib = Object::cast_to<VoxelLibraryMerger>(_library);
 
 	ERR_FAIL_COND(lib == NULL);
 

@@ -188,10 +188,10 @@ _FORCE_INLINE_ void VoxelChunk::set_margin_end(const int value) {
 	_margin_end = value;
 }
 
-Ref<VoxelmanLibrary> VoxelChunk::get_library() {
+Ref<VoxelLibrary> VoxelChunk::get_library() {
 	return _library;
 }
-void VoxelChunk::set_library(const Ref<VoxelmanLibrary> &value) {
+void VoxelChunk::set_library(const Ref<VoxelLibrary> &value) {
 	_library = value;
 }
 
@@ -905,7 +905,11 @@ int VoxelChunk::mesh_data_resource_get_count() const {
 void VoxelChunk::mesh_data_resource_remove(const int index) {
 	ERR_FAIL_INDEX(index, _mesh_data_resources.size());
 
+#if VERSION_MAJOR < 4
 	_mesh_data_resources.remove(index);
+#else
+	_mesh_data_resources.remove_at(index);
+#endif
 }
 void VoxelChunk::mesh_data_resource_clear() {
 	_mesh_data_resources.clear();
@@ -1379,7 +1383,11 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_transform"), &VoxelChunk::get_transform);
 	ClassDB::bind_method(D_METHOD("set_transform", "value"), &VoxelChunk::set_transform);
+#if VERSION_MAJOR < 4
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM, "transform"), "set_transform", "get_transform");
+#else
+	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "transform"), "set_transform", "get_transform");
+#endif
 
 	ClassDB::bind_method(D_METHOD("get_visible"), &VoxelChunk::get_visible);
 	ClassDB::bind_method(D_METHOD("set_visible", "value"), &VoxelChunk::set_visible);
@@ -1450,7 +1458,7 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelChunk::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelChunk::set_library);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary"), "set_library", "get_library");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLibrary"), "set_library", "get_library");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelChunk::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelChunk::set_voxel_scale);

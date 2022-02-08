@@ -20,25 +20,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "voxelman_level_generator_flat.h"
+#include "voxel_level_generator_flat.h"
 
 #include "../world/voxel_chunk.h"
 
-int VoxelmanLevelGeneratorFlat::get_floor_position() const {
+int VoxelLevelGeneratorFlat::get_floor_position() const {
 	return _floor_position;
 }
-void VoxelmanLevelGeneratorFlat::set_floor_position(const int floor_height) {
+void VoxelLevelGeneratorFlat::set_floor_position(const int floor_height) {
 	_floor_position = floor_height;
 }
 
-Dictionary VoxelmanLevelGeneratorFlat::get_channel_map() {
+Dictionary VoxelLevelGeneratorFlat::get_channel_map() {
 	return _channel_map;
 }
-void VoxelmanLevelGeneratorFlat::set_channel_map(const Dictionary &map) {
+void VoxelLevelGeneratorFlat::set_channel_map(const Dictionary &map) {
 	_channel_map = map;
 }
 
-void VoxelmanLevelGeneratorFlat::_generate_chunk(Ref<VoxelChunk> chunk) {
+void VoxelLevelGeneratorFlat::_generate_chunk(Ref<VoxelChunk> chunk) {
 	int dymin = chunk->get_position_y() * chunk->get_size_y();
 	int dymax = dymin + chunk->get_size_y() + chunk->get_margin_end();
 
@@ -82,22 +82,22 @@ void VoxelmanLevelGeneratorFlat::_generate_chunk(Ref<VoxelChunk> chunk) {
 	}
 }
 
-VoxelmanLevelGeneratorFlat::VoxelmanLevelGeneratorFlat() {
+VoxelLevelGeneratorFlat::VoxelLevelGeneratorFlat() {
 	_floor_position = 0;
 }
 
-VoxelmanLevelGeneratorFlat::~VoxelmanLevelGeneratorFlat() {
+VoxelLevelGeneratorFlat::~VoxelLevelGeneratorFlat() {
 	_channel_map.clear();
 }
 
-void VoxelmanLevelGeneratorFlat::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_floor_position"), &VoxelmanLevelGeneratorFlat::get_floor_position);
-	ClassDB::bind_method(D_METHOD("set_floor_position", "value"), &VoxelmanLevelGeneratorFlat::set_floor_position);
+void VoxelLevelGeneratorFlat::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_floor_position"), &VoxelLevelGeneratorFlat::get_floor_position);
+	ClassDB::bind_method(D_METHOD("set_floor_position", "value"), &VoxelLevelGeneratorFlat::set_floor_position);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "floor_position"), "set_floor_position", "get_floor_position");
 
-	ClassDB::bind_method(D_METHOD("get_channel_map"), &VoxelmanLevelGeneratorFlat::get_channel_map);
-	ClassDB::bind_method(D_METHOD("set_channel_map", "value"), &VoxelmanLevelGeneratorFlat::set_channel_map);
+	ClassDB::bind_method(D_METHOD("get_channel_map"), &VoxelLevelGeneratorFlat::get_channel_map);
+	ClassDB::bind_method(D_METHOD("set_channel_map", "value"), &VoxelLevelGeneratorFlat::set_channel_map);
 	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "channel_map"), "set_channel_map", "get_channel_map");
 
-	ClassDB::bind_method(D_METHOD("_generate_chunk", "chunk"), &VoxelmanLevelGeneratorFlat::_generate_chunk);
+	ClassDB::bind_method(D_METHOD("_generate_chunk", "chunk"), &VoxelLevelGeneratorFlat::_generate_chunk);
 }

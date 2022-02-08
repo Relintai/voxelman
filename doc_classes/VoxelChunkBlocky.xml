@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelChunkBlocky" inherits="VoxelChunkDefault" version="3.2">
+<class name="VoxelChunkBlocky" inherits="VoxelChunkDefault" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -9,7 +9,7 @@
 	<methods>
 	</methods>
 	<members>
-		<member name="data_channel" type="PoolByteArray" setter="set_channel_compressed" getter="get_channel_compressed" default="PoolByteArray(  )">
+		<member name="data_channel" type="PoolByteArray" setter="channel_set_compressed" getter="channel_get_compressed" default="PoolByteArray(  )">
 		</member>
 	</members>
 	<constants>

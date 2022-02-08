@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BlockVoxelStructure" inherits="VoxelStructure" version="3.2">
+<class name="BlockVoxelStructure" inherits="VoxelStructure" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -7,65 +7,37 @@
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="get_voxel" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
-			<argument index="3" name="channel_index" type="int" default="0">
-			</argument>
+		<method name="get_voxel_isolevel" qualifiers="const">
+			<return type="int" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="get_voxel_data" qualifiers="const">
-			<return type="PoolByteArray">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+		<method name="get_voxel_type" qualifiers="const">
+			<return type="int" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="set_voxel">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="int">
-			</argument>
-			<argument index="1" name="x" type="int">
-			</argument>
-			<argument index="2" name="y" type="int">
-			</argument>
-			<argument index="3" name="z" type="int">
-			</argument>
-			<argument index="4" name="channel_index" type="int" default="0">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="set_voxel_data">
-			<return type="void">
-			</return>
-			<argument index="0" name="arr" type="PoolByteArray">
-			</argument>
-			<argument index="1" name="x" type="int">
-			</argument>
-			<argument index="2" name="y" type="int">
-			</argument>
-			<argument index="3" name="z" type="int">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
+			<argument index="3" name="type" type="int" />
+			<argument index="4" name="isolevel" type="int" />
 			<description>
 			</description>
 		</method>
 	</methods>
 	<members>
-		<member name="channel_count" type="int" setter="set_channel_count" getter="get_channel_count" default="0">
+		<member name="channel_isolevel" type="int" setter="set_channel_isolevel" getter="get_channel_isolevel" default="0">
+		</member>
+		<member name="channel_type" type="int" setter="set_channel_type" getter="get_channel_type" default="0">
 		</member>
 	</members>
 	<constants>

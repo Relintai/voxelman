@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelmanLibraryMerger" inherits="VoxelmanLibrary" version="3.2">
+<class name="VoxelLibraryMerger" inherits="VoxelLibrary" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -7,6 +7,17 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="get_prop_packer">
+			<return type="TexturePacker" />
+			<description>
+			</description>
+		</method>
+		<method name="get_prop_uv_rect">
+			<return type="Rect2" />
+			<argument index="0" name="texture" type="Texture" />
+			<description>
+			</description>
+		</method>
 	</methods>
 	<members>
 		<member name="background_color" type="Color" setter="set_background_color" getter="get_background_color" default="Color( 0, 0, 0, 1 )">
@@ -16,6 +27,8 @@
 		<member name="margin" type="int" setter="set_margin" getter="get_margin" default="0">
 		</member>
 		<member name="max_atlas_size" type="int" setter="set_max_atlas_size" getter="get_max_atlas_size" default="1024">
+		</member>
+		<member name="props" type="Array" setter="set_props" getter="get_props" default="[  ]">
 		</member>
 		<member name="texture_flags" type="int" setter="set_texture_flags" getter="get_texture_flags" default="5">
 		</member>

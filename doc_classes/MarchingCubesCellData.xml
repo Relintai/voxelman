@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="MarchingCubesCellData" inherits="Reference" version="3.2">
+<class name="MarchingCubesCellData" inherits="Reference" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -8,48 +8,37 @@
 	</tutorials>
 	<methods>
 		<method name="get_triangle_count" qualifiers="const">
-			<return type="int">
-			</return>
+			<return type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_vertex_count" qualifiers="const">
-			<return type="int">
-			</return>
+			<return type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_vertex_index" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="set_triangle_count">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="int">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="value" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="set_vertex_count">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="int">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="value" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="set_vertex_index">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<argument index="1" name="value" type="int">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="value" type="int" />
 			<description>
 			</description>
 		</method>

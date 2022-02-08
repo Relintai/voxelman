@@ -112,10 +112,10 @@ void VoxelMesher::set_texture_scale(const int value) {
 	_texture_scale = value;
 }
 
-Ref<VoxelmanLibrary> VoxelMesher::get_library() {
+Ref<VoxelLibrary> VoxelMesher::get_library() {
 	return _library;
 }
-void VoxelMesher::set_library(const Ref<VoxelmanLibrary> &library) {
+void VoxelMesher::set_library(const Ref<VoxelLibrary> &library) {
 	_library = library;
 }
 
@@ -905,7 +905,7 @@ void VoxelMesher::remove_index(const int idx) {
 #endif
 }
 
-VoxelMesher::VoxelMesher(const Ref<VoxelmanLibrary> &library) {
+VoxelMesher::VoxelMesher(const Ref<VoxelLibrary> &library) {
 	_library = library;
 
 	_mesher_index = 0;
@@ -971,7 +971,7 @@ void VoxelMesher::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary"), "set_library", "get_library");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLibrary"), "set_library", "get_library");
 
 	ClassDB::bind_method(D_METHOD("get_material"), &VoxelMesher::get_material);
 	ClassDB::bind_method(D_METHOD("set_material", "value"), &VoxelMesher::set_material);

@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXEL_TERRARIN_JOB_H
-#define VOXEL_TERRARIN_JOB_H
+#ifndef VOXEL_TERRAIN_JOB_H
+#define VOXEL_TERRAIN_JOB_H
 
 #include "voxel_job.h"
 
@@ -33,8 +33,8 @@ include_pool_vector
 
 		class VoxelMesher;
 
-class VoxelTerrarinJob : public VoxelJob {
-	GDCLASS(VoxelTerrarinJob, VoxelJob);
+class VoxelTerrainJob : public VoxelJob {
+	GDCLASS(VoxelTerrainJob, VoxelJob);
 
 public:
 	//Meshers
@@ -52,10 +52,10 @@ public:
 	int get_liquid_mesher_count() const;
 
 	void phase_setup();
-	void phase_terrarin_mesh_setup();
+	void phase_terrain_mesh_setup();
 	void phase_collider();
 	void phase_physics_proces();
-	void phase_terrarin_mesh();
+	void phase_terrain_mesh();
 	void phase_finalize();
 	void phase_physics_process();
 
@@ -63,8 +63,8 @@ public:
 	void _reset();
 	void _physics_process(float delta);
 
-	VoxelTerrarinJob();
-	~VoxelTerrarinJob();
+	VoxelTerrainJob();
+	~VoxelTerrainJob();
 
 protected:
 	static void _bind_methods();

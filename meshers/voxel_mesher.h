@@ -56,12 +56,12 @@ include_pool_vector
 #include "../../mesh_data_resource/mesh_data_resource.h"
 #endif
 
-#include "../library/voxelman_library.h"
+#include "../library/voxel_library.h"
 
 		const double PI_2 = 3.141592653589793238463 / 2;
 const double PI = 3.141592653589793238463;
 
-class VoxelmanLibrary;
+class VoxelLibrary;
 class VoxelChunk;
 
 class VoxelMesher : public Reference {
@@ -113,8 +113,8 @@ public:
 	int get_texture_scale() const;
 	void set_texture_scale(const int value);
 
-	Ref<VoxelmanLibrary> get_library();
-	void set_library(const Ref<VoxelmanLibrary> &library);
+	Ref<VoxelLibrary> get_library();
+	void set_library(const Ref<VoxelLibrary> &library);
 
 	Ref<Material> get_material();
 	void set_material(const Ref<Material> &material);
@@ -199,7 +199,7 @@ public:
 	GDVIRTUAL1(_add_mesher, Ref<VoxelMesher>);
 #endif
 
-	VoxelMesher(const Ref<VoxelmanLibrary> &library);
+	VoxelMesher(const Ref<VoxelLibrary> &library);
 	VoxelMesher();
 	~VoxelMesher();
 
@@ -226,7 +226,7 @@ protected:
 	Vector<float> _last_weights;
 	Plane _last_tangent;
 
-	Ref<VoxelmanLibrary> _library;
+	Ref<VoxelLibrary> _library;
 	Ref<Material> _material;
 
 	float _voxel_scale;

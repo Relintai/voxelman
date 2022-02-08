@@ -57,11 +57,11 @@ void VoxelSurface::set_rect(const VoxelSurfaceSides side, const Rect2 &rect) {
 	_rects[side] = rect;
 }
 
-Ref<VoxelmanLibrary> VoxelSurface::get_library() const {
-	return Ref<VoxelmanLibrary>(_library);
+Ref<VoxelLibrary> VoxelSurface::get_library() const {
+	return Ref<VoxelLibrary>(_library);
 }
 
-void VoxelSurface::set_library(Ref<VoxelmanLibrary> library) {
+void VoxelSurface::set_library(Ref<VoxelLibrary> library) {
 	_library = (*library);
 }
 

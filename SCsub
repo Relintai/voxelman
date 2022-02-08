@@ -25,10 +25,10 @@ sources = [
 
     "register_types.cpp",
 
-    "library/voxelman_library.cpp",
-    "library/voxelman_library_simple.cpp",
+    "library/voxel_library.cpp",
+    "library/voxel_library_simple.cpp",
     
-    "nodes/voxelman_light.cpp",
+    "nodes/voxel_light_node.cpp",
 
     "library/voxel_surface.cpp",
     "library/voxel_surface_simple.cpp",
@@ -63,8 +63,8 @@ sources = [
     "meshers/cubic/voxel_mesher_cubic.cpp",
     "meshers/cubic/voxel_cube_points.cpp",
 
-    "level_generator/voxelman_level_generator.cpp",
-    "level_generator/voxelman_level_generator_flat.cpp",
+    "level_generator/voxel_level_generator.cpp",
+    "level_generator/voxel_level_generator_flat.cpp",
 
     "world/cubic/voxel_chunk_cubic.cpp",
     "world/cubic/voxel_world_cubic.cpp",
@@ -76,13 +76,13 @@ sources = [
     "thirdparty/lz4/lz4.c",
 
     "world/jobs/voxel_job.cpp",
-    "world/jobs/voxel_terrarin_job.cpp",
+    "world/jobs/voxel_terrain_job.cpp",
     "world/jobs/voxel_light_job.cpp",
     "world/jobs/voxel_prop_job.cpp",
 ]
 
 if has_texture_packer:
-    sources.append("library/voxelman_library_merger.cpp")
+    sources.append("library/voxel_library_merger.cpp")
     sources.append("library/voxel_surface_merger.cpp")
 
 if ARGUMENTS.get('custom_modules_shared', 'no') == 'yes':

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelWorld" inherits="Navigation" version="3.2">
+<class name="VoxelWorld" inherits="Navigation" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -7,441 +7,351 @@
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="_add_prop" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="prop" type="VoxelChunkPropData">
-			</argument>
-			<description>
-			</description>
-		</method>
 		<method name="_chunk_added" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
 			<description>
 			</description>
 		</method>
 		<method name="_create_chunk" qualifiers="virtual">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
-			<argument index="3" name="chunk" type="VoxelChunk">
-			</argument>
+			<return type="VoxelChunk" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
+			<argument index="3" name="chunk" type="VoxelChunk" />
 			<description>
 			</description>
 		</method>
 		<method name="_generate_chunk" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
 			<description>
 			</description>
 		</method>
 		<method name="_generation_finished" qualifiers="virtual">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="_get_channel_index_info" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="channel_type" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="channel_type" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="_prepare_chunk_for_generation" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
 			<description>
 			</description>
 		</method>
-		<method name="add_chunk">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
-			<argument index="1" name="x" type="int">
-			</argument>
-			<argument index="2" name="y" type="int">
-			</argument>
-			<argument index="3" name="z" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_light">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_prop">
-			<return type="void">
-			</return>
-			<argument index="0" name="prop" type="VoxelChunkPropData">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_to_generation">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_to_generation_queue">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_voxel_structure">
-			<return type="void">
-			</return>
-			<argument index="0" name="structure" type="VoxelStructure">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_voxel_structure_at_position">
-			<return type="void">
-			</return>
-			<argument index="0" name="structure" type="VoxelStructure">
-			</argument>
-			<argument index="1" name="world_position" type="Vector3">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_world_area">
-			<return type="void">
-			</return>
-			<argument index="0" name="area" type="WorldArea">
-			</argument>
+		<method name="_set_voxel_with_tool" qualifiers="virtual">
+			<return type="void" />
+			<argument index="0" name="mode_add" type="bool" />
+			<argument index="1" name="hit_position" type="Vector3" />
+			<argument index="2" name="hit_normal" type="Vector3" />
+			<argument index="3" name="selected_voxel" type="int" />
+			<argument index="4" name="isolevel" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="can_chunk_do_build_step">
-			<return type="bool">
-			</return>
+			<return type="bool" />
 			<description>
 			</description>
 		</method>
-		<method name="clear_chunks">
-			<return type="void">
-			</return>
+		<method name="chunk_add">
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
+			<argument index="1" name="x" type="int" />
+			<argument index="2" name="y" type="int" />
+			<argument index="3" name="z" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="clear_lights">
-			<return type="void">
-			</return>
+		<method name="chunk_create">
+			<return type="VoxelChunk" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="clear_voxel_structures">
-			<return type="void">
-			</return>
+		<method name="chunk_get">
+			<return type="VoxelChunk" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="clear_world_areas">
-			<return type="void">
-			</return>
+		<method name="chunk_get_count" qualifiers="const">
+			<return type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="create_chunk">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+		<method name="chunk_get_index">
+			<return type="VoxelChunk" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="chunk_get_or_create">
+			<return type="VoxelChunk" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="chunk_has" qualifiers="const">
+			<return type="bool" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="chunk_remove">
+			<return type="VoxelChunk" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="chunk_remove_index">
+			<return type="VoxelChunk" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="chunk_setup">
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
+			<description>
+			</description>
+		</method>
+		<method name="chunks_clear">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="generation_add_to">
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
+			<description>
+			</description>
+		</method>
+		<method name="generation_get_index">
+			<return type="VoxelChunk" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="generation_get_size" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="generation_queue_add_to">
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
+			<description>
+			</description>
+		</method>
+		<method name="generation_queue_get_index">
+			<return type="VoxelChunk" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="generation_queue_get_size" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="generation_queue_remove_index">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="generation_remove_index">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_channel_index_info">
-			<return type="int">
-			</return>
-			<argument index="0" name="channel_type" type="int" enum="VoxelWorld.ChannelTypeInfo">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_chunk">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="channel_type" type="int" enum="VoxelWorld.ChannelTypeInfo" />
 			<description>
 			</description>
 		</method>
 		<method name="get_chunk_at_world_position">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="world_position" type="Vector3">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_chunk_count" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_chunk_index">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_generation_index">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_generation_queue_index">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_generation_queue_size" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_generation_size" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_light">
-			<return type="VoxelLight">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_light_count" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_lights">
-			<return type="Array">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_or_create_chunk">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+			<return type="VoxelChunk" />
+			<argument index="0" name="world_position" type="Vector3" />
 			<description>
 			</description>
 		</method>
 		<method name="get_or_create_chunk_at_world_position">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="world_position" type="Vector3">
-			</argument>
+			<return type="VoxelChunk" />
+			<argument index="0" name="world_position" type="Vector3" />
 			<description>
 			</description>
 		</method>
 		<method name="get_voxel_at_world_position">
-			<return type="int">
-			</return>
-			<argument index="0" name="world_position" type="Vector3">
-			</argument>
-			<argument index="1" name="channel_index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_voxel_structure" qualifiers="const">
-			<return type="VoxelStructure">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_voxel_structure_count" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_world_area" qualifiers="const">
-			<return type="WorldArea">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_world_area_count" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="has_chunk" qualifiers="const">
-			<return type="bool">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="world_position" type="Vector3" />
+			<argument index="1" name="channel_index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="is_position_walkable">
-			<return type="bool">
-			</return>
-			<argument index="0" name="position" type="Vector3">
-			</argument>
+			<return type="bool" />
+			<argument index="0" name="position" type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="light_add">
+			<return type="void" />
+			<argument index="0" name="light" type="VoxelLight" />
+			<description>
+			</description>
+		</method>
+		<method name="light_get">
+			<return type="VoxelLight" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="light_get_count" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="light_remove">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="lights_clear">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="lights_get">
+			<return type="Array" />
+			<description>
+			</description>
+		</method>
+		<method name="lights_set">
+			<return type="void" />
+			<argument index="0" name="chunks" type="Array" />
 			<description>
 			</description>
 		</method>
 		<method name="on_chunk_mesh_generation_finished">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
 			<description>
 			</description>
 		</method>
-		<method name="remove_chunk">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="remove_chunk_index">
-			<return type="VoxelChunk">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="remove_generation_index">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="remove_generation_queue_index">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="remove_light">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="remove_voxel_structure">
-			<return type="void">
-			</return>
-			<argument index="0" name="structure" type="VoxelStructure">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="remove_voxel_structure_index">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="remove_world_area">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="set_lights">
-			<return type="void">
-			</return>
-			<argument index="0" name="chunks" type="Array">
-			</argument>
+		<method name="prop_add">
+			<return type="void" />
+			<argument index="0" name="transform" type="Transform" />
+			<argument index="1" name="prop" type="PropData" />
+			<argument index="2" name="apply_voxel_scael" type="bool" default="true" />
 			<description>
 			</description>
 		</method>
 		<method name="set_voxel_at_world_position">
-			<return type="void">
-			</return>
-			<argument index="0" name="world_position" type="Vector3">
-			</argument>
-			<argument index="1" name="data" type="int">
-			</argument>
-			<argument index="2" name="channel_index" type="int">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="world_position" type="Vector3" />
+			<argument index="1" name="data" type="int" />
+			<argument index="2" name="channel_index" type="int" />
+			<argument index="3" name="rebuild" type="bool" default="true" />
+			<description>
+			</description>
+		</method>
+		<method name="set_voxel_with_tool">
+			<return type="void" />
+			<argument index="0" name="mode_add" type="bool" />
+			<argument index="1" name="hit_position" type="Vector3" />
+			<argument index="2" name="hit_normal" type="Vector3" />
+			<argument index="3" name="selected_voxel" type="int" />
+			<argument index="4" name="isolevel" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_add">
+			<return type="void" />
+			<argument index="0" name="structure" type="VoxelStructure" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_add_at_position">
+			<return type="void" />
+			<argument index="0" name="structure" type="VoxelStructure" />
+			<argument index="1" name="world_position" type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_get" qualifiers="const">
+			<return type="VoxelStructure" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_get_count" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_remove">
+			<return type="void" />
+			<argument index="0" name="structure" type="VoxelStructure" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_remove_index">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structures_clear">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="world_area_add">
+			<return type="void" />
+			<argument index="0" name="area" type="WorldArea" />
+			<description>
+			</description>
+		</method>
+		<method name="world_area_get" qualifiers="const">
+			<return type="WorldArea" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="world_area_get_count" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="world_area_remove">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="world_areas_clear">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
@@ -455,7 +365,7 @@
 		</member>
 		<member name="chunk_spawn_range" type="int" setter="set_chunk_spawn_range" getter="get_chunk_spawn_range" default="4">
 		</member>
-		<member name="chunks" type="Array" setter="set_chunks" getter="get_chunks" default="[  ]">
+		<member name="chunks" type="Array" setter="chunks_set" getter="chunks_get" default="[  ]">
 		</member>
 		<member name="current_seed" type="int" setter="set_current_seed" getter="get_current_seed" default="0">
 		</member>
@@ -465,9 +375,9 @@
 		</member>
 		<member name="editable" type="bool" setter="set_editable" getter="get_editable" default="false">
 		</member>
-		<member name="level_generator" type="VoxelmanLevelGenerator" setter="set_level_generator" getter="get_level_generator">
+		<member name="level_generator" type="VoxelLevelGenerator" setter="set_level_generator" getter="get_level_generator">
 		</member>
-		<member name="library" type="VoxelmanLibrary" setter="set_library" getter="get_library">
+		<member name="library" type="VoxelLibrary" setter="set_library" getter="get_library">
 		</member>
 		<member name="max_concurrent_generations" type="int" setter="set_max_concurrent_generations" getter="get_max_concurrent_generations" default="3">
 		</member>
@@ -481,13 +391,12 @@
 		</member>
 		<member name="voxel_scale" type="float" setter="set_voxel_scale" getter="get_voxel_scale" default="1.0">
 		</member>
-		<member name="voxel_structures" type="Array" setter="set_voxel_structures" getter="get_voxel_structures" default="[  ]">
+		<member name="voxel_structures" type="Array" setter="voxel_structures_set" getter="voxel_structures_get" default="[  ]">
 		</member>
 	</members>
 	<signals>
 		<signal name="chunk_mesh_generation_finished">
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
+			<argument index="0" name="chunk" type="VoxelChunk" />
 			<description>
 			</description>
 		</signal>

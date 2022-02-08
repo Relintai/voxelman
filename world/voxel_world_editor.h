@@ -101,10 +101,10 @@ protected:
 
 public:
 #if VERSION_MAJOR < 4
-	bool forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event);
+	bool forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event) { return voxel_world_editor->forward_spatial_input_event(p_camera, p_event); }
 	virtual bool forward_spatial_gui_input(int p_index, Camera *p_camera, const Ref<InputEvent> &p_event) { return voxel_world_editor->forward_spatial_input_event(p_camera, p_event); }
 #else
-	EditorPlugin::AfterGUIInput forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event);
+	EditorPlugin::AfterGUIInput forward_spatial_input_event(Camera *p_camera, const Ref<InputEvent> &p_event) { return voxel_world_editor->forward_spatial_input_event(p_camera, p_event); }
 	virtual EditorPlugin::AfterGUIInput forward_spatial_gui_input(int p_index, Camera *p_camera, const Ref<InputEvent> &p_event) { return voxel_world_editor->forward_spatial_input_event(p_camera, p_event); }
 #endif
 	virtual String get_name() const { return "VoxelWorldEditor"; }

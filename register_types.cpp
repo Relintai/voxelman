@@ -25,12 +25,12 @@ SOFTWARE.
 #include "library/voxel_surface.h"
 #include "library/voxel_surface_simple.h"
 
-#include "library/voxelman_library.h"
-#include "library/voxelman_library_simple.h"
+#include "library/voxel_library.h"
+#include "library/voxel_library_simple.h"
 
 #ifdef TEXTURE_PACKER_PRESENT
 #include "library/voxel_surface_merger.h"
-#include "library/voxelman_library_merger.h"
+#include "library/voxel_library_merger.h"
 #endif
 
 #include "data/voxel_light.h"
@@ -51,8 +51,8 @@ SOFTWARE.
 #include "meshers/cubic/voxel_cube_points.h"
 #include "meshers/cubic/voxel_mesher_cubic.h"
 
-#include "level_generator/voxelman_level_generator.h"
-#include "level_generator/voxelman_level_generator_flat.h"
+#include "level_generator/voxel_level_generator.h"
+#include "level_generator/voxel_level_generator_flat.h"
 
 #include "areas/world_area.h"
 
@@ -70,12 +70,12 @@ SOFTWARE.
 #include "world/marching_cubes/voxel_chunk_marching_cubes.h"
 #include "world/marching_cubes/voxel_world_marching_cubes.h"
 
-#include "nodes/voxelman_light.h"
+#include "nodes/voxel_light_node.h"
 
 #include "world/jobs/voxel_job.h"
 #include "world/jobs/voxel_light_job.h"
 #include "world/jobs/voxel_prop_job.h"
-#include "world/jobs/voxel_terrarin_job.h"
+#include "world/jobs/voxel_terrain_job.h"
 
 void register_voxelman_types() {
 	ClassDB::register_class<VoxelMesher>();
@@ -87,16 +87,16 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelSurface>();
 	ClassDB::register_class<VoxelSurfaceSimple>();
 
-	ClassDB::register_class<VoxelmanLibrary>();
-	ClassDB::register_class<VoxelmanLibrarySimple>();
+	ClassDB::register_class<VoxelLibrary>();
+	ClassDB::register_class<VoxelLibrarySimple>();
 
 #ifdef TEXTURE_PACKER_PRESENT
 	ClassDB::register_class<VoxelSurfaceMerger>();
-	ClassDB::register_class<VoxelmanLibraryMerger>();
+	ClassDB::register_class<VoxelLibraryMerger>();
 #endif
 
 	ClassDB::register_class<VoxelLight>();
-	ClassDB::register_class<VoxelmanLight>();
+	ClassDB::register_class<VoxelLightNode>();
 
 	ClassDB::register_class<VoxelWorld>();
 	ClassDB::register_class<VoxelChunk>();
@@ -121,13 +121,13 @@ void register_voxelman_types() {
 	ClassDB::register_class<VoxelWorldCubic>();
 	ClassDB::register_class<VoxelChunkCubic>();
 
-	ClassDB::register_class<VoxelmanLevelGenerator>();
-	ClassDB::register_class<VoxelmanLevelGeneratorFlat>();
+	ClassDB::register_class<VoxelLevelGenerator>();
+	ClassDB::register_class<VoxelLevelGeneratorFlat>();
 
 	ClassDB::register_class<WorldArea>();
 
 	ClassDB::register_class<VoxelJob>();
-	ClassDB::register_class<VoxelTerrarinJob>();
+	ClassDB::register_class<VoxelTerrainJob>();
 	ClassDB::register_class<VoxelLightJob>();
 	ClassDB::register_class<VoxelPropJob>();
 

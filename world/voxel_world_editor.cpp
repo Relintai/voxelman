@@ -34,7 +34,7 @@ SOFTWARE.
 #include "voxel_chunk.h"
 
 #include "../library/voxel_surface.h"
-#include "../library/voxelman_library.h"
+#include "../library/voxel_library.h"
 
 #include "../defines.h"
 
@@ -52,7 +52,7 @@ bool VoxelWorldEditor::forward_spatial_input_event(Camera *p_camera, const Ref<I
 
 	if (mb.is_valid()) {
 		if (mb->is_pressed()) {
-			Ref<VoxelmanLibrary> lib = _world->get_library();
+			Ref<VoxelLibrary> lib = _world->get_library();
 
 			if (!lib.is_valid())
 				return false;
@@ -79,7 +79,7 @@ EditorPlugin::AfterGUIInput VoxelWorldEditor::forward_spatial_input_event(Camera
 
 	if (mb.is_valid()) {
 		if (mb->is_pressed()) {
-			Ref<VoxelmanLibrary> lib = _world->get_library();
+			Ref<VoxelLibrary> lib = _world->get_library();
 
 			if (!lib.is_valid())
 				return EditorPlugin::AFTER_GUI_INPUT_PASS;
@@ -184,7 +184,7 @@ void VoxelWorldEditor::edit(VoxelWorld *p_world) {
 		}
 	}
 
-	Ref<VoxelmanLibrary> library = _world->get_library();
+	Ref<VoxelLibrary> library = _world->get_library();
 
 	if (!library.is_valid())
 		return;
@@ -268,9 +268,9 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	add_button->CONNECT("button_up", this, VoxelWorldEditor, _on_tool_button_pressed);
 
 #if VERSION_MAJOR < 4
-	add_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/add_mode", "Add Mode", KEY_A));
+	add_button->set_shortcut(ED_SHORTCUT("voxel_world_editor/add_mode", "Add Mode", KEY_A));
 #else
-	add_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/add_mode", "Add Mode", Key::A));
+	add_button->set_shortcut(ED_SHORTCUT("voxel_world_editor/add_mode", "Add Mode", Key::A));
 #endif
 
 	spatial_editor_hb->add_child(add_button);
@@ -284,9 +284,9 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	remove_button->CONNECT("button_up", this, VoxelWorldEditor, _on_tool_button_pressed);
 
 #if VERSION_MAJOR < 4
-	remove_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/remove_mode", "Remove Mode", KEY_S));
+	remove_button->set_shortcut(ED_SHORTCUT("voxel_world_editor/remove_mode", "Remove Mode", KEY_S));
 #else
-	remove_button->set_shortcut(ED_SHORTCUT("voxelman_world_editor/remove_mode", "Remove Mode", Key::S));
+	remove_button->set_shortcut(ED_SHORTCUT("voxel_world_editor/remove_mode", "Remove Mode", Key::S));
 #endif
 
 	spatial_editor_hb->add_child(remove_button);
@@ -297,9 +297,9 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	insert_buton->CONNECT("button_up", this, VoxelWorldEditor, _on_insert_block_at_camera_button_pressed);
 
 #if VERSION_MAJOR < 4
-	insert_buton->set_shortcut(ED_SHORTCUT("voxelman_world_editor/instert_block_at_camera", "Insert at camera", KEY_B));
+	insert_buton->set_shortcut(ED_SHORTCUT("voxel_world_editor/instert_block_at_camera", "Insert at camera", KEY_B));
 #else
-	insert_buton->set_shortcut(ED_SHORTCUT("voxelman_world_editor/instert_block_at_camera", "Insert at camera", Key::B));
+	insert_buton->set_shortcut(ED_SHORTCUT("voxel_world_editor/instert_block_at_camera", "Insert at camera", Key::B));
 #endif
 
 	spatial_editor_hb->add_child(insert_buton);
@@ -410,7 +410,7 @@ void VoxelWorldEditor::_bind_methods() {
 
 void VoxelWorldEditorPlugin::_notification(int p_what) {
 	if (p_what == EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED) {
-		switch ((int)EditorSettings::get_singleton()->get("editors/voxelman/editor_side")) {
+		switch ((int)EditorSettings::get_singleton()->get("editors/voxel/editor_side")) {
 #if VERSION_MAJOR <= 3 && VERSION_MINOR < 5
 			case 0: { // Left.
 				SpatialEditor::get_singleton()->get_palette_split()->move_child(voxel_world_editor, 0);
@@ -459,11 +459,11 @@ void VoxelWorldEditorPlugin::make_visible(bool p_visible) {
 VoxelWorldEditorPlugin::VoxelWorldEditorPlugin(EditorNode *p_node) {
 	editor = p_node;
 
-	EDITOR_DEF("editors/voxelman/editor_side", 1);
-	EditorSettings::get_singleton()->add_property_hint(PropertyInfo(Variant::INT, "editors/voxelman/editor_side", PROPERTY_HINT_ENUM, "Left,Right"));
+	EDITOR_DEF("editors/voxel/editor_side", 1);
+	EditorSettings::get_singleton()->add_property_hint(PropertyInfo(Variant::INT, "editors/voxel/editor_side", PROPERTY_HINT_ENUM, "Left,Right"));
 
 	voxel_world_editor = memnew(VoxelWorldEditor(editor));
-	switch ((int)EditorSettings::get_singleton()->get("editors/voxelman/editor_side")) {
+	switch ((int)EditorSettings::get_singleton()->get("editors/voxel/editor_side")) {
 		case 0: { // Left.
 			add_control_to_container(CONTAINER_SPATIAL_EDITOR_SIDE_LEFT, voxel_world_editor);
 		} break;

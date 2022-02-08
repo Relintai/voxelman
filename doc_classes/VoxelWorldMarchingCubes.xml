@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelWorldMarchingCubes" inherits="VoxelWorldDefault" version="3.2">
+<class name="VoxelWorldMarchingCubes" inherits="VoxelWorldDefault" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -9,7 +9,7 @@
 	<methods>
 	</methods>
 	<members>
-		<member name="data_margin_end" type="int" setter="set_data_margin_end" getter="get_data_margin_end" override="true" default="2" />
+		<member name="data_margin_end" type="int" setter="set_data_margin_end" getter="get_data_margin_end" overrides="VoxelWorld" default="2" />
 	</members>
 	<constants>
 	</constants>

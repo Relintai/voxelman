@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019-2020 Péter Magyar
+Copyright (c) 2020 Péter Magyar
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,30 +20,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXELMAN_LEVEL_GENERATOR_H
-#define VOXELMAN_LEVEL_GENERATOR_H
+#ifndef VOXEL_LIGHT_NODE_H
+#define VOXEL_LIGHT_NODE_H
 
 #include "core/version.h"
 
-#if VERSION_MAJOR > 3
-#include "core/io/resource.h"
+#if VERSION_MAJOR < 4
+#include "scene/3d/spatial.h"
 #else
-#include "core/resource.h"
+#include "scene/3d/node_3d.h"
+
+#define Spatial Node3D
 #endif
 
-class VoxelChunk;
+#include "core/math/vector3.h"
 
-class VoxelmanLevelGenerator : public Resource {
-	GDCLASS(VoxelmanLevelGenerator, Resource);
+class VoxelLightNode : public Spatial {
+	GDCLASS(VoxelLightNode, Spatial);
+	OBJ_CATEGORY("Props");
 
 public:
-	void generate_chunk(Ref<VoxelChunk> chunk);
+	//make it turn into a normal light if voxelman isn't present?
 
-	VoxelmanLevelGenerator();
-	~VoxelmanLevelGenerator();
+	VoxelLightNode();
+	~VoxelLightNode();
 
 protected:
 	static void _bind_methods();
+
+private:
 };
 
 #endif

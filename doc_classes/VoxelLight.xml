@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelLight" inherits="Reference" version="3.2">
+<class name="VoxelLight" inherits="Reference" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -8,32 +8,25 @@
 	</tutorials>
 	<methods>
 		<method name="get_world_position_x" qualifiers="const">
-			<return type="int">
-			</return>
+			<return type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_world_position_y" qualifiers="const">
-			<return type="int">
-			</return>
+			<return type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_world_position_z" qualifiers="const">
-			<return type="int">
-			</return>
+			<return type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="set_world_position">
-			<return type="void">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>

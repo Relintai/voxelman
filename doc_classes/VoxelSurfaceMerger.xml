@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelSurfaceMerger" inherits="VoxelSurface" version="3.2">
+<class name="VoxelSurfaceMerger" inherits="VoxelSurface" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -8,38 +8,28 @@
 	</tutorials>
 	<methods>
 		<method name="get_region">
-			<return type="AtlasTexture">
-			</return>
-			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
-			</argument>
+			<return type="AtlasTexture" />
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides" />
 			<description>
 			</description>
 		</method>
 		<method name="get_texture">
-			<return type="Texture">
-			</return>
-			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
-			</argument>
+			<return type="Texture" />
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides" />
 			<description>
 			</description>
 		</method>
 		<method name="set_region">
-			<return type="void">
-			</return>
-			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
-			</argument>
-			<argument index="1" name="texture" type="AtlasTexture">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides" />
+			<argument index="1" name="texture" type="AtlasTexture" />
 			<description>
 			</description>
 		</method>
 		<method name="set_texture">
-			<return type="void">
-			</return>
-			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides">
-			</argument>
-			<argument index="1" name="texture" type="Texture">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="side" type="int" enum="VoxelSurface.VoxelSurfaceSides" />
+			<argument index="1" name="texture" type="Texture" />
 			<description>
 			</description>
 		</method>

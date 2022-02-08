@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020 Péter Magyar
+Copyright (c) 2019-2020 Péter Magyar
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,35 +20,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXELMAN_LIGHT_H
-#define VOXELMAN_LIGHT_H
+#ifndef VOXEL_LEVEL_GENERATOR_H
+#define VOXEL_LEVEL_GENERATOR_H
 
 #include "core/version.h"
 
-#if VERSION_MAJOR < 4
-#include "scene/3d/spatial.h"
+#if VERSION_MAJOR > 3
+#include "core/io/resource.h"
+#include "core/object/gdvirtual.gen.inc"
+#include "core/object/script_language.h"
 #else
-#include "scene/3d/node_3d.h"
-
-#define Spatial Node3D
+#include "core/resource.h"
 #endif
 
-#include "core/math/vector3.h"
+class VoxelChunk;
 
-class VoxelmanLight : public Spatial {
-	GDCLASS(VoxelmanLight, Spatial);
-	OBJ_CATEGORY("Props");
+class VoxelLevelGenerator : public Resource {
+	GDCLASS(VoxelLevelGenerator, Resource);
 
 public:
-	//make it turn into a normal light if voxelman isn't present?
+	void generate_chunk(Ref<VoxelChunk> chunk);
 
-	VoxelmanLight();
-	~VoxelmanLight();
+#if VERSION_MAJOR >= 4
+	GDVIRTUAL1(_generate_chunk, Ref<VoxelChunk>);
+#endif
+
+	VoxelLevelGenerator();
+	~VoxelLevelGenerator();
 
 protected:
 	static void _bind_methods();
-
-private:
 };
 
 #endif

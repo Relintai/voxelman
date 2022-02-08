@@ -49,7 +49,7 @@ SOFTWARE.
 #include "../../data/voxel_light.h"
 #include "../../meshers/voxel_mesher.h"
 #include "../../library/voxel_surface.h"
-#include "../../library/voxelman_library.h"
+#include "../../library/voxel_library.h"
 
 class VoxelWorld;
 class VoxelJob;
@@ -77,7 +77,7 @@ public:
 	};
 
 	enum {
-		MESH_INDEX_TERRARIN = 0,
+		MESH_INDEX_TERRAIN = 0,
 		MESH_INDEX_PROP,
 		MESH_INDEX_LIQUID,
 		MESH_INDEX_CLUTTER,

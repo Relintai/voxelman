@@ -68,7 +68,7 @@ include_pool_vector
 #endif
 
 #include "../library/voxel_surface.h"
-#include "../library/voxelman_library.h"
+#include "../library/voxel_library.h"
 ; //hackfix for a clang format issue
 
 class VoxelJob;
@@ -144,8 +144,8 @@ public:
 	void set_margin_start(const int value);
 	void set_margin_end(const int value);
 
-	Ref<VoxelmanLibrary> get_library();
-	void set_library(const Ref<VoxelmanLibrary> &value);
+	Ref<VoxelLibrary> get_library();
+	void set_library(const Ref<VoxelLibrary> &value);
 
 	float get_voxel_scale() const;
 	void set_voxel_scale(const float value);
@@ -402,7 +402,7 @@ protected:
 	int _current_job;
 	Vector<Ref<VoxelJob>> _jobs;
 
-	Ref<VoxelmanLibrary> _library;
+	Ref<VoxelLibrary> _library;
 
 	Vector<Ref<VoxelStructure>> _voxel_structures;
 

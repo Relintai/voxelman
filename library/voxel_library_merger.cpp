@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "voxelman_library_merger.h"
+#include "voxel_library_merger.h"
 
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/texture.h"
@@ -37,63 +37,63 @@ SOFTWARE.
 
 #include "../defines.h"
 
-int VoxelmanLibraryMerger::get_texture_flags() const {
+int VoxelLibraryMerger::get_texture_flags() const {
 	return _packer->get_texture_flags();
 }
-void VoxelmanLibraryMerger::set_texture_flags(const int flags) {
+void VoxelLibraryMerger::set_texture_flags(const int flags) {
 	_packer->set_texture_flags(flags);
 	_prop_packer->set_texture_flags(flags);
 }
 
-int VoxelmanLibraryMerger::get_max_atlas_size() const {
+int VoxelLibraryMerger::get_max_atlas_size() const {
 	return _packer->get_max_atlas_size();
 }
-void VoxelmanLibraryMerger::set_max_atlas_size(const int size) {
+void VoxelLibraryMerger::set_max_atlas_size(const int size) {
 	_packer->set_max_atlas_size(size);
 	_prop_packer->set_max_atlas_size(size);
 }
 
-bool VoxelmanLibraryMerger::get_keep_original_atlases() const {
+bool VoxelLibraryMerger::get_keep_original_atlases() const {
 	return _packer->get_keep_original_atlases();
 }
-void VoxelmanLibraryMerger::set_keep_original_atlases(const bool value) {
+void VoxelLibraryMerger::set_keep_original_atlases(const bool value) {
 	_packer->set_keep_original_atlases(value);
 	_prop_packer->set_keep_original_atlases(value);
 }
 
-Color VoxelmanLibraryMerger::get_background_color() const {
+Color VoxelLibraryMerger::get_background_color() const {
 	return _packer->get_background_color();
 }
-void VoxelmanLibraryMerger::set_background_color(const Color &color) {
+void VoxelLibraryMerger::set_background_color(const Color &color) {
 	_packer->set_background_color(color);
 	_prop_packer->set_background_color(color);
 }
 
-int VoxelmanLibraryMerger::get_margin() const {
+int VoxelLibraryMerger::get_margin() const {
 	return _packer->get_margin();
 }
-void VoxelmanLibraryMerger::set_margin(const int margin) {
+void VoxelLibraryMerger::set_margin(const int margin) {
 	_packer->set_margin(margin);
 	_prop_packer->set_margin(margin);
 }
 
 //Surfaces
-Ref<VoxelSurface> VoxelmanLibraryMerger::voxel_surface_get(const int index) {
+Ref<VoxelSurface> VoxelLibraryMerger::voxel_surface_get(const int index) {
 	ERR_FAIL_INDEX_V(index, _voxel_surfaces.size(), Ref<VoxelSurface>(NULL));
 
 	return _voxel_surfaces[index];
 }
 
-void VoxelmanLibraryMerger::voxel_surface_add(Ref<VoxelSurface> value) {
+void VoxelLibraryMerger::voxel_surface_add(Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(!value.is_valid());
 
-	value->set_library(Ref<VoxelmanLibraryMerger>(this));
+	value->set_library(Ref<VoxelLibraryMerger>(this));
 	value->set_id(_voxel_surfaces.size());
 
 	_voxel_surfaces.push_back(value);
 }
 
-void VoxelmanLibraryMerger::voxel_surface_set(const int index, Ref<VoxelSurface> value) {
+void VoxelLibraryMerger::voxel_surface_set(const int index, Ref<VoxelSurface> value) {
 	ERR_FAIL_COND(index < 0);
 
 	if (_voxel_surfaces.size() < index) {
@@ -101,25 +101,25 @@ void VoxelmanLibraryMerger::voxel_surface_set(const int index, Ref<VoxelSurface>
 	}
 
 	if (_voxel_surfaces[index].is_valid()) {
-		_voxel_surfaces.get(index)->set_library(Ref<VoxelmanLibraryMerger>(NULL));
+		_voxel_surfaces.get(index)->set_library(Ref<VoxelLibraryMerger>(NULL));
 	}
 
 	if (value.is_valid()) {
-		value->set_library(Ref<VoxelmanLibraryMerger>(this));
+		value->set_library(Ref<VoxelLibraryMerger>(this));
 
 		_voxel_surfaces.set(index, value);
 	}
 }
 
-void VoxelmanLibraryMerger::voxel_surface_remove(const int index) {
-	_voxel_surfaces.remove(index);
+void VoxelLibraryMerger::voxel_surface_remove(const int index) {
+	_voxel_surfaces.VREMOVE(index);
 }
 
-int VoxelmanLibraryMerger::voxel_surface_get_num() const {
+int VoxelLibraryMerger::voxel_surface_get_num() const {
 	return _voxel_surfaces.size();
 }
 
-void VoxelmanLibraryMerger::voxel_surfaces_clear() {
+void VoxelLibraryMerger::voxel_surfaces_clear() {
 	_packer->clear();
 
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
@@ -133,11 +133,11 @@ void VoxelmanLibraryMerger::voxel_surfaces_clear() {
 	_voxel_surfaces.clear();
 }
 
-Vector<Variant> VoxelmanLibraryMerger::get_voxel_surfaces() {
+Vector<Variant> VoxelLibraryMerger::get_voxel_surfaces() {
 	VARIANT_ARRAY_GET(_voxel_surfaces);
 }
 
-void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) {
+void VoxelLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) {
 	_voxel_surfaces.clear();
 
 	for (int i = 0; i < surfaces.size(); i++) {
@@ -152,43 +152,43 @@ void VoxelmanLibraryMerger::set_voxel_surfaces(const Vector<Variant> &surfaces) 
 }
 
 #ifdef PROPS_PRESENT
-Ref<PropData> VoxelmanLibraryMerger::get_prop(const int index) {
+Ref<PropData> VoxelLibraryMerger::get_prop(const int index) {
 	ERR_FAIL_INDEX_V(index, _props.size(), Ref<PropData>());
 
 	return _props[index];
 }
-void VoxelmanLibraryMerger::add_prop(Ref<PropData> value) {
+void VoxelLibraryMerger::add_prop(Ref<PropData> value) {
 	_props.push_back(value);
 }
-bool VoxelmanLibraryMerger::has_prop(const Ref<PropData> &value) const {
+bool VoxelLibraryMerger::has_prop(const Ref<PropData> &value) const {
 	return _props.find(value) != -1;
 }
-void VoxelmanLibraryMerger::set_prop(const int index, const Ref<PropData> &value) {
+void VoxelLibraryMerger::set_prop(const int index, const Ref<PropData> &value) {
 	ERR_FAIL_INDEX(index, _props.size());
 
 	_props.write[index] = value;
 }
-void VoxelmanLibraryMerger::remove_prop(const int index) {
+void VoxelLibraryMerger::remove_prop(const int index) {
 	ERR_FAIL_INDEX(index, _props.size());
 
-	_props.remove(index);
+	_props.VREMOVE(index);
 }
-int VoxelmanLibraryMerger::get_num_props() const {
+int VoxelLibraryMerger::get_num_props() const {
 	return _props.size();
 }
-void VoxelmanLibraryMerger::clear_props() {
+void VoxelLibraryMerger::clear_props() {
 	_props.clear();
 }
 
-Vector<Variant> VoxelmanLibraryMerger::get_props() {
+Vector<Variant> VoxelLibraryMerger::get_props() {
 	VARIANT_ARRAY_GET(_props);
 }
 
-void VoxelmanLibraryMerger::set_props(const Vector<Variant> &props) {
+void VoxelLibraryMerger::set_props(const Vector<Variant> &props) {
 	VARIANT_ARRAY_SET(props, _props, PropData);
 }
 
-Rect2 VoxelmanLibraryMerger::get_prop_uv_rect(const Ref<Texture> &texture) {
+Rect2 VoxelLibraryMerger::get_prop_uv_rect(const Ref<Texture> &texture) {
 	if (!texture.is_valid()) {
 		return Rect2(0, 0, 1, 1);
 	}
@@ -207,7 +207,11 @@ Rect2 VoxelmanLibraryMerger::get_prop_uv_rect(const Ref<Texture> &texture) {
 		return Rect2(0, 0, 1, 1);
 	}
 
+#if VERSION_MAJOR < 4
 	Ref<Image> image = tex->get_data();
+#else
+	Ref<Image> image = tex->get_image();
+#endif
 
 	if (!image.is_valid()) {
 		return Rect2(0, 0, 1, 1);
@@ -222,12 +226,12 @@ Rect2 VoxelmanLibraryMerger::get_prop_uv_rect(const Ref<Texture> &texture) {
 	return region;
 }
 
-Ref<TexturePacker> VoxelmanLibraryMerger::get_prop_packer() {
+Ref<TexturePacker> VoxelLibraryMerger::get_prop_packer() {
 	return _prop_packer;
 }
 #endif
 
-void VoxelmanLibraryMerger::refresh_rects() {
+void VoxelLibraryMerger::refresh_rects() {
 	bool texture_added = false;
 	for (int i = 0; i < _voxel_surfaces.size(); i++) {
 		Ref<VoxelSurfaceMerger> surface = Ref<VoxelSurfaceMerger>(_voxel_surfaces[i]);
@@ -295,7 +299,7 @@ void VoxelmanLibraryMerger::refresh_rects() {
 	set_initialized(true);
 }
 
-void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, const Ref<Texture> &texture) {
+void VoxelLibraryMerger::_setup_material_albedo(const int material_index, const Ref<Texture> &texture) {
 	Ref<SpatialMaterial> mat;
 
 	int count = 0;
@@ -313,7 +317,6 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 	}
 
 	for (int i = 0; i < count; ++i) {
-
 		switch (material_index) {
 			case MATERIAL_INDEX_VOXELS:
 				mat = material_get(i);
@@ -353,8 +356,8 @@ void VoxelmanLibraryMerger::_setup_material_albedo(const int material_index, con
 	}
 }
 
-VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
-	_packer.instance();
+VoxelLibraryMerger::VoxelLibraryMerger() {
+	_packer.INSTANCE();
 
 #if GODOT4
 #warning implement
@@ -366,7 +369,7 @@ VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
 	_packer->set_keep_original_atlases(false);
 	_packer->set_margin(0);
 
-	_prop_packer.instance();
+	_prop_packer.INSTANCE();
 
 #if GODOT4
 #warning implement
@@ -379,12 +382,12 @@ VoxelmanLibraryMerger::VoxelmanLibraryMerger() {
 	_prop_packer->set_margin(0);
 }
 
-VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
+VoxelLibraryMerger::~VoxelLibraryMerger() {
 	for (int i = 0; i < _voxel_surfaces.size(); ++i) {
 		Ref<VoxelSurface> surface = _voxel_surfaces[i];
 
 		if (surface.is_valid()) {
-			surface->set_library(Ref<VoxelmanLibraryMerger>());
+			surface->set_library(Ref<VoxelLibraryMerger>());
 		}
 	}
 
@@ -398,7 +401,7 @@ VoxelmanLibraryMerger::~VoxelmanLibraryMerger() {
 }
 
 #ifdef PROPS_PRESENT
-bool VoxelmanLibraryMerger::process_prop_textures(Ref<PropData> prop) {
+bool VoxelLibraryMerger::process_prop_textures(Ref<PropData> prop) {
 	if (!prop.is_valid()) {
 		return false;
 	}
@@ -432,40 +435,40 @@ bool VoxelmanLibraryMerger::process_prop_textures(Ref<PropData> prop) {
 }
 #endif
 
-void VoxelmanLibraryMerger::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_texture_flags"), &VoxelmanLibraryMerger::get_texture_flags);
-	ClassDB::bind_method(D_METHOD("set_texture_flags", "flags"), &VoxelmanLibraryMerger::set_texture_flags);
+void VoxelLibraryMerger::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_texture_flags"), &VoxelLibraryMerger::get_texture_flags);
+	ClassDB::bind_method(D_METHOD("set_texture_flags", "flags"), &VoxelLibraryMerger::set_texture_flags);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "texture_flags", PROPERTY_HINT_FLAGS, "Mipmaps,Repeat,Filter,Anisotropic Linear,Convert to Linear,Mirrored Repeat,Video Surface"), "set_texture_flags", "get_texture_flags");
 
-	ClassDB::bind_method(D_METHOD("get_max_atlas_size"), &VoxelmanLibraryMerger::get_max_atlas_size);
-	ClassDB::bind_method(D_METHOD("set_max_atlas_size", "size"), &VoxelmanLibraryMerger::set_max_atlas_size);
+	ClassDB::bind_method(D_METHOD("get_max_atlas_size"), &VoxelLibraryMerger::get_max_atlas_size);
+	ClassDB::bind_method(D_METHOD("set_max_atlas_size", "size"), &VoxelLibraryMerger::set_max_atlas_size);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_atlas_size"), "set_max_atlas_size", "get_max_atlas_size");
 
-	ClassDB::bind_method(D_METHOD("get_keep_original_atlases"), &VoxelmanLibraryMerger::get_keep_original_atlases);
-	ClassDB::bind_method(D_METHOD("set_keep_original_atlases", "value"), &VoxelmanLibraryMerger::set_keep_original_atlases);
+	ClassDB::bind_method(D_METHOD("get_keep_original_atlases"), &VoxelLibraryMerger::get_keep_original_atlases);
+	ClassDB::bind_method(D_METHOD("set_keep_original_atlases", "value"), &VoxelLibraryMerger::set_keep_original_atlases);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "keep_original_atlases"), "set_keep_original_atlases", "get_keep_original_atlases");
 
-	ClassDB::bind_method(D_METHOD("get_background_color"), &VoxelmanLibraryMerger::get_background_color);
-	ClassDB::bind_method(D_METHOD("set_background_color", "color"), &VoxelmanLibraryMerger::set_background_color);
+	ClassDB::bind_method(D_METHOD("get_background_color"), &VoxelLibraryMerger::get_background_color);
+	ClassDB::bind_method(D_METHOD("set_background_color", "color"), &VoxelLibraryMerger::set_background_color);
 	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "background_color"), "set_background_color", "get_background_color");
 
-	ClassDB::bind_method(D_METHOD("get_margin"), &VoxelmanLibraryMerger::get_margin);
-	ClassDB::bind_method(D_METHOD("set_margin", "size"), &VoxelmanLibraryMerger::set_margin);
+	ClassDB::bind_method(D_METHOD("get_margin"), &VoxelLibraryMerger::get_margin);
+	ClassDB::bind_method(D_METHOD("set_margin", "size"), &VoxelLibraryMerger::set_margin);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "margin"), "set_margin", "get_margin");
 
-	ClassDB::bind_method(D_METHOD("get_voxel_surfaces"), &VoxelmanLibraryMerger::get_voxel_surfaces);
-	ClassDB::bind_method(D_METHOD("set_voxel_surfaces"), &VoxelmanLibraryMerger::set_voxel_surfaces);
+	ClassDB::bind_method(D_METHOD("get_voxel_surfaces"), &VoxelLibraryMerger::get_voxel_surfaces);
+	ClassDB::bind_method(D_METHOD("set_voxel_surfaces"), &VoxelLibraryMerger::set_voxel_surfaces);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "voxel_surfaces", PROPERTY_HINT_NONE, "17/17:VoxelSurfaceMerger", PROPERTY_USAGE_DEFAULT, "VoxelSurfaceMerger"), "set_voxel_surfaces", "get_voxel_surfaces");
 
 #ifdef PROPS_PRESENT
-	ClassDB::bind_method(D_METHOD("get_props"), &VoxelmanLibraryMerger::get_props);
-	ClassDB::bind_method(D_METHOD("set_props"), &VoxelmanLibraryMerger::set_props);
+	ClassDB::bind_method(D_METHOD("get_props"), &VoxelLibraryMerger::get_props);
+	ClassDB::bind_method(D_METHOD("set_props"), &VoxelLibraryMerger::set_props);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "props", PROPERTY_HINT_NONE, "17/17:PropData", PROPERTY_USAGE_DEFAULT, "PropData"), "set_props", "get_props");
 
-	ClassDB::bind_method(D_METHOD("get_prop_uv_rect", "texture"), &VoxelmanLibraryMerger::get_prop_uv_rect);
+	ClassDB::bind_method(D_METHOD("get_prop_uv_rect", "texture"), &VoxelLibraryMerger::get_prop_uv_rect);
 
-	ClassDB::bind_method(D_METHOD("get_prop_packer"), &VoxelmanLibraryMerger::get_prop_packer);
+	ClassDB::bind_method(D_METHOD("get_prop_packer"), &VoxelLibraryMerger::get_prop_packer);
 #endif
 
-	ClassDB::bind_method(D_METHOD("_setup_material_albedo", "material_index", "texture"), &VoxelmanLibraryMerger::_setup_material_albedo);
+	ClassDB::bind_method(D_METHOD("_setup_material_albedo", "material_index", "texture"), &VoxelLibraryMerger::_setup_material_albedo);
 }

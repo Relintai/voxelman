@@ -13,17 +13,17 @@ def get_doc_classes():
         "WorldArea",
 
         "VoxelLight",
-        "VoxelmanLight",
+        "VoxelLightNode",
 
-        "VoxelmanLevelGenerator",
-        "VoxelmanLevelGeneratorFlat",
+        "VoxelLevelGenerator",
+        "VoxelLevelGeneratorFlat",
 
         "VoxelSurfaceMerger",
         "VoxelSurfaceSimple",
         "VoxelSurface",
-        "VoxelmanLibraryMerger",
-        "VoxelmanLibrarySimple",
-        "VoxelmanLibrary",
+        "VoxelLibraryMerger",
+        "VoxelLibrarySimple",
+        "VoxelLibrary",
 
         "VoxelCubePoints",
         "VoxelMesherCubic",
@@ -57,7 +57,7 @@ def get_doc_classes():
         "VoxelWorldDefault",
 
         "VoxelJob",
-        "VoxelTerrarinJob",
+        "VoxelTerrainJob",
         "VoxelLightJob",
         "VoxelPropJob",
     ]

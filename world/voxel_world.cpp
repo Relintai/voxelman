@@ -122,10 +122,10 @@ void VoxelWorld::set_max_frame_chunk_build_steps(const int value) {
 	_max_frame_chunk_build_steps = value;
 }
 
-Ref<VoxelmanLibrary> VoxelWorld::get_library() {
+Ref<VoxelLibrary> VoxelWorld::get_library() {
 	return _library;
 }
-void VoxelWorld::set_library(const Ref<VoxelmanLibrary> &library) {
+void VoxelWorld::set_library(const Ref<VoxelLibrary> &library) {
 	_library = library;
 
 	for (int i = 0; i < chunk_get_count(); ++i) {
@@ -138,10 +138,10 @@ void VoxelWorld::set_library(const Ref<VoxelmanLibrary> &library) {
 	}
 }
 
-Ref<VoxelmanLevelGenerator> VoxelWorld::get_level_generator() const {
+Ref<VoxelLevelGenerator> VoxelWorld::get_level_generator() const {
 	return _level_generator;
 }
-void VoxelWorld::set_level_generator(const Ref<VoxelmanLevelGenerator> &level_generator) {
+void VoxelWorld::set_level_generator(const Ref<VoxelLevelGenerator> &level_generator) {
 	_level_generator = level_generator;
 }
 
@@ -667,7 +667,11 @@ void VoxelWorld::prop_add(Transform tarnsform, const Ref<PropData> &prop, const 
 
 		if (light_data.is_valid()) {
 			Ref<VoxelLight> light;
+#if VERSION_MAJOR < 4
 			light.instance();
+#else
+			light.instantiate();
+#endif
 
 			light->set_world_position(wp.x / get_voxel_scale(), wp.y / get_voxel_scale(), wp.z / get_voxel_scale());
 			light->set_color(light_data->get_light_color());
@@ -684,8 +688,9 @@ void VoxelWorld::prop_add(Transform tarnsform, const Ref<PropData> &prop, const 
 		if (mesh_data.is_valid()) {
 			Ref<MeshDataResource> mdr = mesh_data->get_mesh();
 
-			if (!mdr.is_valid())
+			if (!mdr.is_valid()) {
 				continue;
+			}
 
 			chunk->mesh_data_resource_add(t, mdr, mesh_data->get_texture());
 
@@ -1159,11 +1164,11 @@ void VoxelWorld::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelWorld::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "library"), &VoxelWorld::set_library);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLibrary"), "set_library", "get_library");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "library", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLibrary"), "set_library", "get_library");
 
 	ClassDB::bind_method(D_METHOD("get_level_generator"), &VoxelWorld::get_level_generator);
 	ClassDB::bind_method(D_METHOD("set_level_generator", "level_generator"), &VoxelWorld::set_level_generator);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "level_generator", PROPERTY_HINT_RESOURCE_TYPE, "VoxelmanLevelGenerator"), "set_level_generator", "get_level_generator");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "level_generator", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLevelGenerator"), "set_level_generator", "get_level_generator");
 
 	ClassDB::bind_method(D_METHOD("get_voxel_scale"), &VoxelWorld::get_voxel_scale);
 	ClassDB::bind_method(D_METHOD("set_voxel_scale", "value"), &VoxelWorld::set_voxel_scale);

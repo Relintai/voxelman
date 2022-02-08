@@ -20,34 +20,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXELMAN_LEVEL_GENERATOR_FLAT_H
-#define VOXELMAN_LEVEL_GENERATOR_FLAT_H
+#include "voxel_level_generator.h"
 
-#include "voxelman_level_generator.h"
+#include "core/version.h"
 
-class VoxelChunk;
+#include "../world/voxel_chunk.h"
 
-class VoxelmanLevelGeneratorFlat : public VoxelmanLevelGenerator {
-	GDCLASS(VoxelmanLevelGeneratorFlat, VoxelmanLevelGenerator);
-
-public:
-	int get_floor_position() const;
-	void set_floor_position(const int floor_height);
-
-	Dictionary get_channel_map();
-	void set_channel_map(const Dictionary &map);
-
-	virtual void _generate_chunk(Ref<VoxelChunk> chunk);
-
-	VoxelmanLevelGeneratorFlat();
-	~VoxelmanLevelGeneratorFlat();
-
-protected:
-	static void _bind_methods();
-
-private:
-	int _floor_position;
-	Dictionary _channel_map;
-};
-
+void VoxelLevelGenerator::generate_chunk(Ref<VoxelChunk> chunk) {
+#if VERSION_MAJOR < 4
+	if (has_method("_generate_chunk")) {
+		call("_generate_chunk", chunk);
+	}
+#else
+	GDVIRTUAL_CALL(_generate_chunk, chunk);
 #endif
+}
+
+VoxelLevelGenerator::VoxelLevelGenerator() {
+}
+
+VoxelLevelGenerator::~VoxelLevelGenerator() {
+}
+
+void VoxelLevelGenerator::_bind_methods() {
+#if VERSION_MAJOR < 4
+	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+#else
+	GDVIRTUAL_BIND(_generate_chunk, "chunk");
+#endif
+
+	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk"), &VoxelLevelGenerator::generate_chunk);
+}

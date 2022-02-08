@@ -20,39 +20,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXELMAN_LIBRARY_SIMPLE_H
-#define VOXELMAN_LIBRARY_SIMPLE_H
+#ifndef VOXEL_LIBRARY_MERGER_H
+#define VOXEL_LIBRARY_MERGER_H
 
 #include "core/version.h"
 
 #if VERSION_MAJOR > 3
-#include "core/object/ref_counted.h"
-#ifndef Reference
-#define Reference RefCounted
-#endif
+#include "core/io/resource.h"
+#include "core/templates/map.h"
 #else
 #include "core/resource.h"
+#include "core/map.h"
 #endif
 
-#include "voxelman_library.h"
+#include "voxel_library.h"
 
 #include "scene/resources/material.h"
 
 #include "../data/voxel_light.h"
-#include "voxel_surface_simple.h"
+#include "voxel_surface_merger.h"
 
 class VoxelSurfaceSimple;
 class VoxelMesher;
+class PackedScene;
 
-class VoxelmanLibrarySimple : public VoxelmanLibrary {
-	GDCLASS(VoxelmanLibrarySimple, VoxelmanLibrary)
+class VoxelLibraryMerger : public VoxelLibrary {
+	GDCLASS(VoxelLibraryMerger, VoxelLibrary)
 
 public:
-	int get_atlas_columns() const;
-	void set_atlas_columns(int s);
+	int get_texture_flags() const;
+	void set_texture_flags(const int flags);
 
-	int get_atlas_rows() const;
-	void set_atlas_rows(int s);
+	int get_max_atlas_size() const;
+	void set_max_atlas_size(const int size);
+
+	bool get_keep_original_atlases() const;
+	void set_keep_original_atlases(const bool value);
+
+	Color get_background_color() const;
+	void set_background_color(const Color &color);
+
+	int get_margin() const;
+	void set_margin(const int margin);
 
 	Ref<VoxelSurface> voxel_surface_get(const int index);
 	void voxel_surface_add(Ref<VoxelSurface> value);
@@ -64,20 +73,45 @@ public:
 	Vector<Variant> get_voxel_surfaces();
 	void set_voxel_surfaces(const Vector<Variant> &surfaces);
 
+#ifdef PROPS_PRESENT
+	Ref<PropData> get_prop(const int index);
+	void add_prop(Ref<PropData> value);
+	bool has_prop(const Ref<PropData> &value) const;
+	void set_prop(const int index, const Ref<PropData> &value);
+	void remove_prop(const int index);
+	int get_num_props() const;
+	void clear_props();
+
+	Vector<Variant> get_props();
+	void set_props(const Vector<Variant> &props);
+
+	Rect2 get_prop_uv_rect(const Ref<Texture> &texture);
+
+	Ref<TexturePacker> get_prop_packer();
+#endif
+
 	void refresh_rects();
 
-	VoxelmanLibrarySimple();
-	~VoxelmanLibrarySimple();
+	void _setup_material_albedo(const int material_index, const Ref<Texture> &texture);
+
+	VoxelLibraryMerger();
+	~VoxelLibraryMerger();
 
 protected:
+#ifdef PROPS_PRESENT
+	bool process_prop_textures(Ref<PropData> prop);
+#endif
+
 	static void _bind_methods();
 
 private:
-	Vector<Ref<VoxelSurfaceSimple> > _voxel_surfaces;
+	Vector<Ref<VoxelSurfaceMerger> > _voxel_surfaces;
+#ifdef PROPS_PRESENT
+	Vector<Ref<PropData> > _props;
+#endif
 
-	//atlas
-	int _atlas_columns;
-	int _atlas_rows;
+	Ref<TexturePacker> _packer;
+	Ref<TexturePacker> _prop_packer;
 };
 
-#endif // VOXEL_LIBRARY_H
+#endif

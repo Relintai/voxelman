@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelChunk" inherits="Resource" version="3.2">
+<class name="VoxelChunk" inherits="Resource" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -8,496 +8,685 @@
 	</tutorials>
 	<methods>
 		<method name="_bake_light" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="light" type="VoxelLight" />
 			<description>
 			</description>
 		</method>
 		<method name="_bake_lights" qualifiers="virtual">
-			<return type="void">
-			</return>
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_build" qualifiers="virtual">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_channel_setup" qualifiers="virtual">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="_clear_baked_lights" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="_create_meshers" qualifiers="virtual">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="_enter_tree" qualifiers="virtual">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="_exit_tree" qualifiers="virtual">
-			<return type="void">
-			</return>
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_finalize_build" qualifiers="virtual">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_generation_physics_process" qualifiers="virtual">
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_generation_process" qualifiers="virtual">
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_mesh_data_resource_added" qualifiers="virtual">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="_physics_process" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="delta" type="float">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
 			<description>
 			</description>
 		</method>
 		<method name="_process" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="delta" type="float">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="_prop_added" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="prop" type="VoxelChunkPropData">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="_setup_channels" qualifiers="virtual">
-			<return type="void">
-			</return>
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
 			<description>
 			</description>
 		</method>
 		<method name="_visibility_changed" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="visible" type="bool">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="visible" type="bool" />
 			<description>
 			</description>
 		</method>
 		<method name="_world_light_added" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="light" type="VoxelLight" />
 			<description>
 			</description>
 		</method>
 		<method name="_world_light_removed" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="light" type="VoxelLight" />
 			<description>
 			</description>
 		</method>
 		<method name="_world_transform_changed" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="add_mesher">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesher" type="VoxelMesher">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="add_prop">
-			<return type="void">
-			</return>
-			<argument index="0" name="prop" type="VoxelChunkPropData">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="allocate_channel">
-			<return type="void">
-			</return>
-			<argument index="0" name="channel_index" type="int">
-			</argument>
-			<argument index="1" name="default_value" type="int">
-			</argument>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="bake_light">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="light" type="VoxelLight" />
 			<description>
 			</description>
 		</method>
 		<method name="bake_lights">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
-		<method name="bake_mesh_array_uv" qualifiers="const">
-			<return type="Array">
-			</return>
-			<argument index="0" name="arr" type="Array">
-			</argument>
-			<argument index="1" name="tex" type="Texture">
-			</argument>
-			<argument index="2" name="mul_color" type="float" default="0.7">
-			</argument>
+		<method name="build">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_allocate">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="default_value" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_dealloc">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_ensure_allocated">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="default_value" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_fill">
+			<return type="void" />
+			<argument index="0" name="value" type="int" />
+			<argument index="1" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_get_array" qualifiers="const">
+			<return type="PoolByteArray" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_get_compressed" qualifiers="const">
+			<return type="PoolByteArray" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_is_allocated">
+			<return type="bool" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_set_array">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="array" type="PoolByteArray" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_set_compressed">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="array" type="PoolByteArray" />
+			<description>
+			</description>
+		</method>
+		<method name="channel_setup">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="clear_baked_lights">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
-		<method name="clear_props">
-			<return type="void">
-			</return>
+		<method name="collider_add">
+			<return type="int" />
+			<argument index="0" name="local_transform" type="Transform" />
+			<argument index="1" name="shape" type="Shape" />
+			<argument index="2" name="shape_rid" type="RID" />
+			<argument index="3" name="body" type="RID" />
 			<description>
 			</description>
 		</method>
-		<method name="create_meshers">
-			<return type="void">
-			</return>
+		<method name="collider_get_body">
+			<return type="RID" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="dealloc_channel">
-			<return type="void">
-			</return>
-			<argument index="0" name="channel_index" type="int">
-			</argument>
+		<method name="collider_get_count" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="collider_get_shape">
+			<return type="Shape" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="collider_get_shape_rid">
+			<return type="RID" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="collider_get_transform">
+			<return type="Transform" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="collider_remove">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="collider_set_body">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="rid" type="RID" />
+			<description>
+			</description>
+		</method>
+		<method name="collider_set_shape">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="shape" type="Shape" />
+			<description>
+			</description>
+		</method>
+		<method name="collider_set_shape_rid">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="rid" type="RID" />
+			<description>
+			</description>
+		</method>
+		<method name="collider_set_transform">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="transform" type="Transform" />
+			<description>
+			</description>
+		</method>
+		<method name="colliders_clear">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="enter_tree">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="exit_tree">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
-		<method name="fill_channel">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="int">
-			</argument>
-			<argument index="1" name="channel_index" type="int">
-			</argument>
+		<method name="finalize_build">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
-		<method name="get_channel_array" qualifiers="const">
-			<return type="PoolByteArray">
-			</return>
-			<argument index="0" name="channel_index" type="int">
-			</argument>
+		<method name="generation_physics_process">
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
 			<description>
 			</description>
 		</method>
-		<method name="get_channel_compressed" qualifiers="const">
-			<return type="PoolByteArray">
-			</return>
-			<argument index="0" name="channel_index" type="int">
-			</argument>
+		<method name="generation_process">
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
 			<description>
 			</description>
 		</method>
 		<method name="get_data_index" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_data_size" qualifiers="const">
-			<return type="int">
-			</return>
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="get_global_transform" qualifiers="const">
+			<return type="Transform" />
 			<description>
 			</description>
 		</method>
 		<method name="get_index" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_mesher" qualifiers="const">
-			<return type="VoxelMesher">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_mesher_count" qualifiers="const">
-			<return type="int">
-			</return>
+			<return type="int" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_physics_process" qualifiers="const">
-			<return type="bool">
-			</return>
+			<return type="bool" />
 			<description>
 			</description>
 		</method>
 		<method name="get_position" qualifiers="const">
-			<return type="Vector3">
-			</return>
+			<return type="Vector3" />
 			<description>
 			</description>
 		</method>
 		<method name="get_process" qualifiers="const">
-			<return type="bool">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_prop">
-			<return type="VoxelChunkPropData">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_prop_count" qualifiers="const">
-			<return type="int">
-			</return>
+			<return type="bool" />
 			<description>
 			</description>
 		</method>
 		<method name="get_voxel" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
-			<argument index="3" name="channel_index" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
+			<argument index="3" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="get_world_aabb" qualifiers="const">
+			<return type="AABB" />
+			<description>
+			</description>
+		</method>
+		<method name="get_world_position" qualifiers="const">
+			<return type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="get_world_size" qualifiers="const">
+			<return type="Vector3" />
 			<description>
 			</description>
 		</method>
 		<method name="is_in_tree" qualifiers="const">
-			<return type="bool">
-			</return>
+			<return type="bool" />
 			<description>
 			</description>
 		</method>
-		<method name="merge_mesh_array" qualifiers="const">
-			<return type="Array">
-			</return>
-			<argument index="0" name="arr" type="Array">
-			</argument>
+		<method name="job_add">
+			<return type="void" />
+			<argument index="0" name="job" type="VoxelJob" />
+			<description>
+			</description>
+		</method>
+		<method name="job_get" qualifiers="const">
+			<return type="VoxelJob" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="job_get_count" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="job_get_current">
+			<return type="VoxelJob" />
+			<description>
+			</description>
+		</method>
+		<method name="job_get_current_index">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="job_next">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="job_remove">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="job_set">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="job" type="VoxelJob" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_add">
+			<return type="int" />
+			<argument index="0" name="local_transform" type="Transform" />
+			<argument index="1" name="mesh" type="MeshDataResource" />
+			<argument index="2" name="texture" type="Texture" default="null" />
+			<argument index="3" name="color" type="Color" default="Color( 1, 1, 1, 1 )" />
+			<argument index="4" name="apply_voxel_scale" type="bool" default="true" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_addv">
+			<return type="int" />
+			<argument index="0" name="local_data_pos" type="Vector3" />
+			<argument index="1" name="mesh" type="MeshDataResource" />
+			<argument index="2" name="texture" type="Texture" default="null" />
+			<argument index="3" name="color" type="Color" default="Color( 1, 1, 1, 1 )" />
+			<argument index="4" name="apply_voxel_scale" type="bool" default="true" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_clear">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_get">
+			<return type="MeshDataResource" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_get_color">
+			<return type="Color" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_get_count" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_get_is_inside">
+			<return type="bool" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_get_texture">
+			<return type="Texture" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_get_transform">
+			<return type="Transform" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_get_uv_rect">
+			<return type="Rect2" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_remove">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_set">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="mesh" type="MeshDataResource" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_set_color">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="color" type="Color" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_set_is_inside">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="inside" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_set_texture">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="texture" type="Texture" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_set_transform">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="transform" type="Transform" />
+			<description>
+			</description>
+		</method>
+		<method name="mesh_data_resource_set_uv_rect">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
+			<argument index="1" name="uv_rect" type="Rect2" />
 			<description>
 			</description>
 		</method>
 		<method name="physics_process">
-			<return type="void">
-			</return>
-			<argument index="0" name="delta" type="float">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
 			<description>
 			</description>
 		</method>
 		<method name="process">
-			<return type="void">
-			</return>
-			<argument index="0" name="delta" type="float">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
 			<description>
 			</description>
 		</method>
-		<method name="remove_mesher">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
+		<method name="prop_add">
+			<return type="void" />
+			<argument index="0" name="prop" type="Transform" />
+			<argument index="1" name="arg1" type="PropData" />
 			<description>
 			</description>
 		</method>
-		<method name="remove_prop">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
+		<method name="prop_get">
+			<return type="PropData" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="set_channel_array">
-			<return type="void">
-			</return>
-			<argument index="0" name="channel_index" type="int">
-			</argument>
-			<argument index="1" name="array" type="PoolByteArray">
-			</argument>
+		<method name="prop_get_count" qualifiers="const">
+			<return type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="set_channel_compressed">
-			<return type="void">
-			</return>
-			<argument index="0" name="channel_index" type="int">
-			</argument>
-			<argument index="1" name="array" type="PoolByteArray">
-			</argument>
+		<method name="prop_remove">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="set_mesher">
-			<return type="void">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
-			<argument index="1" name="mesher" type="VoxelMesher">
-			</argument>
+		<method name="props_clear">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="set_physics_process">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="bool">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="value" type="bool" />
 			<description>
 			</description>
 		</method>
 		<method name="set_position">
-			<return type="void">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="set_process">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="bool">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="value" type="bool" />
 			<description>
 			</description>
 		</method>
 		<method name="set_size">
-			<return type="void">
-			</return>
-			<argument index="0" name="size_x" type="int">
-			</argument>
-			<argument index="1" name="size_y" type="int">
-			</argument>
-			<argument index="2" name="size_z" type="int">
-			</argument>
-			<argument index="3" name="margin_start" type="int" default="0">
-			</argument>
-			<argument index="4" name="margin_end" type="int" default="0">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="size_x" type="int" />
+			<argument index="1" name="size_y" type="int" />
+			<argument index="2" name="size_z" type="int" />
+			<argument index="3" name="margin_start" type="int" default="0" />
+			<argument index="4" name="margin_end" type="int" default="0" />
 			<description>
 			</description>
 		</method>
 		<method name="set_voxel">
-			<return type="void">
-			</return>
-			<argument index="0" name="value" type="int">
-			</argument>
-			<argument index="1" name="x" type="int">
-			</argument>
-			<argument index="2" name="y" type="int">
-			</argument>
-			<argument index="3" name="z" type="int">
-			</argument>
-			<argument index="4" name="channel_index" type="int">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="value" type="int" />
+			<argument index="1" name="x" type="int" />
+			<argument index="2" name="y" type="int" />
+			<argument index="3" name="z" type="int" />
+			<argument index="4" name="index" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="setup_channels">
-			<return type="void">
-			</return>
+		<method name="to_global" qualifiers="const">
+			<return type="Vector3" />
+			<argument index="0" name="local" type="Vector3" />
 			<description>
 			</description>
 		</method>
-		<method name="validate_channel_data_position" qualifiers="const">
-			<return type="bool">
-			</return>
-			<argument index="0" name="x" type="int">
-			</argument>
-			<argument index="1" name="y" type="int">
-			</argument>
-			<argument index="2" name="z" type="int">
-			</argument>
+		<method name="to_local" qualifiers="const">
+			<return type="Vector3" />
+			<argument index="0" name="global" type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="validate_data_position" qualifiers="const">
+			<return type="bool" />
+			<argument index="0" name="x" type="int" />
+			<argument index="1" name="y" type="int" />
+			<argument index="2" name="z" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="visibility_changed">
-			<return type="void">
-			</return>
-			<argument index="0" name="visible" type="bool">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="visible" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_add">
+			<return type="void" />
+			<argument index="0" name="structure" type="VoxelStructure" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_add_at_position">
+			<return type="void" />
+			<argument index="0" name="structure" type="VoxelStructure" />
+			<argument index="1" name="world_position" type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_clear">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_get" qualifiers="const">
+			<return type="VoxelStructure" />
+			<argument index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_get_count" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_remove">
+			<return type="void" />
+			<argument index="0" name="structure" type="VoxelStructure" />
+			<description>
+			</description>
+		</method>
+		<method name="voxel_structure_remove_index">
+			<return type="void" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="world_light_added">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="light" type="VoxelLight" />
 			<description>
 			</description>
 		</method>
 		<method name="world_light_removed">
-			<return type="void">
-			</return>
-			<argument index="0" name="light" type="VoxelLight">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="light" type="VoxelLight" />
 			<description>
 			</description>
 		</method>
 		<method name="world_transform_changed">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 	</methods>
 	<members>
-		<member name="channel_count" type="int" setter="set_channel_count" getter="get_channel_count" default="0">
+		<member name="channel_count" type="int" setter="channel_set_count" getter="channel_get_count" default="0">
 		</member>
 		<member name="data_size_x" type="int" setter="set_data_size_x" getter="get_data_size_x" default="0">
 		</member>
@@ -511,7 +700,7 @@
 		</member>
 		<member name="is_generating" type="bool" setter="set_is_generating" getter="get_is_generating">
 		</member>
-		<member name="library" type="VoxelmanLibrary" setter="set_library" getter="get_library">
+		<member name="library" type="VoxelLibrary" setter="set_library" getter="get_library">
 		</member>
 		<member name="margin_end" type="int" setter="set_margin_end" getter="get_margin_end" default="0">
 		</member>
@@ -537,13 +726,14 @@
 		</member>
 		<member name="voxel_scale" type="float" setter="set_voxel_scale" getter="get_voxel_scale" default="1.0">
 		</member>
+		<member name="voxel_structures" type="Array" setter="voxel_structures_set" getter="voxel_structures_get" default="[  ]">
+		</member>
 		<member name="voxel_world" type="VoxelWorld" setter="set_voxel_world" getter="get_voxel_world">
 		</member>
 	</members>
 	<signals>
 		<signal name="mesh_generation_finished">
-			<argument index="0" name="chunk" type="VoxelChunk">
-			</argument>
+			<argument index="0" name="chunk" type="VoxelChunk" />
 			<description>
 			</description>
 		</signal>

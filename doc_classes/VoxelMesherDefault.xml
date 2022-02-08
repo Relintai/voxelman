@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelMesherDefault" inherits="VoxelMesher" version="3.2">
+<class name="VoxelMesherDefault" inherits="VoxelMesher" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -11,7 +11,7 @@
 	<members>
 		<member name="build_flags" type="int" setter="set_build_flags" getter="get_build_flags" default="384">
 		</member>
-		<member name="format" type="int" setter="set_format" getter="get_format" override="true" default="18" />
+		<member name="format" type="int" setter="set_format" getter="get_format" overrides="VoxelMesher" default="18" />
 	</members>
 	<constants>
 	</constants>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelChunkDefault" inherits="VoxelChunk" version="3.2">
+<class name="VoxelChunkDefault" inherits="VoxelChunk" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -7,339 +7,217 @@
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="_build_phase" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="phase" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="_build_phase_physics_process" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="phase" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="_build_phase_process" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="phase" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="_draw_debug_voxel_lights" qualifiers="virtual">
-			<return type="void">
-			</return>
-			<argument index="0" name="debug_drawer" type="ImmediateGeometry">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="build_phase">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="build_phase_physics_process">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="build_phase_process">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="clear_mesh_rids">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
 		<method name="clear_rids">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="create_colliders">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="layer_mask" type="int" default="1">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="layer_mask" type="int" default="1" />
 			<description>
 			</description>
 		</method>
-		<method name="create_debug_immediate_geometry">
-			<return type="void">
-			</return>
+		<method name="debug_mesh_add_vertices_to">
+			<return type="void" />
+			<argument index="0" name="arr" type="PoolVector3Array" />
 			<description>
 			</description>
 		</method>
-		<method name="create_meshes">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_count" type="int">
-			</argument>
+		<method name="debug_mesh_allocate">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="debug_mesh_array_clear">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="debug_mesh_clear">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="debug_mesh_free">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="debug_mesh_has">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="debug_mesh_send">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="draw_cross_voxels">
-			<return type="void">
-			</return>
-			<argument index="0" name="max" type="Vector3">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="max" type="Vector3" />
 			<description>
 			</description>
 		</method>
 		<method name="draw_cross_voxels_fill">
-			<return type="void">
-			</return>
-			<argument index="0" name="max" type="Vector3">
-			</argument>
-			<argument index="1" name="fill" type="float">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="max" type="Vector3" />
+			<argument index="1" name="fill" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="draw_debug_mdr_colliders">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="draw_debug_voxel_lights">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="draw_debug_voxels">
-			<return type="void">
-			</return>
-			<argument index="0" name="max" type="int">
-			</argument>
-			<argument index="1" name="color" type="Color" default="Color( 1, 1, 1, 1 )">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="max" type="int" />
+			<argument index="1" name="color" type="Color" default="Color( 1, 1, 1, 1 )" />
 			<description>
 			</description>
 		</method>
 		<method name="emit_build_finished">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="free_chunk">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="free_colliders">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="free_debug_immediate_geometry">
-			<return type="void">
-			</return>
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="free_index">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="free_meshes">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="free_rids">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="generate_ao">
-			<return type="void">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="generate_random_ao">
-			<return type="void">
-			</return>
-			<argument index="0" name="seed" type="int">
-			</argument>
-			<argument index="1" name="octaves" type="int" default="4">
-			</argument>
-			<argument index="2" name="period" type="int" default="30">
-			</argument>
-			<argument index="3" name="persistence" type="float" default="0.3">
-			</argument>
-			<argument index="4" name="scale_factor" type="float" default="0.6">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_light">
-			<return type="VoxelLight">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
+			<return type="VoxelLight" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_light_count" qualifiers="const">
-			<return type="int">
-			</return>
-			<description>
-			</description>
-		</method>
-		<method name="get_mesh_rid">
-			<return type="RID">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_mesh_rid_count">
-			<return type="int">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="get_mesh_rid_index">
-			<return type="RID">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
-			<argument index="2" name="index" type="int">
-			</argument>
+			<return type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_mesh_rids">
-			<return type="Dictionary">
-			</return>
+			<return type="Dictionary" />
 			<description>
 			</description>
 		</method>
-		<method name="get_meshes">
-			<return type="Array">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
+		<method name="mesh_rid_get">
+			<return type="RID" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="has_meshes">
-			<return type="bool">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
+		<method name="mesh_rid_get_count">
+			<return type="int" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="has_next_phase">
-			<return type="bool">
-			</return>
+		<method name="mesh_rid_get_index">
+			<return type="RID" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
+			<argument index="2" name="index" type="int" />
 			<description>
 			</description>
 		</method>
-		<method name="next_phase">
-			<return type="void">
-			</return>
+		<method name="mesh_rid_set">
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
+			<argument index="2" name="value" type="RID" />
 			<description>
 			</description>
 		</method>
-		<method name="set_mesh_rid">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
-			<argument index="2" name="value" type="RID">
-			</argument>
+		<method name="mesh_rid_set_index">
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
+			<argument index="2" name="index" type="int" />
+			<argument index="3" name="value" type="RID" />
 			<description>
 			</description>
 		</method>
-		<method name="set_mesh_rid_index">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
-			<argument index="2" name="index" type="int">
-			</argument>
-			<argument index="3" name="value" type="RID">
-			</argument>
+		<method name="mesh_rids_clear">
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="meshes_create">
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_count" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="meshes_free">
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="meshes_get">
+			<return type="Array" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="meshes_has">
+			<return type="bool" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="meshes_set">
+			<return type="void" />
+			<argument index="0" name="mesh_index" type="int" />
+			<argument index="1" name="mesh_type_index" type="int" />
+			<argument index="2" name="meshes" type="Array" />
+			<description>
+			</description>
+		</method>
+		<method name="rids_free">
+			<return type="void" />
 			<description>
 			</description>
 		</method>
 		<method name="set_mesh_rids">
-			<return type="void">
-			</return>
-			<argument index="0" name="rids" type="Dictionary">
-			</argument>
-			<description>
-			</description>
-		</method>
-		<method name="set_meshes">
-			<return type="void">
-			</return>
-			<argument index="0" name="mesh_index" type="int">
-			</argument>
-			<argument index="1" name="mesh_type_index" type="int">
-			</argument>
-			<argument index="2" name="meshes" type="Array">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="rids" type="Dictionary" />
 			<description>
 			</description>
 		</method>
 	</methods>
 	<members>
-		<member name="active_build_phase_type" type="int" setter="set_active_build_phase_type" getter="get_active_build_phase_type" enum="VoxelChunkDefault.ActiveBuildPhaseType">
-		</member>
 		<member name="build_flags" type="int" setter="set_build_flags" getter="get_build_flags">
-		</member>
-		<member name="current_build_phase" type="int" setter="set_current_build_phase" getter="get_current_build_phase">
 		</member>
 		<member name="current_lod_level" type="int" setter="set_current_lod_level" getter="get_current_lod_level" default="0">
 		</member>
@@ -347,63 +225,31 @@
 		</member>
 		<member name="lod_num" type="int" setter="set_lod_num" getter="get_lod_num">
 		</member>
-		<member name="lod_size" type="int" setter="set_lod_size" getter="get_lod_size">
-		</member>
-		<member name="max_build_phase" type="int" setter="set_max_build_phase" getter="get_max_build_phase">
-		</member>
 	</members>
 	<constants>
-		<constant name="BUILD_PHASE_DONE" value="0">
-		</constant>
-		<constant name="BUILD_PHASE_SETUP" value="1">
-		</constant>
-		<constant name="BUILD_PHASE_TERRARIN_MESH_SETUP" value="2">
-		</constant>
-		<constant name="BUILD_PHASE_TERRARIN_MESH_COLLIDER" value="3">
-		</constant>
-		<constant name="BUILD_PHASE_TERRARIN_MESH" value="5">
-		</constant>
-		<constant name="BUILD_PHASE_LIGHTS" value="4">
-		</constant>
-		<constant name="BUILD_PHASE_FINALIZE" value="6">
-		</constant>
-		<constant name="BUILD_PHASE_MAX" value="7">
-		</constant>
-		<constant name="VOXEL_CHUNK_STATE_GENERATION_QUEUED" value="1">
-		</constant>
-		<constant name="VOXEL_CHUNK_STATE_GENERATION" value="2">
-		</constant>
-		<constant name="VOXEL_CHUNK_STATE_MESH_GENERATION_QUEUED" value="3">
-		</constant>
-		<constant name="VOXEL_CHUNK_STATE_MESH_GENERATION" value="4">
-		</constant>
-		<constant name="VOXEL_CHUNK_STATE_MAX" value="5">
-		</constant>
 		<constant name="DEFAULT_CHANNEL_TYPE" value="0" enum="DefaultChannels">
 		</constant>
 		<constant name="DEFAULT_CHANNEL_ISOLEVEL" value="1" enum="DefaultChannels">
 		</constant>
-		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_R" value="2" enum="DefaultChannels">
+		<constant name="DEFAULT_CHANNEL_ALT_TYPE" value="2" enum="DefaultChannels">
 		</constant>
-		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_G" value="3" enum="DefaultChannels">
+		<constant name="DEFAULT_CHANNEL_ALT_ISOLEVEL" value="3" enum="DefaultChannels">
 		</constant>
-		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_B" value="4" enum="DefaultChannels">
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_R" value="4" enum="DefaultChannels">
 		</constant>
-		<constant name="DEFAULT_CHANNEL_AO" value="5" enum="DefaultChannels">
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_G" value="5" enum="DefaultChannels">
 		</constant>
-		<constant name="DEFAULT_CHANNEL_RANDOM_AO" value="6" enum="DefaultChannels">
+		<constant name="DEFAULT_CHANNEL_LIGHT_COLOR_B" value="6" enum="DefaultChannels">
 		</constant>
-		<constant name="DEFAULT_CHANNEL_LIQUID_FLOW" value="7" enum="DefaultChannels">
+		<constant name="DEFAULT_CHANNEL_AO" value="7" enum="DefaultChannels">
 		</constant>
-		<constant name="MAX_DEFAULT_CHANNELS" value="8" enum="DefaultChannels">
+		<constant name="DEFAULT_CHANNEL_RANDOM_AO" value="8" enum="DefaultChannels">
 		</constant>
-		<constant name="BUILD_PHASE_TYPE_NORMAL" value="0" enum="ActiveBuildPhaseType">
+		<constant name="DEFAULT_CHANNEL_LIQUID_FLOW" value="9" enum="DefaultChannels">
 		</constant>
-		<constant name="BUILD_PHASE_TYPE_PROCESS" value="1" enum="ActiveBuildPhaseType">
+		<constant name="MAX_DEFAULT_CHANNELS" value="10" enum="DefaultChannels">
 		</constant>
-		<constant name="BUILD_PHASE_TYPE_PHYSICS_PROCESS" value="2" enum="ActiveBuildPhaseType">
-		</constant>
-		<constant name="MESH_INDEX_TERRARIN" value="0">
+		<constant name="MESH_INDEX_TERRAIN" value="0">
 		</constant>
 		<constant name="MESH_INDEX_PROP" value="1">
 		</constant>

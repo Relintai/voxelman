@@ -28,7 +28,8 @@ SOFTWARE.
 #include "../../meshers/blocky/voxel_mesher_liquid_blocky.h"
 #include "../jobs/voxel_light_job.h"
 #include "../jobs/voxel_prop_job.h"
-#include "../jobs/voxel_terrarin_job.h"
+#include "../jobs/voxel_terrain_job.h"
+#include "../../defines.h"
 
 Ref<VoxelChunk> VoxelWorldBlocky::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
 
@@ -37,14 +38,14 @@ Ref<VoxelChunk> VoxelWorldBlocky::_create_chunk(int x, int y, int z, Ref<VoxelCh
 	}
 
 	if (chunk->job_get_count() == 0) {
-		Ref<VoxelTerrarinJob> tj;
-		tj.instance();
+		Ref<VoxelTerrainJob> tj;
+		tj.INSTANCE();
 
 		Ref<VoxelLightJob> lj;
-		lj.instance();
+		lj.INSTANCE();
 
 		Ref<VoxelPropJob> pj;
-		pj.instance();
+		pj.INSTANCE();
 		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky)));
 
 		tj->add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky())));

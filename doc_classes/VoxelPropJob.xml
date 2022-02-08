@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelPropJob" inherits="VoxelJob" version="3.5">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="build_phase_type" type="int" setter="set_build_phase_type" getter="get_build_phase_type" overrides="VoxelJob" enum="VoxelJob.ActiveBuildPhaseType" default="2" />
+		<member name="prop_mesher" type="VoxelMesher" setter="set_prop_mesher" getter="get_prop_mesher">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

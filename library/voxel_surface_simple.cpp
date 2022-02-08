@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "voxel_surface_simple.h"
 
-#include "voxelman_library_simple.h"
+#include "voxel_library_simple.h"
 
 int VoxelSurfaceSimple::get_atlas_x(const VoxelSurfaceSides side) const {
 	int indx = (side * 2);
@@ -47,7 +47,7 @@ void VoxelSurfaceSimple::set_atlas_y(const VoxelSurfaceSides side, int value) {
 }
 
 void VoxelSurfaceSimple::refresh_rects() {
-	VoxelmanLibrarySimple *lib = Object::cast_to<VoxelmanLibrarySimple>(_library);
+	VoxelLibrarySimple *lib = Object::cast_to<VoxelLibrarySimple>(_library);
 
 	ERR_FAIL_COND(lib == NULL);
 

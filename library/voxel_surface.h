@@ -39,9 +39,9 @@ SOFTWARE.
 #include "core/math/rect2.h"
 #include "scene/resources/material.h"
 
-#include "voxelman_library.h"
+#include "voxel_library.h"
 
-class VoxelmanLibrary;
+class VoxelLibrary;
 
 class VoxelSurface : public Resource {
 	GDCLASS(VoxelSurface, Resource)
@@ -88,8 +88,8 @@ public:
 	Rect2 get_rect(const VoxelSurfaceSides side) const;
 	void set_rect(const VoxelSurfaceSides side, const Rect2 &rect);
 
-	Ref<VoxelmanLibrary> get_library() const;
-	void set_library(Ref<VoxelmanLibrary> library);
+	Ref<VoxelLibrary> get_library() const;
+	void set_library(Ref<VoxelLibrary> library);
 
 	Vector2 transform_uv(const VoxelSurfaceSides p_side, const Vector2 &p_uv) const;
 	Vector2 transform_uv_scaled(const VoxelSurfaceSides p_side, const Vector2 &p_uv, const int p_current_x, const int p_current_y, const int p_max) const;
@@ -102,7 +102,7 @@ public:
 protected:
 	static void _bind_methods();
 
-	VoxelmanLibrary *_library;
+	VoxelLibrary *_library;
 
 	int _id;
 	int _mesher_index;

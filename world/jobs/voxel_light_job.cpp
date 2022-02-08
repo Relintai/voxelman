@@ -25,7 +25,7 @@ SOFTWARE.
 #include "../../defines.h"
 
 #include "../../library/voxel_surface.h"
-#include "../../library/voxelman_library.h"
+#include "../../library/voxel_library.h"
 
 #include "../../meshers/voxel_mesher.h"
 #include "../default/voxel_chunk_default.h"
@@ -74,7 +74,7 @@ void VoxelLightJob::phase_light() {
 void VoxelLightJob::_execute_phase() {
 	ERR_FAIL_COND(!_chunk.is_valid());
 
-	Ref<VoxelmanLibrary> library = _chunk->get_library();
+	Ref<VoxelLibrary> library = _chunk->get_library();
 
 	ERR_FAIL_COND(!library.is_valid());
 

@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "voxel_terrarin_job.h"
+#include "voxel_terrain_job.h"
 
 #include "../../library/voxel_surface.h"
-#include "../../library/voxelman_library.h"
+#include "../../library/voxel_library.h"
 
 #include "../../meshers/default/voxel_mesher_default.h"
 #include "../../meshers/voxel_mesher.h"
@@ -34,51 +34,51 @@ SOFTWARE.
 #include "../../../mesh_utils/fast_quadratic_mesh_simplifier.h"
 #endif
 
-Ref<VoxelMesher> VoxelTerrarinJob::get_mesher(int index) const {
+Ref<VoxelMesher> VoxelTerrainJob::get_mesher(int index) const {
 	ERR_FAIL_INDEX_V(index, _meshers.size(), Ref<VoxelMesher>());
 
 	return _meshers.get(index);
 }
-void VoxelTerrarinJob::set_mesher(int index, const Ref<VoxelMesher> &mesher) {
+void VoxelTerrainJob::set_mesher(int index, const Ref<VoxelMesher> &mesher) {
 	ERR_FAIL_INDEX(index, _meshers.size());
 
 	_meshers.set(index, mesher);
 }
-void VoxelTerrarinJob::remove_mesher(const int index) {
+void VoxelTerrainJob::remove_mesher(const int index) {
 	ERR_FAIL_INDEX(index, _meshers.size());
 
-	_meshers.remove(index);
+	_meshers.VREMOVE(index);
 }
-void VoxelTerrarinJob::add_mesher(const Ref<VoxelMesher> &mesher) {
+void VoxelTerrainJob::add_mesher(const Ref<VoxelMesher> &mesher) {
 	_meshers.push_back(mesher);
 }
-int VoxelTerrarinJob::get_mesher_count() const {
+int VoxelTerrainJob::get_mesher_count() const {
 	return _meshers.size();
 }
 
-Ref<VoxelMesher> VoxelTerrarinJob::get_liquid_mesher(int index) const {
+Ref<VoxelMesher> VoxelTerrainJob::get_liquid_mesher(int index) const {
 	ERR_FAIL_INDEX_V(index, _liquid_meshers.size(), Ref<VoxelMesher>());
 
 	return _liquid_meshers.get(index);
 }
-void VoxelTerrarinJob::set_liquid_mesher(int index, const Ref<VoxelMesher> &mesher) {
+void VoxelTerrainJob::set_liquid_mesher(int index, const Ref<VoxelMesher> &mesher) {
 	ERR_FAIL_INDEX(index, _liquid_meshers.size());
 
 	_liquid_meshers.set(index, mesher);
 }
-void VoxelTerrarinJob::remove_liquid_mesher(const int index) {
+void VoxelTerrainJob::remove_liquid_mesher(const int index) {
 	ERR_FAIL_INDEX(index, _liquid_meshers.size());
 
-	_liquid_meshers.remove(index);
+	_liquid_meshers.VREMOVE(index);
 }
-void VoxelTerrarinJob::add_liquid_mesher(const Ref<VoxelMesher> &mesher) {
+void VoxelTerrainJob::add_liquid_mesher(const Ref<VoxelMesher> &mesher) {
 	_liquid_meshers.push_back(mesher);
 }
-int VoxelTerrarinJob::get_liquid_mesher_count() const {
+int VoxelTerrainJob::get_liquid_mesher_count() const {
 	return _liquid_meshers.size();
 }
 
-void VoxelTerrarinJob::phase_setup() {
+void VoxelTerrainJob::phase_setup() {
 	for (int i = 0; i < _meshers.size(); ++i) {
 		Ref<VoxelMesher> mesher = _meshers.get(i);
 
@@ -100,7 +100,7 @@ void VoxelTerrarinJob::phase_setup() {
 	next_phase();
 }
 
-void VoxelTerrarinJob::phase_terrarin_mesh_setup() {
+void VoxelTerrainJob::phase_terrain_mesh_setup() {
 	int starti = 0;
 
 	if (has_meta("tms_m")) {
@@ -150,7 +150,7 @@ void VoxelTerrarinJob::phase_terrarin_mesh_setup() {
 	next_phase();
 }
 
-void VoxelTerrarinJob::phase_collider() {
+void VoxelTerrainJob::phase_collider() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER) == 0) {
@@ -216,15 +216,15 @@ void VoxelTerrarinJob::phase_collider() {
 	next_phase();
 }
 
-void VoxelTerrarinJob::phase_physics_process() {
+void VoxelTerrainJob::phase_physics_process() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	if (temp_arr_collider.size() != 0) {
-		if (!chunk->meshes_has(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_BODY)) {
-			chunk->colliders_create(VoxelChunkDefault::MESH_INDEX_TERRARIN);
+		if (!chunk->meshes_has(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_BODY)) {
+			chunk->colliders_create(VoxelChunkDefault::MESH_INDEX_TERRAIN);
 		}
 
-		PhysicsServer::get_singleton()->shape_set_data(chunk->mesh_rid_get(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
+		PhysicsServer::get_singleton()->shape_set_data(chunk->mesh_rid_get(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_SHAPE), temp_arr_collider);
 
 		temp_arr_collider.resize(0);
 	}
@@ -251,7 +251,7 @@ void VoxelTerrarinJob::phase_physics_process() {
 	next_phase();
 }
 
-void VoxelTerrarinJob::phase_terrarin_mesh() {
+void VoxelTerrainJob::phase_terrain_mesh() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
 	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
@@ -378,16 +378,16 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 			}
 		}
 
-		RID mesh_rid = chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 0);
+		RID mesh_rid = chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 0);
 
 		if (should_do()) {
 			if (mesh_rid == RID()) {
 				if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_CREATE_LODS) != 0)
-					chunk->meshes_create(VoxelChunkDefault::MESH_INDEX_TERRARIN, chunk->get_lod_num() + 1);
+					chunk->meshes_create(VoxelChunkDefault::MESH_INDEX_TERRAIN, chunk->get_lod_num() + 1);
 				else
-					chunk->meshes_create(VoxelChunkDefault::MESH_INDEX_TERRARIN, 1);
+					chunk->meshes_create(VoxelChunkDefault::MESH_INDEX_TERRAIN, 1);
 
-				mesh_rid = chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 0);
+				mesh_rid = chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 0);
 			}
 
 			if (VS::get_singleton()->mesh_get_surface_count(mesh_rid) > 0)
@@ -419,10 +419,10 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 					//for lod 1 just remove uv2
 					temp_mesh_arr[VisualServer::ARRAY_TEX_UV2] = Variant();
 
-					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
+					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 					if (chunk->get_library()->material_get(1).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), 0, chunk->get_library()->material_get(1)->get_rid());
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 1), 0, chunk->get_library()->material_get(1)->get_rid());
 				}
 				if (should_return()) {
 					return;
@@ -434,10 +434,10 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 					Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
 					temp_mesh_arr = temp_mesh_arr2;
 
-					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
+					VisualServer::get_singleton()->mesh_add_surface_from_arrays(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr2);
 
 					if (chunk->get_library()->material_get(2).is_valid())
-						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), 0, chunk->get_library()->material_get(2)->get_rid());
+						VisualServer::get_singleton()->mesh_surface_set_material(chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 2), 0, chunk->get_library()->material_get(2)->get_rid());
 				}
 
 				if (should_return()) {
@@ -462,12 +462,12 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 						temp_mesh_arr[VisualServer::ARRAY_TEX_UV] = Variant();
 
 						VisualServer::get_singleton()->mesh_add_surface_from_arrays(
-								chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3),
+								chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3),
 								VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 						if (chunk->get_library()->material_get(3).is_valid())
 							VisualServer::get_singleton()->mesh_surface_set_material(
-									chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0,
+									chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, 3), 0,
 									chunk->get_library()->material_get(3)->get_rid());
 					}
 				}
@@ -481,7 +481,7 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 			if (should_do()) {
 				if (chunk->get_lod_num() > 4) {
 					Ref<FastQuadraticMeshSimplifier> fqms;
-					fqms.instance();
+					fqms.INSTANCE();
 					fqms->set_preserve_border_edges(true);
 					fqms->initialize(temp_mesh_arr);
 
@@ -490,12 +490,12 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 						temp_mesh_arr = fqms->get_arrays();
 
 						VisualServer::get_singleton()->mesh_add_surface_from_arrays(
-								chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i),
+								chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i),
 								VisualServer::PRIMITIVE_TRIANGLES, temp_mesh_arr);
 
 						if (chunk->get_library()->material_get(i).is_valid())
 							VisualServer::get_singleton()->mesh_surface_set_material(
-									chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRARIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i), 0,
+									chunk->mesh_rid_get_index(VoxelChunkDefault::MESH_INDEX_TERRAIN, VoxelChunkDefault::MESH_TYPE_INDEX_MESH, i), 0,
 									chunk->get_library()->material_get(i)->get_rid());
 					}
 				}
@@ -570,37 +570,37 @@ void VoxelTerrarinJob::phase_terrarin_mesh() {
 	next_phase();
 }
 
-void VoxelTerrarinJob::phase_finalize() {
+void VoxelTerrainJob::phase_finalize() {
 	set_complete(true); //So threadpool knows it's done
 
 	next_job();
 }
 
-void VoxelTerrarinJob::_execute_phase() {
+void VoxelTerrainJob::_execute_phase() {
 	ERR_FAIL_COND(!_chunk.is_valid());
 
-	Ref<VoxelmanLibrary> library = _chunk->get_library();
+	Ref<VoxelLibrary> library = _chunk->get_library();
 
 	ERR_FAIL_COND(!library.is_valid());
 
 	if (_phase == 0) {
 		phase_setup();
 	} else if (_phase == 1) {
-		phase_terrarin_mesh_setup();
+		phase_terrain_mesh_setup();
 	} else if (_phase == 2) {
 		phase_collider();
 	} else if (_phase == 4) {
-		phase_terrarin_mesh();
+		phase_terrain_mesh();
 	} else if (_phase == 5) {
 		phase_finalize();
 	} else if (_phase > 5) {
 		set_complete(true); //So threadpool knows it's done
 		next_job();
-		ERR_FAIL_MSG("VoxelTerrarinJob: _phase is too high!");
+		ERR_FAIL_MSG("VoxelTerrainJob: _phase is too high!");
 	}
 }
 
-void VoxelTerrarinJob::_reset() {
+void VoxelTerrainJob::_reset() {
 	VoxelJob::_reset();
 
 	_build_done = false;
@@ -637,31 +637,31 @@ void VoxelTerrarinJob::_reset() {
 	}
 }
 
-void VoxelTerrarinJob::_physics_process(float delta) {
+void VoxelTerrainJob::_physics_process(float delta) {
 	if (_phase == 3)
 		phase_physics_process();
 }
 
-VoxelTerrarinJob::VoxelTerrarinJob() {
+VoxelTerrainJob::VoxelTerrainJob() {
 }
 
-VoxelTerrarinJob::~VoxelTerrarinJob() {
+VoxelTerrainJob::~VoxelTerrainJob() {
 	_meshers.clear();
 	_liquid_meshers.clear();
 }
 
-void VoxelTerrarinJob::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_mesher", "index"), &VoxelTerrarinJob::get_mesher);
-	ClassDB::bind_method(D_METHOD("set_mesher", "index", "mesher"), &VoxelTerrarinJob::set_mesher);
-	ClassDB::bind_method(D_METHOD("remove_mesher", "index"), &VoxelTerrarinJob::remove_mesher);
-	ClassDB::bind_method(D_METHOD("add_mesher", "mesher"), &VoxelTerrarinJob::add_mesher);
-	ClassDB::bind_method(D_METHOD("get_mesher_count"), &VoxelTerrarinJob::get_mesher_count);
+void VoxelTerrainJob::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_mesher", "index"), &VoxelTerrainJob::get_mesher);
+	ClassDB::bind_method(D_METHOD("set_mesher", "index", "mesher"), &VoxelTerrainJob::set_mesher);
+	ClassDB::bind_method(D_METHOD("remove_mesher", "index"), &VoxelTerrainJob::remove_mesher);
+	ClassDB::bind_method(D_METHOD("add_mesher", "mesher"), &VoxelTerrainJob::add_mesher);
+	ClassDB::bind_method(D_METHOD("get_mesher_count"), &VoxelTerrainJob::get_mesher_count);
 
-	ClassDB::bind_method(D_METHOD("get_liquid_mesher", "index"), &VoxelTerrarinJob::get_liquid_mesher);
-	ClassDB::bind_method(D_METHOD("set_liquid_mesher", "index", "mesher"), &VoxelTerrarinJob::set_liquid_mesher);
-	ClassDB::bind_method(D_METHOD("remove_liquid_mesher", "index"), &VoxelTerrarinJob::remove_liquid_mesher);
-	ClassDB::bind_method(D_METHOD("add_liquid_mesher", "mesher"), &VoxelTerrarinJob::add_liquid_mesher);
-	ClassDB::bind_method(D_METHOD("get_liquid_mesher_count"), &VoxelTerrarinJob::get_liquid_mesher_count);
+	ClassDB::bind_method(D_METHOD("get_liquid_mesher", "index"), &VoxelTerrainJob::get_liquid_mesher);
+	ClassDB::bind_method(D_METHOD("set_liquid_mesher", "index", "mesher"), &VoxelTerrainJob::set_liquid_mesher);
+	ClassDB::bind_method(D_METHOD("remove_liquid_mesher", "index"), &VoxelTerrainJob::remove_liquid_mesher);
+	ClassDB::bind_method(D_METHOD("add_liquid_mesher", "mesher"), &VoxelTerrainJob::add_liquid_mesher);
+	ClassDB::bind_method(D_METHOD("get_liquid_mesher_count"), &VoxelTerrainJob::get_liquid_mesher_count);
 
-	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &VoxelTerrarinJob::_physics_process);
+	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &VoxelTerrainJob::_physics_process);
 }

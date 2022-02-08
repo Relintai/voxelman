@@ -20,24 +20,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "voxelman_level_generator.h"
+#ifndef VOXEL_LEVEL_GENERATOR_FLAT_H
+#define VOXEL_LEVEL_GENERATOR_FLAT_H
 
-#include "../world/voxel_chunk.h"
+#include "voxel_level_generator.h"
 
-void VoxelmanLevelGenerator::generate_chunk(Ref<VoxelChunk> chunk) {
-	if (has_method("_generate_chunk")) {
-		call("_generate_chunk", chunk);
-	}
-}
+class VoxelChunk;
 
-VoxelmanLevelGenerator::VoxelmanLevelGenerator() {
-}
+class VoxelLevelGeneratorFlat : public VoxelLevelGenerator {
+	GDCLASS(VoxelLevelGeneratorFlat, VoxelLevelGenerator);
 
-VoxelmanLevelGenerator::~VoxelmanLevelGenerator() {
-}
+public:
+	int get_floor_position() const;
+	void set_floor_position(const int floor_height);
 
-void VoxelmanLevelGenerator::_bind_methods() {
-	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+	Dictionary get_channel_map();
+	void set_channel_map(const Dictionary &map);
 
-	ClassDB::bind_method(D_METHOD("generate_chunk", "chunk"), &VoxelmanLevelGenerator::generate_chunk);
-}
+	virtual void _generate_chunk(Ref<VoxelChunk> chunk);
+
+	VoxelLevelGeneratorFlat();
+	~VoxelLevelGeneratorFlat();
+
+protected:
+	static void _bind_methods();
+
+private:
+	int _floor_position;
+	Dictionary _channel_map;
+};
+
+#endif

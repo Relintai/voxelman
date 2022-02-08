@@ -45,6 +45,10 @@ public:
 
 	PoolColorArray get_vertex_colors(const Transform &transform, const PoolVector3Array &vertices, const float base_light_value = 0.45, const float ao_strength = 0.2);
 
+#if VERSION_MAJOR >= 4
+	GDVIRTUAL0(_update_lods);
+#endif
+
 	VoxelWorldDefault();
 	~VoxelWorldDefault();
 

@@ -38,8 +38,8 @@ SOFTWARE.
 #include navigation_h
 
 #include "../areas/world_area.h"
-#include "../level_generator/voxelman_level_generator.h"
-#include "../library/voxelman_library.h"
+#include "../level_generator/voxel_level_generator.h"
+#include "../library/voxel_library.h"
 
 #include "core/os/os.h"
 
@@ -94,11 +94,11 @@ public:
 	int get_max_frame_chunk_build_steps() const;
 	void set_max_frame_chunk_build_steps(const int value);
 
-	Ref<VoxelmanLibrary> get_library();
-	void set_library(const Ref<VoxelmanLibrary> &library);
+	Ref<VoxelLibrary> get_library();
+	void set_library(const Ref<VoxelLibrary> &library);
 
-	Ref<VoxelmanLevelGenerator> get_level_generator() const;
-	void set_level_generator(const Ref<VoxelmanLevelGenerator> &level_generator);
+	Ref<VoxelLevelGenerator> get_level_generator() const;
+	void set_level_generator(const Ref<VoxelLevelGenerator> &level_generator);
 
 	float get_voxel_scale() const;
 	void set_voxel_scale(const float value);
@@ -262,8 +262,8 @@ private:
 	int _data_margin_start;
 	int _data_margin_end;
 
-	Ref<VoxelmanLibrary> _library;
-	Ref<VoxelmanLevelGenerator> _level_generator;
+	Ref<VoxelLibrary> _library;
+	Ref<VoxelLevelGenerator> _level_generator;
 	float _voxel_scale;
 	int _chunk_spawn_range;
 

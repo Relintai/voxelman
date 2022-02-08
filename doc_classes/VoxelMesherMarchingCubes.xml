@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="VoxelMesherMarchingCubes" inherits="VoxelMesherDefault" version="3.2">
+<class name="VoxelMesherMarchingCubes" inherits="VoxelMesherDefault" version="3.5">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -8,94 +8,68 @@
 	</tutorials>
 	<methods>
 		<method name="corner_id_to_vertex" qualifiers="const">
-			<return type="Vector3">
-			</return>
-			<argument index="0" name="index1" type="int">
-			</argument>
+			<return type="Vector3" />
+			<argument index="0" name="index1" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_regular_cell_class" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_regular_cell_data" qualifiers="const">
-			<return type="MarchingCubesCellData">
-			</return>
-			<argument index="0" name="index" type="int">
-			</argument>
+			<return type="MarchingCubesCellData" />
+			<argument index="0" name="index" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_regular_vertex_data" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="index1" type="int">
-			</argument>
-			<argument index="1" name="index2" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="index1" type="int" />
+			<argument index="1" name="index2" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_regular_vertex_data_first_vertex" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="index1" type="int">
-			</argument>
-			<argument index="1" name="index2" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="index1" type="int" />
+			<argument index="1" name="index2" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_regular_vertex_data_second_vertex" qualifiers="const">
-			<return type="int">
-			</return>
-			<argument index="0" name="index1" type="int">
-			</argument>
-			<argument index="1" name="index2" type="int">
-			</argument>
+			<return type="int" />
+			<argument index="0" name="index1" type="int" />
+			<argument index="1" name="index2" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_regular_vertex_direction" qualifiers="const">
-			<return type="Vector3">
-			</return>
-			<argument index="0" name="index1" type="int">
-			</argument>
-			<argument index="1" name="index2" type="int">
-			</argument>
+			<return type="Vector3" />
+			<argument index="0" name="index1" type="int" />
+			<argument index="1" name="index2" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_regular_vertex_first_position" qualifiers="const">
-			<return type="Vector3">
-			</return>
-			<argument index="0" name="index1" type="int">
-			</argument>
-			<argument index="1" name="index2" type="int">
-			</argument>
+			<return type="Vector3" />
+			<argument index="0" name="index1" type="int" />
+			<argument index="1" name="index2" type="int" />
 			<description>
 			</description>
 		</method>
 		<method name="get_regular_vertex_second_position" qualifiers="const">
-			<return type="Vector3">
-			</return>
-			<argument index="0" name="index1" type="int">
-			</argument>
-			<argument index="1" name="index2" type="int">
-			</argument>
+			<return type="Vector3" />
+			<argument index="0" name="index1" type="int" />
+			<argument index="1" name="index2" type="int" />
 			<description>
 			</description>
 		</method>
 	</methods>
 	<members>
-		<member name="format" type="int" setter="set_format" getter="get_format" override="true" default="58" />
-		<member name="texture_scale" type="int" setter="set_texture_scale" getter="get_texture_scale" default="4">
-		</member>
+		<member name="format" type="int" setter="set_format" getter="get_format" overrides="VoxelMesher" default="58" />
 	</members>
 	<constants>
 		<constant name="VOXEL_ENTRY_INDEX_000" value="0" enum="VoxelEntryIndices">

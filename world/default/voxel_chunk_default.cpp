@@ -37,7 +37,7 @@ SOFTWARE.
 
 #include "../jobs/voxel_light_job.h"
 #include "../jobs/voxel_prop_job.h"
-#include "../jobs/voxel_terrarin_job.h"
+#include "../jobs/voxel_terrain_job.h"
 
 const String VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS = "Use Isolevel,Use Lighting,Use AO,Use RAO,Generate AO,Generate RAO,Bake Lights,Create Collider,Create Lods";
 
@@ -83,7 +83,7 @@ void VoxelChunkDefault::set_current_lod_level(const int value) {
 		if (i == _current_lod_level)
 			vis = true;
 
-		RID rid = mesh_rid_get_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+		RID rid = mesh_rid_get_index(MESH_INDEX_TERRAIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, vis);
@@ -378,7 +378,12 @@ void VoxelChunkDefault::colliders_create(const int mesh_index, const int layer_m
 	ERR_FAIL_COND(m.has(MESH_TYPE_INDEX_SHAPE));
 
 	RID shape_rid = PhysicsServer::get_singleton()->shape_create(PhysicsServer::SHAPE_CONCAVE_POLYGON);
+#if VERSION_MAJOR < 4
 	RID body_rid = PhysicsServer::get_singleton()->body_create(PhysicsServer::BODY_MODE_STATIC);
+#else
+	RID body_rid = PhysicsServer::get_singleton()->body_create();
+	PhysicsServer::get_singleton()->body_set_mode(body_rid, PhysicsServer::BODY_MODE_STATIC);
+#endif
 
 	PhysicsServer::get_singleton()->body_set_collision_layer(body_rid, layer_mask);
 	PhysicsServer::get_singleton()->body_set_collision_mask(body_rid, layer_mask);
@@ -712,7 +717,7 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 	}
 
 	for (int i = 0; i < _lod_num + 1; ++i) {
-		RID rid = mesh_rid_get_index(MESH_INDEX_TERRARIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
+		RID rid = mesh_rid_get_index(MESH_INDEX_TERRAIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
 			VisualServer::get_singleton()->instance_set_visible(rid, false);
@@ -833,7 +838,11 @@ void VoxelChunkDefault::_world_light_removed(const Ref<VoxelLight> &light) {
 	int index = _lights.find(light);
 
 	if (index != -1) {
+#if VERSION_MAJOR < 4
 		_lights.remove(index);
+#else
+		_lights.remove_at(index);
+#endif
 
 		set_lights_dirty(true);
 	}
@@ -975,7 +984,7 @@ void VoxelChunkDefault::_bind_methods() {
 	BIND_ENUM_CONSTANT(DEFAULT_CHANNEL_LIQUID_FLOW);
 	BIND_ENUM_CONSTANT(MAX_DEFAULT_CHANNELS);
 
-	BIND_CONSTANT(MESH_INDEX_TERRARIN);
+	BIND_CONSTANT(MESH_INDEX_TERRAIN);
 	BIND_CONSTANT(MESH_INDEX_PROP);
 	BIND_CONSTANT(MESH_INDEX_LIQUID);
 	BIND_CONSTANT(MESH_INDEX_CLUTTER);

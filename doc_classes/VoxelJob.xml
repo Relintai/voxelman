@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VoxelJob" inherits="ThreadPoolJob" version="3.5">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_execute_phase" qualifiers="virtual">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_physics_process" qualifiers="virtual">
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_process" qualifiers="virtual">
+			<return type="void" />
+			<argument index="0" name="delta" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_reset" qualifiers="virtual">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="chunk_exit_tree">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="execute_phase">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="generate_ao">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="generate_random_ao">
+			<return type="void" />
+			<argument index="0" name="seed" type="int" />
+			<argument index="1" name="octaves" type="int" default="4" />
+			<argument index="2" name="period" type="int" default="30" />
+			<argument index="3" name="persistence" type="float" default="0.3" />
+			<argument index="4" name="scale_factor" type="float" default="0.6" />
+			<description>
+			</description>
+		</method>
+		<method name="get_build_done">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="get_phase">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="next_job">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="next_phase">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="reset">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="set_build_done">
+			<return type="void" />
+			<argument index="0" name="val" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="set_chunk">
+			<return type="void" />
+			<argument index="0" name="chunk" type="VoxelChunk" />
+			<description>
+			</description>
+		</method>
+		<method name="set_phase">
+			<return type="void" />
+			<argument index="0" name="phase" type="int" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="build_phase_type" type="int" setter="set_build_phase_type" getter="get_build_phase_type" enum="VoxelJob.ActiveBuildPhaseType" default="0">
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

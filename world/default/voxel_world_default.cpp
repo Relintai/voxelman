@@ -29,7 +29,7 @@ SOFTWARE.
 #include "../../meshers/default/voxel_mesher_default.h"
 #include "../jobs/voxel_light_job.h"
 #include "../jobs/voxel_prop_job.h"
-#include "../jobs/voxel_terrarin_job.h"
+#include "../jobs/voxel_terrain_job.h"
 
 _FORCE_INLINE_ int VoxelWorldDefault::get_build_flags() const {
 	return _build_flags;
@@ -62,7 +62,11 @@ void VoxelWorldDefault::set_num_lods(const int value) {
 }
 
 void VoxelWorldDefault::update_lods() {
+#if VERSION_MAJOR < 4
 	call("_update_lods");
+#else
+	GDVIRTUAL_CALL(_update_lods);
+#endif
 }
 
 int VoxelWorldDefault::get_chunk_lod_falloff() const {
@@ -178,7 +182,7 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 	}
 
 	if (chunk->job_get_count() == 0) {
-		Ref<VoxelTerrarinJob> tj;
+		Ref<VoxelTerrainJob> tj;
 #if VERSION_MAJOR < 4
 		tj.instance();
 #else
@@ -298,7 +302,12 @@ void VoxelWorldDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_num_lods", "value"), &VoxelWorldDefault::set_num_lods);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "num_lods"), "set_num_lods", "get_num_lods");
 
+#if VERSION_MAJOR < 4
 	BIND_VMETHOD(MethodInfo("_update_lods"));
+#else
+	GDVIRTUAL_BIND(_update_lods);
+#endif
+
 	ClassDB::bind_method(D_METHOD("update_lods"), &VoxelWorldDefault::update_lods);
 	ClassDB::bind_method(D_METHOD("_update_lods"), &VoxelWorldDefault::_update_lods);
 

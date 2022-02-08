@@ -1,4 +1,4 @@
-# Voxelman
+# Voxel
 
 A voxel engine module for godot, focusing more on editor integration, gameplay-related features, and extendability (even from gdscript), without sacrificing too much speed.
 
@@ -11,8 +11,8 @@ check whether it works from time to time.
 
 ## Optional Dependencies
 
-`https://github.com/Relintai/thread_pool`: Threaded chunk generation. Without this Voxelman is single threaded! \
-`https://github.com/Relintai/texture_packer`: You get access to [VoxelmanLibraryMerger](#voxelmanlibrarymerger). \
+`https://github.com/Relintai/thread_pool`: Threaded chunk generation. Without this Voxel is single threaded! \
+`https://github.com/Relintai/texture_packer`: You get access to [VoxelLibraryMerger](#voxellibrarymerger). \
 `https://github.com/Relintai/mesh_data_resource`: You get access to a bunch of properties, and methods that can manipulate meshes.\
 `https://github.com/Relintai/props`: You get access to a bunch of properties, and methods that can manipulate, and use props.\
 `https://github.com/Relintai/mesh_utils`: Lets you use lod levels higher than 4 by default.
@@ -24,7 +24,7 @@ repo, should you want to. It contains all my modules.
 
 ## Usage
 
-First create a scene, and add a VoxelWorldBlocky node into it. Create a VoxelmanLibrary, and assign it to the Library property.
+First create a scene, and add a VoxelWorldBlocky node into it. Create a VoxelLibrary, and assign it to the Library property.
 Also, add a VoxelSurface into your library.
 
 (VoxelWorldBlocky is the only one that works properly for now, this will soon be fixed!)
@@ -34,19 +34,19 @@ voxel at the inspector's camera's location.
 
 Select the add button, and now you can just add voxels with the mouse, by clicking on the newly added voxel.
 
-## VoxelmanLibrary
+## VoxelLibrary
 
 This class stores the materials, and the VoxelSurfaces.
 
 Note: If you want lods, assign equal (or more) materials than your maximum lod level. If you only want one material just assign it 
 multiple times. If you don't then your meshes won't have materials (They will be white).
 
-### VoxelmanLibrarySimple
+### VoxelLibrarySimple
 
 The simplest library, just assign a material with a texture, and using the atlas_rows and atlas_culomns properties to tell the system
 how the UVs should be divided.
 
-### VoxelmanLibraryMerger
+### VoxelLibraryMerger
 
 You will only have this if your godot also contains https://github.com/Relintai/texture_packer
 
@@ -81,7 +81,7 @@ You can write your own algorithm by implementing the ``` void _generate_chunk(ch
 
 ## VoxelJobs
 
-Producing just a terrarin mesh for a chunk is not that hard by itself. However when you start adding layers/features
+Producing just a terrain mesh for a chunk is not that hard by itself. However when you start adding layers/features
 like lod generation, collision meshes (especially since manipulating the physics server is not threadsafe), 
 vertex volumetric lights, props, snapping props, props with vertex lights, etc
 chunk mesh generation can quicly become a serious mess.
@@ -105,9 +105,9 @@ If you implement your own jobs, when your job finishes call `next_job()`.
 
 This is the job that will generate vertex light based ao, random ao, and will bake your `VoxelLight`s.
 
-### VoxelTerrarinJob
+### VoxelTerrainJob
 
-This will generate your terrarin collider and mesh (with lods) for you, using the meshers that you add into it.
+This will generate your terrain collider and mesh (with lods) for you, using the meshers that you add into it.
 
 ### VoxelPropJob
 
@@ -134,7 +134,7 @@ This is done by `setup_chunk(shunk)` in `VoxelWorld`.
         # We need to check whether or not we need to initialize jobs
         if chunk.job_get_count() == 0:
             # Setup a blocky (minecratf like) mesher job
-            var tj : VoxelTerrarinJob = VoxelTerrarinJob.new()
+            var tj : VoxelTerrainJob = VoxelTerrainJob.new()
 
             tj.add_mesher(VoxelMesherBlocky.new())
             tj.add_liquid_mesher(VoxelMesherLiquidBlocky.new())
@@ -148,7 +148,7 @@ This is done by `setup_chunk(shunk)` in `VoxelWorld`.
 
 #### VoxelChunk
 
-Stores terrarin data, prop data. And mesh data (VoxelChunkDefault), and the mesh generation jobs.
+Stores terrain data, prop data. And mesh data (VoxelChunkDefault), and the mesh generation jobs.
 
 When it starts building meshes it will start submitting jobs to thread_pool (if present) one by one.
 

@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXELMAN_LIBRARY_H
-#define VOXELMAN_LIBRARY_H
+#ifndef VOXEL_LIBRARY_H
+#define VOXEL_LIBRARY_H
 
 #include "core/version.h"
 
@@ -50,8 +50,8 @@ class PackedScene;
 class PropData;
 #endif
 
-class VoxelmanLibrary : public Resource {
-	GDCLASS(VoxelmanLibrary, Resource)
+class VoxelLibrary : public Resource {
+	GDCLASS(VoxelLibrary, Resource)
 
 public:
 	enum {
@@ -129,8 +129,8 @@ public:
 	GDVIRTUAL2(_setup_material_albedo, int, Ref<Texture>);
 #endif
 
-	VoxelmanLibrary();
-	~VoxelmanLibrary();
+	VoxelLibrary();
+	~VoxelLibrary();
 
 protected:
 	static void _bind_methods();
