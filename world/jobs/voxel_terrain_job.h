@@ -65,6 +65,7 @@ public:
 	void phase_collider();
 	void phase_physics_proces();
 	void phase_terrain_mesh();
+	void new_phase_terrain_mesh();
 	void phase_finalize();
 	void phase_physics_process();
 
