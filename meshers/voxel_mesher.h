@@ -113,6 +113,9 @@ public:
 	int get_texture_scale() const;
 	void set_texture_scale(const int value);
 
+	int get_lod_index() const;
+	void set_lod_index(const int value);
+
 	Ref<VoxelLibrary> get_library();
 	void set_library(const Ref<VoxelLibrary> &library);
 
@@ -214,6 +217,7 @@ protected:
 	int _format;
 
 	int _texture_scale;
+	int _lod_index;
 
 	PoolVector<Vertex> _vertices;
 	PoolVector<int> _indices;

@@ -112,6 +112,13 @@ void VoxelMesher::set_texture_scale(const int value) {
 	_texture_scale = value;
 }
 
+int VoxelMesher::get_lod_index() const {
+	return _lod_index;
+}
+void VoxelMesher::set_lod_index(const int value) {
+	_lod_index = value;
+}
+
 Ref<VoxelLibrary> VoxelMesher::get_library() {
 	return _library;
 }
@@ -918,6 +925,7 @@ VoxelMesher::VoxelMesher(const Ref<VoxelLibrary> &library) {
 
 	_format = 0;
 	_texture_scale = 1;
+	_lod_index = 0;
 }
 
 VoxelMesher::VoxelMesher() {
@@ -930,6 +938,7 @@ VoxelMesher::VoxelMesher() {
 	_channel_index_type = 0;
 	_channel_index_isolevel = 0;
 	_texture_scale = 1;
+	_lod_index = 0;
 }
 
 VoxelMesher::~VoxelMesher() {
@@ -968,6 +977,10 @@ void VoxelMesher::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_texture_scale"), &VoxelMesher::get_texture_scale);
 	ClassDB::bind_method(D_METHOD("set_texture_scale", "value"), &VoxelMesher::set_texture_scale);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "texture_scale"), "set_texture_scale", "get_texture_scale");
+
+	ClassDB::bind_method(D_METHOD("get_lod_index"), &VoxelMesher::get_lod_index);
+	ClassDB::bind_method(D_METHOD("set_lod_index", "value"), &VoxelMesher::set_lod_index);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "lod_index"), "set_lod_index", "get_lod_index");
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelMesher::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelMesher::set_library);
