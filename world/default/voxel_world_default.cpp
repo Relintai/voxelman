@@ -183,26 +183,37 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 
 	if (chunk->job_get_count() == 0) {
 		Ref<VoxelTerrainJob> tj;
-#if VERSION_MAJOR < 4
 		tj.instance();
-#else
-		tj.instantiate();
-#endif
 
 		Ref<VoxelLightJob> lj;
-#if VERSION_MAJOR < 4
 		lj.instance();
-#else
-		lj.instantiate();
-#endif
 
 		Ref<VoxelPropJob> pj;
-#if VERSION_MAJOR < 4
 		pj.instance();
-#else
-		pj.instantiate();
-#endif
 		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault)));
+
+		Ref<VoxelMesherJobStep> s;
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL);
+		tj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL_LOD);
+		s->set_lod_index(1);
+		tj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL_LOD);
+		s->set_lod_index(2);
+		tj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_MERGE_VERTS);
+		tj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_BAKE_TEXTURE);
+		tj->add_jobs_step(s);
 
 		chunk->job_add(lj);
 		chunk->job_add(tj);
