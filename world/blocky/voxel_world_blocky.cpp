@@ -76,6 +76,28 @@ Ref<VoxelChunk> VoxelWorldBlocky::_create_chunk(int x, int y, int z, Ref<VoxelCh
 		pj.INSTANCE();
 		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherBlocky)));
 
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL);
+		pj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_MERGE_VERTS);
+		pj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_BAKE_TEXTURE);
+		pj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_SIMPLIFY_MESH);
+#ifdef MESH_UTILS_PRESENT
+		Ref<FastQuadraticMeshSimplifier> fqms;
+		fqms.instance();
+		s->set_fqms(fqms);
+		s->set_simplification_steps(2);
+#endif
+		pj->add_jobs_step(s);
+
 		chunk->job_add(lj);
 		chunk->job_add(tj);
 		chunk->job_add(pj);
