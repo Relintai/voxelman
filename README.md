@@ -6,8 +6,16 @@ This is an engine module! Which means that you will need to compile it into Godo
 
 You can find a demonstration project here: https://github.com/Relintai/the_tower
 
-It supports both godot 3.2 and 4.0 (master [last tested commit](https://github.com/godotengine/godot/commit/b7e10141197fdd9b0dbc4cfa7890329510d36540)). Note that since 4.0 is still in very early stages I only 
-check whether it works from time to time.
+## Godot Version Support
+
+I'm currently mostly using [Terraman](https://github.com/Relintai/terraman) instead of this, so it might get temporarily a bit behind.\
+If compile breaks, and I don't notice please report.
+
+3.2 - Will likely work, probably needs changes by now. (TODO check.)\
+3.3 - Will more likely work, might need smaller changes by now. (TODO check.)\
+3.4 - Should work without any issues. (TODO check.)\
+3.x - Works. [last tested commit](6ea58db2d849d9ca0ccee5bc6a6d2b919d404bc1)\
+4.0 - Have been fixing support from time to time. Currently it won't build. Mostly done with the fix though.
 
 ## Optional Dependencies
 
@@ -165,8 +173,8 @@ First make sure that you can compile godot. See the official docs: https://docs.
 
 1. Clone the engine if you haven't already:
 
-If you want Godot 3.2:
-```git clone -b 3.2 https://github.com/godotengine/godot.git godot```
+If you want Godot 3.x:
+```git clone -b 3.x https://github.com/godotengine/godot.git godot```
 
 If you want Godot 4.0:
 ```git clone https://github.com/godotengine/godot.git godot```
