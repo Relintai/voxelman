@@ -648,45 +648,115 @@ void VoxelTerrainJob::new_phase_terrain_mesh() {
 		return;
 	}
 
-	Ref<VoxelMesher> mesher;
-	for (int i = 0; i < _meshers.size(); ++i) {
-		mesher = _meshers.get(i);
+	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
+		int starti = 0;
 
-		if (mesher.is_valid()) {
-			break;
+		if (has_meta("bptm_ulm")) {
+			starti = get_meta("bptm_ulm");
 		}
+
+		for (int i = starti; i < _meshers.size(); ++i) {
+			if (should_return()) {
+				set_meta("bptm_ulm", i);
+			}
+
+			Ref<VoxelMesher> mesher = _meshers.get(i);
+
+			ERR_CONTINUE(!mesher.is_valid());
+
+			mesher->bake_colors(_chunk);
+		}
+
+		starti = 0;
+
+		if (has_meta("bptm_ullm")) {
+			starti = get_meta("bptm_ullm");
+		}
+
+		for (int i = starti; i < _liquid_meshers.size(); ++i) {
+			if (should_return()) {
+				set_meta("bptm_ullm", i);
+			}
+
+			Ref<VoxelMesher> mesher = _liquid_meshers.get(i);
+
+			ERR_CONTINUE(!mesher.is_valid());
+
+			mesher->bake_colors(_chunk);
+		}
+	}
+
+	int starti = 0;
+
+	if (has_meta("bptm_mm")) {
+		starti = get_meta("bptm_mm");
+	}
+
+	Ref<VoxelMesher> mesher;
+	for (int i = starti; i < _meshers.size(); ++i) {
+		if (should_return()) {
+			set_meta("bptm_mm", i);
+		}
+
+		Ref<VoxelMesher> m = _meshers.get(i);
+
+		ERR_CONTINUE(!m.is_valid());
+
+		if (!mesher.is_valid()) {
+			mesher = m;
+			mesher->set_material(_chunk->get_library()->material_get(0));
+			continue;
+		}
+
+		mesher->set_material(_chunk->get_library()->material_get(0));
+		mesher->add_mesher(m);
+	}
+
+	ERR_FAIL_COND(!mesher.is_valid());
+
+	starti = 0;
+
+	if (has_meta("bptm_lmm")) {
+		starti = get_meta("bptm_lmm");
 	}
 
 	Ref<VoxelMesher> liquid_mesher;
-	for (int i = 0; i < _liquid_meshers.size(); ++i) {
-		liquid_mesher = _liquid_meshers.get(i);
-
-		if (liquid_mesher.is_valid()) {
-			break;
+	for (int i = starti; i < _liquid_meshers.size(); ++i) {
+		if (should_return()) {
+			set_meta("bptm_lmm", i);
 		}
-	}
 
-	if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_USE_LIGHTING) != 0) {
-		//if (should_do()) {
-		//	_mesher->bake_colors(_chunk);
+		Ref<VoxelMesher> m = _liquid_meshers.get(i);
 
-		//	if (should_return()) {
-		//		return;
-		//	}
-		//}
+		ERR_CONTINUE(!m.is_valid());
 
-		if (should_do()) {
-			if (liquid_mesher.is_valid()) {
-				liquid_mesher->bake_colors(_chunk);
-
-				if (should_return()) {
-					return;
-				}
-			}
+		if (!liquid_mesher.is_valid()) {
+			liquid_mesher = m;
+			liquid_mesher->set_material(_chunk->get_library()->material_get(0));
+			continue;
 		}
+
+		liquid_mesher->set_material(_chunk->get_library()->material_get(0));
+		liquid_mesher->add_mesher(m);
 	}
 
 	if (mesher->get_vertex_count() == 0 && (!liquid_mesher.is_valid() || liquid_mesher->get_vertex_count() == 0)) {
+		if (has_meta("bptm_ulm")) {
+			remove_meta("bptm_ulm");
+		}
+
+		if (has_meta("bptm_ullm")) {
+			remove_meta("bptm_ullm");
+		}
+
+		if (has_meta("bptm_mm")) {
+			remove_meta("bptm_mm");
+		}
+
+		if (has_meta("bptm_lmm")) {
+			remove_meta("bptm_lmm");
+		}
+
 		reset_stages();
 		next_phase();
 
@@ -832,6 +902,22 @@ void VoxelTerrainJob::new_phase_terrain_mesh() {
 		//}
 	}
 
+	if (has_meta("bptm_ulm")) {
+		remove_meta("bptm_ulm");
+	}
+
+	if (has_meta("bptm_ullm")) {
+		remove_meta("bptm_ullm");
+	}
+
+	if (has_meta("bptm_mm")) {
+		remove_meta("bptm_mm");
+	}
+
+	if (has_meta("bptm_lmm")) {
+		remove_meta("bptm_lmm");
+	}
+
 	reset_stages();
 	next_phase();
 }
@@ -858,7 +944,7 @@ void VoxelTerrainJob::_execute_phase() {
 	} else if (_phase == 3) {
 		phase_collider();
 	} else if (_phase == 5) {
-		phase_terrain_mesh();
+		new_phase_terrain_mesh();
 	} else if (_phase == 6) {
 		phase_finalize();
 	} else if (_phase > 6) {
@@ -1115,7 +1201,6 @@ void VoxelTerrainJob::step_type_simplify_mesh() {
 
 		++_current_mesh;
 	}
-
 #endif
 }
 
