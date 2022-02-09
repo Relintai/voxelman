@@ -29,6 +29,10 @@ SOFTWARE.
 #include "../jobs/voxel_prop_job.h"
 #include "../jobs/voxel_terrain_job.h"
 
+#ifdef MESH_UTILS_PRESENT
+#include "../../../mesh_utils/fast_quadratic_mesh_simplifier.h"
+#endif
+
 Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkMarchingCubes));
@@ -60,6 +64,9 @@ Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<
 
 #ifdef MESH_UTILS_PRESENT
 		s.instance();
+		Ref<FastQuadraticMeshSimplifier> fqms;
+		fqms.instance();
+		s->set_fqms(fqms);
 		s->set_job_type(VoxelMesherJobStep::TYPE_SIMPLIFY_MESH);
 		s->set_simplification_step_ratio(0.8);
 		s->set_simplification_agressiveness(7);
@@ -93,7 +100,6 @@ Ref<VoxelChunk> VoxelWorldMarchingCubes::_create_chunk(int x, int y, int z, Ref<
 		s.instance();
 		s->set_job_type(VoxelMesherJobStep::TYPE_SIMPLIFY_MESH);
 #ifdef MESH_UTILS_PRESENT
-		Ref<FastQuadraticMeshSimplifier> fqms;
 		fqms.instance();
 		s->set_fqms(fqms);
 		s->set_simplification_steps(2);
