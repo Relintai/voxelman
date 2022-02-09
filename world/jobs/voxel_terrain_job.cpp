@@ -621,7 +621,7 @@ void VoxelTerrainJob::_execute_phase() {
 	} else if (_phase == 3) {
 		phase_collider();
 	} else if (_phase == 5) {
-		new_phase_terrain_mesh();
+		phase_terrain_mesh();
 	} else if (_phase == 6) {
 		phase_finalize();
 	} else if (_phase > 6) {
