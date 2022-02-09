@@ -1509,27 +1509,27 @@ void VoxelChunk::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("material_cache_key_get"), &VoxelChunk::material_cache_key_get);
 	ClassDB::bind_method(D_METHOD("material_cache_key_set"), &VoxelChunk::material_cache_key_set);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "material_cache_key"), "material_cache_key_set", "material_cache_key_get");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "material_cache_key", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "material_cache_key_set", "material_cache_key_get");
 
 	ClassDB::bind_method(D_METHOD("material_cache_key_has"), &VoxelChunk::material_cache_key_has);
 	ClassDB::bind_method(D_METHOD("material_cache_key_has_set"), &VoxelChunk::material_cache_key_has_set);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "material_cache_key_has"), "material_cache_key_has_set", "material_cache_key_has");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "material_cache_key_has", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "material_cache_key_has_set", "material_cache_key_has");
 
 	ClassDB::bind_method(D_METHOD("liquid_material_cache_key_get"), &VoxelChunk::liquid_material_cache_key_get);
 	ClassDB::bind_method(D_METHOD("liquid_material_cache_key_set"), &VoxelChunk::liquid_material_cache_key_set);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "liquid_material_cache_key"), "liquid_material_cache_key_set", "liquid_material_cache_key_get");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "liquid_material_cache_key", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "liquid_material_cache_key_set", "liquid_material_cache_key_get");
 
 	ClassDB::bind_method(D_METHOD("liquid_material_cache_key_has"), &VoxelChunk::liquid_material_cache_key_has);
 	ClassDB::bind_method(D_METHOD("liquid_material_cache_key_has_set"), &VoxelChunk::liquid_material_cache_key_has_set);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "liquid_material_cache_key_has"), "liquid_material_cache_key_has_set", "liquid_material_cache_key_has");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "liquid_material_cache_key_has", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "liquid_material_cache_key_has_set", "liquid_material_cache_key_has");
 
 	ClassDB::bind_method(D_METHOD("prop_material_cache_key_get"), &VoxelChunk::prop_material_cache_key_get);
 	ClassDB::bind_method(D_METHOD("prop_material_cache_key_set"), &VoxelChunk::prop_material_cache_key_set);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "prop_material_cache_key"), "prop_material_cache_key_set", "prop_material_cache_key_get");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "prop_material_cache_key", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "prop_material_cache_key_set", "prop_material_cache_key_get");
 
 	ClassDB::bind_method(D_METHOD("prop_material_cache_key_has"), &VoxelChunk::prop_material_cache_key_has);
 	ClassDB::bind_method(D_METHOD("prop_material_cache_key_has_set"), &VoxelChunk::prop_material_cache_key_has_set);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "prop_material_cache_key_has"), "prop_material_cache_key_has_set", "prop_material_cache_key_has");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "prop_material_cache_key_has", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "prop_material_cache_key_has_set", "prop_material_cache_key_has");
 
 	ClassDB::bind_method(D_METHOD("get_library"), &VoxelChunk::get_library);
 	ClassDB::bind_method(D_METHOD("set_library", "value"), &VoxelChunk::set_library);
