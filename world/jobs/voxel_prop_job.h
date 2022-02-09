@@ -43,11 +43,9 @@ public:
 	int get_jobs_step_count() const;
 
 	void phase_physics_process();
-	void old_phase_prop();
 	void phase_prop();
 
 	void _physics_process(float delta);
-	void old_execute_phase();
 	void _execute_phase();
 	void _reset();
 
