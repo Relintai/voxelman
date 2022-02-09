@@ -107,6 +107,9 @@ Ref<VoxelChunk> VoxelWorldBlocky::_create_chunk(int x, int y, int z, Ref<VoxelCh
 		chunk->job_add(lj);
 		chunk->job_add(tj);
 		chunk->job_add(pj);
+
+		// TODO this should be removed
+		set_num_lods(5);
 	}
 
 	return VoxelWorld::_create_chunk(x, y, z, chunk);

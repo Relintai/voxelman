@@ -253,6 +253,9 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 		chunk->job_add(lj);
 		chunk->job_add(tj);
 		chunk->job_add(pj);
+
+		// TODO this should be removed
+		set_num_lods(5);
 	}
 
 	Ref<VoxelChunkDefault> vcd = chunk;
@@ -291,7 +294,7 @@ VoxelWorldDefault::VoxelWorldDefault() {
 	_lod_update_timer = 0;
 	_lod_update_interval = 0.5;
 	_build_flags = VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER | VoxelChunkDefault::BUILD_FLAG_CREATE_LODS;
-	_num_lods = 4;
+	_num_lods = 0;
 
 	set_data_margin_start(1);
 	set_data_margin_end(1);
