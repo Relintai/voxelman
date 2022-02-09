@@ -30,28 +30,52 @@ SOFTWARE.
 #include "../jobs/voxel_terrain_job.h"
 
 Ref<VoxelChunk> VoxelWorldCubic::_create_chunk(int x, int y, int z, Ref<VoxelChunk> chunk) {
-
 	if (!chunk.is_valid()) {
 		chunk = Ref<VoxelChunk>(memnew(VoxelChunkCubic));
 	}
 
 	if (chunk->job_get_count() == 0) {
-		Ref<VoxelTerrainJob> tj;
-		tj.INSTANCE();
-
 		Ref<VoxelLightJob> lj;
 		lj.INSTANCE();
 
-		Ref<VoxelPropJob> pj;
-		pj.INSTANCE();
-		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic)));
+		Ref<VoxelTerrainJob> tj;
+		tj.INSTANCE();
+
+		Ref<VoxelMesherJobStep> s;
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL);
+		tj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_DROP_UV2);
+		tj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_MERGE_VERTS);
+		tj->add_jobs_step(s);
+
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_BAKE_TEXTURE);
+		tj->add_jobs_step(s);
+
+#ifdef MESH_UTILS_PRESENT
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_SIMPLIFY_MESH);
+		s->set_simplification_step_ratio(0.8);
+		s->set_simplification_agressiveness(7);
+		s->set_simplification_steps(1);
+		tj->add_jobs_step(s);
+#endif
 
 		Ref<VoxelMesher> m = Ref<VoxelMesher>(memnew(VoxelMesherCubic()));
 		m->set_channel_index_type(VoxelChunkDefault::DEFAULT_CHANNEL_TYPE);
 		m->set_channel_index_isolevel(VoxelChunkDefault::DEFAULT_CHANNEL_ISOLEVEL);
-
 		tj->add_mesher(m);
 		//add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherLiquidMarchingCubes())));
+
+		Ref<VoxelPropJob> pj;
+		pj.INSTANCE();
+		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic)));
 
 		chunk->job_add(lj);
 		chunk->job_add(tj);

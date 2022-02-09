@@ -182,15 +182,11 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 	}
 
 	if (chunk->job_get_count() == 0) {
-		Ref<VoxelTerrainJob> tj;
-		tj.instance();
-
 		Ref<VoxelLightJob> lj;
 		lj.instance();
 
-		Ref<VoxelPropJob> pj;
-		pj.instance();
-		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault)));
+		Ref<VoxelTerrainJob> tj;
+		tj.instance();
 
 		Ref<VoxelMesherJobStep> s;
 		s.instance();
@@ -218,6 +214,14 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 		tj->add_jobs_step(s);
 #endif
 
+		tj->add_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault())));
+		//tj->add_liquid_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault())));
+
+		Ref<VoxelPropJob> pj;
+		pj.instance();
+		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherDefault)));
+
+		// Order matters!
 		chunk->job_add(lj);
 		chunk->job_add(tj);
 		chunk->job_add(pj);
