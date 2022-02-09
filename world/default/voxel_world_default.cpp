@@ -198,13 +198,7 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 		tj->add_jobs_step(s);
 
 		s.instance();
-		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL_LOD);
-		s->set_lod_index(1);
-		tj->add_jobs_step(s);
-
-		s.instance();
-		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL_LOD);
-		s->set_lod_index(2);
+		s->set_job_type(VoxelMesherJobStep::TYPE_DROP_UV2);
 		tj->add_jobs_step(s);
 
 		s.instance();
@@ -214,6 +208,15 @@ Ref<VoxelChunk> VoxelWorldDefault::_create_chunk(int x, int y, int z, Ref<VoxelC
 		s.instance();
 		s->set_job_type(VoxelMesherJobStep::TYPE_BAKE_TEXTURE);
 		tj->add_jobs_step(s);
+
+#ifdef MESH_UTILS_PRESENT
+		s.instance();
+		s->set_job_type(VoxelMesherJobStep::TYPE_SIMPLIFY_MESH);
+		s->set_simplification_step_ratio(0.8);
+		s->set_simplification_agressiveness(7);
+		s->set_simplification_steps(1);
+		tj->add_jobs_step(s);
+#endif
 
 		chunk->job_add(lj);
 		chunk->job_add(tj);
