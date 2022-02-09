@@ -135,7 +135,7 @@ void VoxelPropJob::phase_physics_process() {
 	next_phase();
 }
 
-void VoxelPropJob::phase_prop() {
+void VoxelPropJob::old_phase_prop() {
 #ifdef MESH_DATA_RESOURCE_PRESENT
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
@@ -219,6 +219,8 @@ void VoxelPropJob::phase_prop() {
 		}
 	}
 
+	// OK UP
+
 	if (get_prop_mesher()->get_vertex_count() != 0) {
 		if (should_do()) {
 			temp_mesh_arr = get_prop_mesher()->build_mesh();
@@ -263,6 +265,8 @@ void VoxelPropJob::phase_prop() {
 			}
 		}
 
+		// OK UP
+
 		if ((chunk->get_build_flags() & VoxelChunkDefault::BUILD_FLAG_CREATE_LODS) != 0) {
 			if (should_do()) {
 				if (chunk->get_lod_num() >= 1) {
@@ -279,7 +283,7 @@ void VoxelPropJob::phase_prop() {
 					return;
 				}
 			}
-
+			// OK UP
 			if (should_do()) {
 				if (chunk->get_lod_num() >= 2) {
 					Array temp_mesh_arr2 = merge_mesh_array(temp_mesh_arr);
@@ -294,7 +298,7 @@ void VoxelPropJob::phase_prop() {
 					return;
 				}
 			}
-
+			// OK UP
 			//	if (should_do()) {
 			if (chunk->get_lod_num() >= 3) {
 				Ref<ShaderMaterial> mat = chunk->get_library()->prop_material_get(0);
@@ -318,6 +322,7 @@ void VoxelPropJob::phase_prop() {
 				}
 			}
 
+	// OK UP
 #ifdef MESH_UTILS_PRESENT
 			if (should_do()) {
 				if (chunk->get_lod_num() > 4) {
@@ -355,7 +360,7 @@ void VoxelPropJob::phase_prop() {
 	next_job();
 }
 
-void VoxelPropJob::new_phase_prop() {
+void VoxelPropJob::phase_prop() {
 #ifdef MESH_DATA_RESOURCE_PRESENT
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
@@ -442,10 +447,37 @@ void VoxelPropJob::new_phase_prop() {
 	next_phase();
 }
 
-
 void VoxelPropJob::_physics_process(float delta) {
 	if (_phase == 0)
 		phase_physics_process();
+}
+
+void VoxelPropJob::old_execute_phase() {
+	ERR_FAIL_COND(!_chunk.is_valid());
+
+	Ref<VoxelLibrary> library = _chunk->get_library();
+
+	ERR_FAIL_COND(!library.is_valid());
+
+	Ref<VoxelChunkDefault> chunk = _chunk;
+
+	if (!chunk.is_valid()
+#ifdef MESH_DATA_RESOURCE_PRESENT
+			|| chunk->mesh_data_resource_get_count() == 0
+#endif
+	) {
+		set_complete(true);
+		next_job();
+		return;
+	}
+
+	if (_phase == 1) {
+		old_phase_prop();
+	} else if (_phase > 1) {
+		set_complete(true); //So threadpool knows it's done
+		next_job();
+		ERR_FAIL_MSG("VoxelPropJob: _phase is too high!");
+	}
 }
 
 void VoxelPropJob::_execute_phase() {
@@ -468,37 +500,9 @@ void VoxelPropJob::_execute_phase() {
 	}
 
 	if (_phase == 1) {
-		phase_prop();
-	} else if (_phase > 1) {
-		set_complete(true); //So threadpool knows it's done
-		next_job();
-		ERR_FAIL_MSG("VoxelPropJob: _phase is too high!");
-	}
-}
-
-void VoxelPropJob::new_execute_phase() {
-	ERR_FAIL_COND(!_chunk.is_valid());
-
-	Ref<VoxelLibrary> library = _chunk->get_library();
-
-	ERR_FAIL_COND(!library.is_valid());
-
-	Ref<VoxelChunkDefault> chunk = _chunk;
-
-	if (!chunk.is_valid()
-#ifdef MESH_DATA_RESOURCE_PRESENT
-			|| chunk->mesh_data_resource_get_count() == 0
-#endif
-	) {
-		set_complete(true);
-		next_job();
-		return;
-	}
-
-	if (_phase == 1) {
 		phase_setup();
 	} else if (_phase == 2) {
-		new_phase_prop();
+		phase_prop();
 	} else if (_phase == 3) {
 		phase_steps();
 	} else if (_phase > 3) {
