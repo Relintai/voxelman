@@ -60,7 +60,7 @@ You will only have this if your godot also contains https://github.com/Relintai/
 
 You can assign any texture to your surfaces with this, and it will merge them together.
 
-### VoxelLibraryMergerPCM - (PCM = Per Chunk Material)
+### VoxelLibraryMergerPCM (PCM = Per Chunk Material)
 
 You will only have this if your godot also contains https://github.com/Relintai/texture_packer
 
