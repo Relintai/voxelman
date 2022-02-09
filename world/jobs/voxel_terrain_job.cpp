@@ -316,6 +316,10 @@ void VoxelTerrainJob::phase_physics_process() {
 	next_phase();
 }
 
+//TODO Remove chunk get_lod_num!
+// Or make it automatic
+//Also remove VoxelChunkDefault::BUILD_FLAG_CREATE_LODS
+
 void VoxelTerrainJob::phase_terrain_mesh() {
 	Ref<VoxelChunkDefault> chunk = _chunk;
 
