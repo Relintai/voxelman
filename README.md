@@ -60,6 +60,16 @@ You will only have this if your godot also contains https://github.com/Relintai/
 
 You can assign any texture to your surfaces with this, and it will merge them together.
 
+### VoxelLibraryMergerPCM - (PCM = Per Chunk Material)
+
+You will only have this if your godot also contains https://github.com/Relintai/texture_packer
+
+You can assign any texture to your surfaces with this, and it will merge them together, but it will do it for every required chunk/voxel combination.
+
+For example if you have a chunk with voxel Grass, and voxel Stone used in it, this library will create a material with a merged texture for Stone and Grass.
+If you have an anouther chunk which only has Grass and Stone in it, this material will be reused.
+And if you have a third chunk which only has a Grass voxel used in it, it will get a new merged material and texture only containing Grass voxel.
+
 ## Worlds
 
 The 2 base classes:
