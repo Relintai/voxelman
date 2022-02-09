@@ -32,6 +32,9 @@ public:
 	int get_build_flags() const;
 	void set_build_flags(const int flags);
 
+	bool get_use_default_lod_update() const;
+	void set_use_default_lod_update(const bool value);
+
 	float get_lod_update_interval() const;
 	void set_lod_update_interval(const float value);
 
@@ -58,12 +61,13 @@ protected:
 	virtual void _chunk_added(Ref<VoxelChunk> chunk);
 	int _get_channel_index_info(const ChannelTypeInfo channel_type);
 
-	//virtual void _notification(int p_what);
+	virtual void _notification(int p_what);
 
 	static void _bind_methods();
 
 private:
 	int _build_flags;
+	bool _use_default_lod_update;
 	float _lod_update_timer;
 	float _lod_update_interval;
 	int _chunk_lod_falloff;

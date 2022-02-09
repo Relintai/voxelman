@@ -51,6 +51,15 @@ _FORCE_INLINE_ void VoxelWorldDefault::set_build_flags(const int flags) {
 	}
 }
 
+bool VoxelWorldDefault::get_use_default_lod_update() const {
+	return _use_default_lod_update;
+}
+void VoxelWorldDefault::set_use_default_lod_update(const bool value) {
+	_use_default_lod_update = value;
+
+	set_process_internal(_use_default_lod_update);
+}
+
 float VoxelWorldDefault::get_lod_update_interval() const {
 	return _lod_update_interval;
 }
@@ -171,9 +180,7 @@ void VoxelWorldDefault::_update_lods() {
 		int mr = MAX(MAX(dx, dy), dz);
 
 		mr -= _chunk_lod_falloff;
-
-		//Todo 3 should be _num_lod, but it's NYI, because chunk can only handle 3 lod levels for now -> FQMS needs to be fixed
-		mr = CLAMP(mr, 0, _num_lods - 1);
+		mr = CLAMP(mr, 0, _num_lods);
 
 		if (c->get_current_lod_level() != mr)
 			c->set_current_lod_level(mr);
@@ -290,11 +297,12 @@ int VoxelWorldDefault::_get_channel_index_info(const VoxelWorld::ChannelTypeInfo
 }
 
 VoxelWorldDefault::VoxelWorldDefault() {
-	_chunk_lod_falloff = 2;
+	_chunk_lod_falloff = 4;
 	_lod_update_timer = 0;
 	_lod_update_interval = 0.5;
 	_build_flags = VoxelChunkDefault::BUILD_FLAG_CREATE_COLLIDER | VoxelChunkDefault::BUILD_FLAG_CREATE_LODS;
 	_num_lods = 0;
+	set_use_default_lod_update(true);
 
 	set_data_margin_start(1);
 	set_data_margin_end(1);
@@ -303,13 +311,12 @@ VoxelWorldDefault::VoxelWorldDefault() {
 VoxelWorldDefault ::~VoxelWorldDefault() {
 }
 
-/*
 void VoxelWorldDefault::_notification(int p_what) {
 	VoxelWorld::_notification(p_what);
 
 	switch (p_what) {
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if ((get_build_flags() & VoxelChunkDefault::BUILD_FLAG_CREATE_LODS) == 0)
+			if (!_use_default_lod_update)
 				return;
 
 			if (!get_player()) {
@@ -330,7 +337,7 @@ void VoxelWorldDefault::_notification(int p_what) {
 			}
 		} break;
 	}
-}*/
+}
 
 void VoxelWorldDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_chunk_added", "chunk"), &VoxelWorldDefault::_chunk_added);
@@ -338,6 +345,10 @@ void VoxelWorldDefault::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_build_flags"), &VoxelWorldDefault::get_build_flags);
 	ClassDB::bind_method(D_METHOD("set_build_flags", "value"), &VoxelWorldDefault::set_build_flags);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "build_flags", PROPERTY_HINT_FLAGS, VoxelChunkDefault::BINDING_STRING_BUILD_FLAGS), "set_build_flags", "get_build_flags");
+
+	ClassDB::bind_method(D_METHOD("get_use_default_lod_update"), &VoxelWorldDefault::get_use_default_lod_update);
+	ClassDB::bind_method(D_METHOD("set_use_default_lod_update", "value"), &VoxelWorldDefault::set_use_default_lod_update);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_default_lod_update"), "set_use_default_lod_update", "get_use_default_lod_update");
 
 	ClassDB::bind_method(D_METHOD("get_lod_update_interval"), &VoxelWorldDefault::get_lod_update_interval);
 	ClassDB::bind_method(D_METHOD("set_lod_update_interval", "value"), &VoxelWorldDefault::set_lod_update_interval);
