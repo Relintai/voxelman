@@ -35,10 +35,6 @@ include_pool_vector
 
 		class VoxelMesher;
 
-//TODO Remove chunk get_lod_num!
-// Or make it automatic
-//Also remove VoxelChunkDefault::BUILD_FLAG_CREATE_LODS
-
 class VoxelTerrainJob : public VoxelJob {
 	GDCLASS(VoxelTerrainJob, VoxelJob);
 

@@ -75,6 +75,10 @@ class VoxelJob;
 class VoxelWorld;
 class VoxelStructure;
 
+//TODO Remove chunk get_lod_num!
+// Or make it automatic
+//Also remove VoxelChunkDefault::BUILD_FLAG_CREATE_LODS
+
 class VoxelChunk : public Resource {
 	GDCLASS(VoxelChunk, Resource);
 
