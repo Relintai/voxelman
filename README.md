@@ -1,6 +1,6 @@
 # Voxelman
 
-A voxel engine module for godot, focusing more on editor integration, gameplay-related features, and extendability (even from gdscript), without sacrificing too much speed.
+A voxel engine for godot, focusing more on editor integration, gameplay-related features, and extendability (even from gdscript), without sacrificing too much speed.
 
 This is an engine module! Which means that you will need to compile it into Godot! [See the compiling section here.](#compiling)
 
