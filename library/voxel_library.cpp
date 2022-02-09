@@ -225,7 +225,7 @@ Ref<Material> VoxelLibrary::prop_material_get(const int index) {
 }
 
 Ref<Material> VoxelLibrary::prop_material_lod_get(const int index) {
-	ERR_FAIL_COND_V_MSG(_prop_materials.size() == 0, Ref<Material>(), "Error! You should to add at least one material to VoxelLibrary!");
+	ERR_FAIL_COND_V_MSG(_prop_materials.size() == 0, Ref<Material>(), "Error! You should to add at least one prop material to VoxelLibrary! (By default it will use up to 5. See VoxelWorldDefault::_create_chunk().)");
 
 	if (index < 0) {
 		return _prop_materials[0];
