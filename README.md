@@ -190,7 +190,7 @@ They won't get reset, so for exaple if you want all your vertices to have a cert
 
 ## Compiling
 
-First make sure that you can compile godot. See the official docs: https://docs.godotengine.org/en/3.2/development/compiling/index.html
+First make sure that you can compile godot. See the official docs: https://docs.godotengine.org/en/3.x/development/compiling/index.html
 
 1. Clone the engine if you haven't already:
 
