@@ -173,7 +173,7 @@ This is done by `setup_chunk(shunk)` in `VoxelWorld`.
         return ._create_chunk(x, y, z, chunk)
 ```
 
-You can look at the other world implementations for more examples: [VoxelWorldBlocky](https://github.com/Relintai/voxelman/blob/master/world/blocky/voxel_world_blocky.cpp), [VoxelWorldMarchingCubes](https://github.com/Relintai/voxelman/blob/master/world/marching_cubes/voxel_world_marching_cubes.cpp).
+You can look at the world implementations for more examples: [VoxelWorldBlocky](https://github.com/Relintai/voxelman/blob/master/world/blocky/voxel_world_blocky.cpp), [VoxelWorldMarchingCubes](https://github.com/Relintai/voxelman/blob/master/world/marching_cubes/voxel_world_marching_cubes.cpp).
 
 #### VoxelChunk
 
