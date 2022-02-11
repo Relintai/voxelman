@@ -27,10 +27,8 @@ If compile breaks, and I don't notice please report.
 
 ## Usage
 
-First create a scene, and add a VoxelWorldBlocky node into it. Create a VoxelLibrary, and assign it to the Library property.
+First create a scene, and add a VoxelWorldBlocky / VoxelWorldMarchingCubes node into it. Create a VoxelLibrary, and assign it to the Library property.
 Also, add a VoxelSurface into your library.
-
-(VoxelWorldBlocky is the only one that works properly for now, this will soon be fixed!)
 
 Tick the editable property, deselect, then select the world again, and click the insert button at the top toolbar, or press B to insert a
 voxel at the inspector's camera's location.
@@ -69,7 +67,7 @@ And if you have a third chunk which only has a Grass voxel used in it, it will g
 
 ## Worlds
 
-The 2 base classes:
+The 2 base classes. These won't do meshing on their own:
 
 VoxelWorld: Basic world, does not do anything until you implemnent the required virtual methods!\
 VoxelWorldDefault: This adds threading, and LoD storage support to VoxelWorld. Will not create meshes for you!
@@ -85,6 +83,8 @@ A marching cubes based Voxel World. Actually it uses a modified version of the T
 ### VoxelWorldCubic
 
 This is my own meshing algorithm, it's basicly a Minecraft style mesher that can take isolevel into account.
+
+It's kind of a pain to use, it might get removed.
 
 ### Level generation
 
@@ -124,9 +124,13 @@ This is the job that will generate vertex light based ao, random ao, and will ba
 
 This will generate your terrain collider and mesh (with lods) for you, using the meshers that you add into it.
 
+Your lod setup is easily customizable with [VoxelMesherJobSteps](https://github.com/Relintai/voxelman/blob/master/world/jobs/voxel_mesher_job_step.h). The setup happens in your selected world's `_create_chunk` method.
+
 ### VoxelPropJob
 
 This will generate your prop meshes (with lods).
+
+Also supports [VoxelMesherJobSteps](https://github.com/Relintai/voxelman/blob/master/world/jobs/voxel_mesher_job_step.h).
 
 ### Internal workings
 
