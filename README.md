@@ -39,8 +39,10 @@ Select the add button, and now you can just add voxels with the mouse, by clicki
 
 This class stores the materials, and the VoxelSurfaces.
 
-Note: If you want lods, assign equal (or more) materials than your maximum lod level. If you only want one material just assign it 
-multiple times. If you don't then your meshes won't have materials (They will be white).
+Lod levels will automatically try to use materials of their own index.\
+For example lod level 1 will try to use material index 1, lod level 2 will try to use material index 2, etc.\
+If a material index is not available, they'll use the highest that is.\
+For example lod level 5 will try to get material index 5, but if you only have 3 materials it will use the 3rd.
 
 ### VoxelLibrarySimple
 
