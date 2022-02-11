@@ -19,8 +19,8 @@ If compile breaks, and I don't notice please report.
 
 ## Optional Dependencies
 
-`https://github.com/Relintai/thread_pool`: Threaded chunk generation. Without this Voxel is single threaded! \
-`https://github.com/Relintai/texture_packer`: You get access to [VoxelLibraryMerger](#voxellibrarymerger). \
+`https://github.com/Relintai/thread_pool`: Threaded chunk generation. Without this Voxelman is single threaded! \
+`https://github.com/Relintai/texture_packer`: You get access to [VoxelLibraryMerger](#voxellibrarymerger) and [VoxelLibraryMergerPCM](#voxellibrarymergerpcm). \
 `https://github.com/Relintai/mesh_data_resource`: You get access to a bunch of properties, and methods that can manipulate meshes.\
 `https://github.com/Relintai/props`: You get access to a bunch of properties, and methods that can manipulate, and use props.\
 `https://github.com/Relintai/mesh_utils`: Lets you use lod levels higher than 4 by default.
@@ -55,7 +55,9 @@ You will only have this if your godot also contains https://github.com/Relintai/
 
 You can assign any texture to your surfaces with this, and it will merge them together.
 
-### VoxelLibraryMergerPCM (PCM = Per Chunk Material)
+### VoxelLibraryMergerPCM
+
+(PCM = Per Chunk Material)
 
 You will only have this if your godot also contains https://github.com/Relintai/texture_packer
 
