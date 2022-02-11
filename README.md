@@ -4,7 +4,7 @@ A voxel engine for godot, focusing more on editor integration, gameplay-related 
 
 This is an engine module! Which means that you will need to compile it into Godot! [See the compiling section here.](#compiling)
 
-You can find a demonstration project here: https://github.com/Relintai/the_tower
+You can find a demonstration project (with pre-built binaries) here: https://github.com/Relintai/the_tower
 
 ## Godot Version Support
 
@@ -24,11 +24,6 @@ If compile breaks, and I don't notice please report.
 `https://github.com/Relintai/mesh_data_resource`: You get access to a bunch of properties, and methods that can manipulate meshes.\
 `https://github.com/Relintai/props`: You get access to a bunch of properties, and methods that can manipulate, and use props.\
 `https://github.com/Relintai/mesh_utils`: Lets you use lod levels higher than 4 by default.
-
-## Pre-built binaries
-
-You can grab a pre-built editor binary from the [Broken Seals](https://github.com/Relintai/broken_seals/releases) 
-repo, should you want to. It contains all my modules.
 
 ## Usage
 
