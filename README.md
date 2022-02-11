@@ -49,6 +49,8 @@ For example lod level 5 will try to get material index 5, but if you only have 3
 The simplest library, just assign a material with a texture, and using the atlas_rows and atlas_culomns properties to tell the system
 how the UVs should be divided.
 
+This is the basic Minecraft-style lib rary. Use this if you just have one texture atlas. 
+
 ### VoxelLibraryMerger
 
 You will only have this if your godot also contains https://github.com/Relintai/texture_packer
@@ -80,7 +82,7 @@ The most basic world. It is the Minecraft-style world.
 
 ### VoxelWorldMarchingCubes
 
-A marching cubes based Voxel World. Actually it uses a modified version of the Transvoxel tables. It is UV mapped.
+A marching cubes based Voxel World. Actually it uses a modified version of the Transvoxel tables, because it is UV mapped.
 
 ### VoxelWorldCubic
 
@@ -100,12 +102,12 @@ You can write your own algorithm by implementing the ``` void _generate_chunk(ch
 
 Producing just a terrain mesh for a chunk is not that hard by itself. However when you start adding layers/features
 like lod generation, collision meshes (especially since manipulating the physics server is not threadsafe), 
-vertex volumetric lights, props, snapping props, props with vertex lights, etc
+vertex lights, props, snapping props, props with vertex lights, etc
 chunk mesh generation can quicly become a serious mess.
 
-VoxelJobs are meant to solve the issue with this complexity.
+VoxelJobs are meant to solve the issue with less complexity.
 
-They also provide a way to easily modularize mesh generation.
+They also provide a way to easily modularize mesh and lod generation.
 
 ### VoxelJob
 
@@ -157,6 +159,10 @@ This is done by `setup_chunk(shunk)` in `VoxelWorld`.
             # Setup a blocky (minecratf like) mesher job
             var tj : VoxelTerrainJob = VoxelTerrainJob.new()
 
+            var s : VoxelMesherJobStep = VoxelMesherJobStep.new()
+            s.job_type = VoxelMesherJobStep.TYPE_NORMAL
+            tj.add_jobs_step(s)
+
             tj.add_mesher(VoxelMesherBlocky.new())
             tj.add_liquid_mesher(VoxelMesherLiquidBlocky.new())
 
@@ -166,6 +172,8 @@ This is done by `setup_chunk(shunk)` in `VoxelWorld`.
 
         return ._create_chunk(x, y, z, chunk)
 ```
+
+You can look at the other world implementations for more examples: [VoxelWorldBlocky](https://github.com/Relintai/voxelman/blob/master/world/blocky/voxel_world_blocky.cpp), [VoxelWorldMarchingCubes](https://github.com/Relintai/voxelman/blob/master/world/marching_cubes/voxel_world_marching_cubes.cpp).
 
 #### VoxelChunk
 
