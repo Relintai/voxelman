@@ -113,7 +113,7 @@ They also provide a way to easily modularize mesh and lod generation.
 
 Base class for jobs.
 
-If the (thread pool)[https://github.com/Relintai/thread_pool] module is present, this is inherited from `ThreadPoolJob`,
+If the [thread pool](https://github.com/Relintai/thread_pool) module is present, this is inherited from `ThreadPoolJob`,
 else it implements the same api as `ThreadPoolJob`, but it's not going to use threading.
 
 A job has a reference to it's owner chunk.
