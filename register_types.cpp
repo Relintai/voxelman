@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "register_types.h"
 
+#include "core/object/class_db.h"
+
 #include "library/voxel_surface.h"
 #include "library/voxel_surface_simple.h"
 
@@ -77,73 +79,77 @@ SOFTWARE.
 
 #include "world/jobs/voxel_job.h"
 #include "world/jobs/voxel_light_job.h"
+#include "world/jobs/voxel_mesher_job_step.h"
 #include "world/jobs/voxel_prop_job.h"
 #include "world/jobs/voxel_terrain_job.h"
-#include "world/jobs/voxel_mesher_job_step.h"
 
-void register_voxelman_types() {
-	ClassDB::register_class<VoxelMesher>();
-	ClassDB::register_class<VoxelMesherDefault>();
+void initialize_voxelman_module(ModuleInitializationLevel p_level) {
+	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+		GDREGISTER_CLASS(VoxelMesher);
+		GDREGISTER_CLASS(VoxelMesherDefault);
 
-	ClassDB::register_class<VoxelMesherMarchingCubes>();
-	ClassDB::register_class<MarchingCubesCellData>();
+		GDREGISTER_CLASS(VoxelMesherMarchingCubes);
+		GDREGISTER_CLASS(MarchingCubesCellData);
 
-	ClassDB::register_class<VoxelSurface>();
-	ClassDB::register_class<VoxelSurfaceSimple>();
+		GDREGISTER_CLASS(VoxelSurface);
+		GDREGISTER_CLASS(VoxelSurfaceSimple);
 
-	ClassDB::register_class<VoxelLibrary>();
-	ClassDB::register_class<VoxelLibrarySimple>();
+		GDREGISTER_CLASS(VoxelLibrary);
+		GDREGISTER_CLASS(VoxelLibrarySimple);
 
-	ClassDB::register_class<VoxelMaterialCache>();
+		GDREGISTER_CLASS(VoxelMaterialCache);
 
 #ifdef TEXTURE_PACKER_PRESENT
-	ClassDB::register_class<VoxelSurfaceMerger>();
-	ClassDB::register_class<VoxelLibraryMerger>();
-	ClassDB::register_class<VoxelLibraryMergerPCM>();
-	ClassDB::register_class<VoxelMaterialCachePCM>();
+		GDREGISTER_CLASS(VoxelSurfaceMerger);
+		GDREGISTER_CLASS(VoxelLibraryMerger);
+		GDREGISTER_CLASS(VoxelLibraryMergerPCM);
+		GDREGISTER_CLASS(VoxelMaterialCachePCM);
 #endif
 
-	ClassDB::register_class<VoxelLight>();
-	ClassDB::register_class<VoxelLightNode>();
+		GDREGISTER_CLASS(VoxelLight);
+		GDREGISTER_CLASS(VoxelLightNode);
 
-	ClassDB::register_class<VoxelWorld>();
-	ClassDB::register_class<VoxelChunk>();
-	ClassDB::register_class<VoxelStructure>();
-	ClassDB::register_class<BlockVoxelStructure>();
-	ClassDB::register_class<EnvironmentData>();
+		GDREGISTER_CLASS(VoxelWorld);
+		GDREGISTER_CLASS(VoxelChunk);
+		GDREGISTER_CLASS(VoxelStructure);
+		GDREGISTER_CLASS(BlockVoxelStructure);
+		GDREGISTER_CLASS(EnvironmentData);
 
-	ClassDB::register_class<VoxelChunkDefault>();
-	ClassDB::register_class<VoxelWorldDefault>();
+		GDREGISTER_CLASS(VoxelChunkDefault);
+		GDREGISTER_CLASS(VoxelWorldDefault);
 
-	ClassDB::register_class<VoxelMesherCubic>();
-	ClassDB::register_class<VoxelCubePoints>();
+		GDREGISTER_CLASS(VoxelMesherCubic);
+		GDREGISTER_CLASS(VoxelCubePoints);
 
-	ClassDB::register_class<VoxelMesherBlocky>();
-	ClassDB::register_class<VoxelWorldBlocky>();
-	ClassDB::register_class<VoxelChunkBlocky>();
-	ClassDB::register_class<VoxelMesherLiquidBlocky>();
+		GDREGISTER_CLASS(VoxelMesherBlocky);
+		GDREGISTER_CLASS(VoxelWorldBlocky);
+		GDREGISTER_CLASS(VoxelChunkBlocky);
+		GDREGISTER_CLASS(VoxelMesherLiquidBlocky);
 
-	ClassDB::register_class<VoxelWorldMarchingCubes>();
-	ClassDB::register_class<VoxelChunkMarchingCubes>();
+		GDREGISTER_CLASS(VoxelWorldMarchingCubes);
+		GDREGISTER_CLASS(VoxelChunkMarchingCubes);
 
-	ClassDB::register_class<VoxelWorldCubic>();
-	ClassDB::register_class<VoxelChunkCubic>();
+		GDREGISTER_CLASS(VoxelWorldCubic);
+		GDREGISTER_CLASS(VoxelChunkCubic);
 
-	ClassDB::register_class<VoxelLevelGenerator>();
-	ClassDB::register_class<VoxelLevelGeneratorFlat>();
+		GDREGISTER_CLASS(VoxelLevelGenerator);
+		GDREGISTER_CLASS(VoxelLevelGeneratorFlat);
 
-	ClassDB::register_class<WorldArea>();
+		GDREGISTER_CLASS(WorldArea);
 
-	ClassDB::register_class<VoxelJob>();
-	ClassDB::register_class<VoxelTerrainJob>();
-	ClassDB::register_class<VoxelMesherJobStep>();
-	ClassDB::register_class<VoxelLightJob>();
-	ClassDB::register_class<VoxelPropJob>();
+		GDREGISTER_CLASS(VoxelJob);
+		GDREGISTER_CLASS(VoxelTerrainJob);
+		GDREGISTER_CLASS(VoxelMesherJobStep);
+		GDREGISTER_CLASS(VoxelLightJob);
+		GDREGISTER_CLASS(VoxelPropJob);
+	}
 
 #ifdef TOOLS_ENABLED
-	EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
+	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
+		EditorPlugins::add_by_type<VoxelWorldEditorPlugin>();
+	}
 #endif
 }
 
-void unregister_voxelman_types() {
+void uninitialize_voxelman_module(ModuleInitializationLevel p_level) {
 }

@@ -20,10 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef VOXEL_REGISTER_TYPES_H
-#define VOXEL_REGISTER_TYPES_H
+#ifndef VOXELMAN_REGISTER_TYPES_H
+#define VOXELMAN_REGISTER_TYPES_H
 
-void register_voxelman_types();
-void unregister_voxelman_types();
+#include "modules/register_module_types.h"
+
+void initialize_voxelman_module(ModuleInitializationLevel p_level);
+void uninitialize_voxelman_module(ModuleInitializationLevel p_level);
 
 #endif
