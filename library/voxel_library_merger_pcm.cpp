@@ -42,7 +42,7 @@ SOFTWARE.
 
 #include "../world/default/voxel_chunk_default.h"
 
-#include "core/hashfuncs.h"
+#include "core/templates/hashfuncs.h"
 
 bool VoxelLibraryMergerPCM::_supports_caching() {
 	return true;
@@ -702,7 +702,7 @@ void VoxelLibraryMergerPCM::_setup_material_albedo(const int material_index, con
 		}
 
 		if (shmat.is_valid()) {
-			shmat->set_shader_param("texture_albedo", texture);
+			shmat->set_shader_parameter("texture_albedo", texture);
 		}
 	}
 }

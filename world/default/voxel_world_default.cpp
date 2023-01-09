@@ -363,7 +363,7 @@ void VoxelWorldDefault::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "num_lods"), "set_num_lods", "get_num_lods");
 
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_update_lods"));
+	//BIND_VMETHOD(MethodInfo("_update_lods"));
 #else
 	GDVIRTUAL_BIND(_update_lods);
 #endif

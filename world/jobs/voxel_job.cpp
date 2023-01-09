@@ -349,8 +349,8 @@ VoxelJob::~VoxelJob() {
 
 void VoxelJob::_bind_methods() {
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
-	BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));
+	//BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
+	//BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));
 #else
 	GDVIRTUAL_BIND(_process, "delta");
 	GDVIRTUAL_BIND(_physics_process, "delta");
@@ -372,7 +372,7 @@ void VoxelJob::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("next_job"), &VoxelJob::next_job);
 
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_reset"));
+	//BIND_VMETHOD(MethodInfo("_reset"));
 #else
 	GDVIRTUAL_BIND(_reset);
 #endif
@@ -383,7 +383,7 @@ void VoxelJob::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_execute"), &VoxelJob::_execute);
 
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_execute_phase"));
+	//BIND_VMETHOD(MethodInfo("_execute_phase"));
 #else
 	GDVIRTUAL_BIND(_execute_phase);
 #endif
@@ -419,7 +419,7 @@ void VoxelJob::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("should_return"), &VoxelJob::should_return);
 
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_execute"));
+	//BIND_VMETHOD(MethodInfo("_execute"));
 #else
 	GDVIRTUAL_BIND(_execute);
 #endif

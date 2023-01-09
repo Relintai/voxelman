@@ -87,7 +87,7 @@ VoxelStructure::~VoxelStructure() {
 
 void VoxelStructure::_bind_methods() {
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_write_to_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+	//BIND_VMETHOD(MethodInfo("_write_to_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 #else
 	GDVIRTUAL_BIND(_write_to_chunk, "chunk");
 #endif

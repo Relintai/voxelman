@@ -1355,13 +1355,13 @@ void VoxelChunk::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("mesh_generation_finished", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_mesh_data_resource_added", PropertyInfo(Variant::INT, "index")));
+	//BIND_VMETHOD(MethodInfo("_mesh_data_resource_added", PropertyInfo(Variant::INT, "index")));
 
-	BIND_VMETHOD(MethodInfo("_channel_setup"));
+	//BIND_VMETHOD(MethodInfo("_channel_setup"));
 
-	BIND_VMETHOD(MethodInfo("_bake_lights"));
-	BIND_VMETHOD(MethodInfo("_bake_light", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
-	BIND_VMETHOD(MethodInfo("_clear_baked_lights"));
+	//BIND_VMETHOD(MethodInfo("_bake_lights"));
+	//BIND_VMETHOD(MethodInfo("_bake_light", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
+	//BIND_VMETHOD(MethodInfo("_clear_baked_lights"));
 #else
 	GDVIRTUAL_BIND(_mesh_data_resource_added, "index");
 
@@ -1377,19 +1377,19 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear_baked_lights"), &VoxelChunk::clear_baked_lights);
 
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_enter_tree"));
-	BIND_VMETHOD(MethodInfo("_exit_tree"));
-	BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
-	BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));
-	BIND_VMETHOD(MethodInfo("_world_transform_changed"));
-	BIND_VMETHOD(MethodInfo("_visibility_changed", PropertyInfo(Variant::BOOL, "visible")));
-	BIND_VMETHOD(MethodInfo("_world_light_added", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
-	BIND_VMETHOD(MethodInfo("_world_light_removed", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
+	//BIND_VMETHOD(MethodInfo("_enter_tree"));
+	//BIND_VMETHOD(MethodInfo("_exit_tree"));
+	//BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
+	//BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));
+	//BIND_VMETHOD(MethodInfo("_world_transform_changed"));
+	//BIND_VMETHOD(MethodInfo("_visibility_changed", PropertyInfo(Variant::BOOL, "visible")));
+	//BIND_VMETHOD(MethodInfo("_world_light_added", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
+	//BIND_VMETHOD(MethodInfo("_world_light_removed", PropertyInfo(Variant::OBJECT, "light", PROPERTY_HINT_RESOURCE_TYPE, "VoxelLight")));
 
-	BIND_VMETHOD(MethodInfo("_generation_process", PropertyInfo(Variant::REAL, "delta")));
-	BIND_VMETHOD(MethodInfo("_generation_physics_process", PropertyInfo(Variant::REAL, "delta")));
+	//BIND_VMETHOD(MethodInfo("_generation_process", PropertyInfo(Variant::REAL, "delta")));
+	//BIND_VMETHOD(MethodInfo("_generation_physics_process", PropertyInfo(Variant::REAL, "delta")));
 
-	BIND_VMETHOD(MethodInfo("_finalize_build"));
+	//BIND_VMETHOD(MethodInfo("_finalize_build"));
 #else
 	GDVIRTUAL_BIND(_enter_tree);
 	GDVIRTUAL_BIND(_exit_tree);
@@ -1651,7 +1651,7 @@ void VoxelChunk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("colliders_clear"), &VoxelChunk::colliders_clear);
 
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_build"));
+	//BIND_VMETHOD(MethodInfo("_build"));
 #else
 	GDVIRTUAL_BIND(_build);
 #endif

@@ -287,7 +287,7 @@ void VoxelMaterialCache::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("dec_ref_count"), &VoxelMaterialCache::dec_ref_count);
 
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_setup_material_albedo", PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture")));
+	//BIND_VMETHOD(MethodInfo("_setup_material_albedo", PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture")));
 #else
 	GDVIRTUAL_BIND(_setup_material_albedo, "texture");
 #endif

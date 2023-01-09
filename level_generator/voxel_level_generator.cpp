@@ -44,7 +44,7 @@ VoxelLevelGenerator::~VoxelLevelGenerator() {
 
 void VoxelLevelGenerator::_bind_methods() {
 #if VERSION_MAJOR < 4
-	BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
+	//BIND_VMETHOD(MethodInfo("_generate_chunk", PropertyInfo(Variant::OBJECT, "chunk", PROPERTY_HINT_RESOURCE_TYPE, "VoxelChunk")));
 #else
 	GDVIRTUAL_BIND(_generate_chunk, "chunk");
 #endif
