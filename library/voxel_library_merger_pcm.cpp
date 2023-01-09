@@ -120,7 +120,7 @@ void VoxelLibraryMergerPCM::_material_cache_get_key(Ref<VoxelChunk> chunk) {
 	//print_error("New cache: " + hstr);
 
 	Ref<VoxelMaterialCachePCM> cache;
-	cache.instance();
+	cache.instantiate();
 	cache->inc_ref_count();
 
 	cache->set_texture_flags(get_texture_flags());
@@ -295,7 +295,7 @@ void VoxelLibraryMergerPCM::_prop_material_cache_get_key(Ref<VoxelChunk> chunk) 
 	//print_error("New prop cache: " + hstr);
 
 	Ref<VoxelMaterialCachePCM> cache;
-	cache.instance();
+	cache.instantiate();
 	cache->inc_ref_count();
 
 	cache->set_texture_flags(get_texture_flags());
@@ -514,7 +514,7 @@ void VoxelLibraryMergerPCM::set_prop(const int index, const Ref<PropData> &value
 void VoxelLibraryMergerPCM::remove_prop(const int index) {
 	ERR_FAIL_INDEX(index, _props.size());
 
-	_props.remove(index);
+	_props.remove_at(index);
 }
 int VoxelLibraryMergerPCM::get_num_props() const {
 	return _props.size();
@@ -708,7 +708,7 @@ void VoxelLibraryMergerPCM::_setup_material_albedo(const int material_index, con
 }
 
 VoxelLibraryMergerPCM::VoxelLibraryMergerPCM() {
-	_packer.instance();
+	_packer.instantiate();
 
 #if GODOT4
 #warning implement
@@ -720,7 +720,7 @@ VoxelLibraryMergerPCM::VoxelLibraryMergerPCM() {
 	_packer->set_keep_original_atlases(false);
 	_packer->set_margin(0);
 
-	_prop_packer.instance();
+	_prop_packer.instantiate();
 
 #if GODOT4
 #warning implement

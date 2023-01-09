@@ -253,7 +253,7 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	SpatialEditor::get_singleton()->add_control_to_menu_panel(spatial_editor_hb);
 
 #if VERSION_MAJOR < 4
-	_tool_button_group.instance();
+	_tool_button_group.instantiate();
 #else
 	_tool_button_group.instantiate();
 #endif
@@ -329,7 +329,7 @@ VoxelWorldEditor::VoxelWorldEditor(EditorNode *p_editor) {
 	_surfaces_vbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
 
 #if VERSION_MAJOR < 4
-	_surfaces_button_group.instance();
+	_surfaces_button_group.instantiate();
 #else
 	_surfaces_button_group.instantiate();
 #endif

@@ -179,7 +179,7 @@ void VoxelMaterialCachePCM::_setup_material_albedo(Ref<Texture> texture) {
 }
 
 VoxelMaterialCachePCM::VoxelMaterialCachePCM() {
-	_packer.instance();
+	_packer.instantiate();
 
 #if GODOT4
 #warning implement

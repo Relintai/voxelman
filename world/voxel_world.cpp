@@ -413,7 +413,7 @@ void VoxelWorld::chunk_setup(Ref<VoxelChunk> chunk) {
 Ref<VoxelChunk> VoxelWorld::_create_chunk(const int x, const int y, const int z, Ref<VoxelChunk> chunk) {
 	if (!chunk.is_valid()) {
 #if VERSION_MAJOR < 4
-		chunk.instance();
+		chunk.instantiate();
 #else
 		chunk.instantiate();
 #endif
@@ -668,7 +668,7 @@ void VoxelWorld::prop_add(Transform tarnsform, const Ref<PropData> &prop, const 
 		if (light_data.is_valid()) {
 			Ref<VoxelLight> light;
 #if VERSION_MAJOR < 4
-			light.instance();
+			light.instantiate();
 #else
 			light.instantiate();
 #endif

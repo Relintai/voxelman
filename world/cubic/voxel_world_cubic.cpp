@@ -46,26 +46,26 @@ Ref<VoxelChunk> VoxelWorldCubic::_create_chunk(int x, int y, int z, Ref<VoxelChu
 		tj.INSTANCE();
 
 		Ref<VoxelMesherJobStep> s;
-		s.instance();
+		s.instantiate();
 		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL);
 		tj->add_jobs_step(s);
 
-		s.instance();
+		s.instantiate();
 		s->set_job_type(VoxelMesherJobStep::TYPE_DROP_UV2);
 		tj->add_jobs_step(s);
 
-		s.instance();
+		s.instantiate();
 		s->set_job_type(VoxelMesherJobStep::TYPE_MERGE_VERTS);
 		tj->add_jobs_step(s);
 
-		s.instance();
+		s.instantiate();
 		s->set_job_type(VoxelMesherJobStep::TYPE_BAKE_TEXTURE);
 		tj->add_jobs_step(s);
 
 #ifdef MESH_UTILS_PRESENT
-		s.instance();
+		s.instantiate();
 		Ref<FastQuadraticMeshSimplifier> fqms;
-		fqms.instance();
+		fqms.instantiate();
 		s->set_fqms(fqms);
 		s->set_job_type(VoxelMesherJobStep::TYPE_SIMPLIFY_MESH);
 		s->set_simplification_step_ratio(0.8);
@@ -84,22 +84,22 @@ Ref<VoxelChunk> VoxelWorldCubic::_create_chunk(int x, int y, int z, Ref<VoxelChu
 		pj.INSTANCE();
 		pj->set_prop_mesher(Ref<VoxelMesher>(memnew(VoxelMesherCubic)));
 
-		s.instance();
+		s.instantiate();
 		s->set_job_type(VoxelMesherJobStep::TYPE_NORMAL);
 		pj->add_jobs_step(s);
 
-		s.instance();
+		s.instantiate();
 		s->set_job_type(VoxelMesherJobStep::TYPE_MERGE_VERTS);
 		pj->add_jobs_step(s);
 
-		s.instance();
+		s.instantiate();
 		s->set_job_type(VoxelMesherJobStep::TYPE_BAKE_TEXTURE);
 		pj->add_jobs_step(s);
 
-		s.instance();
+		s.instantiate();
 		s->set_job_type(VoxelMesherJobStep::TYPE_SIMPLIFY_MESH);
 #ifdef MESH_UTILS_PRESENT
-		fqms.instance();
+		fqms.instantiate();
 		s->set_fqms(fqms);
 		s->set_simplification_steps(2);
 #endif
