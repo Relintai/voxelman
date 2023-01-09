@@ -27,7 +27,7 @@ SOFTWARE.
 
 #if VERSION_MAJOR > 3
 #include "core/io/resource.h"
-#include "core/templates/map.h"
+#include "core/templates/hash_map.h"
 #else
 #include "core/resource.h"
 #include "core/map.h"

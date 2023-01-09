@@ -88,7 +88,7 @@ Rect2 VoxelMaterialCachePCM::additional_texture_get_uv_rect(const Ref<Texture> &
 		return Rect2(0, 0, 1, 1);
 	}
 
-	Ref<Image> image = tex->get_data();
+	Ref<Image> image = tex->get_image();
 
 	if (!image.is_valid()) {
 		return Rect2(0, 0, 1, 1);
@@ -181,11 +181,8 @@ void VoxelMaterialCachePCM::_setup_material_albedo(Ref<Texture> texture) {
 VoxelMaterialCachePCM::VoxelMaterialCachePCM() {
 	_packer.instantiate();
 
-#if GODOT4
 #warning implement
-#else
-	_packer->set_texture_flags(Texture::FLAG_MIPMAPS | Texture::FLAG_FILTER);
-#endif
+	//_packer->set_texture_flags(Texture::FLAG_MIPMAPS | Texture::FLAG_FILTER);
 
 	_packer->set_max_atlas_size(1024);
 	_packer->set_keep_original_atlases(false);

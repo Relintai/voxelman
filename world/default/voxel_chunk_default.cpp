@@ -86,12 +86,12 @@ void VoxelChunkDefault::set_current_lod_level(const int value) {
 		RID rid = mesh_rid_get_index(MESH_INDEX_TERRAIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
-			VisualServer::get_singleton()->instance_set_visible(rid, vis);
+			RenderingServer::get_singleton()->instance_set_visible(rid, vis);
 
 		rid = mesh_rid_get_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
-			VisualServer::get_singleton()->instance_set_visible(rid, vis);
+			RenderingServer::get_singleton()->instance_set_visible(rid, vis);
 	}
 }
 
@@ -538,11 +538,11 @@ int VoxelChunkDefault::get_light_count() const {
 
 void VoxelChunkDefault::debug_mesh_allocate() {
 	if (_debug_mesh_rid == RID()) {
-		_debug_mesh_rid = VisualServer::get_singleton()->mesh_create();
+		_debug_mesh_rid = RenderingServer::get_singleton()->mesh_create();
 	}
 
 	if (_debug_mesh_instance == RID()) {
-		_debug_mesh_instance = VisualServer::get_singleton()->instance_create();
+		_debug_mesh_instance = RenderingServer::get_singleton()->instance_create();
 
 		if (get_voxel_world()->GET_WORLD().is_valid())
 			VS::get_singleton()->instance_set_scenario(_debug_mesh_instance, get_voxel_world()->GET_WORLD()->get_scenario());
@@ -554,11 +554,11 @@ void VoxelChunkDefault::debug_mesh_allocate() {
 }
 void VoxelChunkDefault::debug_mesh_free() {
 	if (_debug_mesh_instance != RID()) {
-		VisualServer::get_singleton()->free(_debug_mesh_instance);
+		RenderingServer::get_singleton()->free(_debug_mesh_instance);
 	}
 
 	if (_debug_mesh_rid != RID()) {
-		VisualServer::get_singleton()->free(_debug_mesh_rid);
+		RenderingServer::get_singleton()->free(_debug_mesh_rid);
 	}
 }
 bool VoxelChunkDefault::debug_mesh_has() {
@@ -566,7 +566,7 @@ bool VoxelChunkDefault::debug_mesh_has() {
 }
 void VoxelChunkDefault::debug_mesh_clear() {
 	if (_debug_mesh_rid != RID()) {
-		VisualServer::get_singleton()->mesh_clear(_debug_mesh_rid);
+		RenderingServer::get_singleton()->mesh_clear(_debug_mesh_rid);
 	}
 }
 void VoxelChunkDefault::debug_mesh_array_clear() {
@@ -589,13 +589,13 @@ void VoxelChunkDefault::debug_mesh_send() {
 	SceneTree *st = SceneTree::get_singleton();
 
 	Array arr;
-	arr.resize(VisualServer::ARRAY_MAX);
-	arr[VisualServer::ARRAY_VERTEX] = _debug_mesh_array;
+	arr.resize(RenderingServer::ARRAY_MAX);
+	arr[RenderingServer::ARRAY_VERTEX] = _debug_mesh_array;
 
-	VisualServer::get_singleton()->mesh_add_surface_from_arrays(_debug_mesh_rid, VisualServer::PRIMITIVE_LINES, arr);
+	RenderingServer::get_singleton()->mesh_add_surface_from_arrays(_debug_mesh_rid, RenderingServer::PRIMITIVE_LINES, arr);
 
 	if (st) {
-		VisualServer::get_singleton()->mesh_surface_set_material(_debug_mesh_rid, 0, SceneTree::get_singleton()->get_debug_collision_material()->get_rid());
+		RenderingServer::get_singleton()->mesh_surface_set_material(_debug_mesh_rid, 0, SceneTree::get_singleton()->get_debug_collision_material()->get_rid());
 	}
 
 	debug_mesh_array_clear();
@@ -720,17 +720,17 @@ void VoxelChunkDefault::_visibility_changed(bool visible) {
 		RID rid = mesh_rid_get_index(MESH_INDEX_TERRAIN, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
-			VisualServer::get_singleton()->instance_set_visible(rid, false);
+			RenderingServer::get_singleton()->instance_set_visible(rid, false);
 
 		rid = mesh_rid_get_index(MESH_INDEX_LIQUID, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
-			VisualServer::get_singleton()->instance_set_visible(rid, false);
+			RenderingServer::get_singleton()->instance_set_visible(rid, false);
 
 		rid = mesh_rid_get_index(MESH_INDEX_PROP, MESH_TYPE_INDEX_MESH_INSTANCE, i);
 
 		if (rid != RID())
-			VisualServer::get_singleton()->instance_set_visible(rid, false);
+			RenderingServer::get_singleton()->instance_set_visible(rid, false);
 	}
 }
 
